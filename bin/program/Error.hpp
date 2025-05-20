@@ -20,7 +20,7 @@ namespace error
      */
     enum ErrorCode
     {
-		MIA_Success = 0,
+        MIA_Success = 0,
         Access_denied = 5,
         Gen_Failure = 31,
         Bad_Net_Path = 53,
@@ -76,42 +76,5 @@ namespace error
      */
     [[deprecated("Use MIAException instead!")]]
     static void errorInfoRun(bool all = false);
-
-    /**
-     * @brief Custom exception class for MIA-related errors.
-     * Encapsulates an ErrorCode and descriptive message. Inherits from std::exception
-     * to integrate with standard exception handling mechanisms.
-     */
-    class MIAException : public std::exception
-    {
-    public:
-        /**
-         * @brief Constructs a MIAException with the given error code and message.
-         * @param code The ErrorCode indicating the type of error.
-         * @param details A descriptive message explaining the details of the error (default = "").
-         */
-        MIAException(ErrorCode code, const std::string& details = "")
-            : errorCode(code), errorDetails(details) { }
-    
-        /**
-         * @brief Returns a C-style character string describing the error.
-         * @return The error message as a null-terminated C string.
-         */
-        const char* what() const noexcept override
-        { return errorDetails.c_str(); }
-    
-        /**
-         * @brief Returns the associated ErrorCode for this exception.
-         * @return The ErrorCode value representing the error.
-         */
-        ErrorCode code() const noexcept
-        { return errorCode; }
-    
-    private:
-        /// The specific error code associated with this exception.
-        ErrorCode errorCode;
-        /// Descriptive error message explaining details not included with the specific error code.
-        std::string errorDetails;
-    }; // class MIAException
 
 } // namespace error
