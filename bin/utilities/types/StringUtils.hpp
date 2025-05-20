@@ -30,116 +30,120 @@ namespace types
      * Removes a specific character from a string.
      * @param str[std::string] - the input string to parse.
      * @param c[char] - the character to remove.
-     * @return [std::string] The string without hte character.
+     * @return [std::string] - The string without hte character.
      */
     static std::string removeCharInString(std::string str, char c);
 
     /**
      * Finds the index of the first occurrence of a char in a string.
-     * @param input[std::string] - reference to the input string to parse.
-     * @param c[char] - the character to find.
-     * @return [int] location of the character in the string.
+     * @param input[std::string] - Reference to the input string to parse.
+     * @param c[char] - The character to find.
+     * @return [int] - Location of the character in the string.
      */
     static int findCharInString(std::string& input, char c);
 
     /**
      * Determines if a character is contained within a string.
-     * @param input[std::string] - reference to the input string to parse.
-     * @param c[char] - the character to find.
-     * @return [bool] Returns true if the character is in the string.
+     * @param input[std::string] - Reference to the input string to parse.
+     * @param c[char] - The character to find.
+     * @return [bool] - Returns true if the character is in the string.
      */
     static bool stringContainsChar(std::string& input, char c);
 
     /**
      * Separates a string into components via a delimiter.
-     * @param input[std::string] - reference to the input string to parse.
+     * @param input[std::string] - Reference to the input string to parse.
      * @param delimiter[std::string] - Delimiter to use when parsing.
-     * @param verboseMode[bool] - enables verboseMode output (default = false)
+     * @param verboseMode[bool] - Enables verboseMode output (default = false).
      * @return
      */
     static std::vector<std::string> delimiterString(std::string& input, const std::string &delimiter, bool verboseMode = false);
 
     /**
      * Function for determining if all characters in a string are digits/integers.
-     * @param input[std::string] - reference to the input string to parse.
-     * @return returns true if all characters are integers.
+     * @param input[std::string] - Reference to the input string to parse.
+     * @return [bool] - True if all characters are integers.
      */
     static bool is_digits(const std::string& input);
 
     /**
      * Determines if a string is of the format for a dice roll. i.e 1d20 or 3d8.
-     * @param input[std::string] - reference to the input string to parse.
-     * @return [bool] True if the string is a dice roll.
+     * @param input[std::string] - Reference to the input string to parse.
+     * @return [bool] - True if the string is a dice roll.
      */
     static bool inputRoll(std::string &input);
 
     /**
      * A function used to determine if an answer is equivalent to yes.
-     * @param input[std::string] - reference to the input string to parse.
-     * @return [bool] True if answer is a form of yes.
+     * @param input[std::string] - Reference to the input string to parse.
+     * @return [bool] - True if answer is a form of yes.
      */
     static bool formOfYes(std::string &input);
 
     /**
      * Returns the date for today.
-     * @return[std::string] A string representing the current date.
+     * @return[std::string] - A string representing the current date.
      */
     static std::string today();
 
     /**
      * Returns a shuffled string.
-     * @param input[std::string] the string to shuffle.
-     * @return [std::string] that has been shuffled.
+     * @param input[std::string] - The string to shuffle.
+     * @return [std::string] - That has been shuffled.
      */
     static std::string shuffleString(std::string input);
 
     /**
      * Returns the substring of `line` that appears before the first occurrence of character `c`.
      * If `c` is not found, returns the entire string.
-     * @param line [std::string] The input string to process.
-     * @param c [char] The delimiter character.
-     * @return [std::string] Substring before `c`.
+     * @param line [std::string] - The input string to process.
+     * @param c [char] - The delimiter character.
+     * @param verboseMode[bool] - Enables verboseMode output (default = false).
+     * @return [std::string] - Substring before `c`.
      */
-    static std::string getBeforeChar(std::string line, char c);
+    static std::string getBeforeChar(std::string line, char c, bool verboseMode = false);
     
     /**
      * Returns the substring of `line` that appears after the first occurrence of character `c`.
      * If `c` is not found, returns an empty string.
-     * @param line [std::string] The input string to process.
-     * @param c [char] The delimiter character.
-     * @return [std::string] Substring after `c`.
+     * @param line [std::string] - The input string to process.
+     * @param c [char] - The delimiter character.
+     * @param verboseMode[bool] - Enables verboseMode output (default = false).
+     * @return [std::string] - Substring after `c`.
      */
-    static std::string getAfterChar(std::string line, char c);
+    static std::string getAfterChar(std::string line, char c, bool verboseMode = false);
     
     /**
      * Extracts and returns the substring between the first '=' and the first ';' in the input string.
      * It first trims the string at the ';' and then extracts the portion after the '='.
      * If '=' or ';' are not found, behavior depends on `findCharInString` return values and substr calls.
-     * @param line [std::string] The input string to parse.
-     * @return [std::string] Substring between '=' and ';', or possibly empty if delimiters are missing.
+     * @param line [std::string] - The input string to parse.
+     * @param verboseMode[bool] - Enables verboseMode output (default = false).
+     * @return [std::string] - Substring between '=' and ';', or possibly empty if delimiters are missing.
      */
     [[deprecated("Use getBetweenXAndY() instead")]]
-    static std::string getBetweenEqualAndSemiColon(std::string line);
+    static std::string getBetweenEqualAndSemiColon(std::string line, bool verboseMode = false);
 
     /**
      * Extracts and returns the substring between the first occurrences of characters `x` and `y`
      * in the input string. The result excludes the delimiter characters themselves.
      * If either character is not found, the behavior depends on the result of `findCharInString`.
      *
-     * @param line [std::string] The input string to parse.
-     * @param x [char] The starting delimiter character.
-     * @param y [char] The ending delimiter character.
-     * @return [std::string] Substring between `x` and `y`, or possibly empty if delimiters are not found.
+     * @param line [std::string] - The input string to parse.
+     * @param x [char] - The starting delimiter character.
+     * @param y [char] - The ending delimiter character.
+     * @param verboseMode[bool] - Enables verboseMode output (default = false).
+     * @return [std::string] - Substring between `x` and `y`, or possibly empty if delimiters are not found.
      */
-    static std::string getBetweenXAndY(std::string line, char x, char y);
+    static std::string getBetweenXAndY(std::string line, char x, char y, bool verboseMode = false);
 
     /**
      * This will create two strings of 'entangled' text. The first string contains every other character
      * of the input string and the second string contains the opposite characters. Spaces are added
      * in place of the characters not shown in each output string so that they can be easily matched.
-     * @param input the input string to entangle.
-     * @return std::vector<std::string>, the first element is the first half,
-     *                                   and second element the second half.
+     * @param input[const std::string&] - The input string to entangle.
+     * @return [std::vector<std::string>] - The first element is the first half,
+     *                                      and second element the second half.
      */
     static std::vector<std::string> entangleText(const std::string& input);
 
