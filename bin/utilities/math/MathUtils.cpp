@@ -21,57 +21,58 @@
 using std::cout;
 using std::endl;
 
-int MathUtils::randomInt(int min, int max, int seed, bool useTime, bool verboseMode)
+namespace math
 {
-    if(max < min)
+    int randomInt(int min, int max, int seed, bool useTime, bool verboseMode)
     {
+        if(max < min)
+        {
+            if(verboseMode)
+                cout << "...Max value smaller than min, adjusting appropriately by returning min." << endl;
+            return min;
+        }
+        
         if(verboseMode)
-            cout << "...Max value smaller than min, adjusting appropriately by returning min." << endl;
-        return min;
+            cout << "...Calculating random value between " << min << " and " << max << "." << endl;
+        
+        if(seed == 0)
+            srand((unsigned)time(nullptr));
+        else if (useTime)
+            srand((unsigned)time(nullptr) + seed);
+        else 
+            srand(seed);
+        
+        int random = min + (rand() % (max - min + 1));
+        if(verboseMode)
+            cout << "...random value is " << random << "." << endl;
+        return random;
     }
-    if(verboseMode)
-        cout << "...Calculating random value between " << min << " and " << max << "." << endl;
-    if(seed == 0)
+    
+    
+    int roll(const std::string& input, bool verboseMode)
     {
-        srand((unsigned)time(nullptr));
-    } 
-    else if (useTime)
-    {
-        srand((unsigned)time(nullptr) + seed);
-    } 
-    else 
-    {
-        srand(seed);
+        int numOfDice = stoi(StringUtils::getBeforeChar(input, 'd'));
+        int sizeOfDice = stoi(StringUtils::getAfterChar(input, 'd'));
+        int totalRolled = 0;
+    
+        if (verboseMode)
+            cout << endl;
+        for(int i=0; i<numOfDice; i++)
+        {
+            int randCounter = numOfDice;
+            totalRolled += rolldXX(sizeOfDice, randCounter);
+        }
+        if (verboseMode)
+            cout << "Total Rolled: " << totalRolled << endl << endl;
+        
+        return totalRolled;
     }
-    int random = min + (rand() % (max - min + 1));
-    if(verboseMode)
-        cout << "...random value is " << random << "." << endl;
-    return random;
-}
-
-
-int MathUtils::roll(const std::string& input, bool verboseMode)
-{
-    int numOfDice = stoi(StringUtils::getBeforeChar(input, 'd'));
-    int sizeOfDice = stoi(StringUtils::getAfterChar(input, 'd'));
-    int totalRolled = 0;
-
-    if (verboseMode)
-        cout << endl;
-    for(int i=0; i<numOfDice; i++)
+    
+    
+    int rolldXX(int xx, int seed)
     {
-        int randCounter = numOfDice;
-        totalRolled += rolldXX(sizeOfDice, randCounter);
+        int rand = randomInt(1, xx, seed, true);
+        cout << "1d" << xx << ": " << rand << endl;
+        return rand;
     }
-    if (verboseMode)
-        cout << "Total Rolled: " << totalRolled << endl << endl;
-    return totalRolled;
-}
-
-
-int MathUtils::rolldXX(int xx, int seed)
-{
-    int rand = randomInt(1, xx, seed, true);
-    cout << "1d" << xx << ": " << rand << endl;
-    return rand;
-}
+} // namespace math
