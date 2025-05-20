@@ -8,6 +8,7 @@
  *     used throughout the application. This file contains old math methods that 
  *     were copied from old programs.
  */
+#pragma once
 
 #include <vector>
 #include <string>
