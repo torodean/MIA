@@ -18,9 +18,6 @@ Contains the documentation for the project, including the MIA manual, usage inst
 ### `build/` (if applicable)
 Used for build artifacts, scripts, or platform-specific build outputs. This folder may be generated during the build process and is not typically version-controlled.
 
-### `tests/` (if applicable)
-Includes unit tests or test harnesses for individual modules and features.
-
 ---
 
 Additional directories may be added as the project evolves to support new tools, modules, or documentation needs.
