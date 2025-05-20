@@ -13,20 +13,22 @@ namespace math
 {
     /**
      * Generates a random integer between two values.
-     * @param min[int] - lower bound value to use.
-     * @param max[int] - higher bound to use.
-     * @param seed[int] - a seed to randomize output.
-     * @param useTime[bool] - uses teh time to determine the seed (default = true).
-     * @return
+     * @param min[int] - Lower bound value to use.
+     * @param max[int] - Higher bound to use.
+     * @param seed[int] - A seed to randomize output.
+     * @param useTime[bool] - Uses teh time to determine the seed (default = true).
+     * @param verboseMode[bool] - Enables verbose output (default = false).
+     * @return [int] - An appropriate random integer.
      */
-    static int randomInt(int min, int max, int seed, bool useTime = true);
+    static int randomInt(int min, int max, int seed, bool useTime = true, bool verboseMode = false);
 
     /**
      * Rolls a dice based on input.
      * @param input[std::string&] - Input string. Must be of the form #d#, #d##, ##d##, etc.
+     * @param verboseMode[bool] - Enables verbose output (default = false).
      * @return [int] - returns the total dice roll.
      */
-    static int roll(const std::string &input);
+    static int roll(const std::string &input, bool verboseMode = false);
 
     /**
      * Returns a 1dXX dice roll total output.
