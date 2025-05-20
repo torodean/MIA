@@ -122,7 +122,7 @@ namespace types
      * @param verboseMode[bool] - Enables verboseMode output (default = false).
      * @return [std::string] - Substring between '=' and ';', or possibly empty if delimiters are missing.
      */
-    [[deprecated("Use getBetweenXAndY() instead")]]
+    [[deprecated("Use getBetweenXAndY(line, '=', ';') instead")]]
     static std::string getBetweenEqualAndSemiColon(std::string line, bool verboseMode = false);
 
     /**
