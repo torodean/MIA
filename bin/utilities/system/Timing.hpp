@@ -7,6 +7,7 @@
  *    duration conversions. This header is part of the system utilities module and 
  *    may be extended with additional timing-related functionality.
  */
+#pragma once
 
 namespace system
 {    
