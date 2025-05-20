@@ -97,8 +97,8 @@ namespace types
     /**
      * Returns the substring of `line` that appears before the first occurrence of character `c`.
      * If `c` is not found, returns the entire string.
-     * @param line [std::string] - The input string to process.
-     * @param c [char] - The delimiter character.
+     * @param line[std::string] - The input string to process.
+     * @param c[char] - The delimiter character.
      * @param verboseMode[bool] - Enables verboseMode output (default = false).
      * @return [std::string] - Substring before `c`.
      */
@@ -107,8 +107,8 @@ namespace types
     /**
      * Returns the substring of `line` that appears after the first occurrence of character `c`.
      * If `c` is not found, returns an empty string.
-     * @param line [std::string] - The input string to process.
-     * @param c [char] - The delimiter character.
+     * @param line[std::string] - The input string to process.
+     * @param c[char] - The delimiter character.
      * @param verboseMode[bool] - Enables verboseMode output (default = false).
      * @return [std::string] - Substring after `c`.
      */
@@ -118,7 +118,7 @@ namespace types
      * Extracts and returns the substring between the first '=' and the first ';' in the input string.
      * It first trims the string at the ';' and then extracts the portion after the '='.
      * If '=' or ';' are not found, behavior depends on `findCharInString` return values and substr calls.
-     * @param line [std::string] - The input string to parse.
+     * @param line[std::string] - The input string to parse.
      * @param verboseMode[bool] - Enables verboseMode output (default = false).
      * @return [std::string] - Substring between '=' and ';', or possibly empty if delimiters are missing.
      */
@@ -131,8 +131,8 @@ namespace types
      * If either character is not found, the behavior depends on the result of `findCharInString`.
      *
      * @param line [std::string] - The input string to parse.
-     * @param x [char] - The starting delimiter character.
-     * @param y [char] - The ending delimiter character.
+     * @param x[char] - The starting delimiter character.
+     * @param y[char] - The ending delimiter character.
      * @param verboseMode[bool] - Enables verboseMode output (default = false).
      * @return [std::string] - Substring between `x` and `y`, or possibly empty if delimiters are not found.
      */
