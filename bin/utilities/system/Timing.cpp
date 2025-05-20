@@ -14,22 +14,25 @@
 // Include the associated header file.
 #include "Timing.hpp"
 
-void SystemUtils::sleepMilliseconds(int time)
+namespace system
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(time));
-}
-
-void SystemUtils::sleepMinutes(int time)
-{
-    std::this_thread::sleep_for(std::chrono::minutes(time));
-}
-
-void SystemUtils::sleepSeconds(int time)
-{
-    std::this_thread::sleep_for(std::chrono::seconds(time));
-}
-
-void SystemUtils::sleepSeconds(double time)
-{
-    std::this_thread::sleep_for(std::chrono::duration<double>(time));
-}
+    void sleepMilliseconds(int time)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(time));
+    }
+    
+    void sleepMinutes(int time)
+    {
+        std::this_thread::sleep_for(std::chrono::minutes(time));
+    }
+    
+    void sleepSeconds(int time)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(time));
+    }
+    
+    void sleepSeconds(double time)
+    {
+        std::this_thread::sleep_for(std::chrono::duration<double>(time));
+    }
+} // namespace system
