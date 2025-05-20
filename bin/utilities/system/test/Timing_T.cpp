@@ -19,7 +19,7 @@ using namespace system;
 TEST(TimingTest, SleepMilliseconds) 
 {
     auto start = std::chrono::steady_clock::now();
-    Timing::sleepMilliseconds(100);
+    sleepMilliseconds(100);
     auto end = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -30,7 +30,7 @@ TEST(TimingTest, SleepMilliseconds)
 TEST(TimingTest, SleepSecondsInt) 
 {
     auto start = std::chrono::steady_clock::now();
-    Timing::sleepSeconds(1);
+    sleepSeconds(1);
     auto end = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -41,7 +41,7 @@ TEST(TimingTest, SleepSecondsInt)
 TEST(TimingTest, SleepSecondsDouble) 
 {
     auto start = std::chrono::steady_clock::now();
-    Timing::sleepSeconds(0.2);
+    sleepSeconds(0.2);
     auto end = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -52,7 +52,7 @@ TEST(TimingTest, SleepSecondsDouble)
 TEST(TimingTest, SleepMinutesZero) 
 {
     auto start = std::chrono::steady_clock::now();
-    Timing::sleepMinutes(0);  // Should return immediately
+    sleepMinutes(0);  // Should return immediately
     auto end = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
