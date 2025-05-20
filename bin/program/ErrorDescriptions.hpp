@@ -20,4 +20,7 @@ namespace error
      * @return A const reference to the corresponding error description string.
      */
     const std::string& getErrorDescription(ErrorCode code);
+    
+    // A map to store the error codes and descriptions.
+    extern const std::unordered_map<ErrorCode, std::string> errorDescriptions;
 }

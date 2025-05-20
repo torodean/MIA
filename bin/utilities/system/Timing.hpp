@@ -9,7 +9,7 @@
  */
 #pragma once
 
-namespace system
+namespace MIA_system
 {    
     /**
      * Causes the current thread to sleep for some number of milliseconds.

@@ -15,6 +15,9 @@ Contains the source code for all integrated applications and utilities. This inc
 ### `docs/`
 Contains the documentation for the project, including the MIA manual, usage instructions, design notes, and module-specific references.
 
+### `scripts/`
+Used for storing various helper scripts to perform tasks. This includes various tasks related to installing files, building files, and more.
+
 ### `build/` (if applicable)
 Used for build artifacts, scripts, or platform-specific build outputs. This folder may be generated during the build process and is not typically version-controlled.
 

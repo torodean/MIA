@@ -16,7 +16,7 @@
 #include "MathUtils.hpp"
 
 // @TODO - update this header appropriately for new congig/setup.
-#include "../../utilities/StringUtils.hpp"
+#include "StringUtils.hpp"
 
 using std::cout;
 using std::endl;
@@ -51,8 +51,8 @@ namespace math
     
     int roll(const std::string& input, bool verboseMode)
     {
-        int numOfDice = stoi(StringUtils::getBeforeChar(input, 'd'));
-        int sizeOfDice = stoi(StringUtils::getAfterChar(input, 'd'));
+        int numOfDice = std::stoi(types::getBeforeChar(input, 'd'));
+        int sizeOfDice = std::stoi(types::getAfterChar(input, 'd'));
         int totalRolled = 0;
     
         if (verboseMode)

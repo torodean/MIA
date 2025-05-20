@@ -14,7 +14,7 @@
 // Include the associated header file.
 #include "Timing.hpp"
 
-namespace system
+namespace MIA_system
 {
     void sleepMilliseconds(int time)
     {

@@ -9,7 +9,7 @@
 
 namespace error
 {
-    static const std::unordered_map<ErrorCode, std::string> errorDescriptions = {
+    const std::unordered_map<ErrorCode, std::string> errorDescriptions = {
         { MIA_Success, "The operation completed successfully." },
         { Access_denied, "Access denied." },
         { Gen_Failure, "A device attached to the system is not functioning." },
