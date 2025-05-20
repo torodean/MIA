@@ -35,17 +35,16 @@ namespace error
          */
         MIAException(ErrorCode code, const std::string& details = "")
             : errorCode(code), errorDetails(details) 
-        { }
+        { 
+            cachedWhatMessage = getErrorDescription(code) + (details.empty() ? "" : (" " + details));
+        }
     
         /**
          * @brief Returns a C-style character string describing the error.
          * @return The error message as a null-terminated C string.
          */
         const char* what() const noexcept override
-        {
-            std::string errorStr = getErrorDescription(code) + " " + errorDetails;
-            return errorStr.c_str(); 
-        }
+        { return cachedWhatMessage.c_str(); }
     
         /**
          * @brief Returns the associated ErrorCode for this exception.
@@ -55,9 +54,14 @@ namespace error
         { return errorCode; }
     
     private:
+        std::string generateFullErrorMsg()
+        { return getErrorDescription(code) + " " + errorDetails; } 
+
         /// The specific error code associated with this exception.
         ErrorCode errorCode;
         /// Descriptive error message explaining details not included with the specific error code.
         std::string errorDetails;
+        /// Cached full message used in what()
+        std::string cachedWhatMessage;
     }; // class MIAException
 } // namespace error
