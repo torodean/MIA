@@ -13,6 +13,7 @@
  *     These functions are encapsulated within the `types` namespace and are
  *     intended for general-purpose use with standard string types.
  */
+#pragma once
 
 #include <string>
 #include <vector>
