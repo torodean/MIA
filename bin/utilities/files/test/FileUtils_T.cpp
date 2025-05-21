@@ -1,3 +1,10 @@
+/**
+ * File: FileUtilsTest.cpp
+ * Author: Antonius Torode
+ * Date: 05/21/2025
+ * Description: Unit tests for FileUtils methods using Google Test.
+ */
+
 #include <gtest/gtest.h>
 #include <fstream>
 #include <sstream>
