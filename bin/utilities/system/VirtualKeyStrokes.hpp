@@ -23,7 +23,7 @@ extern "C"
 }
 #endif
 
-namespace system
+namespace MIA_system
 {
     /**
      * This class is for sending virtual key strokes and simulating user input.
@@ -167,4 +167,4 @@ namespace system
         xdo_t *xdo;
     #endif
     }; // class VirtualKeyStrokes
-} // namespace system
+} // namespace MIA_system
