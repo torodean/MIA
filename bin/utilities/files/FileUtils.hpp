@@ -43,9 +43,8 @@ namespace files
      * Writes the given lines to a file, overwriting any existing content.
      * @param filePath[const std::string&] - Path to the file.
      * @param lines[const std::vector<std::string>&] - Lines to write.
-     * @return [bool] - True if write was successful, false otherwise.
      */
-    static bool writeLinesToFile(const std::string& filePath, const std::vector<std::string>& lines);
+    static void writeLinesToFile(const std::string& filePath, const std::vector<std::string>& lines);
 
     /**
      * Reads the entire content of a file as a single string.
@@ -58,9 +57,8 @@ namespace files
      * Appends a single line to the end of a file.
      * @param filePath[const std::string&] - Path to the file.
      * @param line[const std::string&] - Line to append.
-     * @return [bool] - True if append was successful, false otherwise.
      */
-    static bool appendLineToFile(const std::string& filePath, const std::string& line);
+    static void appendLineToFile(const std::string& filePath, const std::string& line);
 
     /**
      * Counts the number of lines in a file.
