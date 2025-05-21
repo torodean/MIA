@@ -11,7 +11,7 @@ This directory contains the primary code for the MIA project and associated libr
 - **libs/**  
   Contains libraries with core functionality for the various MIA apps and features.
 
-- **apps/**
+- **apps/**  
   Contains the applications/program code of the MIA project.
 
 --
