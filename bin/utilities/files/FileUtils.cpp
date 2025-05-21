@@ -9,11 +9,13 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <random>
+#include <chrono>
 
 // Include the associated header file.
 #include "FileUtils.hpp"
 
-#include "MathUtils.hpp"
+// Used for error handling.
 #include "Error.hpp"
 
 using std::string;
@@ -33,7 +35,10 @@ string FileUtils::getRandomLineOfFile(string& fileName)
     file.close();
 
     std::ifstream file2(fileName);
-    int random = MathUtils::randomInt(1, counter, 0, true);
+    // Create a seeded random engine (usually done once, not every call)
+    static std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());    
+    // Generate a random integer between 1 and counter (inclusive)
+    int random = std::uniform_int_distribution<int>(1, counter)(rng);
     counter = 0;
 
     while (getline(file2, output))
