@@ -6,6 +6,7 @@
  *     keyboard and mouse input. Supports character and string input emulation, 
  *     basic automation tasks, and platform-specific input functions for Windows and Linux.
  */
+#pragma once
 
 #include <string>
 #include <thread>
