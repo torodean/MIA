@@ -22,7 +22,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-string FileUtils::getRandomLineOfFile(string& fileName)
+string getRandomLineOfFile(string& fileName)
 {
     int counter = 0;
     string output;
@@ -52,7 +52,7 @@ string FileUtils::getRandomLineOfFile(string& fileName)
     return "ERROR"; // @TODO - Add MIA Exception here.
 }
 
-void FileUtils::printRandomLinesFromFile(std::string filePath, int numberOfLines)
+void printRandomLinesFromFile(std::string filePath, int numberOfLines)
 {
     // Grabs the file.
     std::ifstream file(filePath, std::ifstream::in);
