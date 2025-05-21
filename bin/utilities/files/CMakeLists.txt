@@ -5,7 +5,7 @@ set(Files_SRC
 set(Files_INC 
     FilesUtils.hpp )
 add_library(Files_LIB ${Files_SRC} ${Files_INC})
-target_link_libraries(Files_LIB PUBLIC Math_LIB Program_LIB)
+target_link_libraries(Files_LIB PUBLIC Program_LIB)
 
 # Include the test directory.
 add_subdirectory( test )
