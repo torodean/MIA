@@ -10,3 +10,6 @@ This folder contains reusable utility libraries that provide common functionalit
 
 - **math/**  
   Includes mathematical utility functions and algorithms designed to support numerical computations, statistical operations, and other math-related tasks. This module is structured to be expanded with a variety of math utilities to assist with application-level mathematical processing.
+
+- **files/**
+  This contains utilities and methods used for various file processing, reading, writing, and processing.
