@@ -6,6 +6,7 @@
  *     keyboard and mouse input. Supports character and string input emulation, 
  *     basic automation tasks, and platform-specific input functions for Windows and Linux.
  */
+// @TODO - this file needs some work.
 #pragma once
 
 #include <string>
@@ -58,16 +59,16 @@ namespace MIA_system
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 
         // @TODO - these methods can be simplified into one (or at least two).
-        void one(int holdTime = 0);
-        void two(int holdTime = 0);
-        void three(int holdTime = 0);
-        void four(int holdTime = 0);
-        void five(int holdTime = 0);
-        void six(int holdTime = 0);
-        void seven(int holdTime = 0);
-        void eight(int holdTime = 0);
-        void nine(int holdTime = 0);
-        void zero(int holdTime = 0);
+        void one(int holdTime = 0, bool verboseMode = false);
+        void two(int holdTime = 0, bool verboseMode = false);
+        void three(int holdTime = 0, bool verboseMode = false);
+        void four(int holdTime = 0, bool verboseMode = false);
+        void five(int holdTime = 0, bool verboseMode = false);
+        void six(int holdTime = 0, bool verboseMode = false);
+        void seven(int holdTime = 0, bool verboseMode = false);
+        void eight(int holdTime = 0, bool verboseMode = false);
+        void nine(int holdTime = 0, bool verboseMode = false);
+        void zero(int holdTime = 0, bool verboseMode = false);
         void enter();
         void a(int holdTime = 0);
         void b(int holdTime = 0);
@@ -102,8 +103,8 @@ namespace MIA_system
         void paste();
         void backslash();
         void slash();
-        void leftclick();
-        void rightclick();
+        void leftclick(bool verboseMode = false);
+        void rightclick(bool verboseMode = false);
     
         // Functions relating to Minecraft. // @TODO - move to an app
         void minecraftDig(int time);
@@ -121,10 +122,10 @@ namespace MIA_system
     
     #endif
     
-        void minus();       ///< Simulates press of the minus key.
-        void equal();       ///< Simulates press of the equal key.
-        void space();       ///< Simulates press of the space key.
-        void tab();         ///< Simulates press of the tab key.
+        void minus(bool verboseMode = false);       ///< Simulates press of the minus key.
+        void equal(bool verboseMode = false);       ///< Simulates press of the equal key.
+        void space(bool verboseMode = false);       ///< Simulates press of the space key.
+        void tab(bool verboseMode = false);         ///< Simulates press of the tab key.
     
         /// Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class..
         void defaultSleep() const;
