@@ -1,11 +1,11 @@
 
 # Create the Files_LIB
 set(Files_SRC 
-    FilesUtils.cpp )
+    FileUtils.cpp )
 set(Files_INC 
-    FilesUtils.hpp )
+    FileUtils.hpp )
 add_library(Files_LIB ${Files_SRC} ${Files_INC})
-target_link_libraries(Files_LIB PUBLIC Program_LIB)
+target_link_libraries(Files_LIB PUBLIC Core_LIB)
 
 # Include the test directory.
 add_subdirectory( test )

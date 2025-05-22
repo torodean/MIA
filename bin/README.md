@@ -2,10 +2,10 @@
 
 This directory contains the primary code for the MIA project and associated libraries. Below is a brief description of each subfolder:
 
-- **program/**  
-  Contains code which is used by the MIA programs and core/common to all of the various app functionality. **TODO:** Rename this folder to core.
+- **core/**  
+  Contains code which is used by the MIA programs and core/common to all of the various app functionality.
 
-- **utilities/**  
+- **utils/**  
   Contains reusable utilities and common functionality to support application or feature development.
   
 - **libs/**  
