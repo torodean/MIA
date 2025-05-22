@@ -19,5 +19,5 @@ namespace BasicUtilities
      * @return [int] - The index of the first occurrence of ch in str,
      *                 or -1 if not found.
      */
-    inline int findCharInString(const std::string& str, char ch);
+    int findCharInString(const std::string& str, char ch);
 }

@@ -69,4 +69,28 @@ namespace paths
 
         return std::mismatch(installPath.begin(), installPath.end(), execPath.begin()).first == installPath.end();
     }
+    
+    /**
+     * Returns the default configuration directory path based on the runtime context.
+     *
+     * If the application is running from a system-installed location, this returns the
+     * system configuration directory. Otherwise, it returns the repository configuration
+     * directory, typically used for development or testing.
+     *
+     * @return [std::string] - Path to the appropriate configuration directory.
+     */
+    inline std::string getDefaultConfigDirToUse()
+    {
+        if (isInstalled())
+            return SYSTEM_CONFIG_FILE_DIR;
+        else
+            return REPO_CONFIG_FILE_DIR;
+    }
 } // namespace paths
+
+
+
+
+
+
+

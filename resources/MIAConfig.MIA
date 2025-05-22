@@ -43,22 +43,3 @@ port=3306
 defaultButtonCombination=1234567T
 #buttonCombinationCoordsX=0,0,0
 #buttonCombinationCoordsY=0,0,0
-
-# WoW related variables.
-WoWMailboxSendLetterLocationX=241
-WoWMailboxSendLetterLocationY=580
-WoWMailboxFirstLetterLocationX=56
-WoWMailboxFirstLetterLocationY=223
-WoWMailboxLootLetterLocationX=646
-WoWMailboxLootLetterLocationY=556
-WoWMailboxDeleteLetterLocationX=699
-WoWMailboxDeleteLetterLocationY=589
-
-# Variables relating to the fishbot implementation inside MIA.
-WoWFishBotStartX=791
-WoWFishBotStartY=443
-WoWFishBotEndX=1082
-WoWFishBotEndY=581
-WoWFishBotIncrement=15
-WoWFishBotNumOfCasts=10000
-WoWFishBotDelay=10000

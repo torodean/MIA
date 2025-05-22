@@ -15,24 +15,24 @@ namespace MIA_system
      * Causes the current thread to sleep for some number of milliseconds.
      * @param time[int] - Time to sleep in milliseconds.
      */
-    static void sleepMilliseconds(int time);
+    void sleepMilliseconds(int time);
 
     /**
      * Causes the current thread to sleep for some number of minutes.
      * @param time[int] - Time to sleep in minutes.
      */
-    static void sleepMinutes(int time);
+    void sleepMinutes(int time);
 
     /**
      * Causes the current thread to sleep for some number of seconds.
      * @param time[int] - Time to sleep in seconds.
      */
-    static void sleepSeconds(int time);
+    void sleepSeconds(int time);
 
     /**
      * Causes the current thread to sleep for some number of fractional seconds.
      * @param time[double] - Time to sleep in fractional seconds.
      */
-    static void sleepSeconds(double time);
+    void sleepSeconds(double time);
 
 } // namespace MIA_system

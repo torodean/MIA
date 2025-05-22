@@ -71,12 +71,17 @@ namespace MIA_System
         
         /**
          * Sets the config file name for this object. After this is set, the initialize() method should be called.
+         * This will also automatically call the reload() since it should be assumed that the config file set is
+         * likely different than the initial one.
          * @note The file name here can be the entire file path OR just the name of the file (in which case the
          *       default file path locations will be used).
          * @param configFile[const std::string&] - The config file to use for this object.
          */
          void setConfigFileName(const std::string& configFile)
-         { configFileName = configFile; }
+         { 
+            configFileName = configFile; 
+            reload();
+        }
         
         /**
          * Gets the config file name for this object.

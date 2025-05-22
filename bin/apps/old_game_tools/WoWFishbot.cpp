@@ -10,23 +10,85 @@
 #include <string>
 
 // Include the associated header file.
+#include "WoWFishbot.hpp"
+// Include the virtual key strokes to use for simulation.
 #include "VirtualKeyStrokes.hpp"
 // Include Timing for timing values.
 #include "Timing.hpp"
-// Old file used for configuration.
-#include "Configurator.hpp"
+// Used for error handling.
+#include "Error.hpp"
+// Used for config path.
+#include "Paths.hpp"
 
 using std::string;
 using std::cout;
 using std::endl;
 
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+void WoWFishbot::initialize(int argc, char* argv[])
+{
+    for (int i = 1; i < argc; ++i)
+    {
+        string arg = argv[i];
+        if ((arg == "-c" || arg == "--config") && i + 1 < argc)
+        {
+            config.setConfigFileName(argv[++i]); // advance to next arg
+        }
+    }
+
+    loadConfig();
+}
+
+
+int WoWFishbot::run()
+{
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__	
+	//Default values.
+	string fishButton = "3", lureButton = "8";
+	
+	cout << "...CAUTION! This fishbot was made for educational purposes." << endl;
+	cout << "...WARNING! Use the fishbot at your own risk!" << endl;
+	cout << "...DANGER! Using this fishbot may have negative consequences." << endl;
+	cout << "...ALERT! This fishbot may get you banned." << endl;
+	cout << "..." << endl;
+	cout << "...In order for the fishbot to work, please enter in game settings and DISABLE" << endl << "... hardware cursor. See the manual for more details." << endl;
+	cout << "...To use default values (3 for cast and 8 for lure) leave the following options" << endl << "... blank." << endl;
+	cout << "...Press CTRL-C to stop the fishbot early once started." << endl;
+	cout << "...Press ENTER to continue." << endl;
+	std::cin.ignore();
+
+	cout << "..." << endl;
+	cout << "...Please enter which button you have set to cast: ";
+	getline(std::cin, fishButton);
+	cout << endl;
+	cout << "...If you are not using a lure please enter 'NONE' " << endl;
+	cout << "...Please enter which button you have set to apply a lure: ";
+	getline(std::cin, lureButton);
+	cout << endl;
+	
+	//Arbitrary default values based on my preferred setup.
+	if(fishButton.empty() || fishButton == "\n" || fishButton == "\r")
+	{
+		fishButton = "3";
+	}
+	if(lureButton.empty() || lureButton == "\n" || lureButton == "\r")
+	{
+		lureButton = "8";
+	}
+	
+	WoWFishBot(fishButton, lureButton);
+#else
+    error::returnError(31416);
+    return 1;
+#endif
+    return 0;
+}
+
+
 // A fish bot made for WoW -- Not yet polished.
 void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
 {
-	Configurator cfg;
-	cfg.initialize();
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     fishBotIntro();
 
     //Begin useful variable initialization.
@@ -34,26 +96,36 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     COLORREF color;
     int counter = 0;
     int red=1,green=1,blue=1;
-    int increment = cfg.getWoWFishBotSpace("increment");
-    if(Configurator::getVerboseMode())
+    int increment = WoWFishBotIncrement;
+    
+    if(verboseMode)
         cout << "increment: " << increment << endl;
-    int startX = cfg.getWoWFishBotSpace("startX") + increment/2, startY = cfg.getWoWFishBotSpace("startY");
-    if(Configurator::getVerboseMode()){
+        
+    int startX = WoWFishBotStartX + increment/2, startY = WoWFishBotStartY;
+    
+    if(verboseMode)
+    {
         cout << "startX: " << startX << endl;
         cout << "startY: " << startY << endl;
     }
-    int endX = cfg.getWoWFishBotSpace("endX"), endY = cfg.getWoWFishBotSpace("endY");
-    if(Configurator::getVerboseMode()){
+    
+    int endX = WoWFishBotEndX, endY = WoWFishBotEndY;
+    
+    if(verboseMode)
+    {
         cout << "endX: " << endX << endl;
         cout << "endY: " << endY << endl;
     }
+    
     bool bobberFound = false;
     bool useLure = true;
-    int catchDelay = cfg.getWoWFishBotSpace("delay");
-    if(Configurator::getVerboseMode()) cout << "catchDelay: " << catchDelay << endl;
+    
+    if(verboseMode) 
+        cout << "catchDelay: " << WoWFishBotDelay << endl;
 
     //Determines whether a lure is being used based on input.
-    if (lureButton == "NONE" || lureButton == "None" || lureButton == "none" || lureButton == "n" || lureButton == "N"){
+    if (lureButton == "NONE" || lureButton == "None" || lureButton == "none" || lureButton == "n" || lureButton == "N")
+    {
         useLure = false;
     }
 
@@ -63,10 +135,11 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     long elapsed_time = 0;
 
     //Run the fishbot for some number of casts - determined by the config file variable WoWFishBotNumOfCasts.
-    while(counter < cfg.getWoWFishBotSpace("casts")){
+    while(counter < WoWFishBotNumOfCasts){
 
         //Applies lure.
-        if (useLure && counter % 100 == 0){
+        if (useLure && counter % 100 == 0)
+        {
             cout << "...Applying lure." << endl;
             type(lureButton);
             MIA_system::sleepMilliseconds(3000);
@@ -79,8 +152,10 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
         cout << "...Scanning." << endl;
 
         //Finds bobber.
-        for (int j=startY;j<endY;j+=increment){
-            for (int i=startX;i<endX;i+=increment){
+        for (int j=startY;j<endY;j+=increment)
+        {
+            for (int i=startX;i<endX;i+=increment)
+            {
                 SetCursorPos(i,j);
                 MIA_system::sleepMilliseconds(2);
                 color = GetPixel(dc, i, j);
@@ -89,7 +164,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
                 getRGB(color, red, green, blue);
 
                 //Troubleshooting printouts for color of pixels detected.
-                if (Configurator::getVerboseMode()){
+                if (verboseMode){
                     cout << "(x,y): " << "(" << i << "," << j << ")" << endl;
                     cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
                     cout << "RGB: (" << red << "," << green << "," << blue << ")" << endl;
@@ -102,11 +177,13 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
                     break;
                 }
             }
-            if(bobberFound){
+            if(bobberFound)
+            {
                 break;
             }
         }
-        if(!bobberFound){
+        if(!bobberFound)
+        {
             end = std::chrono::steady_clock::now();
             cout << "...I was unable to find the bobber!" << endl;
             cout << "...To make it look like we're not cheating of course." << endl;
@@ -114,7 +191,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
 
         //Waits a delay time and then clocks the bobber if it was found.
         if(bobberFound){
-            MIA_system::sleepMilliseconds(catchDelay);
+            MIA_system::sleepMilliseconds(WoWFishBotDelay);
             leftclick();
         }
         MIA_system::sleepMilliseconds(1000);
@@ -130,14 +207,15 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     }
 
     ReleaseDC(NULL, dc);
-}
+#elif __LINUX__
+    cout << "This feature is not programmed for linux!" << endl;
+    return;
 #endif
+}
 
 
 void WoWFishbot::fishBotIntro()
 {
-	Configurator cfg;
-	cfg.initialize();
     int drama = 400;
     //Some gibberish for dramatic effect.
     //Also serves as a brief load time before bot starts.
@@ -157,9 +235,30 @@ void WoWFishbot::fishBotIntro()
     cout << "...Disabling daemon ninja process." << endl;
     MIA_system::sleepMilliseconds(drama);
     cout << ".." << endl;
-    cout << "...Number of casts set to: " << cfg.getWoWFishBotSpace("casts") << endl;
+    cout << "...Number of casts set to: " << WoWFishBotNumOfCasts << endl;
     MIA_system::sleepMilliseconds(drama);
     cout << "...Starting fishbot!" << endl;
     MIA_system::sleepMilliseconds(drama);
     cout << ".." << endl;
+}
+
+void WoWFishbot::loadConfig()
+{
+    WoWFishBotStartX = config.getInt("WoWFishBotStartX");
+    WoWFishBotStartY = config.getInt("WoWFishBotStartY");
+    WoWFishBotEndX = config.getInt("WoWFishBotEndX");
+    WoWFishBotEndY = config.getInt("WoWFishBotEndY");
+    WoWFishBotIncrement = config.getInt("WoWFishBotIncrement");
+    WoWFishBotNumOfCasts = config.getInt("WoWFishBotNumOfCasts");
+    WoWFishBotDelay = config.getInt("WoWFishBotDelay");
+}
+
+void WoWFishbot::printHelp() const
+{
+    MIAApplication::printHelp();
+    
+    cout << "Fishbot specific options:" << endl
+         << "  -c, --config    Specify a config file to use (default = "
+         << paths::getDefaultConfigDirToUse() << "/" << defaultConfigFile
+         << ")" << endl;;
 }

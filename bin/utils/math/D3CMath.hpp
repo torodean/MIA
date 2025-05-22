@@ -62,14 +62,14 @@ namespace math
      * @param number[string] - The string representation of the number.
      * @return [long] - The sum of all digits in the number.
      */
-    static long sumOfDigits(string number);
+    long sumOfDigits(string number);
 
     /**
      * Counts the total number of positive factors of a given number.
      * @param x[long] - The number to find factors of.
      * @return [int] - The number of factors of x.
      */
-    static int numberOfFactors(long x);
+    int numberOfFactors(long x);
 
     /**
      * Checks if a given number is a triangular number.
@@ -78,10 +78,10 @@ namespace math
      * @param x[long] - The number to check.
      * @return [bool] - True if x is a triangular number, false otherwise.
      */
-    static bool isTriangleNumber(long x);
+    bool isTriangleNumber(long x);
 
     [[deprecated("just use x.size()!")]]    
-    static int numOfDigitsString(const string& x);
+    int numOfDigitsString(const string& x);
 
     /**
      * Returns the number of digits in a non-zero integer.
@@ -90,7 +90,7 @@ namespace math
      * @param x[int] - The integer to evaluate.
      * @return [int] - The number of digits in the integer.
      */
-    static int numOfDigitsInt(int x);
+    int numOfDigitsInt(int x);
 
     /**
      * Returns the larger of two integers.
@@ -98,7 +98,7 @@ namespace math
      * @param Two[int] - The second integer.
      * @return [int] - The larger integer.
      */
-    static int setLargerInt(int One, int Two);
+    int setLargerInt(int One, int Two);
 
     /**
      * Creates a string consisting of zeros of the specified length.
@@ -106,7 +106,7 @@ namespace math
      * @return [string] - A string composed entirely of '0' characters.
      * @TODO - Move this to StringUtils
      */
-    static string zeroString(int length);
+    string zeroString(int length);
 
     /**
      * Converts a string of digit characters to a vector of integers.
@@ -115,7 +115,7 @@ namespace math
      * @return [vector<int>] - Vector containing the integer values of each character.
      * @TODO - Move this to StringUtils
      */
-    static vector<int> stringToVector(string a);
+    vector<int> stringToVector(string a);
 
     /**
      * Converts a vector of integers to a string, removing leading zeros.
@@ -124,7 +124,7 @@ namespace math
      * @return [string] - String representation of the vector without leading zeros.
      * @TODO - Move this to StringUtils
      */
-    static string vectorToString(vector<int> a);
+    string vectorToString(vector<int> a);
 
     /**
      * Resizes the second string to match the length of the first string by prefixing zeros.
@@ -134,7 +134,7 @@ namespace math
      * @return [string] - The resized string with leading zeros added.
      * @TODO - Move this to StringUtils
      */
-    static string resizeString(const string& a, string b);
+    string resizeString(const string& a, string b);
 
     /**
      * Adds two numeric strings representing non-negative integers and returns their sum as a string.
@@ -144,7 +144,7 @@ namespace math
      * @param stringTwo[string] - Second numeric string.
      * @return [string] - Sum of the two input strings as a string, with a negative sign if both inputs were negative.
      */
-    static string addTwoStrings(string stringOne, string stringTwo);
+    string addTwoStrings(string stringOne, string stringTwo);
 
     /**
      * Prepends a negative sign ('-') to the input string.
@@ -152,7 +152,7 @@ namespace math
      * @return [string] - A new string with a '-' added at the beginning.
      * @TODO - Move this to StringUtils
      */
-    static string addNegativeSign(string Total);
+    string addNegativeSign(string Total);
 
     /**
      * Subtracts the second numeric string from the first and returns the result as a string.
@@ -161,7 +161,7 @@ namespace math
      * @param stringTwo[string] - Subtrahend numeric string.
      * @return [string] - Result of the subtraction as a string, including negative sign if needed.
      */
-    static string subtractTwoStrings(string stringOne, string stringTwo);
+    string subtractTwoStrings(string stringOne, string stringTwo);
 
     /**
      * Multiplies two numeric strings representing integers of any length.
@@ -170,7 +170,7 @@ namespace math
      * @param stringTwo[string] - Second numeric string.
      * @return [string] - Product of the two input strings as a string, with correct sign.
      */
-    static string multiplyTwoStrings(string stringOne, string stringTwo);
+    string multiplyTwoStrings(string stringOne, string stringTwo);
 
     /**
      * Finds the largest product of x consecutive numbers within a numeric string.
@@ -179,7 +179,7 @@ namespace math
      * @param x The number of consecutive digits to multiply.
      * @return The largest product of x consecutive digits as a long integer.
      */
-    static long largestProductOfXConsecutiveNumbers(string string, long x);
+    long largestProductOfXConsecutiveNumbers(string string, long x);
 
     /**
      * Generates the Collatz sequence starting from n and returns the sequence as a space-separated string.
@@ -187,7 +187,7 @@ namespace math
      * @param n The starting positive integer for the Collatz sequence.
      * @return A string containing the sequence numbers separated by spaces (excluding the starting number).
      */
-    static string productCollatzSequence(long n);
+    string productCollatzSequence(long n);
 
     /**
      * Computes the total number of lattice paths from the top-left to bottom-right corner of an x by y grid.
@@ -196,7 +196,7 @@ namespace math
      * @param y The grid height in steps.
      * @return The number of distinct lattice paths as a long integer.
      */
-    static long latticePathsOfSquare(long x, long y);
+    long latticePathsOfSquare(long x, long y);
 
     /**
      * Solves the quadratic equation ax² + bx + c = 0 and returns the roots as a string.
@@ -208,7 +208,7 @@ namespace math
      *                 For complex roots, includes the imaginary part with '*i'.
      * Note: The returned string does not explicitly separate the two roots; it shows the formula with "+/-".
      */
-    static string solveQuadraticFormula(double a, double b, double c);
+    string solveQuadraticFormula(double a, double b, double c);
 
     /**
      * Determines if a long number is a palindrome.
@@ -216,5 +216,5 @@ namespace math
      * @return returns true if the input is a palindrome.
      * @note Old function from 2011-ish
      */
-    static bool isPalindrome(long number);
+    bool isPalindrome(long number);
 } // namespace math

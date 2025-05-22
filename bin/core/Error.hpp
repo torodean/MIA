@@ -55,26 +55,26 @@ namespace error
      * @param details[std::string&] - A string with optional descriptive error info (default = "").
      */
     [[deprecated("Use MIAException instead!")]]
-    static int returnError(int errorCode = 9001, const std::string& details = "");
+    int returnError(int errorCode = 9001, const std::string& details = "");
 
     /**
      * Prints information about a specified known error or all of the known errors.
      * @param error[int] - The error to return information about.
      */
     [[deprecated("Use MIAException instead!")]]
-    static void errorInfo(int error);
+    void errorInfo(int error);
 
     /**
      * Returns information about a specific error code.
      * @param error[ErrorCode] - The error to return information about.
      */
-    static std::string errorInfo(ErrorCode error);
+    std::string errorInfo(ErrorCode error);
 
     /**
      * Inquires for an error code to gather info about.
      * @param all[bool] - option to print all error info (default = false).
      */
     [[deprecated("Use MIAException instead!")]]
-    static void errorInfoRun(bool all = false);
+    void errorInfoRun(bool all = false);
 
 } // namespace error
