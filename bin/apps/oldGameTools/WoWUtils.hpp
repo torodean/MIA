@@ -40,4 +40,17 @@ public:
     void unloadLetters(int copies);
     
     #endif // Windows specifier
+    
+private:
+    /**
+     * WoW Mailbox variables. These have default values for a specific setup.
+     */
+    int WoWMailboxSendLetterLocationX{270};
+    int WoWMailboxSendLetterLocationY{650};
+    int WoWMailboxFirstLetterLocationX{55};
+    int WoWMailboxFirstLetterLocationY{265};
+    int WoWMailboxLootLetterLocationX{675};
+    int WoWMailboxLootLetterLocationY{600};
+    int WoWMailboxDeleteLetterLocationX{700};
+    int WoWMailboxDeleteLetterLocationY{650};
 }

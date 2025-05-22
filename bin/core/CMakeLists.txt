@@ -1,6 +1,7 @@
 # Header-only Constants_LIB (no source files)
 set(Constants_INC
     Paths.hpp
+    Constants.hpp
 )
 add_library(Constants_LIB INTERFACE)
 target_include_directories(Constants_LIB INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -8,11 +9,13 @@ target_include_directories(Constants_LIB INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 # Create the Core_LIB.
 set(Core_SRC 
     Error.cpp 
-    ErrorDescriptions.cpp )
+    ErrorDescriptions.cpp 
+    MIAConfig.cpp )
 set(Core_INC 
     Error.hpp 
     ErrorDescriptions.hpp 
-    MIAException.hpp )
+    MIAException.hpp 
+    MIAConfig.hpp )
 add_library(Core_LIB ${Core_SRC} ${Core_INC})
 target_link_libraries(Core_LIB PUBLIC Constants_LIB)
 

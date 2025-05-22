@@ -11,6 +11,8 @@
 
 // Used for virtual key presses. 
 #include "VirtualKeyStrokes.hpp"
+// Used for the configuration.
+
  
 /**
  * This class contains the code related to the WoWFishbot. This code was decoupled from other
@@ -28,6 +30,12 @@ public:
     /// Default destructor.
     ~WoWFishbot();
     
+    /**
+     * This will initialize this class by loading and setting the appropriate variables from the config.
+     * @TODO - write this method.
+     */
+    void initialize() { /* temp */ };
+    
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     
         /**
@@ -44,4 +52,16 @@ private:
     /// Intro text for the fishbot. This is mostly for flavor.
     void fishBotIntro();
     
+    
+    
+    /**
+     * WoW WoWFishbot variables. These have default values for a specific setup.
+     */
+    int WoWFishBotStartX{725};
+    int WoWFishBotStartY{360};
+    int WoWFishBotEndX{1230};
+    int WoWFishBotEndY{495};
+    int WoWFishBotIncrement{40};
+    int WoWFishBotNumOfCasts{10000};
+    int WoWFishBotDelay{1000};
 } // class WoWFishbot
