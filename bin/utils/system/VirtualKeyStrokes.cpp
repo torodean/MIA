@@ -15,7 +15,6 @@
 #include "Timing.hpp"
 // Include for error handling.
 #include "Error.hpp"
-#include "Configurator.hpp"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #pragma comment (lib, "gdi32.lib")
@@ -47,82 +46,18 @@ namespace MIA_system
     #endif
     }
     
-    void VirtualKeyStrokes::press(const char& character, int holdTime)
+    void VirtualKeyStrokes::press(const char& character, int holdTime, bool verboseMode)
     {
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-        if(character == '1'){
-            one(holdTime);
-        } else if(character == '2'){
-            two(holdTime);
-        } else if(character == '3'){
-            three(holdTime);
-        } else if(character == '4'){
-            four(holdTime);
-        } else if(character == '5'){
-            five(holdTime);
-        } else if(character == '6'){
-            six(holdTime);
-        } else if(character == '7'){
-            seven(holdTime);
-        } else if(character == '8'){
-            eight(holdTime);
-        } else if(character == '9'){
-            nine(holdTime);
-        } else if(character == '0'){
-            zero(holdTime);
-        } else if(character == 'a'){
-            a(holdTime);
-        } else if(character == 'b'){
-            b(holdTime);
-        } else if(character == 'c'){
-            c(holdTime);
-        } else if(character == 'd'){
-            d(holdTime);
-        } else if(character == 'e'){
-            e(holdTime);
-        } else if(character == 'f'){
-            f(holdTime);
-        } else if(character == 'g'){
-            g(holdTime);
-        } else if(character == 'h'){
-            h(holdTime);
-        } else if(character == 'i'){
-            i(holdTime);
-        } else if(character == 'j'){
-            j(holdTime);
-        } else if(character == 'k'){
-            k(holdTime);
-        } else if(character == 'l'){
-            l(holdTime);
-        } else if(character == 'm'){
-            m(holdTime);
-        } else if(character == 'n'){
-            n(holdTime);
-        } else if(character == 'o'){
-            o(holdTime);
-        } else if(character == 'p'){
-            p(holdTime);
-        } else if(character == 'q'){
-            q(holdTime);
-        } else if(character == 'r'){
-            r(holdTime);
-        } else if(character == 's'){
-            s(holdTime);
-        } else if(character == 't'){
-            t(holdTime);
-        } else if(character == 'u'){
-            u(holdTime);
-        } else if(character == 'v'){
-            v(holdTime);
-        } else if(character == 'w'){
-            w(holdTime);
-        } else if(character == 'x'){
-            x(holdTime);
-        } else if(character == 'y'){
-            y(holdTime);
-        } else if(character == 'z'){
-            z(holdTime);
-        } else if(character == ' '){
+        if (std::isdigit(character)) 
+        {
+            pressNumber(character - '0', holdTime, verboseMode);
+        } 
+        else if(std::isalpha(static_cast<unsigned char>(character)))
+        {        
+            pressCharacter(character, holdTime, verboseMode);
+        } 
+        else if(character == ' '){
             space();
         } else if(character == '-'){
             minus();
@@ -145,139 +80,26 @@ namespace MIA_system
         } else if (character == ' '){
             space();
         } else{
-            Error::returnError(31424, std::to_string(character));
+            error::returnError(31424, std::to_string(character));
         }
     #elif __linux__
         bool skipHold = false;
-        if (character == '1') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "1", 0);
-        } else if (character == '2') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "2", 0);
-        } else if (character == '3') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "3", 0);
-        } else if (character == '4') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "4", 0);
-        } else if (character == '5') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "5", 0);
-        } else if (character == '6') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "6", 0);
-        } else if (character == '7') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "7", 0);
-        } else if (character == '8') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "8", 0);
-        } else if (character == '9') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "9", 0);
-        } else if (character == '0') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "0", 0);
-        } else if (character == 'a') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "a", 0);
-        } else if (character == 'b') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "b", 0);
-        } else if (character == 'c') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "c", 0);
-        } else if (character == 'd') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "d", 0);
-        } else if (character == 'e') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "e", 0);
-        } else if (character == 'f') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "f", 0);
-        } else if (character == 'g') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "g", 0);
-        } else if (character == 'h') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "h", 0);
-        } else if (character == 'i') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "i", 0);
-        } else if (character == 'j') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "j", 0);
-        } else if (character == 'k') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "k", 0);
-        } else if (character == 'l') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "l", 0);
-        } else if (character == 'm') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "m", 0);
-        } else if (character == 'n') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "n", 0);
-        } else if (character == 'o') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "o", 0);
-        } else if (character == 'p') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "p", 0);
-        } else if (character == 'q') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "q", 0);
-        } else if (character == 'r') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "r", 0);
-        } else if (character == 's') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "s", 0);
-        } else if (character == 't') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "t", 0);
-        } else if (character == 'u') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "u", 0);
-        } else if (character == 'v') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "v", 0);
-        } else if (character == 'w') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "w", 0);
-        } else if (character == 'x') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "x", 0);
-        } else if (character == 'y') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "y", 0);
-        } else if (character == 'z') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "z", 0);
-        } else if (character == 'A') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
-        } else if (character == 'B') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "B", 0);
-        } else if (character == 'C') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "C", 0);
-        } else if (character == 'D') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "D", 0);
-        } else if (character == 'E') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "E", 0);
-        } else if (character == 'F') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "F", 0);
-        } else if (character == 'G') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "G", 0);
-        } else if (character == 'H') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "H", 0);
-        } else if (character == 'I') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "I", 0);
-        } else if (character == 'J') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "J", 0);
-        } else if (character == 'K') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "K", 0);
-        } else if (character == 'L') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "L", 0);
-        } else if (character == 'M') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "M", 0);
-        } else if (character == 'N') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "N", 0);
-        } else if (character == 'O') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "O", 0);
-        } else if (character == 'P') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "P", 0);
-        } else if (character == 'Q') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Q", 0);
-        } else if (character == 'R') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "R", 0);
-        } else if (character == 'S') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "S", 0);
-        } else if (character == 'T') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "T", 0);
-        } else if (character == 'U') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "U", 0);
-        } else if (character == 'V') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "V", 0);
-        } else if (character == 'W') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "W", 0);
-        } else if (character == 'X') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "X", 0);
-        } else if (character == 'Y') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Y", 0);
-        } else if (character == 'Z') {
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Z", 0);
-        } else if (character == ' ') {
+        if (std::isdigit(static_cast<unsigned char>(character)) || 
+            std::isalpha(static_cast<unsigned char>(character)) ) 
+        {
+            char keyStr[2] = { character, '\0' };
+            xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
+        }
+        else if (character == ' ') 
+        {
             space();
-        } else if (character == '-') {
+        } 
+        else if (character == '-') 
+        {
             minus();
-        } else if (character == '=') {
+        } 
+        else if (character == '=') 
+        {
             equal();
     //    } else if (character == 'L') {
     //        leftclick();
@@ -289,19 +111,46 @@ namespace MIA_system
     //        slash();
         } else {
             skipHold = true;
-            Error::returnError(31424, std::to_string(character));
+            error::returnError(31424, std::to_string(character));
         }
         if(!skipHold)
             MIA_system::sleepMilliseconds(holdTime);
     #endif
-
+    }
+    
     
     void VirtualKeyStrokes::defaultSleep() const
     {
         MIA_system::sleepMilliseconds(globalSleep);
     }
     
+    
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    
+    void VirtualKeyStrokes::pressNumber(int num, int holdTime, bool verboseMode)  
+    {
+        // Press the "num" key (num must be an int number from 0 to 9.
+        if ( num < 0 || num > 9 )
+        {
+            return;
+        }
+        
+        int keyCode = 0x30 + num;
+        
+        ip.ki.wVk = keyCode; // virtual-key code for the "num" key
+        ip.ki.dwFlags = 0; // 0 for key press
+        SendInput(1, &ip, sizeof(INPUT));
+    
+        MIA_system::sleepMilliseconds(holdTime);
+        if(verboseMode)
+            cout << num << endl;
+    
+        // Release the "num" key
+        ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
+        SendInput(1, &ip, sizeof(INPUT));
+        defaultSleep();
+    }
+    
     void VirtualKeyStrokes::one(int holdTime, bool verboseMode){
         // Press the "1" key
         ip.ki.wVk = 0x31; // virtual-key code for the "1" key
@@ -313,7 +162,6 @@ namespace MIA_system
             cout << "1" << endl;
     
         // Release the "1" key
-        ip.ki.wVk = 0x31; // virtual-key code for the "1" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
@@ -346,7 +194,6 @@ namespace MIA_system
             cout << "3" << endl;
     
         // Release the "3" key
-        ip.ki.wVk = 0x33; // virtual-key code for the "3" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
@@ -395,7 +242,6 @@ namespace MIA_system
             cout << "6" << endl;
     
         // Release the "6" key
-        ip.ki.wVk = 0x36; // virtual-key code for the "6" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
@@ -462,6 +308,44 @@ namespace MIA_system
         // Release the "0" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
+        defaultSleep();
+    }
+    
+    void VirtualKeyStrokes::pressChar(char ch, int holdTime, bool verboseMode)
+    {
+        if (!std::isalpha(static_cast<unsigned char>(ch)))
+            return;
+
+        bool useShift = std::isupper(static_cast<unsigned char>(ch));
+        
+        // Convert to uppercase and get ASCII code (VK_A–VK_Z correspond to 'A'–'Z' ASCII values 0x41–0x5A)
+        int vkCode = std::toupper(static_cast<unsigned char>(ch)); // VK_A–VK_Z are 0x41–0x5A
+
+        if (useShift)
+        {
+            ip.ki.wVk = VK_SHIFT;
+            ip.ki.dwFlags = 0; // Press Shift
+            SendInput(1, &ip, sizeof(INPUT));
+        }
+
+        ip.ki.wVk = vkCode;
+        ip.ki.dwFlags = 0; // Press key
+        SendInput(1, &ip, sizeof(INPUT));
+
+        MIA_system::sleepMilliseconds(holdTime);
+        if (verboseMode)
+            std::cout << ch << std::endl;
+
+        ip.ki.dwFlags = KEYEVENTF_KEYUP; // Release key
+        SendInput(1, &ip, sizeof(INPUT));
+
+        if (useShift)
+        {
+            ip.ki.wVk = VK_SHIFT;
+            ip.ki.dwFlags = KEYEVENTF_KEYUP; // Release Shift
+            SendInput(1, &ip, sizeof(INPUT));
+        }
+
         defaultSleep();
     }
     
@@ -960,7 +844,8 @@ namespace MIA_system
     }
     
     //performs a sequence to perpetually dig as you would in minecraft.
-    void VirtualKeyStrokes::minecraftDig(int time){
+    void VirtualKeyStrokes::minecraftDig(int time)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(5000)); //Waits 5 seconds before beginning.
     
         // Set up a generic keyboard event.
@@ -993,7 +878,8 @@ namespace MIA_system
     }
     
     // Press the "ENTER" key
-    void VirtualKeyStrokes::enter(){
+    void VirtualKeyStrokes::enter()
+    {
         // Press the "ENTER" key
         ip.ki.wVk = 0x0D; // virtual-key code for the "ENTER" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -1007,7 +893,8 @@ namespace MIA_system
     }
     
     // Press the "\" key
-    void VirtualKeyStrokes::backslash(){
+    void VirtualKeyStrokes::backslash()
+    {
         // Press the "\" key
         ip.ki.wVk = 0xE2; // virtual-key code for the "\" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -1021,7 +908,8 @@ namespace MIA_system
     }
     
     // Press the "/" key
-    void VirtualKeyStrokes::slash(){
+    void VirtualKeyStrokes::slash()
+    {
         // Press the "/" key
         ip.ki.wVk = 0x6F; // virtual-key code for the "/" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -1032,65 +920,8 @@ namespace MIA_system
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
-    }
-    
-    //Used for duplicating a letter in WoW. Useful for creating RP events.
-    void VirtualKeyStrokes::duplicateLetter(int copies, string recipient)
-    {
-    	Configurator cfg;
-    	cfg.initialize();
-        int x = cfg.getWoWMailboxSendLetterLocation('x');
-        int y = cfg.getWoWMailboxSendLetterLocation('y');
-    
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-        for(int i=0;i<copies;i++){
-            type(recipient);
-            MIA_system::sleepMilliseconds(200);
-            tab();
-            MIA_system::sleepMilliseconds(200);
-            type("subject");
-            MIA_system::sleepMilliseconds(200);
-            tab();
-            MIA_system::sleepMilliseconds(200);
-            paste();
-            MIA_system::sleepMilliseconds(400);
-            SetCursorPos(x, y);
-            MIA_system::sleepMilliseconds(300);
-            leftclick();
-            MIA_system::sleepMilliseconds(2500);
-        }
-    }
-    
-    //Used for unloading letters from the mailbox in WoW. Useful for creating RP events.
-    //Coordinates may need adapted based on screen resolutions, UI scales, etc..
-    void VirtualKeyStrokes::unloadLetters(int copies)
-    {	
-    	Configurator cfg;
-    	cfg.initialize();
-        int x0 = cfg.getWoWMailboxFirstLetterLocation('x');
-        int y0 = cfg.getWoWMailboxFirstLetterLocation('y');
-        int x1 = cfg.getWoWMailboxLootLetterLocation('x');
-        int y1 = cfg.getWoWMailboxLootLetterLocation('y');
-        int x2 = cfg.getWoWMailboxDeleteLetterLocation('x');
-        int y2 = cfg.getWoWMailboxDeleteLetterLocation('y');
-    
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-    
-        for(int i=0;i<copies;i++){
-            SetCursorPos(x0, y0);
-            MIA_system::sleepMilliseconds(300);
-            leftclick();
-            MIA_system::sleepMilliseconds(300);
-            SetCursorPos(x1, y1);
-            MIA_system::sleepMilliseconds(300);
-            leftclick();
-            MIA_system::sleepMilliseconds(300);
-            SetCursorPos(x2, y2);
-            MIA_system::sleepMilliseconds(300);
-            leftclick();
-            MIA_system::sleepMilliseconds(300);
-        }
-    }
+    }    
+
     
     //Prints the current location of the mouse curser after some wait time.
     void VirtualKeyStrokes::findMouseCoords(int wait){
@@ -1106,8 +937,9 @@ namespace MIA_system
         cout << ".." << endl;
     }
     
-    //Prints the pixel color at a scan of ranges in a 100 x 100 grid from the mouse location.
-    void VirtualKeyStrokes::getPixelColor(){
+    // Prints the pixel color at a scan of ranges in a 100 x 100 grid from the mouse location.
+    void VirtualKeyStrokes::getPixelColor()
+    {
         POINT cursor;
         GetCursorPos(&cursor);
     
@@ -1117,8 +949,10 @@ namespace MIA_system
     
         cout << "...Scanning." << endl;
     
-        for (int i=cursor.x;i<cursor.x+100;i+=4){
-            for (int j=cursor.y+2;j<cursor.y+100;j+=4){
+        for (int i=cursor.x;i<cursor.x+100;i+=4)
+        {
+            for (int j=cursor.y+2;j<cursor.y+100;j+=4)
+            {
                 color = GetPixel(dc, i, j);
     
                 getRGB(color, red, green, blue);
@@ -1127,13 +961,14 @@ namespace MIA_system
                 cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
             }
         }
-        ReleaseDC(NULL,dc);
+        ReleaseDC(NULL, dc);
     
         cout << "...Finished." << endl;
     }
     
-    //Prints the pixel color at the cursor location.
-    void VirtualKeyStrokes::getPixelColorAtMouse(){
+    // Prints the pixel color at the cursor location.
+    void VirtualKeyStrokes::getPixelColorAtMouse()
+    {
         POINT cursor;
         GetCursorPos(&cursor);
     
@@ -1150,44 +985,15 @@ namespace MIA_system
         cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
         cout << "RGB: (" << red << "," << green << "," << blue << ")" << endl;
     
-        ReleaseDC(NULL,dc);
+        ReleaseDC(NULL, dc);
     
         cout << "...Finished." << endl;
     }
     
-    void VirtualKeyStrokes::moveMouseTo(int x, int y){
+    void VirtualKeyStrokes::moveMouseTo(int x, int y)
+    {
         SetCursorPos(x,y);
         MIA_system::sleepMilliseconds(40);
-    }
-    
-    void VirtualKeyStrokes::fishBotIntro()
-    {
-    	Configurator cfg;
-    	cfg.initialize();
-        int drama = 400;
-        //Some gibberish for dramatic effect.
-        //Also serves as a brief load time before bot starts.
-        cout << "...Loading Fishbot Modules." << endl;
-        MIA_system::sleepMilliseconds(drama);
-        cout << "...Calculating response functions." << endl;
-        MIA_system::sleepMilliseconds(drama);
-        cout << "...Detecting saved crypto-keys." << endl;
-        MIA_system::sleepMilliseconds(2*drama);
-        cout << "...Saved keys found!" << endl;
-        cout << "...Decrypting password hash values." << endl;
-        MIA_system::sleepMilliseconds(drama);
-        cout << "...MIA_Success!." << endl;
-        cout << "...Sending security information to host." << endl;
-        MIA_system::sleepMilliseconds(2*drama);
-        cout << "...MIA_Success!." << endl;
-        cout << "...Disabling daemon ninja process." << endl;
-        MIA_system::sleepMilliseconds(drama);
-        cout << ".." << endl;
-        cout << "...Number of casts set to: " << cfg.getWoWFishBotSpace("casts") << endl;
-        MIA_system::sleepMilliseconds(drama);
-        cout << "...Starting fishbot!" << endl;
-        MIA_system::sleepMilliseconds(drama);
-        cout << ".." << endl;
     }
     
     void VirtualKeyStrokes::getRGB(COLORREF& color, int& r, int& g, int&b)
@@ -1195,117 +1001,7 @@ namespace MIA_system
         r = GetRValue(color);
         g = GetGValue(color);
         b = GetBValue(color);
-    }
-    
-    //A fish bot made for WoW -- Not yet polished.
-    void VirtualKeyStrokes::WoWFishBot(string fishButton, string lureButton)
-    {
-    	Configurator cfg;
-    	cfg.initialize();
-        fishBotIntro();
-    
-        //Begin useful variable initialization.
-        HDC dc = GetDC(NULL);
-        COLORREF color;
-        int counter = 0;
-        int red=1,green=1,blue=1;
-        int increment = cfg.getWoWFishBotSpace("increment");
-        if(Configurator::getVerboseMode())
-            cout << "increment: " << increment << endl;
-        int startX = cfg.getWoWFishBotSpace("startX") + increment/2, startY = cfg.getWoWFishBotSpace("startY");
-        if(Configurator::getVerboseMode()){
-            cout << "startX: " << startX << endl;
-            cout << "startY: " << startY << endl;
-        }
-        int endX = cfg.getWoWFishBotSpace("endX"), endY = cfg.getWoWFishBotSpace("endY");
-        if(Configurator::getVerboseMode()){
-            cout << "endX: " << endX << endl;
-            cout << "endY: " << endY << endl;
-        }
-        bool bobberFound = false;
-        bool useLure = true;
-        int catchDelay = cfg.getWoWFishBotSpace("delay");
-        if(Configurator::getVerboseMode()) cout << "catchDelay: " << catchDelay << endl;
-    
-        //Determines whether a lure is being used based on input.
-        if (lureButton == "NONE" || lureButton == "None" || lureButton == "none" || lureButton == "n" || lureButton == "N"){
-            useLure = false;
-        }
-    
-        //Creates a clock for timing how long the bot has ran for.
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        std::chrono::steady_clock::time_point end;
-        long elapsed_time = 0;
-    
-        //Run the fishbot for some number of casts - determined by the config file variable WoWFishBotNumOfCasts.
-        while(counter < cfg.getWoWFishBotSpace("casts")){
-    
-            //Applies lure.
-            if (useLure && counter % 100 == 0){
-                cout << "...Applying lure." << endl;
-                type(lureButton);
-                MIA_system::sleepMilliseconds(3000);
-            }
-    
-            //Casts.
-            cout << "...Casting." << endl;
-            type(fishButton);
-            MIA_system::sleepMilliseconds(1500);
-            cout << "...Scanning." << endl;
-    
-            //Finds bobber.
-            for (int j=startY;j<endY;j+=increment){
-                for (int i=startX;i<endX;i+=increment){
-                    SetCursorPos(i,j);
-                    MIA_system::sleepMilliseconds(2);
-                    color = GetPixel(dc, i, j);
-                    //color = GetPixel(dc, cursor.x, cursor.y);
-    
-                    getRGB(color, red, green, blue);
-    
-                    //Troubleshooting printouts for color of pixels detected.
-                    if (Configurator::getVerboseMode()){
-                        cout << "(x,y): " << "(" << i << "," << j << ")" << endl;
-                        cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
-                        cout << "RGB: (" << red << "," << green << "," << blue << ")" << endl;
-                    }
-    
-                    //Check if the mouse is over the bobber.
-                    if(red > green + 35 || red > blue + 35){
-                        cout << "...The bobber has been found!! ...I think." << endl;
-                        bobberFound=true;
-                        break;
-                    }
-                }
-                if(bobberFound){
-                    break;
-                }
-            }
-            if(!bobberFound){
-                end = std::chrono::steady_clock::now();
-                cout << "...I was unable to find the bobber!" << endl;
-                cout << "...To make it look like we're not cheating of course." << endl;
-            }
-    
-            //Waits a delay time and then clocks the bobber if it was found.
-            if(bobberFound){
-                MIA_system::sleepMilliseconds(catchDelay);
-                leftclick();
-            }
-            MIA_system::sleepMilliseconds(1000);
-    
-            //Determines elapsed time and progress information.
-            end = std::chrono::steady_clock::now();
-            elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-            counter++;
-            bobberFound = false;
-            cout << "...Elapsed time: " << elapsed_time << " milliseconds." << endl;
-            cout << "...Number of casts: " << counter << endl;
-            elapsed_time = 0;
-        }
-    
-        ReleaseDC(NULL,dc);
-    }
+    }    
     #endif
     
     void VirtualKeyStrokes::minus(bool verboseMode)
@@ -1397,7 +1093,8 @@ namespace MIA_system
     {
         MIA_system::sleepMilliseconds(5); //Waits 5 seconds before beginning.
     
-        for (int i=0;i<amount;i++){
+        for (int i=0;i<amount;i++)
+        {
             type(button);
             MIA_system::sleepMilliseconds(pause);
         }
@@ -1407,7 +1104,8 @@ namespace MIA_system
     {
         MIA_system::sleepMilliseconds(5); //Waits 5 seconds before beginning.
     
-        for (int i=0;i<amount;i++){
+        for (int i=0;i<amount;i++)
+        {
             type(button);
             defaultSleep();
             tab();

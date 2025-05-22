@@ -47,8 +47,9 @@ namespace MIA_system
          * This will simulate a key press.
          * @param character[const char&] - the key to press.
          * @param holdTime [int] - A time to gold after the keypress in ms (default = 0)
+         * @param verboseMode[bool] If true, prints the pressed number to standard output.
          */
-        void press(const char& character, int holdTime = 0);
+        void press(const char& character, int holdTime = 0, bool verboseMode = false);
     
         /**
          * This will simulate the key presses for a string.
@@ -58,65 +59,149 @@ namespace MIA_system
     
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 
-        // @TODO - these methods can be simplified into one (or at least two).
+        /**
+         * @brief Simulates pressing a number key (0–9) using virtual key codes.
+         *
+         * This function sends a key press and release event for the specified number key.
+         * It validates input to ensure the number is within [0, 9], simulates a press using
+         * Windows SendInput API, waits for the specified hold duration, and then releases
+         * the key. Optionally prints the number to stdout if verboseMode is enabled.
+         *
+         * @param num[int] - The number key to press (must be in range 0–9).
+         * @param holdTime[int] - Duration in milliseconds to hold the key before releasing.
+         * @param verboseMode[bool] - If true, prints the pressed number to standard output.
+         */
+        void pressNumber(int num, int holdTime = 0, bool verboseMode = false);
+        
+        /**
+         * @brief Simulates pressing an alphabetic key (a–z or A–Z) using virtual key codes.
+         *
+         * This function sends a key press and release event for the specified character.
+         * It supports both uppercase and lowercase letters by adjusting the virtual key code
+         * and shift state as needed. Uses the Windows SendInput API to simulate input.
+         *
+         * @param ch[char] - The character to press (must be a letter a–z or A–Z).
+         * @param holdTime[int] - Duration in milliseconds to hold the key before releasing.
+         * @param verboseMode[bool] - If true, prints the pressed character to standard output.
+         */
+        void VirtualKeyStrokes::pressChar(char ch, int holdTime = 0, bool verboseMode = false);
+        
+        // The old methods which are now deprecated.
+        [[deprecated("Use pressNumber(1) instead.")]]
         void one(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(2) instead.")]]
         void two(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(3) instead.")]]
         void three(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(4) instead.")]]
         void four(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(5) instead.")]]
         void five(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(6) instead.")]]
         void six(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(7) instead.")]]
         void seven(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(8) instead.")]]
         void eight(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(9) instead.")]]
         void nine(int holdTime = 0, bool verboseMode = false);
+        [[deprecated("Use pressNumber(0) instead.")]]
         void zero(int holdTime = 0, bool verboseMode = false);
-        void enter();
+        
+        // @TODO - these methods can be simplified into one (or at least a few).
+        [[deprecated("Use pressChar(a) instead.")]]
         void a(int holdTime = 0);
+        [[deprecated("Use pressChar(b) instead.")]]
         void b(int holdTime = 0);
+        [[deprecated("Use pressChar(c) instead.")]]
         void c(int holdTime = 0);
+        [[deprecated("Use pressChar(d) instead.")]]
         void d(int holdTime = 0);
+        [[deprecated("Use pressChar(e) instead.")]]
         void e(int holdTime = 0);
+        [[deprecated("Use pressChar(f) instead.")]]
         void f(int holdTime = 0);
+        [[deprecated("Use pressChar(g) instead.")]]
         void g(int holdTime = 0);
+        [[deprecated("Use pressChar(h) instead.")]]
         void h(int holdTime = 0);
+        [[deprecated("Use pressChar(i) instead.")]]
         void i(int holdTime = 0);
+        [[deprecated("Use pressChar(j) instead.")]]
         void j(int holdTime = 0);
+        [[deprecated("Use pressChar(k) instead.")]]
         void k(int holdTime = 0);
+        [[deprecated("Use pressChar(l) instead.")]]
         void l(int holdTime = 0);
+        [[deprecated("Use pressChar(m) instead.")]]
         void m(int holdTime = 0);
+        [[deprecated("Use pressChar(n) instead.")]]
         void n(int holdTime = 0);
+        [[deprecated("Use pressChar(o) instead.")]]
         void o(int holdTime = 0);
+        [[deprecated("Use pressChar(p) instead.")]]
         void p(int holdTime = 0);
+        [[deprecated("Use pressChar(q) instead.")]]
         void q(int holdTime = 0);
+        [[deprecated("Use pressChar(r) instead.")]]
         void r(int holdTime = 0);
+        [[deprecated("Use pressChar(s) instead.")]]
         void s(int holdTime = 0);
+        [[deprecated("Use pressChar(t) instead.")]]
         void t(int holdTime = 0);
+        [[deprecated("Use pressChar(u) instead.")]]
         void u(int holdTime = 0);
+        [[deprecated("Use pressChar(v) instead.")]]
         void v(int holdTime = 0);
+        [[deprecated("Use pressChar(w) instead.")]]
         void w(int holdTime = 0);
+        [[deprecated("Use pressChar(x) instead.")]]
         void x(int holdTime = 0);
+        [[deprecated("Use pressChar(y) instead.")]]
         void y(int holdTime = 0);
+        [[deprecated("Use pressChar(z) instead.")]]
         void z(int holdTime = 0);
+        
+        void enter();
         void numlock();
         void alt0248();
         void alt136();
-        void shift(char character);
         void paste();
         void backslash();
         void slash();
         void leftclick(bool verboseMode = false);
         void rightclick(bool verboseMode = false);
     
-        // Functions relating to Minecraft. // @TODO - move to an app
+
+        /**
+         * Functions relating to Minecraft. // @TODO - move to an app
+         * This can stay here for now since it has no internal dependancies. 
+         */
         void minecraftDig(int time);
-    
-        // Functions relating to World of Warcraft. // @TODO - move to an app
-        void duplicateLetter(int copies, std::string recipient);
-        void unloadLetters(int copies);
-        void WoWFishBot(std::string fishButton, std::string lureButton);
     
         // Other useful functions.
         void findMouseCoords(int waitTime);
+        
+        /**
+         * @brief Scans and prints RGB color values of pixels in a 100x100 grid offset from the mouse cursor.
+         *
+         * This function captures the screen and iterates over a grid region starting from the mouse cursor’s
+         * position, sampling every 4 pixels horizontally and vertically. For each sampled point, it retrieves
+         * the RGB values and prints the coordinates and corresponding color values.
+         * 
+         * Useful for scanning a region rather than a single pixel.
+         */
         void getPixelColor();
+        
+        /**
+         * @brief Retrieves and prints the RGB color values of the pixel under the mouse cursor.
+         *
+         * This function uses the Windows API to get the current position of the mouse cursor,
+         * reads the color of the pixel at that position from the screen, and then prints the
+         * RGB components along with the cursor's coordinates to the standard output.
+         * It uses `GetCursorPos` to retrieve the cursor location, `GetPixel` to obtain the pixel
+         * color, and `getRGB` to extract the red, green, and blue components.
+         */
         void getPixelColorAtMouse();
         void moveMouseTo(int x, int y);
     
@@ -154,8 +239,6 @@ namespace MIA_system
     
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         INPUT ip;
-    
-        void fishBotIntro(); // @TODO - move to an app
         void getRGB(COLORREF& color, int& r, int& g, int& b);
     #elif __linux__
         /**
