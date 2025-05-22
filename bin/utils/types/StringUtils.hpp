@@ -36,10 +36,13 @@ namespace types
     static std::string removeCharInString(std::string str, char c);
 
     /**
-     * Finds the index of the first occurrence of a char in a string.
-     * @param input[std::string] - Reference to the input string to parse.
-     * @param c[char] - The character to find.
-     * @return [int] - Location of the character in the string.
+     * Finds the first occurrence of a character in a string.
+     * Delegates the actual search to BasicUtilities::findCharInString to avoid
+     * core dependencies and promote reuse.
+     *
+     * @param input[const std::string&] - The string to search.
+     * @param ch[char] - The character to find.
+     * @return [int] - The index of the first occurrence of ch in str, or -1 if not found.
      */
     static int findCharInString(std::string& input, char c);
 

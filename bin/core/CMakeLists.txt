@@ -17,7 +17,9 @@ set(Core_INC
     MIAException.hpp 
     MIAConfig.hpp )
 add_library(Core_LIB ${Core_SRC} ${Core_INC})
-target_link_libraries(Core_LIB PUBLIC Constants_LIB)
+target_link_libraries(Core_LIB PUBLIC Constants_LIB BasicUtilities_LIB)
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(Core_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory( basic_utilities )

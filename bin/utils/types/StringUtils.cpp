@@ -17,6 +17,9 @@
 // The corresponding header file.
 #include "StringUtils.hpp"
 
+// Include the core utilities for some re-defined methods.
+#include "BasicUtilities.hpp"
+
 using std::string;
 using std::cout;
 using std::endl;
@@ -45,15 +48,7 @@ namespace types
     
     int findCharInString(string& input, char c)
     {
-        int length = input.size();
-        for (int i=0; i<length; i++)
-        {
-            if(input[i] == c)
-            {
-                return i;
-            }
-        }
-        return 0;
+        return BasicUtilities::findCharInString(input, c);
     }
     
     

@@ -16,9 +16,11 @@ set(MIA_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 # OS-Specific Path Configuration
 if(WIN32)
+    set(APP_INSTALL_LOCATION "C:/Program Files")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "C:/ProgramData/mia")
     set(DEFAULT_SYSTEM_LOG_DIR "C:/ProgramData/mia/logs")
 elseif(UNIX AND NOT APPLE)
+    set(APP_INSTALL_LOCATION "/usr/local")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "/etc/mia")
     set(DEFAULT_SYSTEM_LOG_DIR "/var/log")
 else()
@@ -43,6 +45,7 @@ add_compile_definitions(
     DEFAULT_SYSTEM_LOG=\"${DEFAULT_SYSTEM_LOG}\"
     DEFAULT_REPO_LOG_DIR=\"${DEFAULT_REPO_LOG_DIR}\"
     DEFAULT_REPO_LOG=\"${DEFAULT_REPO_LOG}\"
+    APP_INSTALL_LOCATION=\"${APP_INSTALL_LOCATION}\"
 )
 
 add_subdirectory(bin)

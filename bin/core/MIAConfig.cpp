@@ -13,19 +13,89 @@
 
 // The associated header file.
 #include "MIAConfig.hpp"
+// Used for file path locations.
+#include "Paths.hpp"
+// Used foir some string manipulation
+#include "BasicUtilities.hpp"
+
 
 namespace MIA_System
 {
-    void MIAConfig::initialize()
+    void MIAConfig::initialize(bool verboseMode)
     {
         // TODO: Implement loading and parsing of the configuration file
+            rawConfigValsMap.clear();
+
+        if (configFileName.empty()) 
+        {
+            // TODO - Add MIA Exception.
+            std::cerr << "Config file name is empty. Cannot initialize!" << std::endl;
+            return;
+        }
+
+        std::string fullPath;
+        if (configFileName.front() == '/') 
+        {
+            fullPath = configFileName; // Assume absolute path.
+        } 
+        else 
+        {
+            if (paths::isInstalled())
+                fullPath = std::string(paths::SYSTEM_CONFIG_FILE_DIR) + "/" + configFileName;
+            else                
+                fullPath = std::string(paths::REPO_CONFIG_FILE_DIR) + "/" + configFileName;
+        }
+
+        std::ifstream file(fullPath, std::ifstream::in);
+        if (!file.is_open()) 
+        {
+            // TODO - Add MIA Exception.
+            std::cerr << "Failed to open config file: " << fullPath << "\n";
+            return;
+        }
+
+        std::string line;
+        std::vector<std::string> lines;
+        
+        while (std::getline(file, line)) 
+        {            
+            if (!line.empty() && line[0] != '#' && line.size()>2)
+            {
+                if(verboseMode) 
+					std::cout << line << std::endl;
+                lines.push_back(line);
+            }
+        }
+        if(verboseMode) 
+			std::cout << std::endl;
+
+        file.close();
+        
+        int size = lines.size();
+        int equalSignLocation;        
+        std::string variable, value;
+        for (int i=0; i<size;i++)
+        {
+            equalSignLocation = BasicUtilities::findCharInString(lines[i], '=');
+            if (equalSignLocation <= 0 || equalSignLocation >= lines[i].size() - 1)
+                continue; // or log malformed line
+                
+            variable = lines[i].substr(0, equalSignLocation);
+            value = lines[i].substr(equalSignLocation+1,lines[i].size()-1);
+
+            //removes end of line characters from variable name and value. Fixes a bug.
+            variable.erase(remove(variable.begin(), variable.end(), '\r'), variable.end());
+            value.erase(remove(value.begin(), value.end(), '\r'), value.end());
+
+            rawConfigValsMap[variable] = value;
+        }
     }
     
 
     int MIAConfig::getInt(const std::string& key) const
     {
-        auto it = RawConfigVals.find(key);
-        if (it == RawConfigVals.end()) 
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end()) 
             return 0; // TODO - Add MIAException here.
         try 
         {
@@ -41,8 +111,8 @@ namespace MIA_System
 
     double MIAConfig::getDouble(const std::string& key) const
     {
-        auto it = RawConfigVals.find(key);
-        if (it == RawConfigVals.end()) 
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end()) 
             return 0.0; // TODO - Add MIAException here.
         try 
         {
@@ -58,8 +128,8 @@ namespace MIA_System
 
     std::string MIAConfig::getString(const std::string& key) const
     {
-        auto it = RawConfigVals.find(key);
-        if (it == RawConfigVals.end()) 
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end()) 
             return {}; // TODO - Add MIAException here.
             
         return it->second;
@@ -69,8 +139,8 @@ namespace MIA_System
     std::vector<std::string> MIAConfig::getVector(const std::string& key, char delimiter) const
     {
         std::vector<std::string> result;
-        auto it = RawConfigVals.find(key);
-        if (it == RawConfigVals.end()) 
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end()) 
             return result; // TODO - Add MIAException here.
 
         std::string val = it->second;
@@ -87,8 +157,8 @@ namespace MIA_System
 
     bool MIAConfig::getBool(const std::string& key) const
     {
-        auto it = RawConfigVals.find(key);
-        if (it == RawConfigVals.end()) 
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end()) 
             return false; // TODO - Add MIAException here.
             
         std::string val = it->second;
@@ -102,8 +172,8 @@ namespace MIA_System
     std::vector<int> MIAConfig::getIntVector(const std::string& key, char delimiter) const
     {
         std::vector<int> result;
-        auto it = RawConfigVals.find(key);
-        if (it == RawConfigVals.end()) 
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end()) 
             return result; // TODO - Add MIAException here.
 
         std::string val = it->second;

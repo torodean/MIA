@@ -45,10 +45,11 @@ namespace MIA_System
          * @note The file name here can be the entire file path OR just the name of the file (in which case the
          *       default file path locations will be used).
          * @param configFile[const std::string&] - The config file to use for this object.
+         * @param verboseMode[bool] - Enables verbose output.
          */
-        MIAConfig(const std::string& configFile) :
+        MIAConfig(const std::string& configFile, bool verboseMode = false) :
             configFileName(configFile)
-        { initialize(); };
+        { initialize(verboseMode); };
 
         /**
          * Main destructor for the MIAConfig class.
@@ -57,8 +58,9 @@ namespace MIA_System
         
         /**
          * This will iniitalize this object by reading and loading the configuration file into the RawConfigVals map.
+         * @param verboseMode[bool] - Enables verbose output.
          */
-        void initialize();
+        void initialize(bool verboseMode = false);
         
         /**
          * This will reloadthe configuration file by calling initialize. This is mainly just semantically different
@@ -135,6 +137,6 @@ namespace MIA_System
         std::string configFileName;
         
         /// Stores the configuration values from a file which are key/value pairs.
-        BasicConfigMap RawConfigVals;
+        BasicConfigMap rawConfigValsMap;
     }; // class MIAConfig
 } // namespace MIA_System

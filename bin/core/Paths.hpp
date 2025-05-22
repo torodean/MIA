@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 /**
  * @namespace MIA_paths
@@ -44,4 +45,28 @@ namespace paths
 
     // Path to the default log file from the repo directory (for testing).
     inline const std::string REPO_LOG = DEFAULT_REPO_LOG;
+
+    // Path to the system level installation directory.
+    inline const std::string INSTALL_LOCATION = APP_INSTALL_LOCATION;
+    
+    /**
+     * Determines whether the application is running from a system-installed location
+     * or from the repository (development/testing) directory.
+     *
+     * This checks whether the executable path is located within the system installation directory.
+     *
+     * @return [bool] - true if running from an installed system location; false if running from the repo.
+     */
+    inline bool isInstalled()
+    {
+        namespace fs = std::filesystem;
+        fs::path execPath = fs::current_path();
+        fs::path installPath = fs::path(INSTALL_LOCATION);
+
+        // Normalize and compare path prefixes
+        execPath = fs::canonical(execPath);
+        installPath = fs::canonical(installPath);
+
+        return std::mismatch(installPath.begin(), installPath.end(), execPath.begin()).first == installPath.end();
+    }
 } // namespace paths
