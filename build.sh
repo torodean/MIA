@@ -13,6 +13,7 @@ usage()
   echo ""
   echo "  Options:"
   echo "    -h    Display this help message."
+  echo "    -C    Perform a clean build by removing the build directory first."  
   echo "    -v    Enable verbose output during build process."
   echo "    -D    Attempt to Install dependencies."
   echo "    -u    Update release files on successful build."
@@ -20,10 +21,12 @@ usage()
 }
 
 # Define the build script options and create variables from options.
-while getopts "hvDuI" opt; do
+while getopts "hCvDuI" opt; do
   case $opt in
     h) usage
       exit 1
+      ;;
+    C) cleanBuild=1
       ;;
     v) verboseMode=1
       ;;
@@ -70,6 +73,11 @@ elif [[ "$OSTYPE" == "freebsd"* ]]; then
 else
   echo "WARNING: Undetected OS! Please install dependencies manually."
   # Unknown.
+fi
+
+if [[ $cleanBuild ]]; then
+    echo "...Cleaning build directories."
+    rm -rf "$rootDirectory"/build
 fi
 
 echo "...Beginning MIA Build!"
