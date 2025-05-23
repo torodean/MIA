@@ -76,7 +76,6 @@ namespace paths
         std::string fullPath(path);
         return fullPath.substr(0, fullPath.find_last_of("\\/"));  
     #elif __linux__
-        std::cout << "getExecutableDir()" << std::endl;
         char result[PATH_MAX];
         ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
         std::string path(result, (count > 0) ? count : 0);

@@ -35,25 +35,19 @@ namespace MIA_System
             throw error::MIAException(error::ErrorCode::Config_File_Not_Set, err);
         }
 
-        std::string fullPath;
         if (configFileName.front() == '/') 
         {
-            fullPath = configFileName; // Assume absolute path.
+            configFileFullPath = configFileName; // Assume absolute path.
         } 
         else 
         {
-            if (paths::isInstalled())
-                fullPath = std::string(paths::SYSTEM_CONFIG_FILE_DIR) + "/" + configFileName;
-            else                
-                fullPath = std::string(paths::REPO_CONFIG_FILE_DIR) + "/" + configFileName;
-                
-            configFileFullPath = fullPath;
+            configFileFullPath = paths::getDefaultConfigDirToUse() + "/" + configFileName;
         }
 
-        std::ifstream file(fullPath, std::ifstream::in);
+        std::ifstream file(configFileFullPath, std::ifstream::in);
         if (!file.is_open()) 
         {            
-            std::string err = "Failed to open config file: " + fullPath;
+            std::string err = "Failed to open config file: " + configFileFullPath;
             throw error::MIAException(error::ErrorCode::Failed_To_Open_File, err);
         }
 
