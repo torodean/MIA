@@ -69,16 +69,16 @@ public:
     /**
      * Templated method to retrieve the parsed command-line option value.
      * Dispatches to the correct command_parser method based on the template type.
-     * @tparam T - The expected return type (bool, int, double, or std::string).
+     * @tparam Type - The expected return type (bool, int, double, or std::string).
      * @param argc[int] - Argument count.
      * @param argv[char**] - Argument values.
-     * @return T - The parsed and typed value.
+     * @param out[Type&] - The parsed and typed value - this is modified by the parsing.
+     * @param requiredOption[bool] - Whether or not the method is required when called.
      * @throws MIAException - If parsing fails or the type is unsupported for the option.
      */
     template<typename Type>
-    Type getOptionVal(int argc, char* argv[]) const
+    void getOptionVal(int argc, char* argv[], Type& out, bool requiredOption = false) const
     {
-        Type out;
         if constexpr (std::is_same_v<Type, bool>)
         {
             if (type != boolOption)
@@ -120,7 +120,6 @@ public:
             std::string err = "Unsupported template type requested";
             throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
         }
-        return out;
     }
 
 private:

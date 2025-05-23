@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <limits> // Used for infinity()
 
 // The associated header file.
 #include "MIAConfig.hpp"
@@ -45,6 +46,8 @@ namespace MIA_System
                 fullPath = std::string(paths::SYSTEM_CONFIG_FILE_DIR) + "/" + configFileName;
             else                
                 fullPath = std::string(paths::REPO_CONFIG_FILE_DIR) + "/" + configFileName;
+                
+            configFileFullPath = fullPath;
         }
 
         std::ifstream file(fullPath, std::ifstream::in);
@@ -122,7 +125,10 @@ namespace MIA_System
         }
         try 
         {
-            return std::stod(it->second);
+            if (it->second == "inf" || it->second == "infinity")
+                return std::numeric_limits<double>::infinity();
+            else
+                return std::stod(it->second);
         } 
         catch (...) 
         {

@@ -42,7 +42,7 @@ concept AppInterface = requires(App app, int argc, char** argv)
  * @return int Return code from app run().
  */
 template<AppInterface App>
-int launchApp(int argc, char** argv)
+int runApp(int argc, char** argv)
 {
     App app;
     app.initialize(argc, argv);
@@ -59,5 +59,5 @@ int launchApp(int argc, char** argv)
 #define MIA_MAIN(AppClass)                   \
 int main(int argc, char** argv)              \
 {                                            \
-    return launchApp<AppClass>(argc, argv);  \
+    return runApp<AppClass>(argc, argv);     \
 }

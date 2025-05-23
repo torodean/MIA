@@ -230,4 +230,11 @@ namespace types
         output.push_back(strOdd);
         return output;
     }
+    
+    
+    bool hasExactlyOneOfEachDelimiter(const std::string& line, char delimiterA, char delimiterB)
+    {
+        return std::count(line.begin(), line.end(), delimiterA) == 1 &&
+               std::count(line.begin(), line.end(), delimiterB) == 1;
+    }
 } // namespace types

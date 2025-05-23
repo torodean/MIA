@@ -92,6 +92,13 @@ namespace MIA_System
          { return configFileName; }
          
         /**
+         * Gets the config file name for this object.
+         * @return [std::string&] - Returns the configFileName value.
+         */
+         std::string getConfigFileFullPath()
+         { return configFileFullPath; }
+         
+        /**
          * Retrieves the configuration value associated with the given key as an int.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [int] - The int value if the key exists and conversion succeeds; otherwise, returns 0.
@@ -147,6 +154,9 @@ namespace MIA_System
     
         /// The name of the configuration file for this object.
         std::string configFileName;
+        
+        /// The full path of the configuration file for this object.
+        std::string configFileFullPath;
         
         /// Stores the configuration values from a file which are key/value pairs.
         BasicConfigMap rawConfigValsMap;

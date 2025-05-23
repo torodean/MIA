@@ -150,5 +150,15 @@ namespace types
      *                                      and second element the second half.
      */
     std::vector<std::string> entangleText(const std::string& input);
+    
+    /**
+     * Checks if the given line contains exactly one occurrence of each specified delimiter.
+     *
+     * @param line[const std::string&] The string to check.
+     * @param delimiterA[char] - The first delimiter to count.
+     * @param delimiterB[char] - The second delimiter to count.
+     * @return [bool] True if the line contains exactly one occurrence of delimiterA and exactly one occurrence of delimiterB; otherwise false.
+     */
+     bool hasExactlyOneOfEachDelimiter(const std::string& line, char delimiterA, char delimiterB);
 
 } // namespace types

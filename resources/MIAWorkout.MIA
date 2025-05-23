@@ -1,0 +1,60 @@
+#============================================================================
+# Name        : MIAConfig.MIA
+# Author      : Antonius Torode
+# Date        : 1/10/18
+# Copyright   : This file can be used under the conditions of Antonius' 
+#				 General Purpose License (AGPL).
+# Description : MIA settings for program initialization.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# Output path for the generated exercises.
+workoutOutputFilePath=resources/outputFiles/workout.txt
+
+# Increasing this value provides a global increase to difficulty. Recommended value is 0.1.
+# The maxNumOfExercises cannot exceed the number of exercises defined. Default values is inf (which picks the maximum allowed).
+# Put these variable before all defined exercises.
+toughness = 0.1
+minNumOfExercises = 3.0
+maxNumOfExercises = inf
+minNumOfSets = 1.0
+maxNumOfSets = inf
+
+#############################################
+#### Define exercises below this point
+#############################################
+
+# Exercises and weights.
+push_up = 10.0; reps
+push_up_mixed = 8.0; reps
+push_up_weighted = 5.0; reps
+push_up_diamond = 7.0; reps
+push_up_jump = 5.0; reps
+sit_up = 15.0; reps
+sit_up_inclined = 10.0; reps
+crunch = 5.0; reps
+leg_lift = 10.0; reps
+pull_up = 2; reps
+pull_up_weighted = 1; reps
+split_jump = 5.0; reps
+squat = 3.0; reps
+squat_weighted = 1.0; reps
+jumping_jack = 30.0; reps
+running = 0.1; miles
+dips = 5.0; reps
+wall_sit = 20.0; seconds
+plank = 30.0; seconds
+lunge = 3.0; reps
+knee_jump = 5.0; reps
+burpee = 3.0; reps
+squirpee = 3.0; reps
+chin_up = 3.0; reps
+chin_up_weighted = 2.0; reps
+punches = 10.0; seconds
+russian_twist = 10.0; seconds

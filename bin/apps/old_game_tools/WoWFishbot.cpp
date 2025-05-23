@@ -30,8 +30,7 @@ using std::endl;
 WoWFishbot::WoWFishbot() : 
     config(defaultConfigFile),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
-                                    paths::getDefaultConfigDirToUse() + "/" + 
-                                    defaultConfigFile + ")",
+                                    paths::getDefaultConfigDirToUse() + "/WoWConfig.MIA)",
                                     CommandOption::commandOptionType::stringOption)
                                     
 { };
@@ -39,7 +38,8 @@ WoWFishbot::WoWFishbot() :
 
 void WoWFishbot::initialize(int argc, char* argv[])
 {
-    std::string configFile = configFileOpt.getOptionVal<std::string>(argc, argv);
+    std::string configFile = defaultConfigFile;
+    configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
     config.setConfigFileName(configFile);
     loadConfig();
 }
@@ -103,12 +103,12 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     int red=1,green=1,blue=1;
     int increment = WoWFishBotIncrement;
     
-    if(verboseMode)
+    if(getVerboseMode())
         cout << "increment: " << increment << endl;
         
     int startX = WoWFishBotStartX + increment/2, startY = WoWFishBotStartY;
     
-    if(verboseMode)
+    if(getVerboseMode())
     {
         cout << "startX: " << startX << endl;
         cout << "startY: " << startY << endl;
@@ -116,7 +116,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     
     int endX = WoWFishBotEndX, endY = WoWFishBotEndY;
     
-    if(verboseMode)
+    if(getVerboseMode())
     {
         cout << "endX: " << endX << endl;
         cout << "endY: " << endY << endl;
@@ -125,7 +125,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     bool bobberFound = false;
     bool useLure = true;
     
-    if(verboseMode) 
+    if(getVerboseMode()) 
         cout << "catchDelay: " << WoWFishBotDelay << endl;
 
     //Determines whether a lure is being used based on input.
@@ -169,7 +169,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
                 getRGB(color, red, green, blue);
 
                 //Troubleshooting printouts for color of pixels detected.
-                if (verboseMode){
+                if (getVerboseMode()){
                     cout << "(x,y): " << "(" << i << "," << j << ")" << endl;
                     cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
                     cout << "RGB: (" << red << "," << green << "," << blue << ")" << endl;
