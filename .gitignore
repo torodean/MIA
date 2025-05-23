@@ -89,6 +89,7 @@
 
 build/**/*
 cmake-build-debug/**/*
+release/**/*
 
 bin/Makefile
 bin/**/Makefile

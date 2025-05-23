@@ -21,6 +21,12 @@ Used for storing various helper scripts to perform tasks. This includes various 
 ### `build/` (if applicable)
 Used for build artifacts, scripts, or platform-specific build outputs. This folder may be generated during the build process and is not typically version-controlled.
 
+### `release/` (if applicable)
+This folder contains (when built) the executables and configuration files built for either combining into a release package or to be used standalone from the folder.
+
+### `resources/` 
+This folder contains resources and configuration files used by the MIA applications and tools.
+
 ---
 
 Additional directories may be added as the project evolves to support new tools, modules, or documentation needs.
