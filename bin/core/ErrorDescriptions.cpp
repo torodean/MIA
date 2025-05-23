@@ -36,6 +36,9 @@ namespace error
         { Linux_Only_Feature, "This feature is only implemented for Linux." },
         { Database_Features_Not_Built, "Database features are not built." },
         { Database_Connection_Failure, "Failed to connect to the database." },
+        { Invalid_Argument, "Invalid application/command argument." },
+        { Missing_Argument, "The app/command argument was not found." },
+        { Failed_To_Open_File, "Failed to open file." },
         { Catastrophic_Failure, "A catastrophic failure occurred." }
     };
 

@@ -17,20 +17,21 @@
 #include "Paths.hpp"
 // Used foir some string manipulation
 #include "BasicUtilities.hpp"
+// Used for error codes and exceptions.
+#include "Error.hpp"
+#include "MIAException.hpp"
 
 
 namespace MIA_System
 {
     void MIAConfig::initialize(bool verboseMode)
     {
-        // TODO: Implement loading and parsing of the configuration file
-            rawConfigValsMap.clear();
+        rawConfigValsMap.clear();
 
         if (configFileName.empty()) 
-        {
-            // TODO - Add MIA Exception.
-            std::cerr << "Config file name is empty. Cannot initialize!" << std::endl;
-            return;
+        { 
+            std::string err = "No config file set in MIAConfig::initialize(..).";
+            throw error::MIAException(error::ErrorCode::Config_File_Not_Set, err);
         }
 
         std::string fullPath;
@@ -48,10 +49,9 @@ namespace MIA_System
 
         std::ifstream file(fullPath, std::ifstream::in);
         if (!file.is_open()) 
-        {
-            // TODO - Add MIA Exception.
-            std::cerr << "Failed to open config file: " << fullPath << "\n";
-            return;
+        {            
+            std::string err = "Failed to open config file: " + fullPath;
+            throw error::MIAException(error::ErrorCode::Failed_To_Open_File, err);
         }
 
         std::string line;
@@ -95,8 +95,11 @@ namespace MIA_System
     int MIAConfig::getInt(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end()) 
-            return 0; // TODO - Add MIAException here.
+        if (it == rawConfigValsMap.end())
+        {
+            std::string err = "Can't find key in configuration map: " + key;
+            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+        }
         try 
         {
             return std::stoi(it->second);
@@ -112,8 +115,11 @@ namespace MIA_System
     double MIAConfig::getDouble(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end()) 
-            return 0.0; // TODO - Add MIAException here.
+        if (it == rawConfigValsMap.end())
+        {
+            std::string err = "Can't find key in configuration map: " + key;
+            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+        }
         try 
         {
             return std::stod(it->second);
@@ -129,8 +135,11 @@ namespace MIA_System
     std::string MIAConfig::getString(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end()) 
-            return {}; // TODO - Add MIAException here.
+        if (it == rawConfigValsMap.end())
+        {
+            std::string err = "Can't find key in configuration map: " + key;
+            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+        }
             
         return it->second;
     }
@@ -140,8 +149,11 @@ namespace MIA_System
     {
         std::vector<std::string> result;
         auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end()) 
-            return result; // TODO - Add MIAException here.
+        if (it == rawConfigValsMap.end())
+        {
+            std::string err = "Can't find key in configuration map: " + key;
+            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+        }
 
         std::string val = it->second;
         std::stringstream ss(val);
@@ -158,8 +170,11 @@ namespace MIA_System
     bool MIAConfig::getBool(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end()) 
-            return false; // TODO - Add MIAException here.
+        if (it == rawConfigValsMap.end())
+        {
+            std::string err = "Can't find key in configuration map: " + key;
+            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+        }
             
         std::string val = it->second;
         std::transform(val.begin(), val.end(), val.begin(), ::tolower);
@@ -173,8 +188,11 @@ namespace MIA_System
     {
         std::vector<int> result;
         auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end()) 
-            return result; // TODO - Add MIAException here.
+        if (it == rawConfigValsMap.end())
+        {
+            std::string err = "Can't find key in configuration map: " + key;
+            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+        }
 
         std::string val = it->second;
         std::stringstream ss(val);

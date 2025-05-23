@@ -6,24 +6,30 @@
  *              Handles common initialization such as parsing command line
  *              arguments for verbose mode.
  */
- 
-#include "MIAApplication.hpp"
+
 #include <iostream>
 #include <string>
 
+// The associated header file.
+#include "MIAApplication.hpp"
+// Used for exception handling.
+#include "MIAException.hpp"
+// Used for parsing command options.
+#include "CommandParser.hpp"
+
+
 void MIAApplication::initialize(int argc, char* argv[])
 {
-    for (int i = 1; i < argc; ++i)
+    try
     {
-        std::string arg = argv[i];
-        if (arg == "-v" || arg == "--verbose")
-        {
-            verboseMode = true;
-        }
-        else if (arg == "-h" || arg == "--help")
-        {
-            helpRequested = true;
-        }
+        command_parser::parseBoolFlag(argc, argv, "-v", "--verbose", verboseMode);
+        command_parser::parseBoolFlag(argc, argv, "-h", "--help", helpRequested);
+    }
+    catch (const error::MIAException& ex)
+    {
+        // Handle unexpected error during flag parsing (shouldn't happen with parseBoolFlag)
+        std::cerr << "Error during MIAApplication::initialize: " << ex.what() << std::endl;
+        throw;
     }
 
     if (helpRequested)
@@ -32,6 +38,7 @@ void MIAApplication::initialize(int argc, char* argv[])
         return; // TODO - Signal to caller that help was requested, app should exit
     }
 }
+
 
 void MIAApplication::printHelp() const
 {

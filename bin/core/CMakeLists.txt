@@ -14,7 +14,8 @@ target_include_directories(Constants_LIB INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 set(Core_SRC 
     Error.cpp 
     ErrorDescriptions.cpp 
-    MIAConfig.cpp 
+    MIAConfig.cpp
+    CommandParser.cpp 
     MIAApplication.cpp )
 set(Core_INC 
     Error.hpp 
@@ -22,6 +23,7 @@ set(Core_INC
     MIAException.hpp 
     MIAConfig.hpp 
     MIAApplication.hpp 
+    CommandParser.hpp
     AppFramework.hpp )
 add_library(Core_LIB ${Core_SRC} ${Core_INC})
 target_link_libraries(Core_LIB PUBLIC Constants_LIB BasicUtilities_LIB)

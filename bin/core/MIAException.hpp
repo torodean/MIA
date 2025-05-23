@@ -50,12 +50,12 @@ namespace error
          * @brief Returns the associated ErrorCode for this exception.
          * @return The ErrorCode value representing the error.
          */
-        ErrorCode code() const noexcept
+        ErrorCode getCode() const noexcept
         { return errorCode; }
     
     private:
         std::string generateFullErrorMsg()
-        { return getErrorDescription(code) + " " + errorDetails; } 
+        { return getErrorDescription(errorCode) + " " + errorDetails; } 
 
         /// The specific error code associated with this exception.
         ErrorCode errorCode;

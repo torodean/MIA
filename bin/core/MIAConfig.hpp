@@ -59,6 +59,7 @@ namespace MIA_System
         /**
          * This will iniitalize this object by reading and loading the configuration file into the RawConfigVals map.
          * @param verboseMode[bool] - Enables verbose output.
+         * @throws MIAException - Thrown if the config file name is not set or if the config file cannot be opened.
          */
         void initialize(bool verboseMode = false);
         
@@ -94,6 +95,7 @@ namespace MIA_System
          * Retrieves the configuration value associated with the given key as an int.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [int] - The int value if the key exists and conversion succeeds; otherwise, returns 0.
+         * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         int getInt(const std::string& key) const;
 
@@ -101,6 +103,7 @@ namespace MIA_System
          * Retrieves the configuration value associated with the given key as a double.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [double] - The double value if the key exists and conversion succeeds; otherwise, returns 0.0.
+         * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         double getDouble(const std::string& key) const;
 
@@ -108,6 +111,7 @@ namespace MIA_System
          * Retrieves the configuration value associated with the given key as a string.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [std::string] - The string value if the key exists; otherwise, returns an empty string.
+         * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         std::string getString(const std::string& key) const;
 
@@ -117,6 +121,7 @@ namespace MIA_System
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @param delimiter[char delimiter] - The character used to split the string into vector elements.
          * @return [std::vector<std::string>] - A vector of strings parsed from the value; empty vector if key not found.
+         * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         std::vector<std::string> getVector(const std::string& key, char delimiter) const;
         
@@ -124,6 +129,7 @@ namespace MIA_System
          * Retrieves the configuration value associated with the given key as a bool.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [bool] - The bool value if the key exists and conversion succeeds; otherwise, returns false.
+         * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         bool getBool(const std::string& key) const;
 
@@ -133,6 +139,7 @@ namespace MIA_System
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @param delimiter[char] - The character used to split the string into vector elements.
          * @return [std::vector<int>] - A vector of ints parsed from the value; empty vector if key not found.
+         * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         std::vector<int> getIntVector(const std::string& key, char delimiter) const;
         
