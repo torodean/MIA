@@ -14,6 +14,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(MIA_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
+# Specifies a release build.
+option(RELEASE_BUILD "Enable release-specific behavior" OFF)
+if(RELEASE_BUILD)
+    get_filename_component(RELEASE_INSTALL_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/../release" ABSOLUTE)
+    set(RELEASE_CONFIG_INSTALL_LOCATION "${RELEASE_INSTALL_LOCATION}/resources")
+    message(STATUS "Release build enabled. Install path: ${RELEASE_INSTALL_LOCATION}")
+endif()
+
 # OS-Specific Path Configuration
 if(WIN32)
     set(APP_INSTALL_LOCATION "C:/Program Files/mia")
@@ -25,6 +33,12 @@ elseif(UNIX AND NOT APPLE)
     set(DEFAULT_SYSTEM_LOG_DIR "/var/log/mia")
 else()
     message(FATAL_ERROR "Unsupported platform")
+endif()
+
+# Specifies a system install.
+option(SYSTEM_INSTALL "Enable system-installation behavior" OFF)
+if(SYSTEM_INSTALL)
+    message(STATUS "System install enabled. Install path: ${APP_INSTALL_LOCATION}")
 endif()
 
 # Non-OS-specific path configurations.

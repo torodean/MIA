@@ -16,12 +16,13 @@ usage()
   echo "    -C    Perform a clean build by removing the build directory first."  
   echo "    -v    Enable verbose output during build process."
   echo "    -D    Attempt to Install dependencies."
-  echo "    -u    Update release files on successful build."
   echo "    -I    Install MIA after building (requires admin)."
+  echo "    -R    Update the release files."
+  echo "    -U    Uninstall all MIA files. This will uninstall then quit without other actions."
 }
 
 # Define the build script options and create variables from options.
-while getopts "hCvDuI" opt; do
+while getopts "hCvDIRU" opt; do
   case $opt in
     h) usage
       exit 1
@@ -32,10 +33,11 @@ while getopts "hCvDuI" opt; do
       ;;
     D) installDependencies=1
       ;;
-    u) updateReleaseFiles=1
-      ;;
     I) installMIA=1
-      updateReleaseFiles=1
+      ;;
+    R) updateReleaseFiles=1
+      ;;
+    U) uninstallMIA=1
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -48,9 +50,15 @@ while getopts "hCvDuI" opt; do
   esac
 done
 
+if [[ $uninstallMIA ]]; then
+  echo "...Uninstalling MIA!"
+  sudo $rootDirectory/scripts/uninstall.sh
+  echo "...Exiting!"
+  exit 0
+fi
+
 # The arguments to pass to cmake.
 cmakeArgs=""
-
 
 # Place OS specific CMake here.
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -84,26 +92,33 @@ if [[ $cleanBuild ]]; then
     rm -rf "$rootDirectory"/build
 fi
 
+# Update Release files if specified.
+if [[ $updateReleaseFiles ]]; then
+  echo "...Updating release files!"
+  cmakeArgs="$cmakeArgs -DRELEASE_BUILD=ON"
+elif [[ $installMIA ]]; then
+  cmakeArgs="$cmakeArgs -DSYSTEM_INSTALL=ON"
+fi
+
 echo "...Beginning MIA Build!"
 
 mkdir -p "$rootDirectory"/build
-cmake -G "Unix Makefiles" -B"$rootDirectory"/build $cmakeArgs
+cmake -G "Unix Makefiles" -B "$rootDirectory"/build $cmakeArgs
 cd "$rootDirectory"/build || exit
 make -j16 || exit
 
 echo "...MIA Build done!"
 
-# Update Release files if specified.
-if [[ $updateReleaseFiles ]]; then
-  echo "...Updating release files!"
-  $rootDirectory/scripts/updateRelease.sh
-fi
-
 # Install MIA if specified
-if [[ $installMIA ]]; then
+if [[ -z $installMIA && -n $updateReleaseFiles ]]; then
+  echo "...Updating Reelease files!"
+  cmake --install "$rootDirectory"/build $cmakeArgs
+  $rootDirectory/scripts/install.sh
+elif [[ $installMIA ]]; then
   echo "...Installing MIA files!"
-  cmake --install "$rootDirectory"/build
+  sudo cmake --install "$rootDirectory"/build $cmakeArgs
   $rootDirectory/scripts/install.sh
 fi
+
 
 
