@@ -1,0 +1,318 @@
+\chapter{Commands and Syntax}
+\pagestyle{fancy}
+
+\section{Valid Syntax}
+MIA is designed to be used similar to a terminal or command prompt. One enters commands and the uses the 'Enter' key to perform the commands. MIA commands are NOT case sensitive. By default, all commands are changed to lower case before executing through the MIA program. If a command is not typed exactly how it is intended (including spaces and newline characters) it may not execute.
+
+
+\section{Complete List of Valid Commands (CLVC)} \label{CLVC}
+
+\subsection{Static Commands}
+
+\index{help}
+\begin{lstlisting}
+help
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Displays a valid lists of commands and a brief description to go along with each.
+\end{enumerate}
+
+\index{add}
+\begin{lstlisting} 
+add   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Adds two positive integers of any length. This adds two strings together using a similar algorithm one would when adding large numbers by hand. It is possible to get results by entering non-number entries but will serve no significance due to the way MIA internally converts strings to integers by shifting the ASCII values.
+\end{enumerate}
+
+\index{button spam}
+\begin{lstlisting} 
+button spam
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Spams a specified button (key press). This function asks for a key input as well as asks for a number of times the user would like the button spammed. Not all keys are programmed in and the time between button spamming is currently fixed (this will be updated at a later time). This function currently only works on Windows OS.
+\end{enumerate}
+
+\index{}
+\begin{lstlisting} 
+button spam -t
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Does the same as the "button spam" command but also simulates the tab key in between each key press.
+\end{enumerate}
+
+\index{collatz}
+\begin{lstlisting} 
+collatz   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Produces a collatz sequence based on a specified starting integer. This method uses the login data type which means if a number of the sequence extends the storage of a long, the results will become untrustworthy. 
+\end{enumerate}
+\begin{lstlisting} 
+config 
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Reloads the MIAConfig.MIA file and prints the variables.
+\end{enumerate}
+
+\index{d0s1}
+\begin{lstlisting} 
+crypt -d0s1   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Encrypts a string using the d0s1 algorithm. This is explained more in chapter \ref{D3C}.
+\end{enumerate}
+
+\index{d0s2}
+\begin{lstlisting} 
+crypt -d0s2  
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Encrypts a string using the d0s2 algorithm. This is explained more in chapter \ref{D3C}.
+\end{enumerate}
+
+\begin{lstlisting} 
+decrypt -d0s1   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] De-crypts a string using the d0s1 algorithm. This is explained more in chapter \ref{D3C}.
+\end{enumerate}
+
+
+\begin{lstlisting} 
+decrypt -d0s2   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] De-crypts a string using the d0s2 algorithm. This is explained more in chapter \ref{D3C}.
+\end{enumerate}
+
+\index{digitsum}
+\begin{lstlisting} 
+digitsum 
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Returns the sum of the digits within an integer of any size. Similar to the add command, this converts a string to an array of integers using ASCII shifting and then sums the values together. Due to this, you can also find values for entering non-numerical strings.
+\end{enumerate}
+
+\index{error info}
+\begin{lstlisting} 
+error info
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Returns information regarding an error code.
+\end{enumerate}
+
+\begin{lstlisting} 
+error info -a
+\end{lstlisting}
+\begin{enumerate}
+\item[] Returns information regarding all error codes.
+\end{enumerate}
+
+\index{eyedropper}
+\begin{lstlisting} 
+eyedropper
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Returns the RGB value of the pixel located at the cursor.
+\end{enumerate}
+
+\index{exit}
+\begin{lstlisting} 
+exit  
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Quits MIA. 
+\end{enumerate}
+
+\index{factors}
+\begin{lstlisting} 
+factors   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Returns the number of factors within an integer. The integer must be smaller than C++'s internal storage for the long data type.
+\end{enumerate}
+
+\index{find mouse}
+\begin{lstlisting} 
+find mouse
+\end{lstlisting}
+\begin{enumerate}
+	\item[] This function will locate the position of the usere mouse pointer after 5 seconds and print the coordinates it is located at.
+\end{enumerate}
+
+\index{fishbot}
+\begin{lstlisting} 
+fishbot
+\end{lstlisting}
+\begin{enumerate}
+\item[]  A working and configurable WoW fishbot. See section \ref{WoWFishbot} for more details.
+\end{enumerate}
+
+\index{lattice}
+\begin{lstlisting} 
+lattice   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Returns total lattice paths to the bottom right corner of an n x m grid. This function is only valid for situations in which the answer will not exceed the internal storage of a long data type.
+\end{enumerate}
+
+\index{mc dig}
+\begin{lstlisting} 
+mc dig
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Simulates key strokes for continuous Minecraft diggigg. This function will press and hold the w key and the left mouse button for forward momentum whilst digging in Minecraft. This function currently only works on Windows OS.
+\end{enumerate}
+
+\index{mc explore}
+\begin{lstlisting} 
+mc explore
+\end{lstlisting}
+\begin{enumerate}
+\item[]  Explores a Minecraft map using /tp. This is for server exploration given someone with /tp power and creative mode. You can enter a range of coordinates and MIA will emulate the keystrokes to /tp over a large area in order to generate the map. This is handy when using mc server plugins such as dynmap which will display explored map areas via a web browser. This function also asks for the user to specify a time between each /tp so that it can be adapted for use on both fast and slow servers/computers. This function currently only works on Windows OS.
+\end{enumerate}
+
+\index{multiply}
+\begin{lstlisting} 
+multiply  
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Multiplies two integers of any length. Similar to add, this multiplies two strings together using a similar algorithm one would when multiplying large numbers by hand. It is possible to get results by entering non-number entries but will serve no significance due to the way MIA internally converts strings to integers by shifting the ASCII values.
+\end{enumerate}
+
+\index{palindrome}
+\begin{lstlisting} 
+palindrome   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Determines if a positive integer is palindrome. The integer must be smaller than C++'s internal storage for the long data type.
+\end{enumerate}
+
+\index{prime}
+\begin{lstlisting} 
+prime   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Determines if a positive integer is prime or not. The integer must be smaller than C++'s internal storage for the long data type.
+\end{enumerate}
+
+\begin{lstlisting} 
+prime -help
+\end{lstlisting}
+\begin{enumerate}
+	\item[]  Displays help defailts for prime functions.
+\end{enumerate}
+
+\begin{lstlisting} 
+prime -f   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Determines all of the prime factors of a positive integer. The integer must be smaller than C++'s internal storage for the long data type.
+\end{enumerate}
+
+\begin{lstlisting} 
+prime -n  
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Calculates the n'th prime number up to a maximum number of 2147483647.
+\end{enumerate}
+
+\begin{lstlisting} 
+prime -n -p   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Creates a file of all prime numbers up to a maximum number of 2147483647.
+\end{enumerate}
+
+\begin{lstlisting} 
+prime -n -c   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Clears the file created by 'prime -n -p'.
+\end{enumerate}
+
+\index{quadratic}
+\begin{lstlisting} 
+quadratic form
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Calculates the solution to an equation of the form $ax^2+bx+c=0$. This function accounts for imaginary answers.
+\end{enumerate}
+
+\index{subtract}
+\begin{lstlisting} 
+subtract   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Finds the difference between two integers of any length. Similar to add, this subtracts two strings together using a similar algorithm one would when subtracting large numbers by hand. It is possible to get results by entering non-number entries but will serve no significance due to the way MIA internally converts strings to integers by shifting the ASCII values.
+\end{enumerate}
+
+\index{randomFromFile}
+\begin{lstlisting} 
+randomFromFile
+\end{lstlisting}
+\begin{enumerate}
+	\item[]  Prints a number of random lines from a text file. This will read in each line from a text file and print a user specified number of the lines by choosing them randomly.
+\end{enumerate}
+
+\index{exit}
+\begin{lstlisting} 
+sequencer
+\end{lstlisting}
+\begin{enumerate}
+	\item[] This begins running the MIA sequencer to process the MIASequence.txt file. 
+\end{enumerate}
+
+\index{triangle}
+\begin{lstlisting} 
+triangle   
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Determines if a number is a triangle number or not. The integer must be smaller than C++'s internal storage for the long data type.
+\end{enumerate}
+
+\index{workout}
+\begin{lstlisting} 
+workout
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Generates a workout from the values defined in workouts.txt. See section \ref{workout} for more information.
+\end{enumerate}
+
+\begin{lstlisting} 
+workout -w
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Generates a weeks worth of workouts from the values defined in workouts.txt. This generation outputs to workout.txt found in the Output files folder. See section \ref{workout} for more information.
+\end{enumerate}
+
+\index{wow dup letter}
+\begin{lstlisting} 
+wow dup letter
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Duplicates a letter in WoW a specified number of times. This will simulate entering a recipient, subject, and then pasting a message into the body followed by hitting the send button through the in game mailbox on World of Warcraft. The user specifies needed information and number of letters to send. This function is useful for RP scenarios. See section \ref{WoWMailbox} for more details.
+\end{enumerate}
+
+\index{wow unload}
+\begin{lstlisting} 
+wow unload
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Unloads a number of letters from the WoW inbox. This is useful in conjunction with the 'wow dup letter' feature. This will simulate opening a letter, obtaining the contents of that letter (assuming it contains 1 item), then deleting said letter through the in game mailbox on World of Warcraft. The user specifies needed information and number of letters to send. This function is useful for RP scenarios. See section \ref{WoWMailbox} for more details.
+\end{enumerate}
+
+\subsection{Fluid (Volatile) Commands}
+
+The fluid commands are commands that do not have a fixed input. They are generally formatted commands that can be entered with user specific input.
+
+\index{XXdYY}
+\begin{lstlisting} 
+XXdYY   //Where XX and YY are integers.
+1d20    //Example of rolling a 20 sided dice.
+3d6     //Example of rolling three 6 sided dice.
+\end{lstlisting}
+\begin{enumerate}
+	\item[] Rolls a dice. The format of this command is XXdYY, where XX and YY are both integers. The value of XX determines the number of dice to roll and the value of YY determines the value of each dice.
+\end{enumerate}

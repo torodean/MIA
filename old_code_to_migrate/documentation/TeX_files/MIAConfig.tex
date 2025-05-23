@@ -1,0 +1,111 @@
+\chapter{MIAConfig file (MIAC)} \label{MIAC}
+\pagestyle{fancy}
+
+\lstset{language=Python}
+
+\section{MIAConfig Purpose Introduction}
+
+The MIAConfig.MIA file (MIAC) is a file designed to hold program variables. The intent and purpose os this file is such that program variables can be changed after compilation and affect the program itself. This is useful for variables that are user dependent and in cases where the user is unable to re-compile the program themselves. 
+
+\section{MIAConfig Contents and Usage}
+
+The MIAC will appear similar to the following.
+
+\begin{lstlisting}
+#============================================================================
+# Name        : MIAConfig.MIA
+# Author      : Antonius Torode
+# Date        : 1/10/18
+# Copyright   : This file can be used under the conditions of Antonius' 
+#				 General Purpose License (AGPL).
+# Description : MIA settings for program initialization.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+
+# MIA file location variables.
+inputFilePath=Resources/InputFiles/
+cryptFilePath=Resources/EncryptedFiles/
+decryptFilePath=Resources/EncryptedFiles/
+workoutsFilePath=Resources/InputFiles/exercises.txt
+sequencesFilePath=Resources/InputFiles/MIASequences.txt
+workoutOutputFilePath=Resources/OutputFiles/workout.txt
+excuseFilePath=Resources/Excuses.txt
+
+# MIA program variables.
+verboseMode=false
+MIATerminalMode=true
+
+#... Other variables below
+\end{lstlisting}
+
+The contents of this file are simple. First, comments are made by adding the '\#' character at the beginning of any line. These lines are ignored by MIA upon compilation and reading in the MIAC for use. Second, empty lines are also ignored by MIA. The MIAC file is pretty self explanatory, but it does require the correct format for proper use with MIA. Space characters are important within the MIAC file and will be taken as intentional. This is because there may be MIA variables that are string inputs such that space characters are needed. 
+
+A MIA variable will only be effective in the MIAC if it is intended to work with the MIA program itself. MIA has a set amount of internal config variables which can be seen in section \ref{MIAC variables}. The variables that are valid must be declared by their variable name (case sensitive) followed by an equal sign then followed by the value. After changing variables in the MIAC, you can save the MIAC and either reload the MIA program or type config in the MIA terminal to re-load the changed variables. In some cases MIA will reload the variables itself depending on if the commands ran are dependent on the MIAC.
+
+\begin{note}
+	If a variable used by MIA is not found in the MIAC, a default value will be used that is determined upon compile time.
+\end{note}
+
+\section{Valid MIAConfig (MIAC) variables} \label{MIAC variables} 
+
+\subsection{File and Folder Paths}
+
+The MIA program depends on multiple folder and file paths. These are all able to be adjusted within the MIAC. The file paths are by default defined relative to the MIA program and the available paths that can be defined are as follows.
+
+\begin{lstlisting}
+# MIA file location variables.
+defaultInputFilePath=../bin/Resources/InputFiles/
+defaultCryptFilePath=../bin/Resources/EncryptedFiles/
+workoutsFilePath=../bin/Resources/InputFiles/exercises.txt
+workoutOutputFilePath=../bin/Resources/OutputFiles/workout.txt
+excuseFilePath=../bin/Resources/Excuses.txt
+\end{lstlisting}
+
+\subsection{MIA Program Related Variables}
+
+The MIA program related variables are variables that alter the way the MIA program will run. The available progrma variables are listed below.
+
+\begin{lstlisting}
+# MIA program variables.
+verboseMode=false
+\end{lstlisting}
+
+The program variable \lstinline{verboseMode}\index{verboseMode} determines whether MIA will print all possible text during runtime relating to the processes being ran. At the time of adding this feature, many functions were already developed to not include verbose text output and thus will still remain silent when this is enabled.
+
+\subsection{World of Warcraft Related Variables}
+
+MIA contains many World of Warcraft (WoW) related functions. These all are user dependent and thus contain MIAC available variables to editing. The available MIAC variables relating to WoW follow as
+
+\begin{lstlisting}
+# WoW related variables.
+WoWMailboxSendLetterLocationX=279
+WoWMailboxSendLetterLocationY=647
+WoWMailboxFirstLetterLocationX=55
+WoWMailboxFirstLetterLocationY=265
+WoWMailboxLootLetterLocationX=675
+WoWMailboxLootLetterLocationY=600
+WoWMailboxDeleteLetterLocationX=700
+WoWMailboxDeleteLetterLocationY=650
+
+# Variables relating to the fishbot implementation inside MIA.
+WoWFishBotStartX=725
+WoWFishBotStartY=360
+WoWFishBotEndX=1230
+WoWFishBotEndY=495
+WoWFishBotIncrement=40
+WoWFishBotNumOfCasts=10000
+WoWFishBotDelay=10000
+\end{lstlisting}
+
+All of the \inlinecode{WoWMailbox}\index{WoWMailbox} variables are related to coordinates within WoW. The required coordinates for the user can be determined using the 'find mouse' command in the correct locations. See section \ref{WoWMailbox} for more details on these variables.
+
+All of the \inlinecode{WoWFishBot}\index{WoWFishBot} variables are related to coordinates and fishbot settings within WoW. The required coordinates for the user can be determined using the 'find mouse' command in the correct locations. See section \ref{WoWFishbot} for more details on these variables.
+
+
+
+

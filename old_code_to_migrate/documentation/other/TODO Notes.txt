@@ -1,0 +1,1 @@
+To find the dll's an exe uses in cygwin, you can use the "cygcheck program.exe" command.
