@@ -1,0 +1,307 @@
+\chapter{MIA Development}
+\pagestyle{fancy}
+
+
+
+
+
+
+\section{Application Framework}
+\label{sec:app-framework}
+
+\subsection*{Overview}
+The application framework provides a minimal structure for C++ applications that follow a consistent life cycle. It enforces a standard interface consisting of initialization and execution phases, and offers utilities to streamline application entry point definition. The design leverages C++20 concepts and templates for compile-time enforcement of interface contracts.
+
+\subsection*{Life Cycle Model}
+Applications using this framework must implement the following life cycle methods:
+\begin{itemize}
+	\item \texttt{void initialize(int argc, char** argv)} \\
+	Performs startup logic, such as argument parsing and resource allocation.
+	\item \texttt{int run()} \\
+	Contains the main execution logic of the application. The return value is propagated as the process exit code.
+\end{itemize}
+
+\subsection*{Interface Enforcement}
+The framework uses a C++20 concept, \texttt{AppInterface}, to statically constrain application types. This ensures that any type passed to the launcher function conforms to the expected interface, eliminating runtime errors due to missing methods.
+
+\subsection*{Application Launch}
+Applications are launched using the \texttt{runApp} template function:
+\begin{itemize}
+	\item Accepts any type satisfying \texttt{AppInterface}.
+	\item Calls \texttt{initialize} followed by \texttt{run}, in that order.
+	\item Returns the result of \texttt{run} as the application's exit code.
+\end{itemize}
+
+\subsection*{Entry Point Definition}
+To reduce boilerplate and unify application entry points, the framework provides a macro:
+\begin{itemize}
+	\item \texttt{MIA\_MAIN(AppClass)} defines a \texttt{main()} function that delegates to \texttt{runApp<AppClass>}.
+	\item This enables consistent startup across applications while preserving type safety and clarity.
+\end{itemize}
+
+\subsection*{Usage Guidelines}
+\begin{enumerate}
+	\item Define an application class that implements the required \texttt{initialize} and \texttt{run} methods.
+	\item Use \texttt{MIA\_MAIN(YourAppClass);} in a translation unit to define the application entry point.
+	\item Avoid manual \texttt{main()} definitions to preserve uniform lifecycle management.
+\end{enumerate}
+
+\subsection*{Benefits}
+\begin{itemize}
+	\item Promotes a consistent lifecycle across applications.
+	\item Enables interface enforcement at compile time.
+	\item Minimizes boilerplate in entry point logic.
+	\item Facilitates cleaner and more maintainable application architecture.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+\section{Base Application Class: \texttt{MIAApplication}}
+\label{sec:base-application}
+
+\subsection*{Overview}
+The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework. It defines a standardized interface for application lifecycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help).
+
+\subsection*{Purpose}
+This class is intended to be subclassed by specific applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method.
+
+\subsection*{Initialization Interface}
+\begin{itemize}
+	\item \texttt{virtual void initialize(int argc, char* argv[])} \\
+	Handles initial setup, including parsing common command-line arguments. 
+	Derived classes should override this method to extend parsing logic but should still invoke the base implementation to preserve flag handling.
+\end{itemize}
+
+\subsection*{Execution Interface}
+\begin{itemize}
+	\item \texttt{virtual int run() = 0} \\
+	Pure virtual function that must be implemented by all derived classes. It defines the main operational logic of the application and must return an integer exit code.
+\end{itemize}
+
+\subsection*{Flag Handling}
+\begin{itemize}
+	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
+	\item Help flag status is stored and can be utilized to trigger usage messages.
+	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses.
+\end{itemize}
+
+\subsection*{Protected Members}
+\begin{itemize}
+	\item \texttt{bool verboseMode} \\
+	Indicates whether verbose output was requested.
+	\item \texttt{bool helpRequested} \\
+	Set to \texttt{true} if the user requested help via the command-line.
+\end{itemize}
+
+\subsection*{Usage Guidelines}
+\begin{enumerate}
+	\item Inherit from \texttt{MIAApplication}.
+	\item Override \texttt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling.
+	\item Implement the \texttt{run()} method with the application's main logic.
+	\item Use \texttt{getVerboseMode()} to conditionally enable verbose output.
+\end{enumerate}
+
+\subsection*{Benefits}
+\begin{itemize}
+	\item Standardizes lifecycle structure across applications.
+	\item Centralizes command-line flag logic.
+	\item Reduces redundancy in application setup.
+	\item Encourages consistent help and verbose interfaces.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\section{Command Option System}
+
+The command option system provides structured parsing and management of command-line arguments. It is composed of two main components: the \texttt{CommandOption} class and the \texttt{command\_parser} namespace. Together, they offer a consistent and type-safe interface for defining, parsing, and validating command-line options.
+
+\subsection{CommandOption Class}
+
+The \texttt{CommandOption} class encapsulates metadata and behavior for individual command-line arguments. It supports a variety of data types and provides a standardized help display format.
+
+\subsubsection*{Key Features}
+\begin{itemize}
+	\item \textbf{Supported Types:} Defined by the \texttt{commandOptionType} enum:
+	\begin{itemize}
+		\item \texttt{boolOption}
+		\item \texttt{intOption}
+		\item \texttt{doubleOption}
+		\item \texttt{stringOption}
+	\end{itemize}
+	
+	\item \textbf{Constructor:} Accepts short/long argument forms, a description, data type, and a \texttt{required} flag.
+	
+	\item \textbf{Help Output:} \texttt{getHelp()} returns a formatted string of the form:
+	\begin{verbatim}
+		-s, --long        Description
+	\end{verbatim}
+	
+	\item \textbf{Value Parsing:} The \texttt{getOptionVal<Type>} method retrieves the typed value from the command-line using appropriate dispatch.
+	
+	\item \textbf{Error Handling:} Throws \texttt{MIAException} if a type mismatch occurs or parsing fails.
+\end{itemize}
+
+\subsection{command\_parser Namespace}
+
+This namespace implements the actual logic for extracting typed values from \texttt{argc}/\texttt{argv}. Each function accepts short and long option names, and a reference to the variable where the parsed value should be stored.
+
+\subsubsection*{Parsing Functions}
+\begin{itemize}
+	\item \texttt{void parseBoolFlag(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, bool\& outValue);}
+	\item \texttt{void parseIntOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, int\& outValue, bool required = false);}
+	\item \texttt{void parseDoubleOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, double\& outValue, bool required = false);}
+	\item \texttt{void parseStringOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, std::string\& outValue, bool required = false);}
+\end{itemize}
+
+\subsubsection*{Behavior}
+Each parser:
+\begin{itemize}
+	\item Validates the presence of the option.
+	\item Converts the argument to the correct type.
+	\item Throws a \texttt{MIAException} on error, such as type mismatch or missing required value.
+\end{itemize}
+
+\subsection{Integration}
+
+The \texttt{CommandOption} class acts as a high-level interface, while \texttt{command\_parser} performs the low-level parsing. Together, they ensure robustness, type safety, and consistent error reporting across the command-line interface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Error Handling Framework}
+\label{sec:error-handling}
+
+\subsection*{Overview}
+The MIA error handling system provides a structured and consistent mechanism for reporting, categorizing, and propagating errors throughout MIA applications. It is centered around a custom exception type (\texttt{MIAException}) and an extensible set of error codes defined via the \texttt{ErrorCode} enumeration.
+
+\subsection*{Error Codes}
+The \texttt{ErrorCode} enumeration defines a comprehensive list of standardized error values used throughout the MIA framework. These include:
+\begin{itemize}
+	\item System-aligned codes (e.g., \texttt{Access\_denied = 5})
+	\item Application-specific codes starting at 31415 (i.e., \texttt{int}($\pi$ × 10000)), e.g., \texttt{Feature\_In\_Dev}
+	\item Custom fatal and configuration errors (e.g., \texttt{FATAL\_File\_Not\_Found}, \texttt{Config\_File\_Not\_Set})
+\end{itemize}
+
+Each error code is associated with a human-readable description defined in \texttt{ErrorDescriptions.hpp}, accessible via:
+\begin{lstlisting}[language=C++]
+	const std::string& getErrorDescription(ErrorCode code);
+\end{lstlisting}
+
+\subsection*{MIAException Class}
+The primary mechanism for structured error propagation is the \texttt{MIAException} class:
+\begin{itemize}
+	\item Inherits from \texttt{std::exception}.
+	\item Encapsulates an \texttt{ErrorCode} and an optional detailed message.
+	\item Supports integration with standard C++ \texttt{try/catch} error handling.
+\end{itemize}
+
+\textbf{Interface Summary:}
+\begin{itemize}
+	\item \texttt{MIAException(ErrorCode, const std::string\& details = "")} \\
+	Constructs an exception with a specific code and optional extra context.
+	\item \texttt{const char* what() const noexcept} \\
+	Returns a descriptive error string combining code-based and contextual information.
+	\item \texttt{ErrorCode getCode() const noexcept} \\
+	Retrieves the error code associated with the exception.
+\end{itemize}
+
+\subsection*{Deprecated Legacy Functions}
+Several older functions exist but are marked deprecated in favor of \texttt{MIAException}:
+\begin{itemize}
+	\item \texttt{returnError()}, \texttt{errorInfo()}, and \texttt{errorInfoRun()} are retained for backward compatibility but should be avoided.
+	\item These are flagged with \texttt{[[deprecated]]} attributes.
+\end{itemize}
+
+\subsection*{Usage Guidelines}
+\begin{enumerate}
+	\item Throw \texttt{MIAException} in place of manual error returns.
+	\item Use \texttt{getErrorDescription()} to log or report known error codes.
+	\item Check exception codes via \texttt{getCode()} in catch blocks to take context-specific actions.
+\end{enumerate}
+
+\subsection*{Benefits}
+\begin{itemize}
+	\item Unifies error handling across the application ecosystem.
+	\item Enables richer debugging and logging through descriptive errors.
+	\item Supports granular response logic based on typed error codes.
+\end{itemize}
+
+
+
+
+
+
+
+
+\section{Global Constants and Paths}
+
+This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version.
+
+\subsection{constants Namespace}
+
+The \texttt{constants} namespace provides globally accessible constant values compiled into the application.
+
+\subsubsection*{Defined Constant}
+\begin{itemize}
+	\item \texttt{MIA\_VERSION}: A \texttt{std::string} representing the version of the MIA application, injected from CMake via the \texttt{MIA\_VERSION\_VAL} macro.
+\end{itemize}
+
+\subsection{paths Namespace}
+
+The \texttt{paths} namespace offers a centralized interface for accessing directory and file paths used by the system. These include installation-specific and repository-relative locations, as well as runtime-determined paths.
+
+\subsubsection*{Static Path Constants}
+\begin{itemize}
+	\item \texttt{SYSTEM\_CONFIG\_FILE\_DIR}, \texttt{SYSTEM\_CONFIG\_FILE}: Paths to the configuration directory and file for system installations.
+	\item \texttt{REPO\_CONFIG\_FILE\_DIR}, \texttt{REPO\_CONFIG\_FILE}: Paths used during development and testing.
+	\item \texttt{SYSTEM\_LOG\_DIR}, \texttt{SYSTEM\_LOG}: Default logging directory and file when installed.
+	\item \texttt{REPO\_LOG\_DIR}, \texttt{REPO\_LOG}: Logging paths for repository use.
+	\item \texttt{INSTALL\_LOCATION}: The root directory of the system installation.
+\end{itemize}
+
+\subsubsection*{Runtime Utilities}
+\begin{itemize}
+	\item \texttt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
+	
+	\item \texttt{isInstalled()}: Determines whether the application is running from the system-installed location by comparing the executable path with the install directory.
+	
+	\item \texttt{getDefaultConfigDirToUse()}: Selects the configuration directory based on execution context:
+	\begin{itemize}
+		\item If installed: returns \texttt{SYSTEM\_CONFIG\_FILE\_DIR}.
+		\item If a \texttt{resources} folder exists in the executable directory: returns that path.
+		\item Otherwise: returns \texttt{REPO\_CONFIG\_FILE\_DIR}.
+	\end{itemize}
+\end{itemize}
+
+This design ensures portability and flexibility across different environments (development, testing, deployment), with consistent fallback logic and platform-agnostic path resolution.
+
+
+
+
+
+
