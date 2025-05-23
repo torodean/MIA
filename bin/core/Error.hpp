@@ -18,26 +18,27 @@ namespace error
     /**
      * A list of error codes that can be returned. Some of these are mapped to typical
      * error codes for consistency. The ones that are specific to MIA (or yet to be 
-     * mapped) begin at 31415 (int(pi*10000)) and increment.
+     * mapped) begin at 31415 (int(pi*10000)) and increment. When values are added to
+     * this enum, a description should also be added to ErrorDescriptions.hpp.
      */
     enum ErrorCode
     {
         MIA_Success = 0,                      ///< Success - no error!
         Access_denied = 5,                    ///< Access denied when attempting an action.
-        Gen_Failure = 31,                     ///< TODO
-        Bad_Net_Path = 53,                    ///< TODO
+        Gen_Failure = 31,                     ///< A device attached to the system is not functioning.
+        Bad_Net_Path = 53,                    ///< The network path was not found.
         Invalid_Parameter = 87,               ///< A Parameter to a method was invalid.
-        Invalid_Level = 124,                  ///< TODO
+        Invalid_Level = 124,                  ///< The system call level is not correct.
         File_Not_Found = 404,                 ///< A File was not found.
-        Logon_Failure = 1326,                 ///< TODO
-        RPC_S_Server_Unavailable = 1722,      ///< TODO
-        NErr_User_Not_Found = 2221,           ///< TODO
-        No_Browser_Servers_Found = 6118,      ///< TODO
+        Logon_Failure = 1326,                 ///< The user name or password is incorrect.
+        RPC_S_Server_Unavailable = 1722,      ///< The RPC server is unavailable.
+        NErr_User_Not_Found = 2221,           ///< The user name could not be found.
+        No_Browser_Servers_Found = 6118,      ///< Unavailable list of servers for this workgroup.
         MIAConfig_File_Not_Found = 31403,     ///< The configuration file was not found.
         FATAL_File_Not_Found = 31404,         ///< A needed file was not found.
         Feature_In_Dev = 31415,               ///< This feature is not finished.
-        Windows_Only_Feature = 31416,         ///< TODO
-        Invalid_MIAConfig_Option = 31417,     ///< TODO
+        Windows_Only_Feature = 31416,         ///< Windows only feature.
+        Invalid_MIAConfig_Option = 31417,     ///< Invalid option in MIAConfig.
         Nothing_set_For_Testing = 31418,      ///< Nothing set for testing.
         Issue_Setting_MIA_Variable = 31419,   ///< Issue setting MIA variable.
         Issue_With_Sequence_File = 31420,     ///< Issue with MIA sequence file.
