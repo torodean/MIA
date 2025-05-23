@@ -8,7 +8,6 @@
  * along with a human-readable description. It provides methods to display a formatted
  * help string and parse the argument using command_parser utilities, returning typed results.
  */
-
 #pragma once
 
 #include <string>
