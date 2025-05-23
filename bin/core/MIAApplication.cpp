@@ -35,7 +35,7 @@ void MIAApplication::initialize(int argc, char* argv[])
     if (helpRequested)
     {
         printHelp();
-        return; // TODO - Signal to caller that help was requested, app should exit
+        std::exit(0); // Call exit after the --help flag is used. 
     }
 }
 

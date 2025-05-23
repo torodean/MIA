@@ -44,6 +44,8 @@ MIAWorkout::MIAWorkout() :
 
 void MIAWorkout::initialize(int argc, char* argv[])
 {
+    MIAApplication::initialize(argc, argv);
+
     // Set the values from the command line arguments.
     difficultyOpt.getOptionVal<double>(argc, argv, difficulty);
     weeklyOpt.getOptionVal<bool>(argc, argv, weekly);
@@ -52,7 +54,9 @@ void MIAWorkout::initialize(int argc, char* argv[])
     std::string configFile = defaultConfigFile;
     configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
     config.setConfigFileName(configFile);
-    loadConfig();
+    
+    if (!helpRequested) // If we are just printing help, no need to load the config.
+        loadConfig();
 }
 
 void MIAWorkout::loadConfig()
@@ -73,10 +77,10 @@ void MIAWorkout::printHelp() const
     MIAApplication::printHelp();
     
     cout << "MIAWorkout specific options:" << endl
-         << configFileOpt.getHelp()
-         << outputFileOpt.getHelp()
-         << difficultyOpt.getHelp()
-         << weeklyOpt.getHelp() 
+         << configFileOpt.getHelp() << endl
+         << outputFileOpt.getHelp() << endl
+         << difficultyOpt.getHelp() << endl
+         << weeklyOpt.getHelp() << endl
          << endl << endl;
     cout << "...Assuming default values, difficulties range from 0-100." << endl;
     cout << "...1-10 (VERY EASY), 11-24 (EASY), 25-39 (NORMAL)" << endl;
@@ -139,6 +143,7 @@ void MIAWorkout::generateWorkout()
     cout << "...Loading MIA workout generation. " << endl;
     cout << "..." << endl;
 
+    // TODO - this is stored in the config map. Replace this code to fetch this from there.
     // grabs the workouts file.
     string fileName = config.getConfigFileFullPath();
     std::ifstream file(fileName, std::ifstream::in);

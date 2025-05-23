@@ -12,6 +12,7 @@
 
 #include <string>
 #include <iostream>
+#include <algorithm> // for std::max
 
 // Used for command option parsing
 #include "CommandParser.hpp"
@@ -61,9 +62,13 @@ public:
      */
     std::string getHelp() const
     {
-        return "  " + shortArg + ", " + longArg +
-               std::string(12 - shortArg.size() - longArg.size(), ' ') +
-               description;
+        const size_t paddingWidth = 24; // total space reserved for shortArg + longArg + spaces
+        size_t currentLength = shortArg.size() + 2 /*", "*/ + longArg.size();
+
+        // Calculate spaces needed, at least 2 spaces for readability
+        size_t spaces = std::max<size_t>(2, paddingWidth > currentLength ? paddingWidth - currentLength : 2);
+
+        return "  " + shortArg + ", " + longArg + std::string(spaces, ' ') + description;
     }
     
     /**

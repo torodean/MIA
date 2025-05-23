@@ -38,6 +38,8 @@ WoWFishbot::WoWFishbot() :
 
 void WoWFishbot::initialize(int argc, char* argv[])
 {
+    MIAApplication::initialize(argc, argv);
+    
     std::string configFile = defaultConfigFile;
     configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
     config.setConfigFileName(configFile);
