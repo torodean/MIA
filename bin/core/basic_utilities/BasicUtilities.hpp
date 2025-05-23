@@ -20,4 +20,25 @@ namespace BasicUtilities
      *                 or -1 if not found.
      */
     int findCharInString(const std::string& str, char ch);
+    
+    /**
+     * @brief Removes leading whitespace characters from the input string.
+     * @param input[const std::string&] - The input string to trim.
+     * @return [std::string] - A new string with leading whitespace removed.
+     */
+    std::string lstrip(const std::string& input);
+
+    /**
+     * @brief Removes trailing whitespace characters from the input string.
+     * @param input[const std::string&] - The input string to trim.
+     * @return [std::string] - A new string with trailing whitespace removed.
+     */
+    std::string rstrip(const std::string& input);
+
+    /**
+     * @brief Removes leading and trailing whitespace characters from the input string.
+     * @param input[const std::string&] - The input string to trim.
+     * @return [std::string] - A new string with both leading and trailing whitespace removed.
+     */
+    std::string strip(const std::string& input);
 }

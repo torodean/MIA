@@ -82,9 +82,9 @@ void MIAWorkout::printHelp() const
          << difficultyOpt.getHelp() << endl
          << weeklyOpt.getHelp() << endl
          << endl << endl;
-    cout << "...Assuming default values, difficulties range from 0-100." << endl;
-    cout << "...1-10 (VERY EASY), 11-24 (EASY), 25-39 (NORMAL)" << endl;
-    cout << "...39-54 (HARD), 54-74 (VERY HARD), 75+ (INSANE)" << endl;
+    cout << "Assuming default values, difficulties range from 0-100." << endl;
+    cout << "   1-10 (VERY EASY), 11-24 (EASY), 25-39 (NORMAL)" << endl;
+    cout << "   39-54 (HARD), 54-74 (VERY HARD), 75+ (INSANE)" << endl;
 }
 
 double MIAWorkout::convertWorkoutWeight(const string& line)
@@ -269,7 +269,7 @@ void MIAWorkout::generateWorkout()
 
             int numOfWorkouts;
             counter++;
-            int numOfSets = math::randomInt((int)minNumOfSetsModifier,(int)maxNumOfSetsModifier,counter, true);
+            int numOfSets = math::randomInt((int)minNumOfSetsModifier, (int)maxNumOfSetsModifier, counter, true);
 
             if(getVerboseMode())
                 cout << "...numOfSets: " << numOfSets << endl;

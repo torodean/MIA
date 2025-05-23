@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 #include <unordered_map>
 
 namespace MIA_System
@@ -150,6 +151,15 @@ namespace MIA_System
          */
         std::vector<int> getIntVector(const std::string& key, char delimiter) const;
         
+        /**
+         * Dumps all key-value pairs stored in rawConfigValsMap to the specified output stream.
+         * Useful for debugging to inspect the current configuration values.
+         * 
+         * @param os [std::ostream&] - The output stream to write the key-value pairs to (default: std::cout).
+         */
+        [[maybe_unused]]
+        void dumpConfigMap(std::ostream& os = std::cout) const;
+
     private:
     
         /// The name of the configuration file for this object.

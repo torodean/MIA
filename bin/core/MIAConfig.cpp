@@ -83,14 +83,14 @@ namespace MIA_System
             if (equalSignLocation <= 0 || equalSignLocation >= lines[i].size() - 1)
                 continue; // or log malformed line
                 
-            variable = lines[i].substr(0, equalSignLocation);
+            variable = BasicUtilities::strip(lines[i].substr(0, equalSignLocation));
             value = lines[i].substr(equalSignLocation+1,lines[i].size()-1);
 
             //removes end of line characters from variable name and value. Fixes a bug.
             variable.erase(remove(variable.begin(), variable.end(), '\r'), variable.end());
             value.erase(remove(value.begin(), value.end(), '\r'), value.end());
 
-            rawConfigValsMap[variable] = value;
+            rawConfigValsMap[variable] = BasicUtilities::strip(value);
         }
     }
     
@@ -211,11 +211,19 @@ namespace MIA_System
             } 
             catch (...) 
             {
-                // TODO - Add MIAException here.
                 // Skip invalid integers
             }
         }
         return result;
+    }
+    
+    
+    void MIAConfig::dumpConfigMap(std::ostream& os) const
+    {
+        for (const auto& val : rawConfigValsMap)
+        {
+            os << val.first << "=" << val.second << std::endl;
+        }
     }
 } // namespace MIA_System
 
