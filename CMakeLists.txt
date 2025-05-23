@@ -16,13 +16,13 @@ set(MIA_PROJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 # OS-Specific Path Configuration
 if(WIN32)
-    set(APP_INSTALL_LOCATION "C:/Program Files")
+    set(APP_INSTALL_LOCATION "C:/Program Files/mia")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "C:/ProgramData/mia")
     set(DEFAULT_SYSTEM_LOG_DIR "C:/ProgramData/mia/logs")
 elseif(UNIX AND NOT APPLE)
-    set(APP_INSTALL_LOCATION "/usr/local")
+    set(APP_INSTALL_LOCATION "/usr/local/mia")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "/etc/mia")
-    set(DEFAULT_SYSTEM_LOG_DIR "/var/log")
+    set(DEFAULT_SYSTEM_LOG_DIR "/var/log/mia")
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
@@ -48,5 +48,6 @@ add_compile_definitions(
     APP_INSTALL_LOCATION=\"${APP_INSTALL_LOCATION}\"
 )
 
-add_subdirectory(bin)
-#add_subdirectory(documentation)
+add_subdirectory( bin )
+#add_subdirectory( documentation )
+add_subdirectory( resources )

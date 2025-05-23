@@ -17,7 +17,7 @@ usage()
   echo "    -v    Enable verbose output during build process."
   echo "    -D    Attempt to Install dependencies."
   echo "    -u    Update release files on successful build."
-  echo "    -I    Install MIA after building."
+  echo "    -I    Install MIA after building (requires admin)."
 }
 
 # Define the build script options and create variables from options.
@@ -48,12 +48,16 @@ while getopts "hCvDuI" opt; do
   esac
 done
 
+# The arguments to pass to cmake.
+cmakeArgs=""
+
+
 # Place OS specific CMake here.
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Linux-GNU
   if [[ $installDependencies ]]; then
     echo "...Installing dependencies for Linux-GNU."
-    sudo apt-get update
+    $rootDirectory/scripts/setup.sh
   fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then 
   # Mac OSX.
@@ -83,7 +87,7 @@ fi
 echo "...Beginning MIA Build!"
 
 mkdir -p "$rootDirectory"/build
-cmake -G "Unix Makefiles" -B"$rootDirectory"/build
+cmake -G "Unix Makefiles" -B"$rootDirectory"/build $cmakeArgs
 cd "$rootDirectory"/build || exit
 make -j16 || exit
 
@@ -98,6 +102,7 @@ fi
 # Install MIA if specified
 if [[ $installMIA ]]; then
   echo "...Installing MIA files!"
+  cmake --install "$rootDirectory"/build
   $rootDirectory/scripts/install.sh
 fi
 
