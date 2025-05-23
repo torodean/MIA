@@ -1,0 +1,25 @@
+#============================================================================
+# Name        : WoWConfig.MIA
+# Author      : Antonius Torode
+# Created on  : 1/10/18
+# Description : Configuration for the WoW-specific apps and tools within MIA.
+#============================================================================
+
+# WoW related variables.
+WoWMailboxSendLetterLocationX=241
+WoWMailboxSendLetterLocationY=580
+WoWMailboxFirstLetterLocationX=56
+WoWMailboxFirstLetterLocationY=223
+WoWMailboxLootLetterLocationX=646
+WoWMailboxLootLetterLocationY=556
+WoWMailboxDeleteLetterLocationX=699
+WoWMailboxDeleteLetterLocationY=589
+
+# Variables relating to the fishbot implementation inside MIA.
+WoWFishBotStartX=791
+WoWFishBotStartY=443
+WoWFishBotEndX=1082
+WoWFishBotEndY=581
+WoWFishBotIncrement=15
+WoWFishBotNumOfCasts=10000
+WoWFishBotDelay=10000

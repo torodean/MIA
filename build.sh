@@ -16,8 +16,8 @@ usage()
   echo "    -C    Perform a clean build by removing the build directory first."  
   echo "    -v    Enable verbose output during build process."
   echo "    -D    Attempt to Install dependencies."
-  echo "    -I    Install MIA after building (requires admin)."
-  echo "    -R    Update the release files."
+  echo "    -I    Install MIA after building (requires admin). Use a clean build if errors occur."
+  echo "    -R    Update the release files. Use a clean build if errors occur."
   echo "    -U    Uninstall all MIA files. This will uninstall then quit without other actions."
 }
 

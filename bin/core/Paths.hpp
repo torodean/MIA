@@ -8,6 +8,14 @@
  */
 #pragma once
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+#include <windows.h>  // for GetModuleFileName
+#elif __linux__
+#include <unistd.h>   // for readlink
+#include <limits.h>   // for PATH_MAX
+#endif
+
+#include <filesystem>
 #include <string>
 #include <filesystem>
 
@@ -50,6 +58,33 @@ namespace paths
     inline const std::string INSTALL_LOCATION = APP_INSTALL_LOCATION;
     
     /**
+     * @brief Retrieves the directory of the currently running executable.
+     * For Linux:
+     * Uses the /proc/self/exe symbolic link to obtain the full path of the
+     * executable, then extracts the directory portion.
+     * For windows:
+     * Uses Windows API GetModuleFileName to obtain the full path of the
+     * executable, then extracts the directory portion.
+     * 
+     * @return std::string The directory path of the executable.
+     */
+    inline std::string getExecutableDir()
+    {
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+        char path[MAX_PATH];
+        GetModuleFileNameA(NULL, path, MAX_PATH);
+        std::string fullPath(path);
+        return fullPath.substr(0, fullPath.find_last_of("\\/"));  
+    #elif __linux__
+        std::cout << "getExecutableDir()" << std::endl;
+        char result[PATH_MAX];
+        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        std::string path(result, (count > 0) ? count : 0);
+        return path.substr(0, path.find_last_of('/'));
+    #endif
+    }
+    
+    /**
      * Determines whether the application is running from a system-installed location
      * or from the repository (development/testing) directory.
      *
@@ -60,12 +95,19 @@ namespace paths
     inline bool isInstalled()
     {
         namespace fs = std::filesystem;
-        fs::path execPath = fs::current_path();
-        fs::path installPath = fs::path(INSTALL_LOCATION);
+        std::error_code errCode;
 
-        // Normalize and compare path prefixes
-        execPath = fs::canonical(execPath);
-        installPath = fs::canonical(installPath);
+        fs::path execPath = fs::canonical(fs::current_path(), errCode);
+        if (errCode) 
+        {
+            return false;
+        }
+
+        fs::path installPath = fs::canonical(fs::path(INSTALL_LOCATION), errCode);
+        if (errCode) 
+        {
+            return false;
+        }
 
         return std::mismatch(installPath.begin(), installPath.end(), execPath.begin()).first == installPath.end();
     }
@@ -74,18 +116,28 @@ namespace paths
      * Returns the default configuration directory path based on the runtime context.
      *
      * If the application is running from a system-installed location, this returns the
-     * system configuration directory. Otherwise, it returns the repository configuration
-     * directory, typically used for development or testing.
+     * system configuration directory. If a 'resources' folder exists in the same direcrory
+     * as the executable, that will be returned second. Otherwise, it returns the git-repository 
+     * configuration directory, typically used for development or testing.
      *
      * @return [std::string] - Path to the appropriate configuration directory.
      */
     inline std::string getDefaultConfigDirToUse()
     {
         if (isInstalled())
+        {
             return SYSTEM_CONFIG_FILE_DIR;
+        }
         else
-            return REPO_CONFIG_FILE_DIR;
+        {
+            std::string resourcesFolder = getExecutableDir() + "/resources";
+            if (std::filesystem::exists(resourcesFolder))
+                return resourcesFolder;
+            else
+                return REPO_CONFIG_FILE_DIR;
+        }
     }
+
 } // namespace paths
 
 
