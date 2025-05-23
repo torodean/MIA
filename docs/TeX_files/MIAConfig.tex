@@ -1,0 +1,84 @@
+\chapter{MIAConfig Files} \label{chap:MIAConfig}
+\pagestyle{fancy}
+
+\lstset{language=Python}
+
+\section{Introduction to MIAConfig}
+
+The \texttt{MIAConfig.MIA} file is a plaintext configuration file used to define the runtime behavior of the MIA application. It serves as a centralized source for main program variables and environment-specific settings. This file allows the behavior of the program(s) to be adjusted without requiring recompilation, making it suitable for use cases where the end-user either lacks access to the build system or needs to fine-tune behavior in different execution environments.
+
+Variables stored in this file affect initialization, input/output paths, user preferences, and runtime flags. Because the file is read during program startup, any changes made to it will be reflected in subsequent executions unless the program is specifically designed to reinitialize the configuration.
+
+\section{Structure, Format, and Syntax}
+
+The format of the configuration file is simple and strictly line-based. Each setting must follow a key-value structure on a single line, with the key and value separated by an equals sign \texttt{=}. The correct format is essential for successful parsing. The configuration classes are designed so this can be expanded to other formats at a later time if needed.
+
+\subsection*{General Rules}
+
+\begin{itemize}
+	\item Comment lines begin with the \texttt{\#} character. These lines are ignored during parsing.
+	\item Empty lines are allowed and ignored.
+	\item Whitespace around the equals sign is not permitted and may result in incorrect key parsing.
+	\item Values may contain spaces and special characters, and they will be interpreted as-is.
+	\item All keys and values are treated as strings during parsing; type conversion occurs at access time.
+\end{itemize}
+
+\subsection*{Example}
+
+\begin{lstlisting}
+	#============================================================================
+	# Name        : MIAConfig.MIA
+	# Author      : Antonius Torode
+	# Date        : 1/10/18
+	# Copyright   : This file can be used under the conditions of Antonius' 
+	#               General Purpose License (AGPL).
+	# Description : MIA settings for program initialization.
+	#============================================================================
+	
+	# File path variables
+	inputFilePath=Resources/InputFiles/
+	cryptFilePath=Resources/EncryptedFiles/
+	decryptFilePath=Resources/EncryptedFiles/
+	workoutsFilePath=Resources/InputFiles/exercises.txt
+	sequencesFilePath=Resources/InputFiles/MIASequences.txt
+	workoutOutputFilePath=Resources/OutputFiles/workout.txt
+	excuseFilePath=Resources/Excuses.txt
+	
+	# Program behavior flags
+	verboseMode=false
+	MIATerminalMode=true
+	
+	# ... Additional runtime variables below
+\end{lstlisting}
+
+\section{How MIAConfig Files Are Handled at Runtime}
+
+At runtime, the MIA system utilizes the \texttt{MIAConfig} class to locate, read, and parse the configuration file. This class stores all configuration values internally in a key-value map structure and provides type-safe access methods to retrieve values in common formats (e.g., \texttt{int}, \texttt{bool}, \texttt{double}, \texttt{string}, and vectors of each type).
+
+The following mechanisms are supported:
+
+\begin{itemize}
+	\item If a full file path is provided to the \texttt{MIAConfig} object, that path is used directly.
+	\item If only a filename is provided, the system will search default paths for a matching file.
+	\item Once loaded, the configuration can be queried using accessor functions like \texttt{getString()}, \texttt{getInt()}, or \texttt{getVector()}.
+	\item The configuration can be reloaded dynamically using the \texttt{reload()} method, allowing runtime updates.
+\end{itemize}
+
+\subsection*{Example Usage (C++)}
+
+\begin{lstlisting}[style=cppstyle]
+MIA_System::MIAConfig config("MIAConfig.MIA");
+
+std::string path = config.getString("inputFilePath");
+bool verbose = config.getBool("verboseMode");
+int retryCount = config.getInt("maxRetries");
+std::vector<std::string> names = config.getVector("userList", ',');
+\end{lstlisting}
+
+\section{Extensibility and Maintainability}
+
+The configuration system was designed to be flexible and extensible. Internally, all configuration is maintained as string-based key-value pairs, but typed access is provided by the interface. This design allows for future integration with other configuration formats (e.g., JSON or environment variables) or backend sources with minimal changes to consuming code. Additional configuration maps or derived classes can be introduced later without altering the core interface or behavior.
+
+\section{MIA Configuration (MIAC)}
+
+Previously, all configuration variables for MIA were contained within a single file called the MIAC (MIA Configuration file). This meant that settings for all applications and modules were centralized in one place. In newer versions of MIA, configuration has been modularized: each application now uses its own standalone configuration file. This separation improves organization, simplifies customization, and reduces the risk of conflicts between different application settings. At the time of writing this, this change is relatively new, so this section is here to explain this change in case the MIAC acronym is used.

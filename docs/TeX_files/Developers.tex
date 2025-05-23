@@ -6,6 +6,150 @@
 
 
 
+
+
+
+
+
+
+
+
+
+\section{Build Script Overview}
+\label{sec:build-script}
+
+The build process for MIA is orchestrated through a Bash script, \texttt{build.sh}, located in the root directory of the project. This script automates common tasks involved in building, installing, and managing the application.
+
+\subsection{Purpose}
+
+The build script serves as a centralized interface for developers and users to:
+\begin{itemize}
+	\item Configure and build the MIA project using CMake.
+	\item Install the application on the system.
+	\item Manage dependencies for supported platforms.
+	\item Generate release builds.
+	\item Clean the build environment for fresh compilation.
+	\item Uninstall installed components.
+\end{itemize}
+
+\subsection{Key Functionalities}
+
+The script supports a range of command-line options to control its behavior:
+\begin{lstlisting}[style=terminalstyle]
+$ ./build.sh -h
+
+build: build.sh [options...]
+This build script will automate the build and install of MIA.
+
+Options:
+	-h    Display this help message.
+	-C    Perform a clean build by removing the build directory first.
+	-v    Enable verbose output during build process.
+	-D    Attempt to Install dependencies.
+	-I    Install MIA after building (requires admin). Use a clean build if errors occur.
+	-R    Update the release files. Use a clean build if errors occur.
+	-U    Uninstall all MIA files. This will uninstall then quit without other actions.
+\end{lstlisting}
+
+\subsection{Platform Support}
+
+The script contains conditional logic to perform platform-specific setup, with support primarily targeted at Linux environments. At the time of writing this, dependency installation scripts are stubbed for other platforms (e.g., macOS, Windows) but are not fully implemented.
+
+\subsection{CMake Integration}
+
+The build is managed via CMake, which is invoked with appropriate flags based on script options. A separate \texttt{build} directory is used to isolate generated files, and Make is used to compile the project with support for parallel jobs. See section \ref{sec:CMake-setup} for more details.
+
+\subsection{Installation and Uninstallation}
+
+Installation is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstallation is handled early in the script flow via a dedicated script and bypasses other operations.
+
+\subsection{Design Considerations}
+
+This script abstracts complexity away from the end user, provides a repeatable and configurable build process, and facilitates both development and deployment workflows. It is structured to be easily extendable for future platform support or additional build modes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{CMake Setup}
+\label{sec:CMake-setup}
+
+The MIA project utilizes CMake to manage the build configuration, compilation, and installation processes. The setup is designed to be flexible and portable across supported platforms while allowing customization for release or system installation builds.
+
+\subsection{Project Definition and Versioning}
+
+The CMake configuration begins by specifying a minimum required CMake version and defining the project name \texttt{MIA} along with its version. The version is also passed as a preprocessor definition (\texttt{MIA\_VERSION\_VAL}) for use in the codebase.
+
+\subsection{Compiler Standards and Flags}
+
+C++20 is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
+
+\subsection{Build Options}
+
+Two primary options control build behavior:
+\begin{itemize}
+	\item \texttt{RELEASE\_BUILD}: When enabled, modifies install paths and triggers release-specific build behavior.
+	\item \texttt{SYSTEM\_INSTALL}: When enabled, configures installation paths and behaviors suitable for system-wide deployment.
+	\item NOTE: The two build behaviors are somewhat incompatible and a clean build needs done when switching between them.
+\end{itemize}
+
+\subsection{Platform-Specific Path Configuration}
+
+Installation paths and default directories for configuration files and logs are set depending on the operating system:
+\begin{itemize}
+	\item \textbf{Windows:} Uses \texttt{C:/Program Files/mia} and \texttt{C:/ProgramData/mia} directories.
+	\item \textbf{Linux/Unix:} Uses \texttt{/usr/local/mia}, \texttt{/etc/mia}, and \texttt{/var/log/mia}.
+	\item Unsupported platforms produce a configuration error.
+\end{itemize}
+
+\subsection{Configuration Constants}
+
+Both system-level and repository-level default paths for configuration and log files are defined and exposed to the compiler through compile-time definitions. This centralizes resource location information for consistent access across the codebase.
+
+\subsection{Project Structure and Targets}
+
+The project is organized into subdirectories for executables, libraries, resources, and tests:
+
+\begin{itemize}
+	\item \textbf{Executables:} Targets like \texttt{MIAWorkout} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
+	\item \textbf{Libraries:} Utility libraries such as \texttt{Types\_LIB} are created from source files and expose their include directories for dependent targets. Libraries can link to other internal utilities.
+	\item \textbf{Tests:} Test code is included via a dedicated subdirectory.
+	\item \textbf{Resources:} Static resources are managed in their own subdirectory.
+\end{itemize}
+
+\subsection{Installation Rules}
+
+Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags. This supports flexible deployment workflows for development, testing, and production release.
+
+Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Application Framework}
 \label{sec:app-framework}
 
@@ -208,8 +352,8 @@ The \texttt{ErrorCode} enumeration defines a comprehensive list of standardized 
 \end{itemize}
 
 Each error code is associated with a human-readable description defined in \texttt{ErrorDescriptions.hpp}, accessible via:
-\begin{lstlisting}[language=C++]
-	const std::string& getErrorDescription(ErrorCode code);
+\begin{lstlisting}[style=cppstyle]
+const std::string& getErrorDescription(ErrorCode code);
 \end{lstlisting}
 
 \subsection*{MIAException Class}
@@ -299,6 +443,95 @@ The \texttt{paths} namespace offers a centralized interface for accessing direct
 \end{itemize}
 
 This design ensures portability and flexibility across different environments (development, testing, deployment), with consistent fallback logic and platform-agnostic path resolution.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Configuration File System}
+
+The configuration management for MIA is handled through the \texttt{MIAConfig} class, defined in the \texttt{MIAConfig.hpp} header. This class replaces the earlier configuration mechanism used in the original MIA project and provides a flexible, extensible interface for loading and accessing key-value configuration pairs (with room for expansion).
+
+\subsection{Overview}
+
+The \texttt{MIAConfig} class serves as the centralized component for parsing, storing, and querying configuration settings used by MIA applications. Configuration files are typically expected to follow a simple key-value format, with entries delimited by \texttt{=}, allowing intuitive and minimal configuration. However, expansion of this to provide other formats are expected. See chapter \ref{chap:MIAConfig} for an example configuration and further explanation of the configuration files.
+
+\subsection{Key Concepts}
+
+\begin{itemize}
+	\item \textbf{BasicConfigMap}: Internally, configuration data is stored as a \texttt{std::unordered\_map<std::string, std::string>}, referred to as \texttt{BasicConfigMap}, which maps each key to its corresponding value as a string.
+	
+	\item \textbf{Type-Safe Access}: While all values are stored as strings, the class provides methods for retrieving typed data such as \texttt{int}, \texttt{double}, \texttt{bool}, \texttt{std::vector<std::string>}, and \texttt{std::vector<int>}, enabling easy and safe use of configuration values.
+	
+	\item \textbf{Initialization and Reloading}: Configuration files can be set at construction time or via the \texttt{setConfigFileName()} method. Initialization reads and parses the file. Configuration can also be reloaded dynamically at runtime.
+\end{itemize}
+
+\subsection{Primary Interface}
+
+\begin{itemize}
+	\item \texttt{MIAConfig(const std::string\& configFile, bool verboseMode = false)}\\
+	Constructor that initializes the configuration map using the specified file.
+	
+	\item \texttt{void initialize(bool verboseMode = false)}\\
+	Loads the configuration file and populates the internal map. Throws on failure.
+	
+	\item \texttt{void reload()}\\
+	Re-reads the existing configuration file, effectively reinitializing the map.
+	
+	\item \texttt{std::string getString(const std::string\& key)}\\
+	Returns the value associated with the given key as a string.
+	
+	\item \texttt{int getInt(const std::string\& key)}\\
+	Returns the value as an \texttt{int}; returns 0 on failure.
+	
+	\item \texttt{double getDouble(const std::string\& key)}\\
+	Returns the value as a \texttt{double}; returns 0.0 on failure.
+	
+	\item \texttt{bool getBool(const std::string\& key)}\\
+	Returns the value as a \texttt{bool}; returns \texttt{false} on failure.
+	
+	\item \texttt{std::vector<std::string> getVector(const std::string\& key, char delimiter)}\\
+	Splits the string value by the specified delimiter and returns a vector.
+	
+	\item \texttt{std::vector<int> getIntVector(const std::string\& key, char delimiter)}\\
+	Splits the value into \texttt{int}s using a delimiter and returns a vector.
+	
+	\item \texttt{void dumpConfigMap(std::ostream\& os = std::cout)}\\
+	Outputs all current key-value pairs for debugging or inspection.
+	
+	\item \texttt{std::vector<KeyValuePair> getAllConfigPairs()}\\
+	Retrieves all configuration entries as a vector of key-value pairs.
+\end{itemize}
+
+\subsection{Extensibility}
+
+The design supports future extensions by allowing alternative configuration types (e.g., hierarchical configs, environment overrides, etc.) to be added without altering the existing interface or breaking compatibility.
+
+
+
+
+
+
+
+
+
+
 
 
 
