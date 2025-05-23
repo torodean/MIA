@@ -160,5 +160,14 @@ namespace types
      * @return [bool] True if the line contains exactly one occurrence of delimiterA and exactly one occurrence of delimiterB; otherwise false.
      */
      bool hasExactlyOneOfEachDelimiter(const std::string& line, char delimiterA, char delimiterB);
+     
+    /**
+     * Checks if the given line contains exactly one occurrence of a specified delimiter.
+     *
+     * @param line[const std::string&] The string to check.
+     * @param delimiterA[char] - The first delimiter to count.
+     * @return [bool] True if the line contains exactly one occurrence of the delimiter; otherwise false.
+     */
+     bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA);
 
 } // namespace types

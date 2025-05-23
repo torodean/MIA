@@ -37,6 +37,13 @@ namespace MIA_System
         using BasicConfigMap = std::unordered_map<std::string, std::string>;
         
         /**
+         * Alias for a key-value pair representing a single configuration entry.
+         * Represents a key-value pair from the configuration,
+         * where both key and value are strings.
+         */
+        using KeyValuePair = std::pair<std::string, std::string>;
+        
+        /**
          * Main default constructor for the MIAConfig class.
          */
         MIAConfig() = default;
@@ -154,11 +161,17 @@ namespace MIA_System
         /**
          * Dumps all key-value pairs stored in rawConfigValsMap to the specified output stream.
          * Useful for debugging to inspect the current configuration values.
-         * 
          * @param os [std::ostream&] - The output stream to write the key-value pairs to (default: std::cout).
          */
         [[maybe_unused]]
         void dumpConfigMap(std::ostream& os = std::cout) const;
+        
+        /**
+         * Returns all key-value pairs stored in rawConfigValsMap as a vector.
+         * This can be used to iterate over all configuration entries.
+         * @return std::vector<KeyValuePair> - A vector containing all configuration key-value pairs.
+         */
+        std::vector<KeyValuePair> getAllConfigPairs() const;
 
     private:
     

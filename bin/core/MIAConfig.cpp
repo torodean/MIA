@@ -220,10 +220,24 @@ namespace MIA_System
     
     void MIAConfig::dumpConfigMap(std::ostream& os) const
     {
+        os << "Dumping rawConfigValsMap:" << std::endl;
         for (const auto& val : rawConfigValsMap)
         {
             os << val.first << "=" << val.second << std::endl;
         }
+        os << std::endl;
+    }
+    
+
+    std::vector<MIAConfig::KeyValuePair> MIAConfig::getAllConfigPairs() const
+    {
+        std::vector<KeyValuePair> pairs;
+        pairs.reserve(rawConfigValsMap.size());
+        for (const auto& val : rawConfigValsMap)
+        {
+            pairs.emplace_back(val.first, val.second);
+        }
+        return pairs;
     }
 } // namespace MIA_System
 

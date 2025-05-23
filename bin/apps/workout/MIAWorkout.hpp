@@ -61,7 +61,7 @@ private:
     CommandOption weeklyOpt;
     
     /// The output file path.
-    std::string outputFileName{""};
+    std::string workoutOutputFilePath{""};
     
     /// The difficulty
     double difficulty{1.0};

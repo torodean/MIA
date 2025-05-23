@@ -237,4 +237,10 @@ namespace types
         return std::count(line.begin(), line.end(), delimiterA) == 1 &&
                std::count(line.begin(), line.end(), delimiterB) == 1;
     }
+    
+    
+    bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA)
+    {
+        return std::count(line.begin(), line.end(), delimiterA) == 1;
+    }
 } // namespace types

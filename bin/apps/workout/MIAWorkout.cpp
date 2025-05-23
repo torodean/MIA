@@ -49,7 +49,7 @@ void MIAWorkout::initialize(int argc, char* argv[])
     // Set the values from the command line arguments.
     difficultyOpt.getOptionVal<double>(argc, argv, difficulty);
     weeklyOpt.getOptionVal<bool>(argc, argv, weekly);
-    outputFileOpt.getOptionVal<std::string>(argc, argv, outputFileName);
+    outputFileOpt.getOptionVal<std::string>(argc, argv, workoutOutputFilePath);
     
     std::string configFile = defaultConfigFile;
     configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
@@ -61,8 +61,8 @@ void MIAWorkout::initialize(int argc, char* argv[])
 
 void MIAWorkout::loadConfig()
 {
-    if (outputFileName != "") // Otherwise it was set via a command option.
-        outputFileName = config.getString("outputFileName");
+    if (workoutOutputFilePath != "") // Otherwise it was set via a command option.
+        workoutOutputFilePath = config.getString("workoutOutputFilePath");
     
     // Get config values.
     toughness = config.getDouble("toughness");
@@ -70,6 +70,9 @@ void MIAWorkout::loadConfig()
     maxNumOfExercises = config.getDouble("maxNumOfExercises");
     minNumOfSets = config.getDouble("minNumOfSets");
     maxNumOfSets = config.getDouble("maxNumOfSets");
+    
+    if (getVerboseMode())
+        config.dumpConfigMap();
 }
 
 void MIAWorkout::printHelp() const
@@ -104,6 +107,7 @@ double MIAWorkout::minNumModifier(double min, double max, double difficulty)
     //adjusts the min compared to max.
     //Set such that new curves are similar to old workout generation functions.
     double minModifier = 1.9;
+    
 
     return (-((-max + min*minModifier)/(10.0*pow(10.0,(1.0/3.0))*minModifier)))*pow(difficulty,(2.0/3.0)) + min;
 }
@@ -116,7 +120,7 @@ void MIAWorkout::generateWorkout()
 
     if(weekly)
     {
-        string outputFile = outputFileName;
+        string outputFile = workoutOutputFilePath;
         outputFile.erase(outputFile.end()-4, outputFile.end());
         outputFile += " ";
         outputFile += __DATE__;
@@ -138,266 +142,229 @@ void MIAWorkout::generateWorkout()
         out.open(outputFile);
         out << outputFileText;
     }
+    
+    // All the exercises are stored in the config file.
+    std::vector<MIA_System::MIAConfig::KeyValuePair> exercisesList = config.getAllConfigPairs();
 
-    cout << "..." << endl;
-    cout << "...Loading MIA workout generation. " << endl;
-    cout << "..." << endl;
-
-    // TODO - this is stored in the config map. Replace this code to fetch this from there.
-    // grabs the workouts file.
-    string fileName = config.getConfigFileFullPath();
-    std::ifstream file(fileName, std::ifstream::in);
-
-    //Checks if the file exists and gathers the variables.
-    if (file.good())
+    // Creates and stores workouts file/program variables.
+    vector<string> workoutName;
+    vector<double> workoutWeight;
+    vector<string> workoutUnit;
+    int maxNumOfExercises = 0; // Counter for number of exercises. Doubles as a counter.
+    
+    // Sets the workout file variables and the weighted value.
+    for(const auto& exercise : exercisesList)
     {
-        string line;
-        vector<string> lines;
-
-        //If true, print the workouts file.
-        if (getVerboseMode())
+        if (!exercise.second.empty() &&                              // skip empty lines
+            types::hasExactlyOneOfADelimiter(exercise.second, ';'))  // Make sure it's an exercise line.
         {
-            cout << endl << "...Workouts file output: " << endl;
-        }
-        while(getline(file,line))
-        {
-            if (line.empty() &&                                // skip empty lines
-                line[0] != '#' &&                              // skip comments
-                line.size()>2 &&                               // skip small lines
-                types::hasExactlyOneOfEachDelimiter(line, '=', ';'))  // Make sure it's an exercise line.
-            {
-                if(getVerboseMode())
-                    cout << line << endl;
-
-                // remove spaces from each line for processing
-                line.erase(remove(line.begin(), line.end(), ' '), line.end());
-                // removes end of line characters from variable name and value. Fixes a bug.
-                line.erase(remove(line.begin(), line.end(), '\r'), line.end());
-                line.erase(remove(line.begin(), line.end(), '\n'), line.end());
-
-                lines.push_back(line);
-            }
-        }
-        
-        if(getVerboseMode())
-            cout << endl << "...Finished reading in workouts file. " << endl;
-
-        // Creates and stores workouts file/program variables.
-        vector<string> workoutName;
-        vector<double> workoutWeight;
-        vector<string> workoutUnit;
-        int size = lines.size();
-        double maxNumOfExercises = (double)size;
-
-        // Sets the workout file variables and the weighted value.
-        for(int i=0; i<size; i++)
-        {
-            workoutName.push_back(types::getBeforeChar(lines[i], '=') );
-            workoutWeight.push_back( convertWorkoutWeight(types::getBetweenEqualAndSemiColon(lines[i]) ) );
-            workoutUnit.push_back(types::getAfterChar(lines[i], ';') );
+            workoutName.push_back(exercise.first);
+            workoutWeight.push_back( convertWorkoutWeight( types::getBeforeChar(exercise.second, ';') ) );
+            workoutUnit.push_back(types::getAfterChar(exercise.second, ';') );
 
             if(getVerboseMode())
             {
                 cout << "...Printing values set. " << endl;
-                cout << workoutName[i] << ": ";
-                cout << workoutWeight[i] << " ";
-                cout << workoutUnit[i] << endl;
+                cout << workoutName[maxNumOfExercises] << ": ";
+                cout << workoutWeight[maxNumOfExercises] << " ";
+                cout << workoutUnit[maxNumOfExercises] << endl;
             }
+            maxNumOfExercises++; // Increment for new exercise found.
+        }
+    }
+
+    cout << "...Running workout generation. " << endl;
+
+    int counter = 1; //For changing random integers between calls.
+
+    // Loops over the generation code however many times needed.
+    while(timesToGenerate > 0)
+    {
+
+        if(!weekly)
+        {
+            cout << endl;
+        } 
+        else if(timesToGenerate == 7)
+        {
+            out << "##############\n"
+                   "### SUNDAY ###\n"
+                   "##############" << endl << endl;
+        } 
+        else if(timesToGenerate == 6)
+        {
+            out << "##############\n"
+                   "### MONDAY ###\n"
+                   "##############" << endl << endl;
+        } 
+        else if(timesToGenerate == 5)
+        {
+            out << "###############\n"
+                   "### TUESDAY ###\n"
+                   "###############" << endl << endl;
+        } 
+        else if(timesToGenerate == 4)
+        {
+            out << "#################\n"
+                   "### WEDNESDAY ###\n"
+                   "#################" << endl << endl;
+        } 
+        else if(timesToGenerate == 3)
+        {
+            out << "################\n"
+                   "### THURSDAY ###\n"
+                   "################" << endl << endl;
+        } 
+        else if(timesToGenerate == 2)
+        {
+            out << "##############\n"
+                   "### FRIDAY ###\n"
+                   "##############" << endl << endl;
+        } 
+        else if(timesToGenerate == 1)
+        {
+            out << "################\n"
+                   "### SATURDAY ###\n"
+                   "################" << endl << endl;
         }
 
-        cout << "...Running workout generation. " << endl;
+        //Calculates workout routine
+        double maxNumOfExercisesModifier = maxNumModifier(minNumOfExercises, static_cast<double>(maxNumOfExercises), difficulty);
+        double minNumOfExercisesModifier = minNumModifier(minNumOfExercises, static_cast<double>(maxNumOfExercises), difficulty);
+        double maxNumOfSetsModifier = maxNumModifier(minNumOfSets, maxNumOfSets, difficulty);
+        double minNumOfSetsModifier = minNumModifier(minNumOfSets, maxNumOfSets, difficulty);
 
-        int counter = 1; //For changing random integers between calls.
+        int numOfWorkouts;
+        counter++;
+        int numOfSets = math::randomInt((int)minNumOfSetsModifier, (int)maxNumOfSetsModifier, counter, true);
 
-        // Loops over the generation code however many times needed.
-        while(timesToGenerate > 0)
+        if (getVerboseMode())
         {
+            std::cout << "maxNumOfExercisesModifier: " << maxNumOfExercisesModifier << std::endl;
+            std::cout << "minNumOfExercisesModifier: " << minNumOfExercisesModifier << std::endl;
+            std::cout << "maxNumOfSetsModifier: " << maxNumOfSetsModifier << std::endl;
+            std::cout << "minNumOfSetsModifier: " << minNumOfSetsModifier << std::endl;
+            std::cout << "numOfSets: " << numOfSets << std::endl;
+        }
+            
+        if(weekly)
+        {
+            out << "...Number of sets: " << numOfSets << endl << endl;
+        } 
+        else 
+        {
+            cout << "...Number of sets: " << numOfSets << endl;
+            cout << endl;
+        }
 
-            if(!weekly)
-            {
-                cout << endl;
-            } 
-            else if(timesToGenerate == 7)
-            {
-                out << "##############\n"
-                       "### SUNDAY ###\n"
-                       "##############" << endl << endl;
-            } 
-            else if(timesToGenerate == 6)
-            {
-                out << "##############\n"
-                       "### MONDAY ###\n"
-                       "##############" << endl << endl;
-            } 
-            else if(timesToGenerate == 5)
-            {
-                out << "###############\n"
-                       "### TUESDAY ###\n"
-                       "###############" << endl << endl;
-            } 
-            else if(timesToGenerate == 4)
-            {
-                out << "#################\n"
-                       "### WEDNESDAY ###\n"
-                       "#################" << endl << endl;
-            } 
-            else if(timesToGenerate == 3)
-            {
-                out << "################\n"
-                       "### THURSDAY ###\n"
-                       "################" << endl << endl;
-            } 
-            else if(timesToGenerate == 2)
-            {
-                out << "##############\n"
-                       "### FRIDAY ###\n"
-                       "##############" << endl << endl;
-            } 
-            else if(timesToGenerate == 1)
-            {
-                out << "################\n"
-                       "### SATURDAY ###\n"
-                       "################" << endl << endl;
-            }
+        // declares some needed variables.
+        vector<bool> workoutChosen;
+        workoutChosen.reserve(maxNumOfExercises);
+        for(int i=0; i<maxNumOfExercises; i++)
+        {
+            workoutChosen.push_back(false);
+        }
+        counter++;
+        int randNum = math::randomInt(0, maxNumOfExercises, counter, true);
+        int set = 1;
+        double repsMin, repsMax, repsModifier;
 
-            //Calculates workout routine
-            double maxNumOfExercisesModifier = maxNumModifier(minNumOfExercises, maxNumOfExercises, difficulty);
-            double minNumOfExercisesModifier = minNumModifier(minNumOfExercises, maxNumOfExercises, difficulty);
-            double maxNumOfSetsModifier = maxNumModifier(minNumOfSets, maxNumOfSets, difficulty);
-            double minNumOfSetsModifier = minNumModifier(minNumOfSets, maxNumOfSets, difficulty);
-
-
-            int numOfWorkouts;
+        // Loops over the stuff and creates a random workout for each set.
+        while (numOfSets > 0)
+        {
             counter++;
-            int numOfSets = math::randomInt((int)minNumOfSetsModifier, (int)maxNumOfSetsModifier, counter, true);
-
-            if(getVerboseMode())
-                cout << "...numOfSets: " << numOfSets << endl;
-                
             if(weekly)
-            {
-                out << "...Number of sets: " << numOfSets << endl << endl;
-            } 
-            else 
-            {
-                cout << "...Number of sets: " << numOfSets << endl;
+            { //prints results.
+                out << "...Workout for set " << set << "." << endl << endl;
+            } else {
+                cout << "...Workout for set " << set << "." << endl;
                 cout << endl;
             }
 
-            // declares some needed variables.
-            vector<bool> workoutChosen;
-            workoutChosen.reserve(size);
-            for(int i=0; i<size; i++)
+
+            for (int i=0; i<maxNumOfExercises; i++)
             {
-                workoutChosen.push_back(false);
+                workoutChosen[i] = false;
             }
-            counter++;
-            int randNum = math::randomInt(0, size, counter, true);
-            int set = 1;
-            double repsMin, repsMax, repsModifier;
 
-            // Loops over the stuff and creates a random workout for each set.
-            while (numOfSets > 0)
+            // randomizes the number of workouts per set.
+            int randCounter = randNum;
+            numOfWorkouts = math::randomInt((int)minNumOfExercisesModifier, (int)maxNumOfExercisesModifier, randCounter, true);
+
+            // determines which workouts to use.
+            for(int i=0;i<numOfWorkouts; i++)
             {
-                counter++;
-                if(weekly)
-                { //prints results.
-                    out << "...Workout for set " << set << "." << endl << endl;
-                } else {
-                    cout << "...Workout for set " << set << "." << endl;
-                    cout << endl;
-                }
-
-
-                for (int i=0; i<size; i++)
+                randNum = math::randomInt(0, maxNumOfExercises, randCounter, true);
+                while(workoutChosen[randNum])
                 {
-                    workoutChosen[i] = false;
-                }
-
-                // randomizes the number of workouts per set.
-                int randCounter = randNum;
-                numOfWorkouts = math::randomInt((int)minNumOfExercisesModifier, (int)maxNumOfExercisesModifier, randCounter, true);
-
-                // determines which workouts to use.
-                for(int i=0;i<numOfWorkouts; i++)
-                {
-                    randNum = math::randomInt(0, size, randCounter, true);
-                    while(workoutChosen[randNum])
-                    {
-                        randNum = math::randomInt(0, size, randCounter, true);
-                        randCounter++;
-                    }
-                    workoutChosen[randNum] = true;
-                }
-
-                // Determines values for each workout and prints the results.
-                for (int i=0; i<size; i++)
-                {
+                    randNum = math::randomInt(0, maxNumOfExercises, randCounter, true);
                     randCounter++;
-                    if(workoutChosen[i]){
-                        repsMin = (toughness*difficulty*workoutWeight[i]-workoutWeight[i])/2+workoutWeight[i];
-                        repsMax = toughness*difficulty*workoutWeight[i];
-                        if(workoutName[i] != "running"){
-                            repsModifier = math::randomInt((int)repsMin, (int)repsMax, randCounter, true);
-                            if(weekly)
-                            { //prints results.
-                                out << workoutName[i] << ": " << (int)repsModifier+1 << " " << workoutUnit[i] << endl;
-                            } 
-                            else 
-                            {
-                                cout << workoutName[i] << ": " << (int)repsModifier+1 << " " << workoutUnit[i] << endl;
-                            }
+                }
+                workoutChosen[randNum] = true;
+            }
+
+            // Determines values for each workout and prints the results.
+            for (int i=0; i<maxNumOfExercises; i++)
+            {
+                randCounter++;
+                if(workoutChosen[i]){
+                    repsMin = (toughness*difficulty*workoutWeight[i]-workoutWeight[i])/2+workoutWeight[i];
+                    repsMax = toughness*difficulty*workoutWeight[i];
+                    if(workoutName[i] != "running"){
+                        repsModifier = math::randomInt((int)repsMin, (int)repsMax, randCounter, true);
+                        if(weekly)
+                        { //prints results.
+                            out << workoutName[i] << ": " << (int)repsModifier+1 << " " << workoutUnit[i] << endl;
                         } 
                         else 
                         {
-                            repsModifier = math::randomInt((int)(repsMin*100.0), (int)(repsMax*100.0), randCounter, true);
-                            repsModifier /= 100;
-                            if(weekly)
-                            { //prints results.
-                                out << workoutName[i] << ": " << repsModifier << " " << workoutUnit[i] << endl;
-                            } 
-                            else 
-                            {
-                                cout << workoutName[i] << ": " << repsModifier << " " << workoutUnit[i] << endl;
-                            }
+                            cout << workoutName[i] << ": " << (int)repsModifier+1 << " " << workoutUnit[i] << endl;
+                        }
+                    } 
+                    else 
+                    {
+                        repsModifier = math::randomInt((int)(repsMin*100.0), (int)(repsMax*100.0), randCounter, true);
+                        repsModifier /= 100;
+                        if(weekly)
+                        { //prints results.
+                            out << workoutName[i] << ": " << repsModifier << " " << workoutUnit[i] << endl;
+                        } 
+                        else 
+                        {
+                            cout << workoutName[i] << ": " << repsModifier << " " << workoutUnit[i] << endl;
                         }
                     }
                 }
-                
-                set++;
-                numOfSets--;
-                
-                if(weekly) //prints results.
-                    out << endl;
-                else
-                    cout << endl;
-                    
             }
-            if(difficulty == 0.0)
-            {
-                if(weekly)
-                { //prints results.
-                    out << "rest: 45 minutes" << endl;
-                } 
-                else 
-                {
-                    cout << "rest: 45 minutes" << endl;
-                }
-            }
-            if (weekly) //prints results.
+            
+            set++;
+            numOfSets--;
+            
+            if(weekly) //prints results.
                 out << endl;
             else
                 cout << endl;
                 
-            timesToGenerate--;
         }
-        cout << "...Workout generation completed." << endl;
-    } 
-    else 
-    {
-        if (getVerboseMode())
-            error::returnError(31404, fileName);
+        if(difficulty == 0.0)
+        {
+            if(weekly)
+            { //prints results.
+                out << "rest: 45 minutes" << endl;
+            } 
+            else 
+            {
+                cout << "rest: 45 minutes" << endl;
+            }
+        }
+        if (weekly) //prints results.
+            out << endl;
+        else
+            cout << endl;
+            
+        timesToGenerate--;
     }
+    cout << "...Workout generation completed." << endl;
 } // void MIAWorkout::generateWorkout(..)
 
 

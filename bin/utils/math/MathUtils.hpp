@@ -16,7 +16,7 @@ namespace math
      * @param min[int] - Lower bound value to use.
      * @param max[int] - Higher bound to use.
      * @param seed[int] - A seed to randomize output.
-     * @param useTime[bool] - Uses teh time to determine the seed (default = true).
+     * @param useTime[bool] - Uses the time to determine the seed (default = true).
      * @param verboseMode[bool] - Enables verbose output (default = false).
      * @return [int] - An appropriate random integer.
      */

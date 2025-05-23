@@ -14,8 +14,7 @@
 
 // Include the associated header file.
 #include "MathUtils.hpp"
-
-// @TODO - update this header appropriately for new congig/setup.
+// Used for parsing dice roll strings.
 #include "StringUtils.hpp"
 
 using std::cout;
@@ -25,6 +24,9 @@ namespace math
 {
     int randomInt(int min, int max, int seed, bool useTime, bool verboseMode)
     {
+        if (min == max)
+            return min;
+            
         if(max < min)
         {
             if(verboseMode)

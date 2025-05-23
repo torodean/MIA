@@ -24,7 +24,7 @@ toughness = 0.1
 minNumOfExercises = 3.0
 maxNumOfExercises = inf
 minNumOfSets = 1.0
-maxNumOfSets = inf
+maxNumOfSets = 10.0
 
 #############################################
 #### Define exercises below this point
