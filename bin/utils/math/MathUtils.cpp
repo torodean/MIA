@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include <random>
 #include <cmath>
 #include <limits>
 
@@ -37,14 +38,10 @@ namespace math
         if(verboseMode)
             cout << "...Calculating random value between " << min << " and " << max << "." << endl;
         
-        if(seed == 0)
-            srand((unsigned)time(nullptr));
-        else if (useTime)
-            srand((unsigned)time(nullptr) + seed);
-        else 
-            srand(seed);
+        std::mt19937 rng(std::random_device{}());
+        std::uniform_int_distribution<int> dist(min, max);
+        int random = dist(rng);
         
-        int random = min + (rand() % (max - min + 1));
         if(verboseMode)
             cout << "...random value is " << random << "." << endl;
         return random;
