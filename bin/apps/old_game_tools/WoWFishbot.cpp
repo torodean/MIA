@@ -19,23 +19,28 @@
 #include "Error.hpp"
 // Used for config path.
 #include "Paths.hpp"
+// Used for command line parsing.
+#include "CommandOption.hpp"
 
 using std::string;
 using std::cout;
 using std::endl;
 
 
+WoWFishbot::WoWFishbot() : 
+    config(defaultConfigFile),
+    configFileOpt("-c", "--config", "Specify a config file to use (default = " +
+                                    paths::getDefaultConfigDirToUse() + "/" + 
+                                    defaultConfigFile + ")",
+                                    CommandOption::commandOptionType::stringOption)
+                                    
+{ };
+
+
 void WoWFishbot::initialize(int argc, char* argv[])
 {
-    for (int i = 1; i < argc; ++i)
-    {
-        string arg = argv[i];
-        if ((arg == "-c" || arg == "--config") && i + 1 < argc)
-        {
-            config.setConfigFileName(argv[++i]); // advance to next arg
-        }
-    }
-
+    std::string configFile = configFileOpt.getOptionVal<std::string>(argc, argv);
+    config.setConfigFileName(configFile);
     loadConfig();
 }
 
@@ -258,7 +263,6 @@ void WoWFishbot::printHelp() const
     MIAApplication::printHelp();
     
     cout << "Fishbot specific options:" << endl
-         << "  -c, --config    Specify a config file to use (default = "
-         << paths::getDefaultConfigDirToUse() << "/" << defaultConfigFile
-         << ")" << endl;;
+         << configFileOpt.getHelp() 
+         << endl;
 }

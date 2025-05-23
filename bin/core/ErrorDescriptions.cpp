@@ -39,6 +39,7 @@ namespace error
         { Invalid_Argument, "Invalid application/command argument." },
         { Missing_Argument, "The app/command argument was not found." },
         { Failed_To_Open_File, "Failed to open file." },
+        { Invalid_Type_Requested, "Invalid type for template argument." },
         { Catastrophic_Failure, "A catastrophic failure occurred." }
     };
 

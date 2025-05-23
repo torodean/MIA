@@ -15,6 +15,8 @@
 #include "MIAConfig.hpp"
 // Used for common app setup.
 #include "MIAApplication.hpp"
+// Used for command options.
+#include "CommandOption.hpp"
  
 /**
  * This class contains the code related to the WoWFishbot. This code was decoupled from other
@@ -25,11 +27,9 @@ class WoWFishbot : public MIAApplication
 {
 public:
     /**
-     * The main constructor of the WoWFishbot class.
+     * The main constructor of the WoWFishbot class. This will construct the command options.
      */
-    WoWFishbot() : 
-        config(defaultConfigFile)
-    { };
+    WoWFishbot();
     
     /// Default destructor.
     ~WoWFishbot() = default;
@@ -64,6 +64,9 @@ private:
     
     /// Intro text for the fishbot. This is mostly for flavor.
     void fishBotIntro();
+    
+    // Command options for this app.
+    CommandOption configFileOpt;
     
     /// The name of the defauilt config file that this class uses.
     std::string defaultConfigFile{"WoWConfig.MIA"};

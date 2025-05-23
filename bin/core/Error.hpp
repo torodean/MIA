@@ -53,6 +53,7 @@ namespace error
         Missing_Argument = 31429,             ///< The app/command argument was not found.
         Config_File_Not_Set = 31430,          ///< Config File not set.
         Failed_To_Open_File = 31431,          ///< Failed to open a file.
+        Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
         Catastrophic_Failure = 9001           ///< Some unprogrammed error occured.
     };
 
