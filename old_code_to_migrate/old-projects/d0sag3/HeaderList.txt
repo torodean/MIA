@@ -1,0 +1,70 @@
+class d3intmath
+{
+public:
+    d3intmath();
+    bool isPrime(long x);
+    bool isPrime(int x);
+    bool isPalindrome(int x);
+    bool isPalindrome(long x);
+    int numberOfFactors(long x);
+    int numberOfFactors(int x);
+    bool isTriangleNumber(long x);
+    bool isTriangleNumber(int x);
+    int numOfDigits(long x);
+    int numOfDigits(int x);
+    int returnLargerInt(int One, int Two);
+    int returnLargerInt(long One, long Two);
+    int sumOfFactors(int x);
+};
+
+class d3string
+{
+public:
+    d3string();
+    long sumOfDigits(string number);
+    string zeroString(int length);
+    int numOfDigits(string x);
+    int spacesInAString(string text);
+};
+
+class d3stringmath
+{
+public:
+    d3stringmath();
+    long sumOfDigits(string number);
+    vector<int> stringToVector(string a);
+    string vectorToStringZeroTrim(vector<int> a);
+    string resizeString(string a, string b);
+    string addTwoStrings(string stringOne, string stringTwo);
+    string multiplyTwoStrings(string stringOne, string stringTwo);
+};
+
+class Euler
+{
+public:
+    Euler();
+    void Euler000();
+    void Euler001(int x);
+    void Euler002();
+    void Euler003(long x);
+    void Euler006(int x);
+    void Euler005();
+    void Euler004();
+    void Euler007();
+    void Euler008();
+    void Euler009();
+    void Euler010(long x);
+    void Euler011();
+    void Euler012();
+    void Euler013();
+    void Euler014();
+    void Euler015();
+    void Euler016();
+    void Euler017();
+    void Euler018();
+    void Euler019();
+    void Euler020();
+    void Euler021();
+    void Euler025(int a) ;
+    void Euler048(int x);
+};
