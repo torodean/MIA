@@ -20,4 +20,23 @@ namespace constants
 {
     // The MIA Version value gathered from CMake.
     inline const std::string MIA_VERSION = MIA_VERSION_VAL;
+    
+    /**
+     * Enum to specify the type of configuration data stored in an implementation of 
+     * the ConfigData interface.
+     * @see ConfigData
+     */
+    enum class ConfigType
+    {
+        KEY_VALUE,  // Key-value pairs separated by '='.
+        RAW_LINES   // Raw file lines without parsing.
+        // Future types (e.g., JSON, YAML) can be added here
+    };
+        
+    /**
+     * Alias for a key-value pair representing a single configuration entry.
+     * Represents a key-value pair from the configuration,
+     * where both key and value are strings.
+     */
+    using KeyValuePair = std::pair<std::string, std::string>;
 } // namespace constants

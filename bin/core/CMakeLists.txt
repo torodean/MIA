@@ -12,17 +12,22 @@ target_include_directories(Constants_LIB INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Create the Core_LIB.
 set(Core_SRC 
-    Error.cpp 
-    ErrorDescriptions.cpp 
+    Error.cpp
+    ErrorDescriptions.cpp
     MIAConfig.cpp
-    CommandParser.cpp 
+    KeyValueData.cpp
+    RawLinesData.cpp
+    CommandParser.cpp
     MIAApplication.cpp )
 set(Core_INC 
-    Error.hpp 
-    ErrorDescriptions.hpp 
-    MIAException.hpp 
-    MIAConfig.hpp 
-    MIAApplication.hpp 
+    Error.hpp
+    ErrorDescriptions.hpp
+    MIAException.hpp
+    MIAConfig.hpp
+    ConfigData.hpp
+    KeyValueData.hpp
+    RawLinesData.hpp
+    MIAApplication.hpp
     CommandParser.hpp
     CommandOption.hpp
     AppFramework.hpp )

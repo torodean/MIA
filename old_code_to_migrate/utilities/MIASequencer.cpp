@@ -50,7 +50,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 	//Sets the input variable for a new sequence name.
 	if (variable == "SEQUENCENAME")
 	{
-		if (Configurator::getVerboseMode())
+		if (verboseMode)
 		{
 			cout << "...Setting Sequence SEQUENCENAME: " << value << endl;
 		}
@@ -62,7 +62,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 	}
 	else if(variable == "TIMING")
 	{
-		if (Configurator::getVerboseMode())
+		if (verboseMode)
 		{
 			cout << "...Setting Sequence TIMING: " << value << endl;
 		}
@@ -71,7 +71,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 	//Sets the input variable for hover times.
 	} else if(variable == "HOVERTIME")
 	{
-		if (Configurator::getVerboseMode())
+		if (verboseMode)
 		{
 			cout << "...Setting Sequence HOVERTIME: " << value << endl;
 		}
@@ -81,7 +81,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 	}
 	else if(variable == "TYPE")
 	{
-		if(Configurator::getVerboseMode())
+		if(verboseMode)
 		{
 			cout << "...Found sequence of type: " << variable << endl;
 			cout << "...Setting coordx: " << 0 << endl;
@@ -104,7 +104,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 		
 		coordx = variable.substr(0, commaLocation);
 		coordy = variable.substr(commaLocation+1,variable.size()-1);
-		if(Configurator::getVerboseMode())
+		if(verboseMode)
 		{
 			cout << "...Found coordx: " << coordx << endl;
 			cout << "...Found coordy: " << coordy << endl;
@@ -138,7 +138,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 		sequenceXCoords.insert(pair<string, vector<int>>(sequenceNames[lastSequenceIndex], sequenceXCoordLine));
 		sequenceYCoords.insert(pair<string, vector<int>>(sequenceNames[lastSequenceIndex], sequenceYCoordLine));
 		sequenceSizes.insert(pair<string, int>(sequenceNames[lastSequenceIndex], sequenceSize));
-		if(Configurator::getVerboseMode())
+		if(verboseMode)
 		{
 			cout << "...Creating size map: " << sequenceNames[lastSequenceIndex] << " -> " << sequenceSize << endl;
 			cout << "...Found ENDOFSEQUENCE." << endl;
@@ -151,7 +151,7 @@ void Sequencer::setSequenceVariables(string variable, string value)
 	}
 	else
     {
-		if(Configurator::getVerboseMode())
+		if(verboseMode)
 		{
 			Error::returnError(31422, variable);
 		}
@@ -172,7 +172,7 @@ void Sequencer::initializeSequences()
 		vector<string> lines;
 
 		//If true, print the configuration file settings.
-		if (Configurator::getVerboseMode())
+		if (verboseMode)
 		{
 			cout << endl << "...Sequence file output: " << endl;
 		}
@@ -180,14 +180,14 @@ void Sequencer::initializeSequences()
 		{
 			if (line[0] != '#' && !line.empty() && line.size()>2)
 			{
-				if(Configurator::getVerboseMode())
+				if(verboseMode)
 				{
 					cout << line << endl;
 				}
 				lines.push_back(line);
 			}	
 		}
-		if(Configurator::getVerboseMode())
+		if(verboseMode)
 		{
 			cout << endl;
 		}
@@ -209,7 +209,7 @@ void Sequencer::initializeSequences()
 				variable = "ENDOFSEQUENCE";
 			}
 			
-			if(Configurator::getVerboseMode() && variable != "ENDOFSEQUENCE")
+			if(verboseMode && variable != "ENDOFSEQUENCE")
 			{
 				cout << "...Sequence variable: " << variable << " with action " << value << "'" << endl;
 			}
@@ -225,7 +225,7 @@ void Sequencer::initializeSequences()
 
 int Sequencer::getSequenceSize(const string& sequence)
 {
-	if(Configurator::getVerboseMode())
+	if(verboseMode)
 	{
 		cout << "...Finding size for sequence " << sequence << " as " << sequenceSizes.find(sequence)->second << endl;
 	}
@@ -235,7 +235,7 @@ int Sequencer::getSequenceSize(const string& sequence)
 
 vector<int> Sequencer::getSequenceXCoords(const string& sequence)
 {
-	if(Configurator::getVerboseMode())
+	if(verboseMode)
 	{
 		cout << "...Finding X Coordinates for sequence " << sequence 
 		//<< " as " << sequenceXCoords2.find(sequence)->second 
@@ -247,7 +247,7 @@ vector<int> Sequencer::getSequenceXCoords(const string& sequence)
 
 vector<int> Sequencer::getSequenceYCoords(const string& sequence)
 {
-	if(Configurator::getVerboseMode())
+	if(verboseMode)
 	{
 		cout << "...Finding Y Coordinates for sequence " << sequence 
 		//<< " as " << sequenceYCoords2.find(sequence)->second 
@@ -259,7 +259,7 @@ vector<int> Sequencer::getSequenceYCoords(const string& sequence)
 
 vector<string> Sequencer::getSequenceActions(const string& sequence)
 {
-	if(Configurator::getVerboseMode())
+	if(verboseMode)
 	{
 		cout << "...Finding Actions for sequence " << sequence
 		//<< " as " << sequenceActions2.find(sequence)->second 
@@ -285,7 +285,7 @@ void Sequencer::activateSequence(const string& sequence)
 		SystemUtils::sleepSeconds(timing);
 		if(XCoords[i] == 0 && YCoords[i] == 0)
 		{
-			if(Configurator::getVerboseMode())
+			if(verboseMode)
 			{
 				cout << "...Coordinates both zero, typing " << actions[i] << endl;
 			}
@@ -293,14 +293,14 @@ void Sequencer::activateSequence(const string& sequence)
 		}
 		else
 		{
-			if(Configurator::getVerboseMode())
+			if(verboseMode)
 			{
 				cout << "...Coordinates not both zero, moving mouse to " << XCoords[i] << "," << YCoords[i] << "." << endl;
 			}
 			keys.moveMouseTo(XCoords[i], YCoords[i]);
 			if(actions[i] == "HOVER")
 			{
-				if(Configurator::getVerboseMode())
+				if(verboseMode)
 				{
 					cout << "...Coordinates both zero, Hovering for " << hover << " seconds." << endl;
 				}
@@ -308,7 +308,7 @@ void Sequencer::activateSequence(const string& sequence)
 			}
 			else
 			{
-				if(Configurator::getVerboseMode())
+				if(verboseMode)
 				{
 					cout << "...Coordinates not zero, performing action: " << actions[i] << endl;
 				}

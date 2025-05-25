@@ -160,7 +160,7 @@ void MIAWorkout::generateWorkout()
     }
     
     // All the exercises are stored in the config file.
-    std::vector<MIA_System::MIAConfig::KeyValuePair> exercisesList = config.getAllConfigPairs();
+    std::vector<std::pair<std::string, std::string>> exercisesList = config.getAllConfigPairs();
 
     // Creates and stores workouts file/program variables.
     vector<string> workoutName;

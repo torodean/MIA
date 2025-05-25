@@ -12,8 +12,10 @@
 #include <string>
 #include <limits> // Used for infinity()
 
-// The associated header file.
+// The associated header file(s).
 #include "MIAConfig.hpp"
+#include "KeyValueData.hpp"
+#include "RawLinesData.hpp"
 // Used for file path locations.
 #include "Paths.hpp"
 // Used foir some string manipulation
@@ -25,16 +27,50 @@
 
 namespace MIA_System
 {
+    // default to RawLinesData since it is perfectly valid for any type of file.
+    MIAConfig::MIAConfig() : configData(std::make_unique<RawLinesData>()) {}
+
+    MIAConfig::MIAConfig(const std::string& configFile, constants::ConfigType type, bool verboseMode)
+        : configFileName(configFile)
+    {
+        switch (type) 
+        {
+            case constants::ConfigType::KEY_VALUE:
+                configData = std::make_unique<KeyValueData>();
+                break;
+            case constants::ConfigType::RAW_LINES:
+                configData = std::make_unique<RawLinesData>();
+                break;
+        }
+    }
+    
+    MIAConfig::~MIAConfig() = default;
+    
+    void MIAConfig::setConfigFileName(const std::string& configFile, constants::ConfigType type, bool verboseMode)
+    {
+        configFileName = configFile;
+        switch (type) 
+        {
+            case constants::ConfigType::KEY_VALUE:
+                configData = std::make_unique<KeyValueData>();
+                break;
+            case constants::ConfigType::RAW_LINES:
+                configData = std::make_unique<RawLinesData>();
+                break;
+        }
+        reload(verboseMode);
+    }
+    
     void MIAConfig::initialize(bool verboseMode)
     {
-        rawConfigValsMap.clear();
-
+        // Check if the configuration file has been set.
         if (configFileName.empty()) 
         { 
             std::string err = "No config file set in MIAConfig::initialize(..).";
             throw error::MIAException(error::ErrorCode::Config_File_Not_Set, err);
         }
 
+        // Get the full path of the configuration file.
         if (configFileName.front() == '/') 
         {
             configFileFullPath = configFileName; // Assume absolute path.
@@ -43,195 +79,58 @@ namespace MIA_System
         {
             configFileFullPath = paths::getDefaultConfigDirToUse() + "/" + configFileName;
         }
-
-        std::ifstream file(configFileFullPath, std::ifstream::in);
-        if (!file.is_open()) 
-        {            
-            std::string err = "Failed to open config file: " + configFileFullPath;
-            throw error::MIAException(error::ErrorCode::Failed_To_Open_File, err);
-        }
-
-        std::string line;
-        std::vector<std::string> lines;
         
-        while (std::getline(file, line)) 
-        {            
-            if (!line.empty() && line[0] != '#' && line.size()>2)
-            {
-                if(verboseMode) 
-					std::cout << line << std::endl;
-                lines.push_back(line);
-            }
-        }
-        if(verboseMode) 
-			std::cout << std::endl;
-
-        file.close();
-        
-        int size = lines.size();
-        int equalSignLocation;        
-        std::string variable, value;
-        for (int i=0; i<size;i++)
-        {
-            equalSignLocation = BasicUtilities::findCharInString(lines[i], '=');
-            if (equalSignLocation <= 0 || equalSignLocation >= lines[i].size() - 1)
-                continue; // or log malformed line
-                
-            variable = BasicUtilities::strip(lines[i].substr(0, equalSignLocation));
-            value = lines[i].substr(equalSignLocation+1,lines[i].size()-1);
-
-            //removes end of line characters from variable name and value. Fixes a bug.
-            variable.erase(remove(variable.begin(), variable.end(), '\r'), variable.end());
-            value.erase(remove(value.begin(), value.end(), '\r'), value.end());
-
-            rawConfigValsMap[variable] = BasicUtilities::strip(value);
-        }
+        configData->load(configFileFullPath, verboseMode);
     }
     
+    constants::ConfigType MIAConfig::getConfigType() const
+    {
+        return configData->getType();
+    }
 
     int MIAConfig::getInt(const std::string& key) const
     {
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-        try 
-        {
-            return std::stoi(it->second);
-        } 
-        catch (...) 
-        {
-            // TODO - Add MIAException here.
-            return 0;
-        }
+        return configData->getInt(key);
     }
-
 
     double MIAConfig::getDouble(const std::string& key) const
     {
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-        try 
-        {
-            if (it->second == "inf" || it->second == "infinity")
-                return std::numeric_limits<double>::infinity();
-            else
-                return std::stod(it->second);
-        } 
-        catch (...) 
-        {
-            // TODO - Add MIAException here.
-            return 0.0;
-        }
+        return configData->getDouble(key);
     }
-
 
     std::string MIAConfig::getString(const std::string& key) const
     {
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-            
-        return it->second;
+        return configData->getString(key);
     }
-
 
     std::vector<std::string> MIAConfig::getVector(const std::string& key, char delimiter) const
     {
-        std::vector<std::string> result;
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-
-        std::string val = it->second;
-        std::stringstream ss(val);
-        std::string item;
-        while (std::getline(ss, item, delimiter)) 
-        {
-            result.push_back(item);
-        }
-        
-        return result;
+        return configData->getVector(key, delimiter);
     }
-
 
     bool MIAConfig::getBool(const std::string& key) const
     {
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-            
-        std::string val = it->second;
-        std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-        
-        // Check for different forms of true.
-        return (val == "true" || val == "1" || val == "yes" || val == "on");
+        return configData->getBool(key);
     }
-
 
     std::vector<int> MIAConfig::getIntVector(const std::string& key, char delimiter) const
     {
-        std::vector<int> result;
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-
-        std::string val = it->second;
-        std::stringstream ss(val);
-        std::string item;
-        while (std::getline(ss, item, delimiter)) 
-        {
-            try 
-            {
-                result.push_back(std::stoi(item));
-            } 
-            catch (...) 
-            {
-                // Skip invalid integers
-            }
-        }
-        return result;
+        return configData->getIntVector(key, delimiter);
     }
-    
-    
+
+    std::vector<constants::KeyValuePair> MIAConfig::getAllConfigPairs() const
+    {
+        return configData->getAllConfigPairs();
+    }
+
+    std::vector<std::string> MIAConfig::getRawLines() const
+    {
+        return configData->getRawLines();
+    }
+
     void MIAConfig::dumpConfigMap(std::ostream& os) const
     {
-        os << "Dumping rawConfigValsMap:" << std::endl;
-        for (const auto& val : rawConfigValsMap)
-        {
-            os << val.first << "=" << val.second << std::endl;
-        }
-        os << std::endl;
-    }
-    
-
-    std::vector<MIAConfig::KeyValuePair> MIAConfig::getAllConfigPairs() const
-    {
-        std::vector<KeyValuePair> pairs;
-        pairs.reserve(rawConfigValsMap.size());
-        for (const auto& val : rawConfigValsMap)
-        {
-            pairs.emplace_back(val.first, val.second);
-        }
-        return pairs;
-    }
+        configData->dump(os);
+    }    
 } // namespace MIA_System
 

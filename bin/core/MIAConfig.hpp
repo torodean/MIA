@@ -11,17 +11,23 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <memory>
+
+// Included for various common-types.
+#include "ConfigData.hpp"
 
 namespace MIA_System
-{
+{   
+    // Forward declaration of ConfigData class where the configuration data is stored.
+    class ConfigData;
+        
     /**
      * @class MIAConfig
      * @brief Manages loading configuration files into flexible key-value storage.
      *
-     * This class provides a basic mechanism to load configuration data into a simple key-value map
-     * (BasicConfigMap). It is designed with extensibility in mind: additional typedefs
-     * like `SpecialConfigMap` or other data structures can be introduced later to support
-     * more complex or alternative config formats without changing the core interface.
+     * This class provides a mechanism to load configuration data into a Data object,
+     * which can store key-value pairs, raw lines, or other formats based on the ConfigType.
+     * It uses the PIMPL idiom to hide implementation details and support extensibility.
      *
      * The MIAConfig acts as a generic container for configuration data, allowing future
      * expansion to support diverse formats while maintaining consistent access patterns.
@@ -29,41 +35,27 @@ namespace MIA_System
     class MIAConfig
     {
     public:
-        /**
-         * The config map type for storing raw key/value pairs.
-         * Key/value pairs in the configuration files are expected to be separated by '='.
-         * This delimiter is used when parsing the configuration file into the BasicConfigMap.
-         */
-        using BasicConfigMap = std::unordered_map<std::string, std::string>;
-        
-        /**
-         * Alias for a key-value pair representing a single configuration entry.
-         * Represents a key-value pair from the configuration,
-         * where both key and value are strings.
-         */
-        using KeyValuePair = std::pair<std::string, std::string>;
         
         /**
          * Main default constructor for the MIAConfig class.
          */
-        MIAConfig() = default;
+        MIAConfig();
         
         /**
-         * Main constructor for the MIAConfig class which sets the config file. After constructed, initialize()
-         * will need called to load the actual configuration file.
-         * @note The file name here can be the entire file path OR just the name of the file (in which case the
+         * Main constructor for the MIAConfig class which sets the config file and type.
+         * After constructed, initialize() must be called to load the configuration file.
+         * @note The file name can be the entire file path or just the name (in which case
          *       default file path locations will be used).
-         * @param configFile[const std::string&] - The config file to use for this object.
+         * @param configFile[const std::string&] - The config file to use.
+         * @param type[constants::ConfigType] - The type of configuration to load (defaults to constants::ConfigType::KEY_VALUE).
          * @param verboseMode[bool] - Enables verbose output.
          */
-        MIAConfig(const std::string& configFile, bool verboseMode = false) :
-            configFileName(configFile)
-        {  };
+        MIAConfig(const std::string& configFile, constants::ConfigType type = constants::ConfigType::KEY_VALUE, bool verboseMode = false);
 
         /**
          * Main destructor for the MIAConfig class.
          */
-        ~MIAConfig() = default;
+        ~MIAConfig();
         
         /**
          * This will iniitalize this object by reading and loading the configuration file into the RawConfigVals map.
@@ -82,20 +74,15 @@ namespace MIA_System
         { initialize(verboseMode); };
         
         /**
-         * Sets the config file name for this object. After this is set, the initialize() method should be called.
-         * This will also automatically call the reload() since it should be assumed that the config file set is
-         * likely different than the initial one.
-         * @note The file name here can be the entire file path OR just the name of the file (in which case the
+         * Sets the config file name and type for this object and reloads the configuration.
+         * @note The file name can be the entire file path or just the name (in which case
          *       default file path locations will be used).
-         * @param configFile[const std::string&] - The config file to use for this object.
+         * @param configFile[const std::string&] - The config file to use.
+         * @param type[constants::ConfigType] - The type of configuration to load.
          * @param verboseMode[bool] - Enables verbose output.
-         * @throws MIAException If the underlying initialize() call fails.
+         * @throws MIAException - If the underlying initialize() call fails.
          */
-         void setConfigFileName(const std::string& configFile, bool verboseMode = false)
-         { 
-            configFileName = configFile; 
-            reload(verboseMode); // may throw due to initialize()
-        }
+        void setConfigFileName(const std::string& configFile, constants::ConfigType type = constants::ConfigType::KEY_VALUE, bool verboseMode = false);
         
         /**
          * Gets the config file name for this object.
@@ -109,10 +96,17 @@ namespace MIA_System
          * @return [std::string&] - Returns the configFileName value.
          */
          std::string getConfigFileFullPath()
-         { return configFileFullPath; }
+         { return configFileFullPath; }       
+         
+        /**
+         * Gets the current configuration type.
+         * @return [constants::ConfigType] - The type of configuration data stored.
+         */
+        constants::ConfigType getConfigType() const;
          
         /**
          * Retrieves the configuration value associated with the given key as an int.
+         * @note Only supported for constants::ConfigType::KEY_VALUE.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [int] - The int value if the key exists and conversion succeeds; otherwise, returns 0.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
@@ -121,6 +115,7 @@ namespace MIA_System
 
         /**
          * Retrieves the configuration value associated with the given key as a double.
+         * @note Only supported for constants::ConfigType::KEY_VALUE.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [double] - The double value if the key exists and conversion succeeds; otherwise, returns 0.0.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
@@ -129,6 +124,7 @@ namespace MIA_System
 
         /**
          * Retrieves the configuration value associated with the given key as a string.
+         * @note Only supported for constants::ConfigType::KEY_VALUE.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [std::string] - The string value if the key exists; otherwise, returns an empty string.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
@@ -138,6 +134,7 @@ namespace MIA_System
         /**
          * Retrieves the configuration value associated with the given key as a vector of strings,
          * splitting the stored string by the specified delimiter.
+         * @note Only supported for constants::ConfigType::KEY_VALUE.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @param delimiter[char delimiter] - The character used to split the string into vector elements.
          * @return [std::vector<std::string>] - A vector of strings parsed from the value; empty vector if key not found.
@@ -147,6 +144,7 @@ namespace MIA_System
         
         /**
          * Retrieves the configuration value associated with the given key as a bool.
+         * @note Only supported for constants::ConfigType::KEY_VALUE.
          * @param key[const std::string&] - The key name to look up in the configuration map.
          * @return [bool] - The bool value if the key exists and conversion succeeds; otherwise, returns false.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
@@ -174,9 +172,17 @@ namespace MIA_System
         /**
          * Returns all key-value pairs stored in rawConfigValsMap as a vector.
          * This can be used to iterate over all configuration entries.
-         * @return std::vector<KeyValuePair> - A vector containing all configuration key-value pairs.
+         * @note Only supported for constants::ConfigType::KEY_VALUE.
+         * @return std::vector<constants::KeyValuePair> - A vector containing all configuration key-value pairs.
          */
-        std::vector<KeyValuePair> getAllConfigPairs() const;
+        std::vector<constants::KeyValuePair> getAllConfigPairs() const;        
+        
+        /**
+         * Returns all raw lines stored in the Data object.
+         * If the config type does not support raw lines, returns an empty vector.
+         * @return std::vector<std::string> - A vector containing all raw lines.
+         */
+        std::vector<std::string> getRawLines() const;
 
     private:
     
@@ -186,7 +192,7 @@ namespace MIA_System
         /// The full path of the configuration file for this object.
         std::string configFileFullPath;
         
-        /// Stores the configuration values from a file which are key/value pairs.
-        BasicConfigMap rawConfigValsMap;
+        /// Stores the configuration data (PIMPL idiom).
+        std::unique_ptr<ConfigData> configData;
     }; // class MIAConfig
 } // namespace MIA_System

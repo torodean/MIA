@@ -6,13 +6,11 @@
  */
 
 #include <iostream>
-#include <iostream>
 
 // The associated header file.
 #include "MIATemplate.hpp"
 
 // Used for error handling.
-#include "Error.hpp"
 #include "Paths.hpp"
 #include "MIAException.hpp"
 
