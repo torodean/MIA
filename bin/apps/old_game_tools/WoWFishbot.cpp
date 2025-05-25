@@ -22,13 +22,15 @@
 // Used for command line parsing.
 #include "CommandOption.hpp"
 
+#include "Constants.hpp"
+
 using std::string;
 using std::cout;
 using std::endl;
 
 
 WoWFishbot::WoWFishbot() : 
-    config(defaultConfigFile),
+    config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                     paths::getDefaultConfigDirToUse() + "/WoWConfig.MIA)",
                                     CommandOption::commandOptionType::stringOption)
@@ -45,7 +47,7 @@ void WoWFishbot::initialize(int argc, char* argv[])
         // Set the values from the command line arguments.
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-        config.setConfigFileName(configFile); // handles config.initialize().
+        config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
     }
     catch (const error::MIAException& ex)
     {

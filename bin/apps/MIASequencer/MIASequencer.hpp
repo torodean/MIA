@@ -66,4 +66,11 @@ private:
     /// The name of the defauilt config file that this class uses.
     std::string defaultSequencesFile{"MIASequences.MIA"};
     
+    /**
+     * The configuration loader for this app. The configuration for this app uses the
+     * constants::ConfigType::RAW_LINES format since it also loads the sequencer fields
+     * in which need custom parsing and interpretation.
+     */
+    MIA_System::MIAConfig config;
+    
 }; // class MIASequencer

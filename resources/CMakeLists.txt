@@ -4,6 +4,7 @@ set(MIA_Config_Files
     excuses.MIA
     MIAWorkout.MIA
     WoWConfig.MIA
+    MIASequences.MIA
 )
 
 if(SYSTEM_INSTALL)

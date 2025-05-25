@@ -18,6 +18,8 @@
 // Used for error handling.
 #include "Paths.hpp"
 #include "MIAException.hpp"
+// Used for the ConfigType.
+#include "Constants.hpp"
 
 using std::string;
 using std::remove;
@@ -30,7 +32,7 @@ using std::pair;
 
 
 MIASequencer::MIASequencer() : 
-    config(defaultConfigFile),
+    config(defaultConfigFile, constants::ConfigType::RAW_LINES),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                 paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
                                 CommandOption::commandOptionType::stringOption),
@@ -50,7 +52,7 @@ void MIASequencer::initialize(int argc, char* argv[])
         
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-        config.setConfigFileName(configFile); // handles config.initialize().
+        config.setConfigFileName(configFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
     }
     catch (const error::MIAException& ex)
     {

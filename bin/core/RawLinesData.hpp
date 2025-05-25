@@ -60,14 +60,14 @@ namespace MIA_System
 
         /**
          * @brief Retrieves all raw lines stored in the configuration.
-         * @return [std::vector<std::string>] A vector containing all raw lines.
+         * @return [std::vector<std::string>] - A vector containing all raw lines.
          * @see ConfigData::getRawLines()
          */
         std::vector<std::string> getRawLines() const override;
 
         /**
          * @brief Outputs the configuration data to the specified stream.
-         * @param os [std::ostream&] The output stream to write to.
+         * @param os[std::ostream&] - The output stream to write to.
          * @note Outputs all raw lines stored in the configuration.
          * @see ConfigData::dump()
          */
@@ -75,7 +75,7 @@ namespace MIA_System
 
         /**
          * @brief Retrieves the type of configuration data stored.
-         * @return [constants::ConfigType] Always returns constants::ConfigType::RAW_LINES.
+         * @return [constants::ConfigType] - Always returns constants::ConfigType::RAW_LINES.
          * @see ConfigData::getType()
          */
         constants::ConfigType getType() const override;

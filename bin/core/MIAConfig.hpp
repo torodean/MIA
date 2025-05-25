@@ -47,10 +47,12 @@ namespace MIA_System
          * @note The file name can be the entire file path or just the name (in which case
          *       default file path locations will be used).
          * @param configFile[const std::string&] - The config file to use.
-         * @param type[constants::ConfigType] - The type of configuration to load (defaults to constants::ConfigType::KEY_VALUE).
+         * @param type[constants::ConfigType] - The type of configuration to load.
          * @param verboseMode[bool] - Enables verbose output.
          */
-        MIAConfig(const std::string& configFile, constants::ConfigType type = constants::ConfigType::KEY_VALUE, bool verboseMode = false);
+        MIAConfig(const std::string& configFile, 
+                  constants::ConfigType type, 
+                  bool verboseMode = false);
 
         /**
          * Main destructor for the MIAConfig class.
@@ -82,7 +84,9 @@ namespace MIA_System
          * @param verboseMode[bool] - Enables verbose output.
          * @throws MIAException - If the underlying initialize() call fails.
          */
-        void setConfigFileName(const std::string& configFile, constants::ConfigType type = constants::ConfigType::KEY_VALUE, bool verboseMode = false);
+        void setConfigFileName(const std::string& configFile, 
+                               constants::ConfigType type, 
+                               bool verboseMode = false);
         
         /**
          * Gets the config file name for this object.

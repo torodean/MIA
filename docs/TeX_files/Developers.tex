@@ -463,73 +463,68 @@ This design ensures portability and flexibility across different environments (d
 
 
 
+\section{Configuration System: \texttt{MIAConfig}}
 
-\section{Configuration File System}
-
-The configuration management for MIA is handled through the \texttt{MIAConfig} class, defined in the \texttt{MIAConfig.hpp} header. This class replaces the earlier configuration mechanism used in the original MIA project and provides a flexible, extensible interface for loading and accessing key-value configuration pairs (with room for expansion).
+The \texttt{MIAConfig} class provides a flexible and extensible interface for managing configuration data in the MIA system. It replaces the legacy \texttt{Configurator} from the previous MIA project. The system is designed using the PIMPL (Pointer to IMPLementation) idiom, encapsulating implementation details and allowing for multiple configuration types such as key-value pairs or raw-line formats (with the flexibility to add more later).
 
 \subsection{Overview}
 
-The \texttt{MIAConfig} class serves as the centralized component for parsing, storing, and querying configuration settings used by MIA applications. Configuration files are typically expected to follow a simple key-value format, with entries delimited by \texttt{=}, allowing intuitive and minimal configuration. However, expansion of this to provide other formats are expected. See chapter \ref{chap:MIAConfig} for an example configuration and further explanation of the configuration files.
-
-\subsection{Key Concepts}
-
 \begin{itemize}
-	\item \textbf{BasicConfigMap}: Internally, configuration data is stored as a \texttt{std::unordered\_map<std::string, std::string>}, referred to as \texttt{BasicConfigMap}, which maps each key to its corresponding value as a string.
-	
-	\item \textbf{Type-Safe Access}: While all values are stored as strings, the class provides methods for retrieving typed data such as \texttt{int}, \texttt{double}, \texttt{bool}, \texttt{std::vector<std::string>}, and \texttt{std::vector<int>}, enabling easy and safe use of configuration values.
-	
-	\item \textbf{Initialization and Reloading}: Configuration files can be set at construction time or via the \texttt{setConfigFileName()} method. Initialization reads and parses the file. Configuration can also be reloaded dynamically at runtime.
+	\item \texttt{MIAConfig} is the main public interface that users interact with.
+	\item \texttt{ConfigData} is an abstract base class defining the interface for internal configuration storage.
+	\item \texttt{KeyValueData} is a concrete implementation of \texttt{ConfigData::KEY\_VALUE}, supporting standard key-value format parsing and access.
+	\item \texttt{RawLinesData} is a concrete implementation of \texttt{ConfigData::RAW\_LINES}, supporting raw line format parsing and access.
+	\item Configuration types are enumerated via \texttt{constants::ConfigType}.
 \end{itemize}
 
-\subsection{Primary Interface}
+\subsection{Key Features}
 
 \begin{itemize}
-	\item \texttt{MIAConfig(const std::string\& configFile, bool verboseMode = false)}\\
-	Constructor which sets the config file name. The initialize() method needs called after this constructor is used to load the configuration map using the specified file.
-	
-	\item \texttt{void initialize(bool verboseMode = false)}\\
-	Loads the configuration file and populates the internal map. Throws on failure.
-	
-	\item \texttt{void reload()}\\
-	Re-reads the existing configuration file, effectively reinitializing the map.
-	
-	\item \texttt{std::string getString(const std::string\& key)}\\
-	Returns the value associated with the given key as a string.
-	
-	\item \texttt{int getInt(const std::string\& key)}\\
-	Returns the value as an \texttt{int}; returns 0 on failure.
-	
-	\item \texttt{double getDouble(const std::string\& key)}\\
-	Returns the value as a \texttt{double}; returns 0.0 on failure.
-	
-	\item \texttt{bool getBool(const std::string\& key)}\\
-	Returns the value as a \texttt{bool}; returns \texttt{false} on failure.
-	
-	\item \texttt{std::vector<std::string> getVector(const std::string\& key, char delimiter)}\\
-	Splits the string value by the specified delimiter and returns a vector.
-	
-	\item \texttt{std::vector<int> getIntVector(const std::string\& key, char delimiter)}\\
-	Splits the value into \texttt{int}s using a delimiter and returns a vector.
-	
-	\item \texttt{void dumpConfigMap(std::ostream\& os = std::cout)}\\
-	Outputs all current key-value pairs for debugging or inspection.
-	
-	\item \texttt{std::vector<KeyValuePair> getAllConfigPairs()}\\
-	Retrieves all configuration entries as a vector of key-value pairs.
+	\item Supports setting and retrieving configuration files and types dynamically.
+	\item Provides typed accessors: \texttt{getInt()}, \texttt{getDouble()}, \texttt{getString()}, \texttt{getBool()}, and vector versions.
+	\item Supports verbose logging during file parsing for debugging.
+	\item Can return all configuration entries as key-value pairs or raw lines, depending on the format.
 \end{itemize}
+
+\subsection{Class Hierarchy and Responsibilities}
+
+\begin{description}
+	\item[\texttt{MIAConfig}] 
+	\hfill \\
+	Acts as the front-end API. It delegates all data handling to the \texttt{ConfigData} object through a \texttt{std::unique\_ptr}.
+	
+	\item[\texttt{ConfigData}] 
+	\hfill \\
+	Abstract base class defining the required interface for data handling implementations. Includes methods for loading, retrieving, and dumping configuration data.
+	
+	\item[\texttt{KeyValueData}]
+	\hfill \\
+	Implements \texttt{ConfigData}. Parses files formatted with \texttt{key=value} lines into an internal map and supports type conversion and retrieval.
+	
+	\item[\texttt{RawLinesData}]
+	\hfill \\
+	Implements \texttt{ConfigData}. Parses files formatted with \texttt{any} format (parsed by line)i nto an internal vector and supports retrieval for custom parsing.
+\end{description}
+
+\subsection{Usage Pattern}
+
+\begin{enumerate}
+	\item Instantiate \texttt{MIAConfig} with a file name and configuration type.
+	\item Call \texttt{initialize()} to parse and load the configuration file.
+	\item Use the typed getter methods to retrieve settings.
+\end{enumerate}
+
+\subsection{Example}
+
+\begin{verbatim}
+	MIAConfig cfg("settings.conf", constants::ConfigType::KEY_VALUE);
+	cfg.initialize();
+	int timeout = cfg.getInt("network.timeout");
+\end{verbatim}
 
 \subsection{Extensibility}
 
-The design supports future extensions by allowing alternative configuration types (e.g., hierarchical configs, environment overrides, etc.) to be added without altering the existing interface or breaking compatibility.
-
-
-
-
-
-
-
-
+New configuration formats can be supported by deriving new classes from \texttt{ConfigData} and implementing the required interface. \texttt{MIAConfig} will manage the polymorphic pointer and delegate appropriately based on the \texttt{ConfigType}.
 
 
 

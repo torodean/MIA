@@ -30,7 +30,7 @@ using std::vector;
 
 
 MIAWorkout::MIAWorkout() : 
-    config(defaultConfigFile),
+    config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                 paths::getDefaultConfigDirToUse() + "/MIAWorkout.MIA)",
                                 CommandOption::commandOptionType::stringOption),
@@ -58,7 +58,7 @@ void MIAWorkout::initialize(int argc, char* argv[])
         
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-        config.setConfigFileName(configFile); // handles config.initialize().
+        config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
     }
     catch (const error::MIAException& ex)
     {
