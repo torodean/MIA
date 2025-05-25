@@ -32,7 +32,18 @@ namespace MIA_system
      */
     class VirtualKeyStrokes
     {
-    public:    
+    public:
+    
+        /**
+         * An enum representing the various types of clicks available via a mouse.
+         */
+        enum ClickType
+        {
+            LEFT_CLICK,   ///< Represents a left click.
+            RIGHT_CLICK,  ///< Represents a right click.
+            MIDDLE_CLICK  ///< Represents a middle click.
+        };
+    
         /**
          * Main default constructor for the VirtualKeyStrokes class.
          */

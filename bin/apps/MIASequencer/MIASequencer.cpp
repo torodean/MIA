@@ -20,16 +20,10 @@
 #include "MIAException.hpp"
 // Used for the ConfigType.
 #include "Constants.hpp"
+// Used for string manipulation and parsing.
+#include "StringUtils.hpp"
 
-using std::string;
-using std::remove;
-using std::ifstream;
-using std::stoi;
-using std::vector;
-using std::cout;
-using std::endl;
-using std::pair;
-
+using types::StringUtils;
 
 MIASequencer::MIASequencer() : 
     config(defaultConfigFile, constants::ConfigType::RAW_LINES),
@@ -64,7 +58,27 @@ void MIASequencer::initialize(int argc, char* argv[])
 
 void MIASequencer::loadConfig()
 {
-    // TODO
+    // TODO - finish this method.
+    
+    // The config stores all non-comment and non-empty lines from the config file.
+    std::vector<std::string> lines = config.getRawLines();
+    for (const auto& line : lines)
+    {
+        std::string key, value;
+        if (stringContainsChar(line, '='))
+        {
+            // Get the key value on the line.
+            key = getBeforeChar(line, '=');
+            // Get the value of the key.
+            value = getAfterChar(line, '=');  
+        }
+        else
+        {
+            key = line;
+        }
+        
+        
+    }    
 }
 
 void MIATemplate::printHelp() const
