@@ -28,12 +28,19 @@ public:
     virtual ~MIAApplication() = default;
 
     /**
+     * Get verbose mode flag.
+     */
+    bool getVerboseMode() const 
+    { return verboseMode; }
+    
+protected:
+    /**
      * Virtual initialize() method. This should be overridden by the inheriting app, but a call
      * to this method should be included.
      * Parse command line arguments, handling common flags (-v, -h).
      * Calls parseAppArguments for app-specific argument parsing.
      * @param argc, argv Command line arguments
-     * TODO - Add MIAException handling for failure.
+     * @throw [MIAException] - Throws an exception if parsing the command line options for base arguments fail.
      */
     virtual void initialize(int argc, char* argv[]);
 
@@ -44,23 +51,16 @@ public:
      * @return int Exit status code.
      */
     virtual int run() = 0;
-
-    /**
-     * Get verbose mode flag.
-     */
-    bool getVerboseMode() const 
-    { return verboseMode; }
     
-protected:
-    
-    /// Base command options used by the MIAApplication.
-    CommandOption verboseOpt;
-    CommandOption helpOpt;
-
     /**
      * Prints common help info including verbose and help flags.
      */
     virtual void printHelp() const;
+    
+private:
+    /// Base command options used by the MIAApplication.
+    CommandOption verboseOpt;
+    CommandOption helpOpt;
     
     /// Stores verboseMode.
     bool verboseMode{false};

@@ -355,30 +355,25 @@ Some tips and considerations follow:
 \section{Base Application Class: \texttt{MIAApplication}}
 \label{sec:base-application}
 
-\subsection*{Overview}
-The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework. It defines a standardized interface for application lifecycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help).
+\subsection*{Overview and Purpose}
+The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{sec:app-framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help). This class is intended to be subclassed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
 
-\subsection*{Purpose}
-This class is intended to be subclassed by specific applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method.
-
-\subsection*{Initialization Interface}
+\subsection*{Initialization and Execution Interface}
 \begin{itemize}
 	\item \texttt{virtual void initialize(int argc, char* argv[])} \\
-	Handles initial setup, including parsing common command-line arguments. 
-	Derived classes should override this method to extend parsing logic but should still invoke the base implementation to preserve flag handling.
+	Handles initial setup, including parsing common command-line arguments. This method is intended to be overloaded to handle app-specific command line arguments and app loading. Derived classes should override this method to extend parsing logic but should still invoke the base implementation to preserve flag handling.
 \end{itemize}
 
-\subsection*{Execution Interface}
 \begin{itemize}
 	\item \texttt{virtual int run() = 0} \\
-	Pure virtual function that must be implemented by all derived classes. It defines the main operational logic of the application and must return an integer exit code.
+	A pure virtual function that must be implemented by all derived classes. It defines the main operational logic of the application and must return an integer exit code.
 \end{itemize}
 
 \subsection*{Flag Handling}
 \begin{itemize}
 	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
-	\item Help flag status is stored and can be utilized to trigger usage messages.
-	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses.
+	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
+	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
 \end{itemize}
 
 \subsection*{Protected Members}
@@ -390,16 +385,59 @@ This class is intended to be subclassed by specific applications. It provides de
 \end{itemize}
 
 \subsection*{Usage Guidelines}
+An example application exists in \texttt{bin/apps/template} which demonstrates how the base application class is used.
 \begin{enumerate}
 	\item Inherit from \texttt{MIAApplication}.
-	\item Override \texttt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling.
+	\begin{lstlisting}[style=cppstyle]
+class MIATemplate : public MIAApplication
+{ // Class details... }
+	\end{lstlisting}
+	\item Override \texttt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling at the start of the application initialize() implementation.
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::initialize(int argc, char* argv[])
+{
+	try
+	{    
+		MIAApplication::initialize(argc, argv);	
+		// Setup app-specific command line arguments here...
+	}
+	catch (const error::MIAException& ex)
+	{
+		std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
+		// Handle error appropriately...
+	}
+	
+	// Other init code...
+}
+	\end{lstlisting}
 	\item Implement the \texttt{run()} method with the application's main logic.
-	\item Use \texttt{getVerboseMode()} to conditionally enable verbose output.
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::run()
+{
+	// Perform app functions...
+}
+	\end{lstlisting}
+	\item Use \texttt{getVerboseMode()} to conditionally enable verbose output (if the verbose flag was used when running the application).
+	\begin{lstlisting}[style=cppstyle]
+if (getVerboseMode())
+    std::cout << "This is verbose output!" << std::endl;
+	\end{lstlisting}
+	\item Override \texttt{printHelp()} to add help output specific to the application. Call the base method to retain base application help menu output.
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::printHelp() const
+{
+    MIAApplication::printHelp();
+    
+    std::cout << "MIATemplate specific options:" << std::endl
+              // Add app-specific help output here...
+              << std::endl;
+}
+	\end{lstlisting}
 \end{enumerate}
 
 \subsection*{Benefits}
 \begin{itemize}
-	\item Standardizes lifecycle structure across applications.
+	\item Standardizes life cycle structure across applications.
 	\item Centralizes command-line flag logic.
 	\item Reduces redundancy in application setup.
 	\item Encourages consistent help and verbose interfaces.
@@ -416,7 +454,7 @@ This class is intended to be subclassed by specific applications. It provides de
 
 \section{Command Option System}
 
-The command option system provides structured parsing and management of command-line arguments. It is composed of two main components: the \texttt{CommandOption} class and the \texttt{command\_parser} namespace. Together, they offer a consistent and type-safe interface for defining, parsing, and validating command-line options.
+The command option system provides structured parsing and management of command-line arguments. It is composed of two main components: the \texttt{CommandOption} class and the \texttt{command\_parser} namespace. Together, they offer a consistent and type-safe interface for defining, parsing, and validating command-line options. An example application exists in \texttt{bin/apps/template} which demonstrates how the command options can be used.
 
 \subsection{CommandOption Class}
 
@@ -424,22 +462,62 @@ The \texttt{CommandOption} class encapsulates metadata and behavior for individu
 
 \subsubsection*{Key Features}
 \begin{itemize}
-	\item \textbf{Supported Types:} Defined by the \texttt{commandOptionType} enum:
+	\item \textbf{Supported Types:} These define the type of command option that is expected. Each command option should only have one expected type which is defined by the \texttt{commandOptionType} enum:
 	\begin{itemize}
-		\item \texttt{boolOption}
-		\item \texttt{intOption}
-		\item \texttt{doubleOption}
-		\item \texttt{stringOption}
+		\item \texttt{boolOption}: A single command flag to store true when used (false otherwise).
+		\item \texttt{intOption}: A command flag followed by an integer.
+		\item \texttt{doubleOption}: A command flag option followed by a double.
+		\item \texttt{stringOption}: A command flag option followed by a string.
 	\end{itemize}
 	
-	\item \textbf{Constructor:} Accepts short/long argument forms, a description, data type, and a \texttt{required} flag.
+	\item \textbf{Constructor:} Accepts short/long argument forms, a description, data type, and a \texttt{required} flag. This constructor should be called during construction for the application class. This constructor sets the command option flags, description, and the type; all of which are needed during initialization to enable command option output and parsing.
+	\begin{lstlisting}[style=cppstyle]
+MIATemplate::MIATemplate() : 
+    configFileOpt("-c", "--config", "Specify a config file to use.",
+        CommandOption::commandOptionType::stringOption),
+    testOpt("-t", "--test", "A test command option.",
+        CommandOption::commandOptionType::boolOption)            
+{ };
+	\end{lstlisting}
 	
 	\item \textbf{Help Output:} \texttt{getHelp()} returns a formatted string of the form:
 	\begin{verbatim}
 		-s, --long        Description
 	\end{verbatim}
-	
-	\item \textbf{Value Parsing:} The \texttt{getOptionVal<Type>} method retrieves the typed value from the command-line using appropriate dispatch.
+	This method is intended to return a string for each command option in a consistent format in order to make constructing the overridden printHelp() message of the base application class simpler. The getHelp() method can be used in constructing the help message for an app in a way similar to the following:
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::printHelp() const
+{
+ MIAApplication::printHelp();
+ 
+ // This is a dump of the help messages used by the various command options.
+ std::cout << "MIATemplate specific options:" << std::endl
+           << configFileOpt.getHelp() << std::endl
+           << testOpt.getHelp() << std::endl
+           << std::endl;
+}
+	\end{lstlisting}
+	\item \textbf{Value Parsing:} The \texttt{getOptionVal<Type>} method retrieves the typed value from the command-line using appropriate dispatch. This is typically done during app initialization and serves to simplify the process of parsing command line options by allowing a single method to get and set the appropriate variables.
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::initialize(int argc, char* argv[])
+{
+    try
+    {    
+        MIAApplication::initialize(argc, argv);
+
+        // Set the values from the command line arguments.
+        testOpt.getOptionVal<bool>(argc, argv, testMode);
+        
+        std::string configFile = defaultConfigFile;
+        configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
+        config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
+    }
+    catch (const error::MIAException& ex)
+    {
+        std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
+    }
+}
+	\end{lstlisting}
 	
 	\item \textbf{Error Handling:} Throws \texttt{MIAException} if a type mismatch occurs or parsing fails.
 \end{itemize}
@@ -456,16 +534,13 @@ This namespace implements the actual logic for extracting typed values from \tex
 	\item \texttt{void parseStringOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, std::string\& outValue, bool required = false);}
 \end{itemize}
 
-\subsubsection*{Behavior}
+\subsubsection*{Behavior and Integration}
 Each parser:
 \begin{itemize}
 	\item Validates the presence of the option.
 	\item Converts the argument to the correct type.
 	\item Throws a \texttt{MIAException} on error, such as type mismatch or missing required value.
 \end{itemize}
-
-\subsection{Integration}
-
 The \texttt{CommandOption} class acts as a high-level interface, while \texttt{command\_parser} performs the low-level parsing. Together, they ensure robustness, type safety, and consistent error reporting across the command-line interface.
 
 

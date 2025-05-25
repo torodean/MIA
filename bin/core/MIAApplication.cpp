@@ -14,6 +14,7 @@
 #include "MIAApplication.hpp"
 // Used for exception handling.
 #include "MIAException.hpp"
+#include "Error.hpp"
 // Used for parsing command options.
 #include "CommandParser.hpp"
 
@@ -35,8 +36,10 @@ void MIAApplication::initialize(int argc, char* argv[])
     }
     catch (const error::MIAException& ex)
     {
-        std::cerr << "Error during MIAApplication::initialize: " << ex.what() << std::endl;
-        throw; // This shouldn't throw a MIAException so if it does, it indicates something very wrong. Thus, throw...
+        // This shouldn't ever throw a MIAException since it's simple and part of the base app, 
+        // but throw an exception just in case... 
+        std::string err = std::string("Error during MIAApplication::initialize: ") + ex.what();
+        throw error::MIAException(error::ErrorCode::Catastrophic_Failure, err); 
     }
 
     if (helpRequested)

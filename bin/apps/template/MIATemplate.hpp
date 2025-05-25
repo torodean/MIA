@@ -50,7 +50,7 @@ protected:
     /**
      * Prints help info for optional config file.
      */
-    virtual void printHelp() const;
+    void printHelp() const override;
 
 private:
 
