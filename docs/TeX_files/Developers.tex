@@ -6,9 +6,16 @@
 
 
 
+\section{Project Dependency Structure}
 
-
-
+The project is organized into layers to manage dependencies clearly:
+\begin{itemize}
+\item Core: Contains fundamental types, error codes, and logging interfaces. It has no dependencies on other modules.
+\item Utilities: Depend on Core and provide reusable helper functions like file and string operations.
+\item Libraries: Depend on Core and Utilities, implementing domain-specific logic such as math functions.
+\item Applications: Depend on Core, Utilities, and Libraries to build and run the final executable.
+\end{itemize}
+Modules within the same layer may depend on each other as needed. The key rule is to avoid circular dependencies between layers to maintain clear and manageable dependency flow. This layering ensures a unidirectional dependency flow, promoting modularity and easier maintenance.
 
 
 
@@ -50,6 +57,32 @@ Options:
 	-R    Update the release files. Use a clean build if errors occur.
 	-U    Uninstall all MIA files. This will uninstall then quit without other actions.
 \end{lstlisting}
+This build script is continually evolving and new options are added.
+
+\subsubsection{Adding New Build Script Options}
+
+To add a new option to the build script, a few things need considered. First, options must be unique. Each option should contain a short option argument (i.e. \inlinecode{-v, -h, -d}) as well as a description. These new options need added to the \texttt{usage} function and the \texttt{getopts} loop.
+\begin{lstlisting}[style=shellstyle]
+usage() # Create the usage output.
+{
+  # ...
+  echo "  Options:"
+  echo "    -f    Adding a new option with the -f flag."
+  # Other entries...
+}
+\end{lstlisting}
+\begin{lstlisting}[style=shellstyle]
+# Define the build script options and create variables from options.
+while getopts "hCvDIfRU" opt; do # Add the flag to the list here.
+  case $opt in
+    # Other entries...
+    f) flagVariable=1 # Add flag actions here.
+      ;;
+    # Other entries...
+  esac
+done
+\end{lstlisting}
+The flag actions should be added to the getopts list (as seen above). These actions are typically setting a variable to store that the flag is used, then called later in the script. But functions or lists of other variables can be added here too.
 
 \subsection{Platform Support}
 
@@ -57,11 +90,19 @@ The script contains conditional logic to perform platform-specific setup, with s
 
 \subsection{CMake Integration}
 
-The build is managed via CMake, which is invoked with appropriate flags based on script options. A separate \texttt{build} directory is used to isolate generated files, and Make is used to compile the project with support for parallel jobs. See section \ref{sec:CMake-setup} for more details.
+The build is managed via CMake, which is invoked with appropriate flags based on script options. A separate \texttt{build} directory is used to isolate generated files, and Make is used to compile the project with support for parallel jobs. See section \ref{sec:CMake-setup} for more details. The build script handles adding flags to the cmake configuration via the \texttt{cmakeArgs}. To add a flag to be used during the cmake build, add the appropriate flag to the \texttt{cmakeArgs} via the following:
+\begin{lstlisting}[style=shellstyle]
+cmakeArgs = "$cmakeArgs -DNEW_FLAG_HERE"
+\end{lstlisting}
 
 \subsection{Installation and Uninstallation}
 
-Installation is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstallation is handled early in the script flow via a dedicated script and bypasses other operations.
+Installation is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstallation is handled early in the script flow via a dedicated script and bypasses other operations. Although installation is handled via cmake, there are also separate install and uninstall scripts which are located in the scripts folder. These are setup to be called during the build script and are meant to implement additional install or uninstall steps. these are called via the following
+
+\begin{lstlisting}[style=shellstyle]
+$rootDirectory/scripts/install.sh
+$rootDirectory/scripts/install.sh
+\end{lstlisting}
 
 \subsection{Design Considerations}
 
@@ -86,13 +127,9 @@ This script abstracts complexity away from the end user, provides a repeatable a
 
 The MIA project utilizes CMake to manage the build configuration, compilation, and installation processes. The setup is designed to be flexible and portable across supported platforms while allowing customization for release or system installation builds.
 
-\subsection{Project Definition and Versioning}
+\subsection{Project Definition, Standards and Versioning}
 
-The CMake configuration begins by specifying a minimum required CMake version and defining the project name \texttt{MIA} along with its version. The version is also passed as a preprocessor definition (\texttt{MIA\_VERSION\_VAL}) for use in the codebase.
-
-\subsection{Compiler Standards and Flags}
-
-C++20 is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
+The CMake configuration begins by specifying a minimum required CMake version and defining the project name \texttt{MIA} along with its version. The version is also passed as a preprocessor definition (\texttt{MIA\_VERSION\_VAL}) for use in the codebase. At the time of writing this, C++20 is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
 
 \subsection{Build Options}
 
@@ -107,31 +144,104 @@ Two primary options control build behavior:
 
 Installation paths and default directories for configuration files and logs are set depending on the operating system:
 \begin{itemize}
-	\item \textbf{Windows:} Uses \texttt{C:/Program Files/mia} and \texttt{C:/ProgramData/mia} directories.
-	\item \textbf{Linux/Unix:} Uses \texttt{/usr/local/mia}, \texttt{/etc/mia}, and \texttt{/var/log/mia}.
+	\item \textbf{Windows:} Uses \texttt{C:/Program Files} for the install and \texttt{C:/ProgramData} for supporting files.
+	\item \textbf{Linux/Unix:} Uses \texttt{/usr/local} for the install, \texttt{/etc} for supporting resource files, and \texttt{/var/log} for logging.
 	\item Unsupported platforms produce a configuration error.
 \end{itemize}
+The cmake section that contains these configurations will give the exact file paths chosen for the various files. The actual CMake file should be used for gathering the current used paths (this documentation may become out-dated) which will be in a section similar to the following:
+\begin{lstlisting}[style=shellstyle]
+# OS-Specific Path Configuration
+if(WIN32)
+    set(APP_INSTALL_LOCATION "C:/Program Files/mia")
+    set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "C:/ProgramData/mia")
+    set(DEFAULT_SYSTEM_LOG_DIR "C:/ProgramData/mia/logs")
+elseif(UNIX AND NOT APPLE)
+    set(APP_INSTALL_LOCATION "/usr/local/mia")
+    set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "/etc/mia")
+    set(DEFAULT_SYSTEM_LOG_DIR "/var/log/mia")
+else()
+    message(FATAL_ERROR "Unsupported platform")
+endif()
+\end{lstlisting}
 
 \subsection{Configuration Constants}
 
-Both system-level and repository-level default paths for configuration and log files are defined and exposed to the compiler through compile-time definitions. This centralizes resource location information for consistent access across the codebase.
+Both system-level and repository-level default paths for configuration and log files are defined and exposed to the compiler through compile-time definitions. This centralizes resource location information for consistent access across the codebase. To add a constant value defined in cmake such that it is accessible in the source code (c++), the following method can be used.
+
+\subsubsection{Defining C++ Accessible CMake Variables}
+
+First, the value needs defined in the CMake using the \texttt{set} and \texttt{add\_definiition} methods:
+\begin{lstlisting}[style=shellstyle]
+# The version of the current MIA code.
+set(MIA_VERSION_VAL "2.001")
+
+# Add MIAVERSION as a preprocessor variable.
+add_definitions( -DMIA_VERSION_VAL=\"${MIA_VERSION_VAL}\" )
+\end{lstlisting}
+These values can then be accessed within the source C++ code directly via
+\begin{lstlisting}[style=cppstyle]
+// The MIA Version value gathered from CMake.
+inline const std::string MIA_VERSION = MIA_VERSION_VAL;
+\end{lstlisting}
+These values are typically added within the \texttt{Constants\_LIB} files which contains system related MIA constants. 
 
 \subsection{Project Structure and Targets}
 
 The project is organized into subdirectories for executables, libraries, resources, and tests:
 
 \begin{itemize}
-	\item \textbf{Executables:} Targets like \texttt{MIAWorkout} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
-	\item \textbf{Libraries:} Utility libraries such as \texttt{Types\_LIB} are created from source files and expose their include directories for dependent targets. Libraries can link to other internal utilities.
+	\item \textbf{Executables:} Targets like \texttt{MIATemplate} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
+	\begin{lstlisting}[style=shellstyle]
+# Create the MIATemplate executable.
+set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
+set(MIATemplate_INC MIATemplate.hpp )
+add_executable(MIATemplate ${MIATemplate_SRC} ${MIATemplate_INC} )
+target_link_libraries(MIATemplate PRIVATE Core_LIB )
+
+if(SYSTEM_INSTALL)
+ install(TARGETS MIATemplate DESTINATION ${APP_INSTALL_LOCATION})
+endif()
+
+if(RELEASE_BUILD)
+ install(TARGETS MIATemplate DESTINATION ${RELEASE_INSTALL_LOCATION})
+endif()
+	\end{lstlisting}
+	\item \textbf{Libraries:} Utility libraries such as \texttt{Types\_LIB} are created from source files and expose their include directories for dependent targets. Libraries can link to other internal utilities or libraries.
+	\begin{lstlisting}[style=shellstyle]
+# Create the Types_LIB
+set(Types_SRC StringUtils.cpp )
+set(Types_INC StringUtils.hpp )
+add_library(Types_LIB ${Types_SRC} ${Types_INC})
+target_link_libraries( Types_LIB PUBLIC BasicUtilities_LIB )
+
+# Expose this library's source directory for #include access by dependent targets
+target_include_directories(Types_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+	\end{lstlisting}
 	\item \textbf{Tests:} Test code is included via a dedicated subdirectory.
-	\item \textbf{Resources:} Static resources are managed in their own subdirectory.
+	\begin{lstlisting}[style=shellstyle]
+# Include the test directory.
+add_subdirectory( test )
+	\end{lstlisting}
+	\item \textbf{Resources:} Static resources are managed in their own subdirectory. These are primarily for configuration files and other resources. These are installed via the \texttt{FILES} Cmake keyword as follows:
+	\begin{lstlisting}[style=shellstyle]
+set(MIA_Config_Files
+    MIATemplate.MIA
+	# Other files here...
+)
+
+if(SYSTEM_INSTALL)
+    install(FILES ${MIA_Config_Files} DESTINATION ${DEFAULT_SYSTEM_CONFIG_FILE_DIR})
+endif()
+
+if(RELEASE_BUILD)
+    install(FILES ${MIA_Config_Files} DESTINATION ${RELEASE_CONFIG_INSTALL_LOCATION})
+endif()
+	\end{lstlisting}
 \end{itemize}
 
 \subsection{Installation Rules}
 
-Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags. This supports flexible deployment workflows for development, testing, and production release.
-
-Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
+Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags (seen in the above shown cmake blocks). This supports flexible deployment workflows for development, testing, and production release. Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
 
 
 

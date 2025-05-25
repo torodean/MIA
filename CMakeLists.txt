@@ -7,7 +7,7 @@ set(MIA_VERSION_VAL "2.001")
 project(MIA VERSION ${MIA_VERSION_VAL})
 
 # Add MIAVERSION as a preprocessor variable.
-add_definitions ( -DMIA_VERSION_VAL=\"${MIA_VERSION_VAL}\" )
+add_definitions( -DMIA_VERSION_VAL=\"${MIA_VERSION_VAL}\" )
 
 # Define cpp standards and build flags.
 set(CMAKE_CXX_STANDARD 20)
