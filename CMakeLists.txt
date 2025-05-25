@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.000")
+set(MIA_VERSION_VAL "2.001")
 
 # Define the project name and version.
 project(MIA VERSION ${MIA_VERSION_VAL})

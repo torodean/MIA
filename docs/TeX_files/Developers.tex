@@ -486,7 +486,7 @@ The \texttt{MIAConfig} class serves as the centralized component for parsing, st
 
 \begin{itemize}
 	\item \texttt{MIAConfig(const std::string\& configFile, bool verboseMode = false)}\\
-	Constructor that initializes the configuration map using the specified file.
+	Constructor which sets the config file name. The initialize() method needs called after this constructor is used to load the configuration map using the specified file.
 	
 	\item \texttt{void initialize(bool verboseMode = false)}\\
 	Loads the configuration file and populates the internal map. Throws on failure.
