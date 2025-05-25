@@ -42,6 +42,7 @@ public:
      */
     enum SequenceActionType
     {
+        UNKNOWN,     ///< Unknown action - do nothing.
         TYPE,        ///< This will type a sequence of characters.
         SLEEP,       ///< This will wait/pause some time.
         MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
@@ -86,8 +87,13 @@ public:
     struct CompleteSequence
     {
         std::string name;        ///< The name of this sequence.
-        int delayTime;           ///< The time between each action (ms).
+        int delayTime{1000};     ///< The time between each action (ms).
         SequenceActions actions; ///< All actions in this sequence.
+        
+        /// Returns true if this is a valid sequence.
+        void isValid();
+        /// Clear this object.
+        void clear();
         
         /**
          * @brief Executes all actions in the sequence in order, applying the defined delay between each.
