@@ -39,10 +39,14 @@ namespace MIA_system
          */
         enum ClickType
         {
+            UNKNOWN,      ///< An unknown click type.
             LEFT_CLICK,   ///< Represents a left click.
             RIGHT_CLICK,  ///< Represents a right click.
             MIDDLE_CLICK  ///< Represents a middle click.
         };
+        
+        /// Converts a string to a ClickType.
+        static ClickType stringToClickType(std::string input);
     
         /**
          * Main default constructor for the VirtualKeyStrokes class.

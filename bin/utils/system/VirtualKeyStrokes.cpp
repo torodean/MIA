@@ -1116,10 +1116,28 @@ namespace MIA_system
     void VirtualKeyStrokes::type(std::string word)
     {
         int size = word.size();
-        for(int i=0;i<size;i++){
+        for(int i=0;i<size;i++)
+        {
             char letter(word[i]);
             press(letter);
             defaultSleep();
         }
+    }
+    
+    
+    VirtualKeyStrokes::ClickType VirtualKeyStrokes::stringToClickType(std::string input)
+    {
+        // Convert the string to lowercase.
+        std::transform(input.begin(), input.end(), input.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+        if (input == "right_click" || input == "rightclick")
+            return ClickType::RIGHT_CLICK;
+        else if (input == "left_click" || input == "leftclick")
+            return ClickType::LEFT_CLICK;
+        else if (input == "middle_click" || input == "middleclick")
+            return ClickType::MIDDLE_CLICK;
+        else
+            return ClickType::UNKNOWN;
     }
 } // namespace MIA_system

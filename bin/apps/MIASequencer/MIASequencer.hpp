@@ -57,7 +57,7 @@ public:
     struct SequenceAction
     {
         SequenceActionType action;      ///< An action type (what to perform).
-        int time;                       ///< Timing information (for pause).
+        int sleepTime;                  ///< Timing information (for pause).
         constants::Coordinate coords;   ///< Coordinates (for moving mouse).
         std::string strToType;          ///< A string (for typing).
         MIA_system::VirtualKeyStrokes::ClickType click; ///< A click type (for mouse input).
@@ -128,6 +128,14 @@ protected:
     virtual void printHelp() const;
 
 private:
+    
+    /**
+     * This will create a SequenceAction from a key-value pair.
+     * @param key[std::String] - The key defining the action type.
+     * @param value[std::String] - The value defining the data needed to perform the action.
+     * @return [SequenceAction] - Returns the constructed SequenceAction.  
+     */
+    SequenceAction createAction(std::String key, std::string value);
 
     /**
      * This will load in the configuration file and load the sequences.

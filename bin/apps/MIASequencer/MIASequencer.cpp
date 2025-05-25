@@ -18,8 +18,6 @@
 // Used for error handling.
 #include "Paths.hpp"
 #include "MIAException.hpp"
-// Used for the ConfigType.
-#include "Constants.hpp"
 // Used for string manipulation and parsing.
 #include "StringUtils.hpp"
 
@@ -56,9 +54,12 @@ void MIASequencer::initialize(int argc, char* argv[])
     loadConfig();
 }
 
+
 void MIASequencer::loadConfig()
 {
     // TODO - finish this method.
+    
+    CompleteSequence sequence;
     
     // The config stores all non-comment and non-empty lines from the config file.
     std::vector<std::string> lines = config.getRawLines();
@@ -77,9 +78,74 @@ void MIASequencer::loadConfig()
             key = line;
         }
         
-        
+        // Check if this is the start of end of a sequence.
+        if (key == "SEQUENCENAME")
+        {
+            sequence.name = value;
+        }
+        else if (key == "DELAY")
+        {
+            sequence.delayTime = std::stoi(value);
+        }
+        else if (key == "ENDOFSEQUENCE") // Complete the sequence.
+        {
+            if (sequence.isValid())
+            {
+                // TODO - check for pre-existing sequences.
+                sequences[sequence.name] = sequence;
+                sequence.clear();
+            }
+            else // Invalid sequence so restart and ignore this one.
+            {
+                // TODO - report error here.
+                sequence.clear();
+            }
+        }
+        else // Everything else is an action or invalid.
+        {
+            sequence.actions.push_back(createAction(key, value));
+        }
     }    
 }
+
+
+SequenceAction createAction(std::String key, std::string value)
+{
+    SequenceAction action;
+    if (key == "TYPE") 
+    {
+        action.action = SequenceActionType::Type;
+        action.strToType = value;
+    }
+    else if (key == "SLEEP") 
+    {
+        action.action = SequenceActionType::SLEEP;
+        action.sleepTime = std::stoi(value);
+    }
+    else if (key == "MOVEMOUSE") 
+    {
+        action.action = SequenceActionType::MOVEMOUSE;
+        constants::Coordinate coords(0,0);
+        if (stringContainsChar(value, ","))
+        {
+            coords.x = std::stoi(getBeforeChar(value, ","));
+            coords.y = std::stoi(getAfterChar(value, ","));
+        }
+        action.coords = coords;
+    }
+    else if (key == "CLICK") 
+    {
+        action.action = SequenceActionType::CLICK;
+        action.click = VirtualKeyStrokes::stringToClickType(value);
+    }
+    else
+    {    
+        action.action = SequenceActionType::UNKNOWN;
+    }
+    
+    return action;
+}
+
 
 void MIATemplate::printHelp() const
 {
