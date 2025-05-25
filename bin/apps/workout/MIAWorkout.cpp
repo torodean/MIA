@@ -20,6 +20,9 @@
 #include "Error.hpp"
 #include "Paths.hpp"
 
+// Used for the key-value pair
+#include "Constants.hpp"
+
 using std::string;
 using std::cout;
 using std::endl;
@@ -160,7 +163,7 @@ void MIAWorkout::generateWorkout()
     }
     
     // All the exercises are stored in the config file.
-    std::vector<std::pair<std::string, std::string>> exercisesList = config.getAllConfigPairs();
+    std::vector<constants::KeyValuePair> exercisesList = config.getAllConfigPairs();
 
     // Creates and stores workouts file/program variables.
     vector<string> workoutName;
