@@ -1,0 +1,20 @@
+#============================================================================
+# Name        : MIATemplate.MIA
+# Author      : Antonius Torode
+# Created on  : 05/24/2025
+# Description : MIA config for MIA template program.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# some template configuration parameters.
+MyBoolValue=true
+myIntValue=314
+myDoubleValue=3.141592
+myStringValue=Hello World!
+myListValue=1,2,3,a,b,c

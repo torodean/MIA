@@ -1,4 +1,5 @@
 set(MIA_Config_Files
+    MIATemplate.MIA
     MIAConfig.MIA
     excuses.MIA
     MIAWorkout.MIA
