@@ -62,8 +62,7 @@ void MIAWorkout::initialize(int argc, char* argv[])
         std::cerr << "Error during MIAWorkout::initialize: " << ex.what() << std::endl;
     }
     
-    if (!helpRequested) // If we are just printing help, no need to load the config.
-        loadConfig();
+    loadConfig();
 }
 
 void MIAWorkout::loadConfig()

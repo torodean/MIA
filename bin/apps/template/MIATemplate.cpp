@@ -45,8 +45,7 @@ void MIATemplate::initialize(int argc, char* argv[])
         std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
     }
     
-    if (!helpRequested) // If we are just printing help, no need to load the config.
-        loadConfig();
+    loadConfig();
 }
 
 void MIATemplate::loadConfig()
