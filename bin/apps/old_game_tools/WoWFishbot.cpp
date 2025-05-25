@@ -38,12 +38,22 @@ WoWFishbot::WoWFishbot() :
 
 void WoWFishbot::initialize(int argc, char* argv[])
 {
-    MIAApplication::initialize(argc, argv);
+    try
+    {    
+        MIAApplication::initialize(argc, argv);
+        
+        // Set the values from the command line arguments.
+        std::string configFile = defaultConfigFile;
+        configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
+        config.setConfigFileName(configFile); // handles config.initialize().
+    }
+    catch (const error::MIAException& ex)
+    {
+        std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
+    }
     
-    std::string configFile = defaultConfigFile;
-    configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-    config.setConfigFileName(configFile);
-    loadConfig();
+    if (!helpRequested) // If we are just printing help, no need to load the config.
+        loadConfig();
 }
 
 
@@ -251,13 +261,27 @@ void WoWFishbot::fishBotIntro()
 
 void WoWFishbot::loadConfig()
 {
-    WoWFishBotStartX = config.getInt("WoWFishBotStartX");
-    WoWFishBotStartY = config.getInt("WoWFishBotStartY");
-    WoWFishBotEndX = config.getInt("WoWFishBotEndX");
-    WoWFishBotEndY = config.getInt("WoWFishBotEndY");
-    WoWFishBotIncrement = config.getInt("WoWFishBotIncrement");
-    WoWFishBotNumOfCasts = config.getInt("WoWFishBotNumOfCasts");
-    WoWFishBotDelay = config.getInt("WoWFishBotDelay");
+    try
+    {
+        WoWFishBotStartX = config.getInt("WoWFishBotStartX");
+        WoWFishBotStartY = config.getInt("WoWFishBotStartY");
+        WoWFishBotEndX = config.getInt("WoWFishBotEndX");
+        WoWFishBotEndY = config.getInt("WoWFishBotEndY");
+        WoWFishBotIncrement = config.getInt("WoWFishBotIncrement");
+        WoWFishBotNumOfCasts = config.getInt("WoWFishBotNumOfCasts");
+        WoWFishBotDelay = config.getInt("WoWFishBotDelay");
+    }
+    catch (error::MIAException& ex)
+    {
+        std::cerr << "Error loading in configuration file value(s): " 
+        << ex.what() 
+        << "Continuing with default values."
+        << std::endl;
+    }
+    
+    // Optionally print the config values after it is loaded.
+    if (getVerboseMode())
+        config.dumpConfigMap();
 }
 
 void WoWFishbot::printHelp() const
@@ -265,6 +289,6 @@ void WoWFishbot::printHelp() const
     MIAApplication::printHelp();
     
     cout << "Fishbot specific options:" << endl
-         << configFileOpt.getHelp() 
+         << configFileOpt.getHelp() << endl
          << endl;
 }

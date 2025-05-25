@@ -49,7 +49,8 @@ namespace MIA_System
         MIAConfig() = default;
         
         /**
-         * Main constructor for the MIAConfig class which sets the config file and reads in the values to the map.
+         * Main constructor for the MIAConfig class which sets the config file. After constructed, initialize()
+         * will need called to load the actual configuration file.
          * @note The file name here can be the entire file path OR just the name of the file (in which case the
          *       default file path locations will be used).
          * @param configFile[const std::string&] - The config file to use for this object.
@@ -57,7 +58,7 @@ namespace MIA_System
          */
         MIAConfig(const std::string& configFile, bool verboseMode = false) :
             configFileName(configFile)
-        { initialize(verboseMode); };
+        {  };
 
         /**
          * Main destructor for the MIAConfig class.
@@ -74,9 +75,11 @@ namespace MIA_System
         /**
          * This will reloadthe configuration file by calling initialize. This is mainly just semantically different
          * so that the call makes sense in contexts where it is used.
+         * @param verboseMode[bool] - Enables verbose output.
+         * @throws MIAException If the underlying initialize() call fails.
          */
-        void reload()
-        { initialize(); };
+        void reload(bool verboseMode = false)
+        { initialize(verboseMode); };
         
         /**
          * Sets the config file name for this object. After this is set, the initialize() method should be called.
@@ -85,11 +88,13 @@ namespace MIA_System
          * @note The file name here can be the entire file path OR just the name of the file (in which case the
          *       default file path locations will be used).
          * @param configFile[const std::string&] - The config file to use for this object.
+         * @param verboseMode[bool] - Enables verbose output.
+         * @throws MIAException If the underlying initialize() call fails.
          */
-         void setConfigFileName(const std::string& configFile)
+         void setConfigFileName(const std::string& configFile, bool verboseMode = false)
          { 
             configFileName = configFile; 
-            reload();
+            reload(verboseMode); // may throw due to initialize()
         }
         
         /**

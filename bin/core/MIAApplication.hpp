@@ -9,6 +9,9 @@
 
 #include <string>
 
+// Used for base configuration values.
+#include "CommandOption.hpp"
+
 /**
  * @class MIAApplication
  * @brief Base class for MIA applications, providing a standard interface
@@ -19,7 +22,7 @@ class MIAApplication
 {
 public:
     /// Default constructor.
-    MIAApplication() = default;
+    MIAApplication();
 
     /// Virtual destructor.
     virtual ~MIAApplication() = default;
@@ -49,6 +52,11 @@ public:
     { return verboseMode; }
     
 protected:
+    
+    /// Base command options used by the MIAApplication.
+    CommandOption verboseOpt;
+    CommandOption helpOpt;
+
     /**
      * Prints common help info including verbose and help flags.
      */

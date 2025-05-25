@@ -18,18 +18,25 @@
 #include "CommandParser.hpp"
 
 
+MIAApplication::MIAApplication() :
+    verboseOpt("-v", "--verbose", "Enable verbose output.",
+        CommandOption::commandOptionType::boolOption),
+    helpOpt("-h", "--help", "Show this help message",
+        CommandOption::commandOptionType::boolOption)
+{ }
+
+
 void MIAApplication::initialize(int argc, char* argv[])
 {
     try
-    {
-        command_parser::parseBoolFlag(argc, argv, "-v", "--verbose", verboseMode);
-        command_parser::parseBoolFlag(argc, argv, "-h", "--help", helpRequested);
+    {    
+        verboseOpt.getOptionVal<bool>(argc, argv, verboseMode);
+        helpOpt.getOptionVal<bool>(argc, argv, helpRequested);
     }
     catch (const error::MIAException& ex)
     {
-        // Handle unexpected error during flag parsing (shouldn't happen with parseBoolFlag)
         std::cerr << "Error during MIAApplication::initialize: " << ex.what() << std::endl;
-        throw;
+        throw; // This shouldn't throw a MIAException so if it does, it indicates something very wrong. Thus, throw...
     }
 
     if (helpRequested)
@@ -42,7 +49,8 @@ void MIAApplication::initialize(int argc, char* argv[])
 
 void MIAApplication::printHelp() const
 {
-    std::cout << "Base application options:\n"
-              << "  -v, --verbose    Enable verbose output\n"
-              << "  -h, --help       Show this help message\n";
+    std::cout << "Base MIA application options:" << std::endl
+              << verboseOpt.getHelp() << std::endl
+              << helpOpt.getHelp()  << std::endl
+              << std::endl;
 }

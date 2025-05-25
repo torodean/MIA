@@ -14,6 +14,7 @@
 // Used for error handling.
 #include "Error.hpp"
 #include "Paths.hpp"
+#include "MIAException.hpp"
 
 
 MIATemplate::MIATemplate() : 
@@ -28,14 +29,23 @@ MIATemplate::MIATemplate() :
 
 void MIATemplate::initialize(int argc, char* argv[])
 {
-    MIAApplication::initialize(argc, argv);
+    try
+    {    
+        MIAApplication::initialize(argc, argv);
 
-    // Set the values from the command line arguments.
-    testOpt.getOptionVal<bool>(argc, argv, testMode);
-    
-    std::string configFile = defaultConfigFile;
-    configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-    config.setConfigFileName(configFile);
+        // Set the values from the command line arguments.
+        testOpt.getOptionVal<bool>(argc, argv, testMode);
+        
+        std::string configFile = defaultConfigFile;
+        configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
+        std::cout << "Before setConfigFileName" << std::endl;
+        config.setConfigFileName(configFile); // handles config.initialize().
+        std::cout << "After setConfigFileName" << std::endl;
+    }
+    catch (const error::MIAException& ex)
+    {
+        std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
+    }
     
     if (!helpRequested) // If we are just printing help, no need to load the config.
         loadConfig();
@@ -43,12 +53,22 @@ void MIATemplate::initialize(int argc, char* argv[])
 
 void MIATemplate::loadConfig()
 {
-    // Load configuration here.
-    configFileVals.boolValue = config.getBool("MyBoolValue");
-    configFileVals.intValue = config.getInt("myIntValue");
-    configFileVals.doubleValue = config.getDouble("myDoubleValue");
-    configFileVals.stringValue = config.getString("myStringValue");
-    configFileVals.listValue = config.getVector("myListValue", ',');
+    try
+    {
+        // Load configuration here.
+        configFileVals.boolValue = config.getBool("MyBoolValue");
+        configFileVals.intValue = config.getInt("myIntValue");
+        configFileVals.doubleValue = config.getDouble("myDoubleValue");
+        configFileVals.stringValue = config.getString("myStringValue");
+        configFileVals.listValue = config.getVector("myListValue", ',');
+    }
+    catch (error::MIAException& ex)
+    {
+        std::cerr << "Error loading in configuration file value(s): " 
+        << ex.what() 
+        << "Continuing with default values."
+        << std::endl;
+    }
     
     // Optionally print the config values after it is loaded.
     if (getVerboseMode())

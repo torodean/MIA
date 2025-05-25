@@ -44,16 +44,23 @@ MIAWorkout::MIAWorkout() :
 
 void MIAWorkout::initialize(int argc, char* argv[])
 {
-    MIAApplication::initialize(argc, argv);
+    try
+    {  
+        MIAApplication::initialize(argc, argv);
 
-    // Set the values from the command line arguments.
-    difficultyOpt.getOptionVal<double>(argc, argv, difficulty);
-    weeklyOpt.getOptionVal<bool>(argc, argv, weekly);
-    outputFileOpt.getOptionVal<std::string>(argc, argv, workoutOutputFilePath);
-    
-    std::string configFile = defaultConfigFile;
-    configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-    config.setConfigFileName(configFile);
+        // Set the values from the command line arguments.
+        difficultyOpt.getOptionVal<double>(argc, argv, difficulty);
+        weeklyOpt.getOptionVal<bool>(argc, argv, weekly);
+        outputFileOpt.getOptionVal<std::string>(argc, argv, workoutOutputFilePath);
+        
+        std::string configFile = defaultConfigFile;
+        configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
+        config.setConfigFileName(configFile); // handles config.initialize().
+    }
+    catch (const error::MIAException& ex)
+    {
+        std::cerr << "Error during MIAWorkout::initialize: " << ex.what() << std::endl;
+    }
     
     if (!helpRequested) // If we are just printing help, no need to load the config.
         loadConfig();
@@ -61,15 +68,25 @@ void MIAWorkout::initialize(int argc, char* argv[])
 
 void MIAWorkout::loadConfig()
 {
-    if (workoutOutputFilePath != "") // Otherwise it was set via a command option.
-        workoutOutputFilePath = config.getString("workoutOutputFilePath");
-    
-    // Get config values.
-    toughness = config.getDouble("toughness");
-    minNumOfExercises = config.getDouble("minNumOfExercises");
-    maxNumOfExercises = config.getDouble("maxNumOfExercises");
-    minNumOfSets = config.getDouble("minNumOfSets");
-    maxNumOfSets = config.getDouble("maxNumOfSets");
+    try
+    {
+        if (workoutOutputFilePath != "") // Otherwise it was set via a command option.
+            workoutOutputFilePath = config.getString("workoutOutputFilePath");
+        
+        // Get config values.
+        toughness = config.getDouble("toughness");
+        minNumOfExercises = config.getDouble("minNumOfExercises");
+        maxNumOfExercises = config.getDouble("maxNumOfExercises");
+        minNumOfSets = config.getDouble("minNumOfSets");
+        maxNumOfSets = config.getDouble("maxNumOfSets");
+    }
+    catch (error::MIAException& ex)
+    {
+        std::cerr << "Error loading in configuration file value(s): " 
+        << ex.what() 
+        << "Continuing with default values."
+        << std::endl;
+    }
     
     if (getVerboseMode())
         config.dumpConfigMap();
