@@ -38,7 +38,7 @@ void MIAApplication::initialize(int argc, char* argv[])
     {
         // This shouldn't ever throw a MIAException since it's simple and part of the base app, 
         // but throw an exception just in case... 
-        std::string err = std::string("Error during MIAApplication::initialize: ") + ex.what();
+        std::string err = "Error during MIAApplication::initialize!";
         throw error::MIAException(error::ErrorCode::Catastrophic_Failure, err); 
     }
 

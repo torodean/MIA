@@ -169,6 +169,7 @@ endif()
 Both system-level and repository-level default paths for configuration and log files are defined and exposed to the compiler through compile-time definitions. This centralizes resource location information for consistent access across the codebase. To add a constant value defined in cmake such that it is accessible in the source code (c++), the following method can be used.
 
 \subsubsection{Defining C++ Accessible CMake Variables}
+\label{sec:CMake-setup-cpp}
 
 First, the value needs defined in the CMake using the \texttt{set} and \texttt{add\_definiition} methods:
 \begin{lstlisting}[style=shellstyle]
@@ -602,9 +603,49 @@ Several older functions exist but are marked deprecated in favor of \texttt{MIAE
 
 \subsection*{Usage Guidelines}
 \begin{enumerate}
-	\item Throw \texttt{MIAException} in place of manual error returns.
+	\item Throw \texttt{MIAException} in place of manual error returns. An appropriate error code from \texttt{error::ErrorCodes} should be used. If one does not exist, one should be added.
+	\begin{lstlisting}[style=cppstyle]
+try
+{    
+    // Do some code...
+}
+catch (const error::MIAException& ex)
+{
+    std::string err = "Details of this error!";
+    throw error::MIAException(error::ErrorCode::Catastrophic_Failure, err); 
+}
+	\end{lstlisting}
 	\item Use \texttt{getErrorDescription()} to log or report known error codes.
 	\item Check exception codes via \texttt{getCode()} in catch blocks to take context-specific actions.
+	\begin{lstlisting}[style=cppstyle]
+catch (const error::MIAException& ex)
+{
+    if (ex.getCode() == error::ErrorCode::Catastrophic_Failure)
+    {
+    	// Do something specific for this error.
+    }
+}
+	\end{lstlisting}
+	\item Add new error codes and descriptions for error-specific handling and information gathering to ensure that apps remain transparent and easy to use.
+	\begin{lstlisting}[style=cppstyle]
+// In bin/core/Error.hpp
+namespace error
+{
+    enum ErrorCode
+    {
+    	New_Error = 31450 // Add error codes here
+    }
+}
+	\end{lstlisting}
+	\begin{lstlisting}[style=cppstyle]
+// In bin/core/Errordescriptions.cpp
+namespace error
+{
+    const std::unordered_map<ErrorCode, std::string> errorDescriptions = {
+    	// Other error code descriptions here...
+        { New_Error, "Add error description here..." },
+    };
+	\end{lstlisting}
 \end{enumerate}
 
 \subsection*{Benefits}
@@ -623,7 +664,7 @@ Several older functions exist but are marked deprecated in favor of \texttt{MIAE
 
 \section{Global Constants and Paths}
 
-This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version.
+This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version. See section \ref{sec:CMake-setup-cpp} for some related information on adding global paths and compile time through CMake.
 
 \subsection{constants Namespace}
 
@@ -647,7 +688,7 @@ The \texttt{paths} namespace offers a centralized interface for accessing direct
 	\item \texttt{INSTALL\_LOCATION}: The root directory of the system installation.
 \end{itemize}
 
-\subsubsection*{Runtime Utilities}
+\subsubsection*{Runtime Utilities} \label{sec:global-constants-utilities}
 \begin{itemize}
 	\item \texttt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
 	
@@ -659,6 +700,7 @@ The \texttt{paths} namespace offers a centralized interface for accessing direct
 		\item If a \texttt{resources} folder exists in the executable directory: returns that path.
 		\item Otherwise: returns \texttt{REPO\_CONFIG\_FILE\_DIR}.
 	\end{itemize}
+	This is particularly useful when determining the full path of a configuration file to use. The application will automatically try to detect which file to use based on its location and which files are available. This allows for portability and flexibility.
 \end{itemize}
 
 This design ensures portability and flexibility across different environments (development, testing, deployment), with consistent fallback logic and platform-agnostic path resolution.
@@ -702,7 +744,7 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 	\item Supports setting and retrieving configuration files and types dynamically.
 	\item Provides typed accessors: \texttt{getInt()}, \texttt{getDouble()}, \texttt{getString()}, \texttt{getBool()}, and vector versions.
 	\item Supports verbose logging during file parsing for debugging.
-	\item Can return all configuration entries as key-value pairs or raw lines, depending on the format.
+	\item Can return all configuration entries as key-value pairs, raw lines, or other formats depending on the format and implementation details.
 \end{itemize}
 
 \subsection{Class Hierarchy and Responsibilities}
@@ -722,18 +764,63 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 	
 	\item[\texttt{RawLinesData}]
 	\hfill \\
-	Implements \texttt{ConfigData}. Parses files formatted with \texttt{any} format (parsed by line)i nto an internal vector and supports retrieval for custom parsing.
+	Implements \texttt{ConfigData}. Parses files formatted with \texttt{any} format (parsed by line) into an internal vector and supports retrieval for custom parsing.
 \end{description}
 
 \subsection{Usage Pattern}
 
 \begin{enumerate}
-	\item Instantiate \texttt{MIAConfig} with a file name and configuration type.
-	\item Call \texttt{initialize()} to parse and load the configuration file.
-	\item Use the typed getter methods to retrieve settings.
+	\item Include a configuration object as a private member of the application class for each configuration file which is needed (used) by the application.
+	\begin{lstlisting}[style=cppstyle]
+/// The configuration loader for this app.
+MIA_System::MIAConfig config;
+	\end{lstlisting}
+	\item Instantiate \texttt{MIAConfig} with a file name and configuration type. This should be done at application construction so that the configuration is available to parse and use during initialization. A default configuration file name can be defined and used at object construction or defined later. The file name can contain a full file path, but if it does not, the MIAConfig class will attempt to identify an appropriate configuration directory during config initialization using the \texttt{paths::getDefaultConfigDirToUse()} method (see section \ref{sec:global-constants-utilities} for more details).
+	\begin{lstlisting}[style=cppstyle]
+MIATemplate::MIATemplate() : 
+	config(defaultConfigFile, constants::ConfigType::KEY_VALUE)                      
+{ };
+	\end{lstlisting}
+	\item Call \texttt{initialize()}, \texttt{reload()} or \texttt{setConfigFileName(..)} during application initialization to parse and load the base configuration file into the appropriate config implementation (this is based on the specified configuration type).
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::initialize(int argc, char* argv[])
+{
+	try
+	{    
+		// Other code...
+		std::string configFile = defaultConfigFile;
+		configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
+		
+		// This will call config.initialize().
+		config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE);
+	}
+	// Optionally print the config values after it is loaded.
+	if (getVerboseMode())
+		config.dumpConfigMap();
+	
+	loadConfig(); // An app-specific config loader.
+}
+	\end{lstlisting}
+	\item Use the typed getter methods to retrieve settings from the config class and store them into application-specific variables.
+	\begin{lstlisting}[style=cppstyle]
+void MIATemplate::loadConfig()
+{
+	try
+	{
+		// Load configuration here.
+		configFileVals.boolValue = config.getBool("MyBoolValue");
+		configFileVals.intValue = config.getInt("myIntValue");
+		configFileVals.doubleValue = config.getDouble("myDoubleValue");
+		configFileVals.stringValue = config.getString("myStringValue");
+		configFileVals.listValue = config.getVector("myListValue", ',');
+	}
+	catch (error::MIAException& ex)
+	{ // Handle errors... }
+}
+	\end{lstlisting}
 \end{enumerate}
 
-\subsection{Example}
+\subsection{Quick Example}
 
 \begin{verbatim}
 	MIAConfig cfg("settings.conf", constants::ConfigType::KEY_VALUE);

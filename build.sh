@@ -111,12 +111,12 @@ echo "...MIA Build done!"
 
 # Install MIA if specified
 if [[ -z $installMIA && -n $updateReleaseFiles ]]; then
-  echo "...Updating Reelease files!"
-  cmake --install "$rootDirectory"/build $cmakeArgs
+  echo "...Updating Release files!"
+  cmake --install "$rootDirectory"/build
   $rootDirectory/scripts/install.sh
 elif [[ $installMIA ]]; then
   echo "...Installing MIA files!"
-  sudo cmake --install "$rootDirectory"/build $cmakeArgs
+  sudo cmake --install "$rootDirectory"/build
   $rootDirectory/scripts/install.sh
 fi
 
