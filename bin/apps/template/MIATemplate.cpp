@@ -38,9 +38,7 @@ void MIATemplate::initialize(int argc, char* argv[])
         
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-        std::cout << "Before setConfigFileName" << std::endl;
         config.setConfigFileName(configFile); // handles config.initialize().
-        std::cout << "After setConfigFileName" << std::endl;
     }
     catch (const error::MIAException& ex)
     {
