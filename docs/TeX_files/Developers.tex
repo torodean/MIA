@@ -276,7 +276,16 @@ Applications using this framework must implement the following life cycle method
 \end{itemize}
 
 \subsection*{Interface Enforcement}
-The framework uses a C++20 concept, \texttt{AppInterface}, to statically constrain application types. This ensures that any type passed to the launcher function conforms to the expected interface, eliminating runtime errors due to missing methods.
+The framework uses a C++20 concept, \texttt{AppInterface}, to statically constrain application types. This ensures that any type passed to the launcher function conforms to the expected interface, eliminating runtime errors due to missing methods. Other types can be added to this interface if they are in the future and should conform to the same format as the currently existing ones. 
+
+\begin{lstlisting}[style=cppstyle]
+template<typename App>
+concept AppInterface = requires(App app, int argc, char** argv) 
+{
+    { app.initialize(argc, argv) } -> std::same_as<void>;
+    { app.run() } -> std::same_as<int>;
+};
+\end{lstlisting}
 
 \subsection*{Application Launch}
 Applications are launched using the \texttt{runApp} template function:
@@ -284,16 +293,41 @@ Applications are launched using the \texttt{runApp} template function:
 	\item Accepts any type satisfying \texttt{AppInterface}.
 	\item Calls \texttt{initialize} followed by \texttt{run}, in that order.
 	\item Returns the result of \texttt{run} as the application's exit code.
+	\item Other method calls can be added in this sequence if they are needed in the future.
 \end{itemize}
+\begin{lstlisting}[style=cppstyle]
+template<AppInterface App>
+int runApp(int argc, char** argv)
+{
+    App app;
+    app.initialize(argc, argv);
+    return app.run();
+}
+\end{lstlisting}
 
 \subsection*{Entry Point Definition}
-To reduce boilerplate and unify application entry points, the framework provides a macro:
+To reduce boilerplate (code needing to be implemented by the end user) and unify application entry points, the framework provides an application macro entry point:
 \begin{itemize}
 	\item \texttt{MIA\_MAIN(AppClass)} defines a \texttt{main()} function that delegates to \texttt{runApp<AppClass>}.
 	\item This enables consistent startup across applications while preserving type safety and clarity.
 \end{itemize}
+\begin{lstlisting}[style=cppstyle]
+#define MIA_MAIN(AppClass)                   \
+int main(int argc, char** argv)              \
+{                                            \
+    return runApp<AppClass>(argc, argv);     \
+}
+\end{lstlisting}
+This macro (along with the above defined interface) makes creating a main for an application simple and straight forward and provides consistent behavior across apps. Typically, for clarity, the user should define a separate main cpp file which contains the implementation of this interface.
+\begin{lstlisting}[style=cppstyle]
+// The MIA Application Framework templates
+#include "AppFramework.hpp"
+// The file containing the fishbot app.
+#include "MIATemplate.hpp"
 
-\subsection*{Usage Guidelines}
+MIA_MAIN(MIATemplate)
+\end{lstlisting}
+Some tips and considerations follow:
 \begin{enumerate}
 	\item Define an application class that implements the required \texttt{initialize} and \texttt{run} methods.
 	\item Use \texttt{MIA\_MAIN(YourAppClass);} in a translation unit to define the application entry point.
