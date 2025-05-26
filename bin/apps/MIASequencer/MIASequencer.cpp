@@ -223,6 +223,7 @@ bool MIASequencer::CompleteSequence::isValid()
     return !name.empty() && !actions.empty();
 }
 
+
 void MIASequencer::CompleteSequence::clear()
 {
     name.clear();
@@ -286,6 +287,7 @@ void MIASequencer::SequenceAction::dump() const
             break;
     }
 }
+
 
 void MIASequencer::CompleteSequence::dump() const 
 {
