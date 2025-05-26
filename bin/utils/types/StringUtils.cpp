@@ -54,7 +54,7 @@ namespace types
     
     bool stringContainsChar(string& input, char c)
     {
-        if(findCharInString(input, c) == 0)
+        if(findCharInString(input, c) == -1)
             return false;
         return true;
     }
@@ -156,10 +156,23 @@ namespace types
     {
         int equalSignLocation = findCharInString(line, c);
     
+        std::string out = line.substr(0, equalSignLocation);
         if(verboseMode)
-            cout << "...stringBeforeEqual: " << line.substr(0, equalSignLocation) << endl;
+            cout << "...stringBeforeEqual: " << out << endl;
     
-        return line.substr(0, equalSignLocation);
+        return trim(out);
+    }
+    
+    
+    string getAfterChar(string line, char c, bool verboseMode)
+    {
+        int semiColonLocation = findCharInString(line, c);
+        
+        std::string out = line.substr(semiColonLocation+1, line.size()-1);
+        if(verboseMode)
+            cout << "...stringAfterSemiColon: " << out << endl;
+    
+        return trim(out);
     }
     
     
@@ -170,7 +183,7 @@ namespace types
     
         //First remove everything after the semi colon sign. Then keep everything after the equal sign.
         line = line.substr(0,semiColonLocation);
-        line = line.substr(equalSignLocation+1,line.size()-1);
+        line = line.substr(equalSignLocation+1, line.size()-1);
     
         if(verboseMode)
             cout << "...stringBetweenEqualAndSemiColon: " << line << endl;
@@ -192,17 +205,6 @@ namespace types
             std::cout << "...stringBetweenXAndY: " << line << std::endl;
     
         return line;
-    }
-    
-    
-    string getAfterChar(string line, char c, bool verboseMode)
-    {
-        int semiColonLocation = findCharInString(line, c);
-    
-        if(verboseMode)
-            cout << "...stringAfterSemiColon: " << line.substr(semiColonLocation+1,line.size()-1) << endl;
-    
-        return line.substr(semiColonLocation+1,line.size()-1);
     }
     
     
@@ -242,5 +244,26 @@ namespace types
     bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA)
     {
         return std::count(line.begin(), line.end(), delimiterA) == 1;
+    }
+    
+    
+    bool contains(const std::string& haystack, const std::string& needle) 
+    {
+        return haystack.find(needle) != std::string::npos;
+    }
+    
+    
+    std::string trim(const std::string& str) 
+    {
+        // Find the first non-whitespace character
+        auto first = std::find_if(str.begin(), str.end(), [](char c)
+        { return !std::isspace(c); });
+
+        // Find the last non-whitespace character
+        auto last = std::find_if(str.rbegin(), str.rend(), [](char c)
+        { return !std::isspace(c); }).base();
+
+        // Return the trimmed string
+        return (first <= last) ? std::string(first, last) : "";
     }
 } // namespace types

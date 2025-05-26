@@ -46,6 +46,21 @@ namespace MIA_system
     #endif
     }
     
+    std::string VirtualKeyStrokes::clickTypeToString(VirtualKeyStrokes::ClickType click) 
+    {
+        switch (click) 
+        {
+            case VirtualKeyStrokes::ClickType::LEFT_CLICK:
+                return "LEFT_CLICK"; 
+            case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+                return "RIGHT_CLICK"; 
+            case VirtualKeyStrokes::ClickType::MIDDLE_CLICK:
+                return "MIDDLE_CLICK"; 
+            default:
+                return "UNKNOWN"; 
+        }
+    }
+    
     void VirtualKeyStrokes::press(const char& character, int holdTime, bool verboseMode)
     {
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
@@ -1148,8 +1163,9 @@ namespace MIA_system
     }
     
     
-    VirtualKeyStrokes::ClickType VirtualKeyStrokes::stringToClickType(std::string input)
+    VirtualKeyStrokes::ClickType VirtualKeyStrokes::stringToClickType(const std::string& in)
     {
+        std::string input = in;
         // Convert the string to lowercase.
         std::transform(input.begin(), input.end(), input.begin(),
                    [](unsigned char c) { return std::tolower(c); });

@@ -45,8 +45,11 @@ namespace MIA_system
             MIDDLE_CLICK  ///< Represents a middle click.
         };
         
+        /// Converts a ClickType to a human readable string.
+        static std::string clickTypeToString(ClickType clickType);
+        
         /// Converts a string to a ClickType.
-        static ClickType stringToClickType(std::string input);
+        static ClickType stringToClickType(const std::string& input);
     
         /**
          * Main default constructor for the VirtualKeyStrokes class.

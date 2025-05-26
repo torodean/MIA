@@ -59,11 +59,20 @@ public:
      */
     struct SequenceAction
     {
-        SequenceActionType action;      ///< An action type (what to perform).
-        int timeValue;                  ///< Timing information (for pause or delay).
-        constants::Coordinate coords;   ///< Coordinates (for moving mouse).
-        std::string strToType;          ///< A string (for typing).
-        MIA_system::VirtualKeyStrokes::ClickType click; ///< A click type (for mouse input).
+        SequenceActionType actionType{};  ///< An action type (what to perform).
+        int timeValue{};                  ///< Timing information (for pause or delay).
+        constants::Coordinate coords{};   ///< Coordinates (for moving mouse).
+        std::string strToType{};          ///< A string (for typing).
+        MIA_system::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
+        
+        /// Returns true if this is a valid action.
+        bool isValid();
+        
+        /**
+         * @brief Outputs a human-readable representation of the acvtion to the standard output.
+         * Useful for debugging or verifying the sequence contents before execution.
+         */
+        void dump() const;
         
         /**
          * @brief Executes the stored action based on its type and associated data.
@@ -92,14 +101,22 @@ public:
      */
     struct CompleteSequence
     {
-        std::string name;        ///< The name of this sequence.
-        int delayTime{1000};     ///< The time between each action (ms).
-        SequenceActions actions; ///< All actions in this sequence.
+        std::string name{};        ///< The name of this sequence.
+        int delayTime{1000};       ///< The time between each action (ms).
+        SequenceActions actions{}; ///< All actions in this sequence.
         
         /// Returns true if this is a valid sequence.
         bool isValid();
         /// Clear this object.
         void clear();
+        
+        /**
+         * @brief Outputs a human-readable representation of the sequence to the standard output.
+         * Prints the name of the sequence, the delay time between actions, and each action
+         * with its specific parameters (e.g., string to type, coordinates, click type, etc.).
+         * Useful for debugging or verifying the sequence contents before execution.
+         */
+        void dump() const;
         
         /**
          * @brief Executes all actions in the sequence in order, applying the defined delay between each.
@@ -151,20 +168,20 @@ private:
      * @param value[std::String] - The value defining the data needed to perform the action.
      * @return [SequenceAction] - Returns the constructed SequenceAction.  
      */
-    static SequenceAction createAction(std::string key, std::string value);
+    SequenceAction createAction(std::string key, std::string value);
     
     /**
      * Runs a sequence based on the name (key) of the sequence.
      * @param sequenceName[const std::String&] - The name of the sequence to run.
      */
-     void runSequence(const std::string& sequenceName);
+    void runSequence(const std::string& sequenceName);
      
-     /**
-      * This will load a default front-end. This will continually loop, while asking the
-      * use for an input sequence name. When a sequence name is entered. The appropriate
-      * sequence will activate, then loop back to the start of the loop.
-      */
-     void defaultFrontEnd();
+    /**
+     * This will load a default front-end. This will continually loop, while asking the
+     * use for an input sequence name. When a sequence name is entered. The appropriate
+     * sequence will activate, then loop back to the start of the loop.
+     */
+    void defaultFrontEnd();
     
     /// An instance of VirtualKeyStrokes for calling the virtual key strokes.
     MIA_system::VirtualKeyStrokes keys;

@@ -169,5 +169,20 @@ namespace types
      * @return [bool] True if the line contains exactly one occurrence of the delimiter; otherwise false.
      */
      bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA);
+     
+    /**
+     * @brief Checks if one string contains another substring.
+     * @param haystack The string to search within.
+     * @param needle The substring to search for.
+     * @return true if 'needle' is found within 'haystack'; false otherwise.
+     */
+    bool contains(const std::string& haystack, const std::string& needle);
+    
+    /**
+     * @brief Removes leading and trailing whitespace characters from the given string.
+     * @param str[const std::string&]The string to trim.
+     * @return [std::string] - The trimmed string.
+     */
+    std::string trim(const std::string& str);
 
 } // namespace types

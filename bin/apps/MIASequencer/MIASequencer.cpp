@@ -27,6 +27,8 @@
 using types::stringContainsChar;
 using types::getBeforeChar;
 using types::getAfterChar;
+using types::contains;
+using types::trim;
 using MIA_system::VirtualKeyStrokes;
 
 MIASequencer::MIASequencer() : 
@@ -74,16 +76,18 @@ void MIASequencer::loadConfig()
     for (auto& line : lines)
     {
         std::string key, value;
+        // See if the line is a key/value pair or contains the end of sequence marker.
         if (stringContainsChar(line, '='))
         {
             // Get the key value on the line.
             key = getBeforeChar(line, '=');
+                
             // Get the value of the key.
             value = getAfterChar(line, '=');  
         }
         else
         {
-            key = line;
+            key = trim(line);
         }
         
         // Check if this is the start of end of a sequence.
@@ -99,8 +103,14 @@ void MIASequencer::loadConfig()
         {
             if (sequence.isValid())
             {
+                std::string seqName = trim(sequence.name);
+                if (getVerboseMode())
+                {
+                    std::cout << "Adding sequence to sequences map: " << seqName << std::endl;
+                    sequence.dump();
+                }
                 // TODO - check for duplicate sequences.
-                sequences[sequence.name] = sequence;
+                sequences[seqName] = sequence;
                 sequence.clear();
             }
             else // Invalid sequence so restart and ignore this one.
@@ -111,9 +121,11 @@ void MIASequencer::loadConfig()
         }
         else // Everything else is an action or invalid.
         {
-            sequence.actions.push_back(createAction(key, value));
+            SequenceAction action = createAction(key, value);
+            if (action.isValid())
+                sequence.actions.push_back(action);
         }
-    }    
+    }
 }
 
 
@@ -122,22 +134,22 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     SequenceAction action;
     if (key == "TYPE") 
     {
-        action.action = SequenceActionType::TYPE;
+        action.actionType = SequenceActionType::TYPE;
         action.strToType = value;
     }
     else if (key == "SLEEP") 
     {
-        action.action = SequenceActionType::SLEEP;
+        action.actionType = SequenceActionType::SLEEP;
         action.timeValue = std::stoi(value);
     }
     else if (key == "DELAY") 
     {
-        action.action = SequenceActionType::DELAY;
+        action.actionType = SequenceActionType::DELAY;
         action.timeValue = std::stoi(value);
     }
     else if (key == "MOVEMOUSE") 
     {
-        action.action = SequenceActionType::MOVEMOUSE;
+        action.actionType = SequenceActionType::MOVEMOUSE;
         constants::Coordinate coords(0,0);
         if (stringContainsChar(value, ','))
         {
@@ -148,12 +160,20 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     }
     else if (key == "CLICK") 
     {
-        action.action = SequenceActionType::CLICK;
-        action.click = VirtualKeyStrokes::stringToClickType(value);
+        action.actionType = SequenceActionType::CLICK;
+        std::string trimmedClickString = trim(value);
+        action.click = VirtualKeyStrokes::stringToClickType(trimmedClickString);
     }
     else
     {    
-        action.action = SequenceActionType::UNKNOWN;
+        action.actionType = SequenceActionType::UNKNOWN;
+    }
+    
+    if (getVerboseMode())
+    {
+        std::cout << "Action created: ";
+        action.dump();
+        std::cout << std::endl;
     }
     
     return action;
@@ -173,6 +193,31 @@ void MIASequencer::printHelp() const
 }
 
 
+bool MIASequencer::SequenceAction::isValid()
+{
+    switch (actionType) 
+    {
+        case SequenceActionType::TYPE:
+            return !strToType.empty();
+
+        case SequenceActionType::SLEEP:
+        case SequenceActionType::DELAY:
+            return timeValue > 0;
+
+        case SequenceActionType::MOVEMOUSE:
+            return true;  // No restriction on coords
+
+        case SequenceActionType::CLICK:
+            return click == MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK ||
+                   click == MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK ||
+                   click == MIA_system::VirtualKeyStrokes::ClickType::MIDDLE_CLICK;
+
+        default:
+            return false;
+    }
+}
+
+
 bool MIASequencer::CompleteSequence::isValid()
 {
     return !name.empty() && !actions.empty();
@@ -186,53 +231,120 @@ void MIASequencer::CompleteSequence::clear()
     return;
 }
 
+
 void MIASequencer::CompleteSequence::performActions(MIA_system::VirtualKeyStrokes& keys, 
                                                     bool testMode)
 {
     for (auto& action : actions)
     {
-        // Update the delayTime if performActions returns an int.
-        if (auto newDelay = action.performAction(keys))
-            delayTime = *newDelay;
-        
-        MIA_system::sleepMilliseconds(delayTime);
+        if (testMode)
+        {
+            action.dump();
+            std::cout << " ";
+        }
+        else
+        {
+            // Update the delayTime if performActions returns an int.
+            if (auto newDelay = action.performAction(keys))
+                delayTime = *newDelay;
+            
+            MIA_system::sleepMilliseconds(delayTime);
+        }
+    }
+    
+    if (testMode)
+        std::cout << std::endl;
+}
+
+
+void MIASequencer::SequenceAction::dump() const 
+{
+    switch (actionType) 
+    {
+        case SequenceActionType::TYPE:
+            std::cout << "TYPE:" << strToType;
+            break;
+            
+        case SequenceActionType::SLEEP:
+            std::cout << "SLEEP:" << timeValue << "ms";
+            break;
+            
+        case SequenceActionType::MOVEMOUSE:
+            std::cout << "MOVEMOUSE:" << coords.x << "," << coords.y;
+            break;
+            
+        case SequenceActionType::CLICK:
+            std::cout << "CLICK:" << VirtualKeyStrokes::clickTypeToString(click);
+            break;
+            
+        case SequenceActionType::DELAY:
+            std::cout << "DELAY:" << timeValue << "ms";
+            break;
+            
+        default:
+            std::cout << "UNKNOWN";
+            break;
     }
 }
+
+void MIASequencer::CompleteSequence::dump() const 
+{
+    std::cout << " -- { " << name << ", ";
+    std::cout << delayTime << "ms";
+
+    for (const auto& action : actions) 
+    {
+        std::cout << ", ";
+        action.dump();
+    }
+    std::cout << " }" << std::endl;
+}
+
 
 std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::VirtualKeyStrokes& keys, 
                                                                bool testMode)
 {
-    switch(action)
+    if (testMode)
     {
-        case SequenceActionType::TYPE:
-            keys.type(strToType);
-            break;
-        case SequenceActionType::SLEEP:
-            MIA_system::sleepMilliseconds(timeValue);
-            break;
-        case SequenceActionType::MOVEMOUSE:
-            keys.moveMouseTo(coords.x, coords.y);
-            break;
-        case SequenceActionType::CLICK:
-            switch(click)
-            {
-                case MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK:
-                    keys.mouseClick(click);
-                    break;
-                case MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK:
-                    keys.mouseClick(click);
-                    break;
-                default:
-                    // Do nothing...
-                    break;
-            }
-            break;
-        case SequenceActionType::DELAY:
-            return timeValue;
-        default:
-            // Do nothing...
-            break;
+        dump();
     }
+    else
+    {
+        switch(actionType)
+        {
+            case SequenceActionType::TYPE:
+                keys.type(strToType);
+                break;
+            case SequenceActionType::SLEEP:
+                MIA_system::sleepMilliseconds(timeValue);
+                break;
+            case SequenceActionType::MOVEMOUSE:
+                keys.moveMouseTo(coords.x, coords.y);
+                break;
+            case SequenceActionType::CLICK:
+                switch(click)
+                {
+                    case MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK:
+                        keys.mouseClick(click);
+                        break;
+                    case MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+                        keys.mouseClick(click);
+                        break;
+                    default:
+                        // Do nothing...
+                        break;
+                }
+                break;
+            case SequenceActionType::DELAY:
+                return timeValue;
+            default:
+                // Do nothing...
+                break;
+        }
+    }
+    
+    if (testMode)
+        std::cout << std::endl;
 }
 
 
