@@ -11,6 +11,7 @@
 #include <map>
 #include <fstream>
 #include <algorithm>
+#include <cstdlib>
 
 // The associated header file.
 #include "MIASequencer.hpp"
@@ -20,10 +21,14 @@
 #include "MIAException.hpp"
 // Used for string manipulation and parsing.
 #include "StringUtils.hpp"
+// Used for sleep.
+#include "Timing.hpp"
 
 using types::stringContainsChar;
 using types::getBeforeChar;
 using types::getAfterChar;
+using types::contains;
+using types::trim;
 using MIA_system::VirtualKeyStrokes;
 
 MIASequencer::MIASequencer() : 
@@ -32,7 +37,9 @@ MIASequencer::MIASequencer() :
                                 paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
                                 CommandOption::commandOptionType::stringOption),
     testOpt("-t", "--test", "Enables test mode. This mode will only output the sequence to terminal.",
-                                CommandOption::commandOptionType::boolOption)
+                                CommandOption::commandOptionType::boolOption),
+    sequenceNameOpt("-s", "--sequence", "Run a sequence, then exit.",
+                                CommandOption::commandOptionType::stringOption)
 { };
 
 
@@ -44,7 +51,9 @@ void MIASequencer::initialize(int argc, char* argv[])
 
         // Set the values from the command line arguments.
         testOpt.getOptionVal<bool>(argc, argv, testMode);
+        sequenceNameOpt.getOptionVal<std::string>(argc, argv, sequenceName);
         
+        // Set and load the config file.
         std::string sequencesFile = defaultSequencesFile;
         sequencesFileOpt.getOptionVal<std::string>(argc, argv, sequencesFile);
         config.setConfigFileName(sequencesFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
@@ -59,9 +68,7 @@ void MIASequencer::initialize(int argc, char* argv[])
 
 
 void MIASequencer::loadConfig()
-{
-    // TODO - finish this method.
-    
+{    
     CompleteSequence sequence;
     
     // The config stores all non-comment and non-empty lines from the config file.
@@ -69,16 +76,18 @@ void MIASequencer::loadConfig()
     for (auto& line : lines)
     {
         std::string key, value;
+        // See if the line is a key/value pair or contains the end of sequence marker.
         if (stringContainsChar(line, '='))
         {
             // Get the key value on the line.
             key = getBeforeChar(line, '=');
+                
             // Get the value of the key.
             value = getAfterChar(line, '=');  
         }
         else
         {
-            key = line;
+            key = trim(line);
         }
         
         // Check if this is the start of end of a sequence.
@@ -94,8 +103,14 @@ void MIASequencer::loadConfig()
         {
             if (sequence.isValid())
             {
-                // TODO - check for pre-existing sequences.
-                sequences[sequence.name] = sequence;
+                std::string seqName = trim(sequence.name);
+                if (getVerboseMode())
+                {
+                    std::cout << "Adding sequence to sequences map: " << seqName << std::endl;
+                    sequence.dump();
+                }
+                // TODO - check for duplicate sequences.
+                sequences[seqName] = sequence;
                 sequence.clear();
             }
             else // Invalid sequence so restart and ignore this one.
@@ -106,9 +121,11 @@ void MIASequencer::loadConfig()
         }
         else // Everything else is an action or invalid.
         {
-            sequence.actions.push_back(createAction(key, value));
+            SequenceAction action = createAction(key, value);
+            if (action.isValid())
+                sequence.actions.push_back(action);
         }
-    }    
+    }
 }
 
 
@@ -117,17 +134,22 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     SequenceAction action;
     if (key == "TYPE") 
     {
-        action.action = SequenceActionType::TYPE;
+        action.actionType = SequenceActionType::TYPE;
         action.strToType = value;
     }
     else if (key == "SLEEP") 
     {
-        action.action = SequenceActionType::SLEEP;
-        action.sleepTime = std::stoi(value);
+        action.actionType = SequenceActionType::SLEEP;
+        action.timeValue = std::stoi(value);
+    }
+    else if (key == "DELAY") 
+    {
+        action.actionType = SequenceActionType::DELAY;
+        action.timeValue = std::stoi(value);
     }
     else if (key == "MOVEMOUSE") 
     {
-        action.action = SequenceActionType::MOVEMOUSE;
+        action.actionType = SequenceActionType::MOVEMOUSE;
         constants::Coordinate coords(0,0);
         if (stringContainsChar(value, ','))
         {
@@ -138,12 +160,20 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     }
     else if (key == "CLICK") 
     {
-        action.action = SequenceActionType::CLICK;
-        action.click = VirtualKeyStrokes::stringToClickType(value);
+        action.actionType = SequenceActionType::CLICK;
+        std::string trimmedClickString = trim(value);
+        action.click = VirtualKeyStrokes::stringToClickType(trimmedClickString);
     }
     else
     {    
-        action.action = SequenceActionType::UNKNOWN;
+        action.actionType = SequenceActionType::UNKNOWN;
+    }
+    
+    if (getVerboseMode())
+    {
+        std::cout << "Action created: ";
+        action.dump();
+        std::cout << std::endl;
     }
     
     return action;
@@ -157,37 +187,221 @@ void MIASequencer::printHelp() const
     // This is a dump of the help messages used by the various command options.
     std::cout << "MIATemplate specific options:" << std::endl
               << sequencesFileOpt.getHelp() << std::endl
+              << sequenceNameOpt.getHelp() << std::endl
               << testOpt.getHelp() << std::endl
               << std::endl;
 }
 
 
+bool MIASequencer::SequenceAction::isValid()
+{
+    switch (actionType) 
+    {
+        case SequenceActionType::TYPE:
+            return !strToType.empty();
+
+        case SequenceActionType::SLEEP:
+        case SequenceActionType::DELAY:
+            return timeValue >= 0;
+
+        case SequenceActionType::MOVEMOUSE:
+            return true;  // No restriction on coords
+
+        case SequenceActionType::CLICK:
+            return click == MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK ||
+                   click == MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK ||
+                   click == MIA_system::VirtualKeyStrokes::ClickType::MIDDLE_CLICK;
+
+        default:
+            return false;
+    }
+}
+
+
 bool MIASequencer::CompleteSequence::isValid()
 {
-    // TODO
-    return true;
+    return !name.empty() && !actions.empty();
 }
+
 
 void MIASequencer::CompleteSequence::clear()
 {
-    // TODO
+    name.clear();
+    delayTime = 1000; // The default value.
+    actions.clear();
     return;
 }
 
-void MIASequencer::CompleteSequence::performActions()
+
+std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::VirtualKeyStrokes& keys, 
+                                                               bool testMode)
 {
-    // TODO
-    return;
+    if (testMode)
+    {
+        dump();
+    }
+    else
+    {
+        switch(actionType)
+        {
+            case SequenceActionType::TYPE:
+                keys.type(strToType);
+                break;
+            case SequenceActionType::SLEEP:
+                MIA_system::sleepMilliseconds(timeValue);
+                break;
+            case SequenceActionType::MOVEMOUSE:
+                keys.moveMouseTo(coords.x, coords.y);
+                break;
+            case SequenceActionType::CLICK:
+                switch(click)
+                {
+                    case MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK:
+                        keys.mouseClick(click);
+                        break;
+                    case MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+                        keys.mouseClick(click);
+                        break;
+                    default:
+                        // Do nothing...
+                        break;
+                }
+                break;
+            case SequenceActionType::DELAY:
+                return timeValue;
+            default:
+                // Do nothing...
+                break;
+        }
+    }
+    
+    if (testMode)
+        std::cout << std::endl;
 }
 
-void MIASequencer::SequenceAction::performAction()
+
+void MIASequencer::CompleteSequence::performActions(MIA_system::VirtualKeyStrokes& keys, 
+                                                    bool testMode)
 {
-    // TODO
-    return;
+    for (auto& action : actions)
+    {
+        if (testMode)
+        {
+            action.dump();
+            std::cout << " ";
+        }
+        else
+        {
+            // Update the delayTime if performActions returns an int.
+            if (auto newDelay = action.performAction(keys))
+                delayTime = *newDelay;
+            
+            MIA_system::sleepMilliseconds(delayTime);
+        }
+    }
+    
+    if (testMode)
+        std::cout << std::endl;
 }
+
+
+void MIASequencer::SequenceAction::dump() const 
+{
+    switch (actionType) 
+    {
+        case SequenceActionType::TYPE:
+            std::cout << "TYPE:" << strToType;
+            break;
+            
+        case SequenceActionType::SLEEP:
+            std::cout << "SLEEP:" << timeValue << "ms";
+            break;
+            
+        case SequenceActionType::MOVEMOUSE:
+            std::cout << "MOVEMOUSE:" << coords.x << "," << coords.y;
+            break;
+            
+        case SequenceActionType::CLICK:
+            std::cout << "CLICK:" << VirtualKeyStrokes::clickTypeToString(click);
+            break;
+            
+        case SequenceActionType::DELAY:
+            std::cout << "DELAY:" << timeValue << "ms";
+            break;
+            
+        default:
+            std::cout << "UNKNOWN";
+            break;
+    }
+    std::cout << std::flush;
+}
+
+
+void MIASequencer::CompleteSequence::dump() const 
+{
+    std::cout << " -- { " << name << ", ";
+    std::cout << delayTime << "ms";
+
+    for (const auto& action : actions) 
+    {
+        std::cout << ", ";
+        action.dump();
+    }
+    std::cout << " }" << std::endl;
+}
+
+
+void MIASequencer::runSequence(const std::string& sequenceName)
+{
+    auto it = sequences.find(sequenceName);
+    if (it != sequences.end())
+        it->second.performActions(keys, testMode);
+    else
+        std::cout << "Sequence not found/loaded: " << sequenceName << std::endl;
+}
+
+
+void MIASequencer::defaultFrontEnd()
+{
+    std::string input;
+    // Loop over the default interface.
+    while (true) 
+    {
+        std::getline(std::cin, input);
+
+        if (input.empty()) 
+            continue;
+            
+        // Run the sequence.
+        runSequence(input);
+    }
+}
+
 
 int MIASequencer::run()
 {
-    // TODO
+    // This would indicate no sequenceNameOpt specified.
+    if (sequenceName.empty())
+    {
+        defaultFrontEnd();
+    }
+    else
+    {
+        std::cout << "Activating sequence: " << sequenceName << std::endl;
+        runSequence(sequenceName);
+        return 0;
+    }
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
