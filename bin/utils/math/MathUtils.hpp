@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <random>
+
 namespace math
 {
     /**
@@ -20,7 +22,7 @@ namespace math
      * @param verboseMode[bool] - Enables verbose output (default = false).
      * @return [int] - An appropriate random integer.
      */
-    int randomInt(int min, int max, int seed, bool useTime = true, bool verboseMode = false);
+    int randomInt(int min, int max, int seed = std::random_device{}(), bool useTime = true, bool verboseMode = false);
 
     /**
      * Rolls a dice based on input.

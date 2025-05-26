@@ -38,7 +38,7 @@ namespace math
         if(verboseMode)
             cout << "...Calculating random value between " << min << " and " << max << "." << endl;
         
-        std::mt19937 rng(std::random_device{}());
+        std::mt19937 rng(seed);
         std::uniform_int_distribution<int> dist(min, max);
         int random = dist(rng);
         
