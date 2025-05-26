@@ -5,4 +5,5 @@ add_subdirectory( template )
 # Add various app folders.
 add_subdirectory( old_game_tools )
 add_subdirectory( workout )
+add_subdirectory( MIASequencer )
 

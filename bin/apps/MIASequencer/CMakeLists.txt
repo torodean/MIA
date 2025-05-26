@@ -2,7 +2,7 @@
 set(MIASequencer_SRC MIASequencer.cpp MIASequencer_main.cpp )
 set(MIASequencer_INC MIASequencer.hpp )
 add_executable(MIASequencer ${MIASequencer_SRC} ${MIASequencer_INC} )
-target_link_libraries(MIASequencer PRIVATE Core_LIB System_LIB )
+target_link_libraries(MIASequencer PRIVATE Core_LIB System_LIB Types_LIB )
 
 if(SYSTEM_INSTALL)
     install(TARGETS MIASequencer DESTINATION ${APP_INSTALL_LOCATION})

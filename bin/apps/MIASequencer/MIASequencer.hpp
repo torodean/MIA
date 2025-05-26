@@ -70,11 +70,11 @@ public:
          * the relevant data members (i.e., coordinates, time, string, click type).
          * Only the data appropriate to the action type is used.
          */
-        static void performAction();
+        void performAction();
     };
     
     /// A list of sequencer actions forming a complete sequence.
-    using std::vector<SequenceAction> SequenceActions;
+    using SequenceActions = std::vector<SequenceAction>;
     
     /**
      * @brief Represents a fully defined input sequence with a name, timing, and actions.
@@ -91,7 +91,7 @@ public:
         SequenceActions actions; ///< All actions in this sequence.
         
         /// Returns true if this is a valid sequence.
-        void isValid();
+        bool isValid();
         /// Clear this object.
         void clear();
         
@@ -100,11 +100,11 @@ public:
          * Iterates through the `actions` list and calls `performAction()` on each entry,
          * pausing for `delayTime` milliseconds between actions.
          */
-        static void performActions();
+        void performActions();
     };
     
     /// Maps sequence names to their corresponding list of actions.
-    using std::unordered_map<std::string, CompleteSequence> sequenceList;
+    using sequenceList = std::unordered_map<std::string, CompleteSequence>;
 
     /**
      * The main constructor of the MIASequencer class. This will construct the command options.
@@ -141,7 +141,7 @@ private:
      * @param value[std::String] - The value defining the data needed to perform the action.
      * @return [SequenceAction] - Returns the constructed SequenceAction.  
      */
-    SequenceAction createAction(std::String key, std::string value);
+    static SequenceAction createAction(std::string key, std::string value);
 
     /**
      * This will load in the configuration file and load the sequences.
@@ -150,7 +150,10 @@ private:
 		
     // Command options for this app.
     CommandOption sequencesFileOpt;  ///< Used for loading a custom sequences file.
-    CommandOption testOption;        ///< Used for enabling test mode.
+    CommandOption testOpt;           ///< Used for enabling test mode.
+    
+    /// Stores true for testMode functionality.
+    bool testMode{false};
     
     /// The name of the defauilt config file that this class uses.
     std::string defaultSequencesFile{"MIASequences.MIA"};

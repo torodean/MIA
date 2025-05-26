@@ -21,11 +21,14 @@
 // Used for string manipulation and parsing.
 #include "StringUtils.hpp"
 
-using types::StringUtils;
+using types::stringContainsChar;
+using types::getBeforeChar;
+using types::getAfterChar;
+using MIA_system::VirtualKeyStrokes;
 
 MIASequencer::MIASequencer() : 
-    config(defaultConfigFile, constants::ConfigType::RAW_LINES),
-    configFileOpt("-c", "--config", "Specify a config file to use (default = " +
+    config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
+    sequencesFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                 paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
                                 CommandOption::commandOptionType::stringOption),
     testOpt("-t", "--test", "Enables test mode. This mode will only output the sequence to terminal.",
@@ -42,9 +45,9 @@ void MIASequencer::initialize(int argc, char* argv[])
         // Set the values from the command line arguments.
         testOpt.getOptionVal<bool>(argc, argv, testMode);
         
-        std::string configFile = defaultConfigFile;
-        configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-        config.setConfigFileName(configFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
+        std::string sequencesFile = defaultSequencesFile;
+        sequencesFileOpt.getOptionVal<std::string>(argc, argv, sequencesFile);
+        config.setConfigFileName(sequencesFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
     }
     catch (const error::MIAException& ex)
     {
@@ -63,7 +66,7 @@ void MIASequencer::loadConfig()
     
     // The config stores all non-comment and non-empty lines from the config file.
     std::vector<std::string> lines = config.getRawLines();
-    for (const auto& line : lines)
+    for (auto& line : lines)
     {
         std::string key, value;
         if (stringContainsChar(line, '='))
@@ -109,12 +112,12 @@ void MIASequencer::loadConfig()
 }
 
 
-SequenceAction createAction(std::String key, std::string value)
+MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::string value)
 {
     SequenceAction action;
     if (key == "TYPE") 
     {
-        action.action = SequenceActionType::Type;
+        action.action = SequenceActionType::TYPE;
         action.strToType = value;
     }
     else if (key == "SLEEP") 
@@ -126,10 +129,10 @@ SequenceAction createAction(std::String key, std::string value)
     {
         action.action = SequenceActionType::MOVEMOUSE;
         constants::Coordinate coords(0,0);
-        if (stringContainsChar(value, ","))
+        if (stringContainsChar(value, ','))
         {
-            coords.x = std::stoi(getBeforeChar(value, ","));
-            coords.y = std::stoi(getAfterChar(value, ","));
+            coords.x = std::stoi(getBeforeChar(value, ','));
+            coords.y = std::stoi(getAfterChar(value, ','));
         }
         action.coords = coords;
     }
@@ -147,19 +150,43 @@ SequenceAction createAction(std::String key, std::string value)
 }
 
 
-void MIATemplate::printHelp() const
+void MIASequencer::printHelp() const
 {
     MIAApplication::printHelp();
     
     // This is a dump of the help messages used by the various command options.
     std::cout << "MIATemplate specific options:" << std::endl
-              << configFileOpt.getHelp() << std::endl
+              << sequencesFileOpt.getHelp() << std::endl
               << testOpt.getHelp() << std::endl
               << std::endl;
 }
 
 
-int MIATemplate::run()
+bool MIASequencer::CompleteSequence::isValid()
+{
+    // TODO
+    return true;
+}
+
+void MIASequencer::CompleteSequence::clear()
+{
+    // TODO
+    return;
+}
+
+void MIASequencer::CompleteSequence::performActions()
+{
+    // TODO
+    return;
+}
+
+void MIASequencer::SequenceAction::performAction()
+{
+    // TODO
+    return;
+}
+
+int MIASequencer::run()
 {
     // TODO
     return 0;
