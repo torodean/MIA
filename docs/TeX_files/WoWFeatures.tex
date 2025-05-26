@@ -51,7 +51,7 @@ These values, \texttt{WoWFishBotStartX, WoWFishBotStartY, WoWFishBotEndX, WoWFis
 
 After these parameters are set, the fishbot can be run in MIA by using the \texttt{fishbot} command. There are a few other variables and parameters that can be set by the user but the others are optional. These other optional parameters that are contained in the configuration file are as follows.
 
-\begin{lstlisting}
+\begin{lstlisting}[style=pythonstyle]
 # Variables relating to the fishbot implementation inside MIA.
 WoWFishBotIncrement=40
 WoWFishBotNumOfCasts=10000
@@ -90,7 +90,7 @@ MIA contains some in game mail management for World of Warcraft (WoW) in order t
 
 As described above briefly, MIA has the capability of automating the sending of duplicate letters to a recipient in WoW. To do this, there are a few settings that need to be configured on the user end to ensure proper functionality. There are two variables contained in the configuration file that are used in conjunction with the \texttt{wow dup letter} function in MIA. These are listed below.
 
-\begin{lstlisting}
+\begin{lstlisting}[style=pythonstyle]
 # WoW related variables.
 WoWMailboxSendLetterLocationX=279
 WoWMailboxSendLetterLocationY=647
@@ -116,7 +116,7 @@ Once the proper coordinates are set, one can automate this process of sending a 
 
 MIA contains a command \texttt{wow unload} which is designed to be used in conjunction with the \texttt{wow dup letter} command. This command will loot the letters from the incoming mailbox that are sent using the \texttt{wow dup letter} command. In order to use this command properly, there are six different variables within the configuration file that need to be determined for the users environment. These variables are below.
 
-\begin{lstlisting}
+\begin{lstlisting}[style=pythonstyle]
 # WoW related variables.
 WoWMailboxFirstLetterLocationX=55
 WoWMailboxFirstLetterLocationY=265

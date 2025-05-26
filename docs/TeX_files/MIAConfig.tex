@@ -25,30 +25,30 @@ The format of the configuration file is simple and strictly line-based. Each set
 
 \subsection*{Example}
 
-\begin{lstlisting}
-	#============================================================================
-	# Name        : MIAConfig.MIA
-	# Author      : Antonius Torode
-	# Date        : 1/10/18
-	# Copyright   : This file can be used under the conditions of Antonius' 
-	#               General Purpose License (AGPL).
-	# Description : MIA settings for program initialization.
-	#============================================================================
-	
-	# File path variables
-	inputFilePath=Resources/InputFiles/
-	cryptFilePath=Resources/EncryptedFiles/
-	decryptFilePath=Resources/EncryptedFiles/
-	workoutsFilePath=Resources/InputFiles/exercises.txt
-	sequencesFilePath=Resources/InputFiles/MIASequences.txt
-	workoutOutputFilePath=Resources/OutputFiles/workout.txt
-	excuseFilePath=Resources/Excuses.txt
-	
-	# Program behavior flags
-	verboseMode=false
-	MIATerminalMode=true
-	
-	# ... Additional runtime variables below
+\begin{lstlisting}[style=pythonstyle]
+#============================================================================
+# Name        : MIAConfig.MIA
+# Author      : Antonius Torode
+# Date        : 1/10/18
+# Copyright   : This file can be used under the conditions of Antonius' 
+#               General Purpose License (AGPL).
+# Description : MIA settings for program initialization.
+#============================================================================
+
+# File path variables
+inputFilePath=Resources/InputFiles/
+cryptFilePath=Resources/EncryptedFiles/
+decryptFilePath=Resources/EncryptedFiles/
+workoutsFilePath=Resources/InputFiles/exercises.txt
+sequencesFilePath=Resources/InputFiles/MIASequences.txt
+workoutOutputFilePath=Resources/OutputFiles/workout.txt
+excuseFilePath=Resources/Excuses.txt
+
+# Program behavior flags
+verboseMode=false
+MIATerminalMode=true
+
+# ... Additional runtime variables below
 \end{lstlisting}
 
 \section{How MIAConfig Files Are Handled at Runtime}
