@@ -202,7 +202,7 @@ bool MIASequencer::SequenceAction::isValid()
 
         case SequenceActionType::SLEEP:
         case SequenceActionType::DELAY:
-            return timeValue > 0;
+            return timeValue >= 0;
 
         case SequenceActionType::MOVEMOUSE:
             return true;  // No restriction on coords
@@ -230,6 +230,53 @@ void MIASequencer::CompleteSequence::clear()
     delayTime = 1000; // The default value.
     actions.clear();
     return;
+}
+
+
+std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::VirtualKeyStrokes& keys, 
+                                                               bool testMode)
+{
+    if (testMode)
+    {
+        dump();
+    }
+    else
+    {
+        switch(actionType)
+        {
+            case SequenceActionType::TYPE:
+                keys.type(strToType);
+                break;
+            case SequenceActionType::SLEEP:
+                MIA_system::sleepMilliseconds(timeValue);
+                break;
+            case SequenceActionType::MOVEMOUSE:
+                keys.moveMouseTo(coords.x, coords.y);
+                break;
+            case SequenceActionType::CLICK:
+                switch(click)
+                {
+                    case MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK:
+                        keys.mouseClick(click);
+                        break;
+                    case MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+                        keys.mouseClick(click);
+                        break;
+                    default:
+                        // Do nothing...
+                        break;
+                }
+                break;
+            case SequenceActionType::DELAY:
+                return timeValue;
+            default:
+                // Do nothing...
+                break;
+        }
+    }
+    
+    if (testMode)
+        std::cout << std::endl;
 }
 
 
@@ -286,6 +333,7 @@ void MIASequencer::SequenceAction::dump() const
             std::cout << "UNKNOWN";
             break;
     }
+    std::cout << std::flush;
 }
 
 
@@ -300,53 +348,6 @@ void MIASequencer::CompleteSequence::dump() const
         action.dump();
     }
     std::cout << " }" << std::endl;
-}
-
-
-std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::VirtualKeyStrokes& keys, 
-                                                               bool testMode)
-{
-    if (testMode)
-    {
-        dump();
-    }
-    else
-    {
-        switch(actionType)
-        {
-            case SequenceActionType::TYPE:
-                keys.type(strToType);
-                break;
-            case SequenceActionType::SLEEP:
-                MIA_system::sleepMilliseconds(timeValue);
-                break;
-            case SequenceActionType::MOVEMOUSE:
-                keys.moveMouseTo(coords.x, coords.y);
-                break;
-            case SequenceActionType::CLICK:
-                switch(click)
-                {
-                    case MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK:
-                        keys.mouseClick(click);
-                        break;
-                    case MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK:
-                        keys.mouseClick(click);
-                        break;
-                    default:
-                        // Do nothing...
-                        break;
-                }
-                break;
-            case SequenceActionType::DELAY:
-                return timeValue;
-            default:
-                // Do nothing...
-                break;
-        }
-    }
-    
-    if (testMode)
-        std::cout << std::endl;
 }
 
 
@@ -366,7 +367,6 @@ void MIASequencer::defaultFrontEnd()
     // Loop over the default interface.
     while (true) 
     {
-        std::cout << "Enter a sequence name to run: ";
         std::getline(std::cin, input);
 
         if (input.empty()) 
@@ -387,6 +387,7 @@ int MIASequencer::run()
     }
     else
     {
+        std::cout << "Activating sequence: " << sequenceName << std::endl;
         runSequence(sequenceName);
         return 0;
     }

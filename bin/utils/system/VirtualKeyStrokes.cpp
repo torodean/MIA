@@ -1151,7 +1151,7 @@ namespace MIA_system
         }
     }
     
-    void VirtualKeyStrokes::type(std::string word)
+    void VirtualKeyStrokes::type(const std::string& word)
     {
         int size = word.size();
         for(int i=0;i<size;i++)

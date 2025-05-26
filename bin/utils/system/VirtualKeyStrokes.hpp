@@ -73,7 +73,7 @@ namespace MIA_system
          * This will simulate the key presses for a string.
          * @param character[const std::string&] - the string to simulate key presses for.
          */
-        void type(std::string word);
+        void type(const std::string& word);
     
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 
