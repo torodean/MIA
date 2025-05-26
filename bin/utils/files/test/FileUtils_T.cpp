@@ -1,5 +1,5 @@
 /**
- * File: FileUtilsTest.cpp
+ * File: FileUtils_T.cpp
  * Author: Antonius Torode
  * Date: 05/21/2025
  * Description: Unit tests for FileUtils methods using Google Test.
@@ -14,6 +14,7 @@
 // Include the header we are testing methods for.
 #include "FileUtils.hpp"
 
+namespace fs = std::filesystem;
 
 namespace files
 {
@@ -58,7 +59,7 @@ namespace files
         std::remove(filename.c_str());
     }
     
-    TEST(FileUtilsTest, GetRandomLineOfFileReturnsLineFromFile) 
+    TEST_F(FileUtils_T, GetRandomLineOfFileReturnsLineFromFile) 
     {
         std::vector<std::string> lines = {"Line1", "Line2", "Line3", "Line4"};
         std::string filename = createTempFile(lines);
@@ -72,19 +73,19 @@ namespace files
         removeTempFile(filename);
     }
     
-    TEST(FileUtilsTest, GetRandomLineOfFileEmptyFileReturnsError) 
+    TEST_F(FileUtils_T, GetRandomLineOfFileEmptyFileReturnsError) 
     {
         std::string filename = createTempFile({});
         
         std::string fileNameParam = filename;
-        std::string line = FileUtils::getRandomLineOfFile(fileNameParam);
+        std::string line = getRandomLineOfFile(fileNameParam);
         
         EXPECT_EQ(line, "ERROR");
         
         removeTempFile(filename);
     }
     
-    TEST(FileUtilsTest, PrintRandomLinesFromFilePrintsCorrectNumberOfLines) 
+    TEST_F(FileUtils_T, PrintRandomLinesFromFilePrintsCorrectNumberOfLines) 
     {
         std::vector<std::string> lines = {"Alpha", "Bravo", "Charlie", "Delta"};
         std::string filename = createTempFile(lines);
@@ -93,7 +94,7 @@ namespace files
         std::stringstream buffer;
         std::streambuf* oldCoutBuf = std::cout.rdbuf(buffer.rdbuf());
     
-        FileUtils::printRandomLinesFromFile(filename, 3);
+        printRandomLinesFromFile(filename, 3);
     
         // Restore cout
         std::cout.rdbuf(oldCoutBuf);
@@ -115,17 +116,17 @@ namespace files
         removeTempFile(filename);
     }
 
-    TEST_F(FileUtilsTest, FileExistsTrue)
+    TEST_F(FileUtils_T, FileExistsTrue)
     {
         EXPECT_TRUE(fileExists(testFile));
     }
     
-    TEST_F(FileUtilsTest, FileExistsFalse)
+    TEST_F(FileUtils_T, FileExistsFalse)
     {
         EXPECT_FALSE(fileExists("nonexistentfile.txt"));
     }
     
-    TEST_F(FileUtilsTest, ReadAllLines)
+    TEST_F(FileUtils_T, ReadAllLines)
     {
         std::vector<std::string> lines = readAllLines(testFile);
         ASSERT_EQ(lines.size(), 3);
@@ -134,7 +135,7 @@ namespace files
         EXPECT_EQ(lines[2], "Line 3");
     }
     
-    TEST_F(FileUtilsTest, WriteLinesToFileAndReadBack)
+    TEST_F(FileUtils_T, WriteLinesToFileAndReadBack)
     {
         std::vector<std::string> linesToWrite = {"A", "B", "C"};
         writeLinesToFile(testFile, linesToWrite);
@@ -146,7 +147,7 @@ namespace files
         EXPECT_EQ(linesRead[2], "C");
     }
     
-    TEST_F(FileUtilsTest, ReadEntireFile)
+    TEST_F(FileUtils_T, ReadEntireFile)
     {
         std::string content = readEntireFile(testFile);
         EXPECT_NE(content.find("Line 1"), std::string::npos);
@@ -154,7 +155,7 @@ namespace files
         EXPECT_NE(content.find("Line 3"), std::string::npos);
     }
     
-    TEST_F(FileUtilsTest, AppendLineToFile)
+    TEST_F(FileUtils_T, AppendLineToFile)
     {
         appendLineToFile(testFile, "Line 4");
     
@@ -163,13 +164,13 @@ namespace files
         EXPECT_EQ(lines.back(), "Line 4");
     }
     
-    TEST_F(FileUtilsTest, CountLinesInFile)
+    TEST_F(FileUtils_T, CountLinesInFile)
     {
         size_t lineCount = countLinesInFile(testFile);
         EXPECT_EQ(lineCount, 3);
     }
     
-    TEST_F(FileUtilsTest, CopyFileSuccess)
+    TEST_F(FileUtils_T, CopyFileSuccess)
     {
         bool copied = copyFile(testFile, copyFileName);
         EXPECT_TRUE(copied);
@@ -180,14 +181,14 @@ namespace files
         EXPECT_EQ(original, copiedLines);
     }
     
-    TEST_F(FileUtilsTest, CopyFileFailure)
+    TEST_F(FileUtils_T, CopyFileFailure)
     {
         bool copied = copyFile("nonexistentfile.txt", copyFileName);
         EXPECT_FALSE(copied);
         EXPECT_FALSE(fileExists(copyFileName));
     }
     
-    TEST_F(FileUtilsTest, DeleteFileSuccess)
+    TEST_F(FileUtils_T, DeleteFileSuccess)
     {
         EXPECT_TRUE(fileExists(testFile));
         bool deleted = deleteFile(testFile);
@@ -195,7 +196,7 @@ namespace files
         EXPECT_FALSE(fileExists(testFile));
     }
     
-    TEST_F(FileUtilsTest, DeleteFileFailure)
+    TEST_F(FileUtils_T, DeleteFileFailure)
     {
         bool deleted = deleteFile("nonexistentfile.txt");
         EXPECT_FALSE(deleted);

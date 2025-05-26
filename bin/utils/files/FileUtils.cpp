@@ -28,36 +28,47 @@ namespace files
 {
     string getRandomLineOfFile(string& fileName)
     {
-        int counter = 0;
-        string output;
-        std::ifstream file(fileName);
-    
-        while (getline(file, output))
+        try
         {
-            counter++;
-        }
-        file.close();
-    
-        std::ifstream file2(fileName);
-        // Create a seeded random engine (usually done once, not every call)
-        static std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());    
-        // Generate a random integer between 1 and counter (inclusive)
-        int random = std::uniform_int_distribution<int>(1, counter)(rng);
-        counter = 0;
-    
-        while (getline(file2, output))
-        {
-            counter++;
-            if(counter == random)
+            int counter = 0;
+            string output;
+            std::ifstream file(fileName);
+            if (!file.is_open()) return "ERROR";
+
+            while (std::getline(file, output))
             {
-                return output;
+                counter++;
+            }
+            file.close();
+
+            if (counter == 0) return "ERROR";
+
+            std::ifstream file2(fileName);
+            if (!file2.is_open()) return "ERROR";
+
+            static std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+            int random = std::uniform_int_distribution<int>(1, counter)(rng);
+            counter = 0;
+
+            while (std::getline(file2, output))
+            {
+                counter++;
+                if (counter == random)
+                {
+                    return output;
+                }
             }
         }
-        return "ERROR"; // @TODO - Add MIA Exception here.
+        catch (const std::exception& e)
+        {
+            // TODO - Add MIAException here.
+            return "ERROR";
+        }
+        return "ERROR";
     }
 
 
-    void printRandomLinesFromFile(std::string filePath, int numberOfLines)
+    void printRandomLinesFromFile(string filePath, int numberOfLines)
     {
         // Grabs the file.
         std::ifstream file(filePath, std::ifstream::in);
@@ -92,20 +103,20 @@ namespace files
     }
 
 
-    bool fileExists(const std::string& filePath)
+    bool fileExists(const string& filePath)
     {
         return std::filesystem::exists(filePath);
     }
 
 
-    std::vector<std::string> readAllLines(const std::string& filePath)
+    std::vector<string> readAllLines(const string& filePath)
     {
-        std::vector<std::string> lines;
+        std::vector<string> lines;
         std::ifstream file(filePath);
         if (!file.is_open()) 
             return lines;
 
-        std::string line;
+        string line;
         while (std::getline(file, line))
             lines.push_back(line);
         
@@ -113,7 +124,7 @@ namespace files
     }
 
 
-    void writeLinesToFile(const std::string& filePath, const std::vector<std::string>& lines)
+    void writeLinesToFile(const string& filePath, const std::vector<string>& lines)
     {
         std::ofstream file(filePath, std::ios::trunc);
         if (!file.is_open()) 
@@ -124,18 +135,18 @@ namespace files
     }
 
 
-    std::string readEntireFile(const std::string& filePath)
+    string readEntireFile(const string& filePath)
     {
         std::ifstream file(filePath, std::ios::in | std::ios::binary);
         if (!file.is_open()) 
             return "";
 
-        std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         return content;
     }
 
 
-    void appendLineToFile(const std::string& filePath, const std::string& line)
+    void appendLineToFile(const string& filePath, const string& line)
     {
         std::ofstream file(filePath, std::ios::app);
         if (!file.is_open()) 
@@ -144,13 +155,13 @@ namespace files
         file << line << "\n";
     }
 
-    size_t countLinesInFile(const std::string& filePath)
+    size_t countLinesInFile(const string& filePath)
     {
         std::ifstream file(filePath);
         if (!file.is_open()) return 0;
 
         size_t count = 0;
-        std::string line;
+        string line;
         while (std::getline(file, line))
         {
             ++count;
@@ -159,7 +170,7 @@ namespace files
     }
 
 
-    bool copyFile(const std::string& sourcePath, const std::string& destPath)
+    bool copyFile(const string& sourcePath, const string& destPath)
     {
         std::error_code ec;
         std::filesystem::copy_file(sourcePath, destPath, std::filesystem::copy_options::overwrite_existing, ec);
@@ -167,7 +178,7 @@ namespace files
     }
 
 
-    bool deleteFile(const std::string& filePath)
+    bool deleteFile(const string& filePath)
     {
         std::error_code ec;
         bool removed = std::filesystem::remove(filePath, ec);
