@@ -794,24 +794,6 @@ namespace MIA_system
         defaultSleep();
     }
     
-    void VirtualKeyStrokes::leftclick(bool verboseMode){
-        INPUT Input;
-        // left down
-        Input.type = INPUT_MOUSE;
-        Input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-        SendInput(1,&Input,sizeof(INPUT));
-    
-        if(verboseMode)
-            cout << "LEFT CLICK" << endl;
-    
-        // left up
-        ZeroMemory(&Input,sizeof(INPUT));
-        Input.type  = INPUT_MOUSE;
-        Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-        SendInput(1,&Input,sizeof(INPUT));
-        std::this_thread::sleep_for(std::chrono::milliseconds(2*globalSleep));
-    }
-    
     void VirtualKeyStrokes::numlock(){
         // Press the "y" key
         ip.ki.wVk = 0x90; // virtual-key code for the "y" key
@@ -823,24 +805,6 @@ namespace MIA_system
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
-    }
-    
-    void VirtualKeyStrokes::rightclick(bool verboseMode){
-        INPUT Input;
-        // right down
-        Input.type = INPUT_MOUSE;
-        Input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
-        SendInput(1,&Input,sizeof(INPUT));
-    
-        if(verboseMode)
-            cout << "RIGHT CLICK" << endl;
-    
-        // right up
-        ZeroMemory(&Input,sizeof(INPUT));
-        Input.type = INPUT_MOUSE;
-        Input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-        SendInput(1,&Input,sizeof(INPUT));
-        std::this_thread::sleep_for(std::chrono::milliseconds(2*globalSleep));
     }
     
     //performs a sequence to perpetually dig as you would in minecraft.
@@ -990,19 +954,78 @@ namespace MIA_system
         cout << "...Finished." << endl;
     }
     
-    void VirtualKeyStrokes::moveMouseTo(int x, int y)
-    {
-        SetCursorPos(x,y);
-        MIA_system::sleepMilliseconds(40);
-    }
-    
     void VirtualKeyStrokes::getRGB(COLORREF& color, int& r, int& g, int&b)
     {
         r = GetRValue(color);
         g = GetGValue(color);
         b = GetBValue(color);
     }    
-    #endif
+    #endif    
+    
+    void VirtualKeyStrokes::leftclick(bool verboseMode)
+    {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+        INPUT Input;
+        // left down
+        Input.type = INPUT_MOUSE;
+        Input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+        SendInput(1,&Input,sizeof(INPUT));
+    
+        if(verboseMode)
+            cout << "LEFT CLICK" << endl;
+    
+        // left up
+        ZeroMemory(&Input,sizeof(INPUT));
+        Input.type  = INPUT_MOUSE;
+        Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+        SendInput(1,&Input,sizeof(INPUT));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2*globalSleep));
+#endif
+    }
+    
+    void VirtualKeyStrokes::rightclick(bool verboseMode)
+    {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+        INPUT Input;
+        // right down
+        Input.type = INPUT_MOUSE;
+        Input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
+        SendInput(1,&Input,sizeof(INPUT));
+    
+        if(verboseMode)
+            cout << "RIGHT CLICK" << endl;
+    
+        // right up
+        ZeroMemory(&Input,sizeof(INPUT));
+        Input.type = INPUT_MOUSE;
+        Input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+        SendInput(1,&Input,sizeof(INPUT));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2*globalSleep));
+#endif
+    }
+    
+    void VirtualKeyStrokes::mouseClick(VirtualKeyStrokes::ClickType clickType, bool verboseMode)
+    {
+        switch(clickType)
+        {
+            case VirtualKeyStrokes::ClickType::LEFT_CLICK:
+                leftclick(verboseMode);
+                break;            
+            case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+                rightclick(verboseMode);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    void VirtualKeyStrokes::moveMouseTo(int x, int y)
+    {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+        SetCursorPos(x,y);
+        MIA_system::sleepMilliseconds(40);
+#endif
+    }
     
     void VirtualKeyStrokes::minus(bool verboseMode)
     {

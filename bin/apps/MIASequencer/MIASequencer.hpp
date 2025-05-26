@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <optional>
 
 // Used for the configuration.
 #include "MIAConfig.hpp"
@@ -45,6 +46,7 @@ public:
         UNKNOWN,     ///< Unknown action - do nothing.
         TYPE,        ///< This will type a sequence of characters.
         SLEEP,       ///< This will wait/pause some time.
+        DELAY,       ///< This is the time to wait between each action.
         MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
         CLICK        ///< This will perform a click with the mouse.
     };
@@ -58,19 +60,23 @@ public:
     struct SequenceAction
     {
         SequenceActionType action;      ///< An action type (what to perform).
-        int sleepTime;                  ///< Timing information (for pause).
+        int timeValue;                  ///< Timing information (for pause or delay).
         constants::Coordinate coords;   ///< Coordinates (for moving mouse).
         std::string strToType;          ///< A string (for typing).
         MIA_system::VirtualKeyStrokes::ClickType click; ///< A click type (for mouse input).
         
         /**
          * @brief Executes the stored action based on its type and associated data.
-         *
          * This function performs the action defined by the `action` field using
          * the relevant data members (i.e., coordinates, time, string, click type).
          * Only the data appropriate to the action type is used.
+         * @param keys[VirtualKeyStrokes& keys] - The object for simulating actions.
+         * @param testMode[bool] - Enables test mode (default = false).
+         * @return [optional<int>] - Returns optional new delay time (ms) to use for 
+         *     subsequent actions if it needs updated via an action.
          */
-        void performAction();
+        std::optional<int> performAction(MIA_system::VirtualKeyStrokes& keys, 
+                                         bool testMode = false);
     };
     
     /// A list of sequencer actions forming a complete sequence.
@@ -99,8 +105,12 @@ public:
          * @brief Executes all actions in the sequence in order, applying the defined delay between each.
          * Iterates through the `actions` list and calls `performAction()` on each entry,
          * pausing for `delayTime` milliseconds between actions.
+         * @param keys[VirtualKeyStrokes& keys] - The object for simulating actions.
+         * @param testMode[bool] - Enables test mode (default = false).
+         * @param [bool] - Enables test mode.
          */
-        void performActions();
+        void performActions(MIA_system::VirtualKeyStrokes& keys, 
+                            bool testMode = false);
     };
     
     /// Maps sequence names to their corresponding list of actions.
@@ -142,18 +152,27 @@ private:
      * @return [SequenceAction] - Returns the constructed SequenceAction.  
      */
     static SequenceAction createAction(std::string key, std::string value);
+    
+    /**
+     * Runs a sequence based on the name (key) of the sequence.
+     * @param sequenceName[const std::String&] - The name of the sequence to run.
+     */
+     void runSequence(const std::string& sequenceName);
+     
+     /**
+      * This will load a default front-end. This will continually loop, while asking the
+      * use for an input sequence name. When a sequence name is entered. The appropriate
+      * sequence will activate, then loop back to the start of the loop.
+      */
+     void defaultFrontEnd();
+    
+    /// An instance of VirtualKeyStrokes for calling the virtual key strokes.
+    MIA_system::VirtualKeyStrokes keys;
 
     /**
      * This will load in the configuration file and load the sequences.
      */
     void loadConfig();
-		
-    // Command options for this app.
-    CommandOption sequencesFileOpt;  ///< Used for loading a custom sequences file.
-    CommandOption testOpt;           ///< Used for enabling test mode.
-    
-    /// Stores true for testMode functionality.
-    bool testMode{false};
     
     /// The name of the defauilt config file that this class uses.
     std::string defaultSequencesFile{"MIASequences.MIA"};
@@ -164,6 +183,16 @@ private:
      * in which need custom parsing and interpretation.
      */
     MIA_System::MIAConfig config;
+		
+    // Command options for this app.
+    CommandOption sequencesFileOpt;  ///< Used for loading a custom sequences file.
+    CommandOption testOpt;           ///< Used for enabling test mode.
+    CommandOption sequenceNameOpt;   ///< Used for running a particular sequence.
+    
+    /// Name of the option-entered sequence to run. Empty if no sequence option used.
+    std::string sequenceName{};
+    /// Stores true for testMode functionality.
+    bool testMode{false};
     
     /// The complete list of sequences.
     sequenceList sequences;

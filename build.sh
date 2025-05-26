@@ -19,10 +19,11 @@ usage()
   echo "    -I    Install MIA after building (requires admin). Use a clean build if errors occur."
   echo "    -R    Update the release files. Use a clean build if errors occur."
   echo "    -U    Uninstall all MIA files. This will uninstall then quit without other actions."
+  echo "    -d    Add flags to cmake for a debug build (useful if gdb is needed)."
 }
 
 # Define the build script options and create variables from options.
-while getopts "hCvDIRU" opt; do
+while getopts "hCvDIRUd" opt; do
   case $opt in
     h) usage
       exit 1
@@ -34,10 +35,14 @@ while getopts "hCvDIRU" opt; do
     D) installDependencies=1
       ;;
     I) installMIA=1
+      releaseMode=1
       ;;
     R) updateReleaseFiles=1
+      releaseMode=1
       ;;
     U) uninstallMIA=1
+      ;;
+    d) debugMode=1
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -98,6 +103,14 @@ if [[ $updateReleaseFiles ]]; then
   cmakeArgs="$cmakeArgs -DRELEASE_BUILD=ON"
 elif [[ $installMIA ]]; then
   cmakeArgs="$cmakeArgs -DSYSTEM_INSTALL=ON"
+fi
+
+if [[ $debugMode ]]; then
+  cmakeArgs="$cmakeArgs -DCMAKE_BUILD_TYPE=Debug"
+fi
+
+if [[ $releaseMode ]]; then
+  cmakeArgs="$cmakeArgs -DCMAKE_BUILD_TYPE=Release"
 fi
 
 echo "...Beginning MIA Build!"

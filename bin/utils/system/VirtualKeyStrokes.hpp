@@ -184,8 +184,6 @@ namespace MIA_system
         void paste();
         void backslash();
         void slash();
-        void leftclick(bool verboseMode = false);
-        void rightclick(bool verboseMode = false);
     
 
         /**
@@ -218,9 +216,18 @@ namespace MIA_system
          * color, and `getRGB` to extract the red, green, and blue components.
          */
         void getPixelColorAtMouse();
-        void moveMouseTo(int x, int y);
     
     #endif
+    
+        void mouseClick(ClickType clickType, bool verboseMode = false);
+    
+        [[deprecated("Use mouseClick(ClickType::LEFT_CLICK) instead.")]]
+        void leftclick(bool verboseMode = false);
+        
+        [[deprecated("Use mouseClick(ClickType::RIGHT_CLICK) instead.")]]
+        void rightclick(bool verboseMode = false);
+    
+        void moveMouseTo(int x, int y);
     
         void minus(bool verboseMode = false);       ///< Simulates press of the minus key.
         void equal(bool verboseMode = false);       ///< Simulates press of the equal key.
