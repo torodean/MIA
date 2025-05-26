@@ -76,6 +76,9 @@ message(STATUS "DEFAULT_REPO_CONFIG_FILE: ${DEFAULT_REPO_CONFIG_FILE}")
 message(STATUS "DEFAULT_REPO_LOG_DIR: ${DEFAULT_REPO_LOG_DIR}")
 message(STATUS "DEFAULT_REPO_LOG: ${DEFAULT_REPO_LOG}")
 
+find_package(GTest REQUIRED)
+enable_testing()
+
 add_subdirectory( bin )
 #add_subdirectory( documentation )
 add_subdirectory( resources )

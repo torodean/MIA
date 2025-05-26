@@ -13,19 +13,23 @@ usage()
   echo ""
   echo "  Options:"
   echo "    -h    Display this help message."
+  echo "    -S    Run the initial setup to install dependancies and such."
   echo "    -C    Perform a clean build by removing the build directory first."  
   echo "    -v    Enable verbose output during build process."
   echo "    -D    Attempt to Install dependencies."
   echo "    -I    Install MIA after building (requires admin). Use a clean build if errors occur."
   echo "    -R    Update the release files. Use a clean build if errors occur."
   echo "    -U    Uninstall all MIA files. This will uninstall then quit without other actions."
+  echo "    -T    Run all tests."
 }
 
 # Define the build script options and create variables from options.
-while getopts "hCvDIRU" opt; do
+while getopts "hSCvDIRUT" opt; do
   case $opt in
     h) usage
       exit 1
+      ;;
+    S) runSetup=1
       ;;
     C) cleanBuild=1
       ;;
@@ -39,6 +43,8 @@ while getopts "hCvDIRU" opt; do
       ;;
     U) uninstallMIA=1
       ;;
+    T) enableTesting=1
+      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
@@ -50,11 +56,19 @@ while getopts "hCvDIRU" opt; do
   esac
 done
 
+# Perform an uninstall of MIA then exit.
 if [[ $uninstallMIA ]]; then
   echo "...Uninstalling MIA!"
   sudo $rootDirectory/scripts/uninstall.sh
   echo "...Exiting!"
   exit 0
+fi
+
+# Run the setup script for installing dependancies.
+if [[ $runSetup ]]; then
+  echo "Installing dependancies!"
+  sudo $rootDirectory/scripts/setup.sh
+  echo "...Done!"
 fi
 
 # The arguments to pass to cmake.
@@ -118,6 +132,19 @@ elif [[ $installMIA ]]; then
   echo "...Installing MIA files!"
   sudo cmake --install "$rootDirectory"/build
   $rootDirectory/scripts/install.sh
+fi
+
+#Run tests if specified
+if [[ $enableTesting ]]; then
+  echo "Running the MIA tests!"
+  cd "$rootDirectory"/build
+  if [[ $verboseMode ]]; then
+    ctest -v --output-on-failure
+  else
+    ctest -v
+  fi
+  cd -
+  echo "Finished with tests!"
 fi
 
 

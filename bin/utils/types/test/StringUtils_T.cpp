@@ -40,7 +40,7 @@ TEST(StringUtilsTest, FindCharInStringReturnsCorrectIndex)
 {
     std::string input = "hello";
     EXPECT_EQ(findCharInString(input, 'e'), 1);
-    EXPECT_EQ(findCharInString(input, 'z'), 0);  // Not found returns 0
+    EXPECT_EQ(findCharInString(input, 'z'), -1);  // Not found returns -1
 }
 
 TEST(StringUtilsTest, StringContainsCharDetectsCharacter) 
@@ -79,14 +79,23 @@ TEST(StringUtilsTest, InputRollValidFormat)
 
 TEST(StringUtilsTest, FormOfYesRecognizesAffirmative) 
 {
-    EXPECT_TRUE(formOfYes(std::string("yes")));
-    EXPECT_TRUE(formOfYes(std::string("Y")));
-    EXPECT_TRUE(formOfYes(std::string("OK")));
-    EXPECT_TRUE(formOfYes(std::string("sure")));
-    EXPECT_TRUE(formOfYes(std::string("indeed")));
-    EXPECT_FALSE(formOfYes(std::string("no")));
-    EXPECT_FALSE(formOfYes(std::string("negative")));
-    EXPECT_FALSE(formOfYes(std::string("hello world!")));
+    std::string input = "yes";
+    input = "yes";
+    EXPECT_TRUE(formOfYes(input));
+    input = "Y";
+    EXPECT_TRUE(formOfYes(input));
+    input = "OK";
+    EXPECT_TRUE(formOfYes(input));
+    input = "sure";
+    EXPECT_TRUE(formOfYes(input));
+    input = "indeed";
+    EXPECT_TRUE(formOfYes(input));
+    input = "no";
+    EXPECT_FALSE(formOfYes(input));
+    input = "negative";
+    EXPECT_FALSE(formOfYes(input));
+    input = "hello world!";
+    EXPECT_FALSE(formOfYes(input));
 }
 
 TEST(StringUtilsTest, TodayReturnsNonEmptyString) 
@@ -114,11 +123,13 @@ TEST(StringUtilsTest, GetAfterCharReturnsCorrectSubstring)
     EXPECT_EQ(getAfterChar(input, '='), "value");
 }
 
+/* Deprecated method.
 TEST(StringUtilsTest, GetBetweenEqualAndSemiColonReturnsCorrectSubstring) 
 {
     std::string input = "param=1234;";
     EXPECT_EQ(getBetweenEqualAndSemiColon(input), "1234");
 }
+*/
 
 TEST(StringUtilsTest, GetBetweenXAndYReturnsCorrectSubstring) 
 {

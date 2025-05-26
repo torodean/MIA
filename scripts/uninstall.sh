@@ -13,4 +13,6 @@ rm -vrf /etc/mia
 # remove build directory
 echo "Removing build directory: ${PARENT_DIR}/build"
 rm -rf ${PARENT_DIR}/build
+
 rm -vrf ${PARENT_DIR}/release
+rm -vrf ${PARENT_DIR}/Testing
