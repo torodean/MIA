@@ -13,7 +13,7 @@ usage()
   echo ""
   echo "  Options:"
   echo "    -h    Display this help message."
-  echo "    -S    Run the initial setup to install dependancies and such."
+  echo "    -S    Run the initial setup to install dependancies and such. then exit."
   echo "    -C    Perform a clean build by removing the build directory first."  
   echo "    -v    Enable verbose output during build process."
   echo "    -D    Attempt to Install dependencies."
@@ -25,7 +25,7 @@ usage()
 }
 
 # Define the build script options and create variables from options.
-while getopts "hCvDIRUTd" opt; do
+while getopts "hSCvDIRUTd" opt; do
   case $opt in
     h) usage
       exit 1
@@ -65,7 +65,7 @@ done
 if [[ $uninstallMIA ]]; then
   echo "...Uninstalling MIA!"
   sudo $rootDirectory/scripts/uninstall.sh
-  echo "...Exiting!"
+  echo "...Done! Exiting!"
   exit 0
 fi
 
@@ -73,7 +73,8 @@ fi
 if [[ $runSetup ]]; then
   echo "Installing dependancies!"
   sudo $rootDirectory/scripts/setup.sh
-  echo "...Done!"
+  echo "...Done! Exiting!"
+  exit 0
 fi
 
 # The arguments to pass to cmake.
