@@ -1,0 +1,111 @@
+\chapter{Sequencer} \label{sequencer}\index{sequencer}
+\pagestyle{fancy}
+
+The sequencer is an app contained within MIA for performing key/button simulation sequences. This can be used for Performing mundane tasks automatically and repeatable tasks on a timer while away from the computer. More advanced uses can also be for botting and other repeatable tasks.
+
+\section{Using the Sequencer}
+
+The sequencer acquires its programmable sequence functionality from the \texttt{MIASequences.MIA} file. This file will appear similar to the following.
+
+\begin{lstlisting}[style=pythonstyle]
+#============================================================================
+# Name        : MIASequences.txt
+# Author      : Antonius Torode
+# Date        : 12/26/2019
+# Description : MIA combinations for button sequences.
+#============================================================================
+
+# This file is formatted similar to the other MIAConfig files.
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a combination name using 'SEQUENCENAME=name'.
+# Define the DELAY between sequence actions with 'DELAY=3000', units are milliseconds.
+# After declaring a name for the command sequence, define the command sequence using 
+# any number of the following possible actions in the desired order.
+#----------------------------------------
+# TYPE=abc123
+# SLEEP=200
+# MOVEMOUSE=xxx,yyy
+# CLICK=RIGHTCLICK
+#-----------------------------------------
+# Actions and program variables should be capitalized.
+# The sequence name must be defined at the start of a sequence.
+# The end of a sequence must be defined by ENDOFSEQUENCE.
+# See the documentation for a full list of valid types and options.
+
+#Sequence definitions below...
+\end{lstlisting}
+
+The sequencer app has two main modes of operation. If ran without the \texttt{--sequence} flag specified, the sequencer will load a front end UI where it prompts the user for a sequence to run. The sequence names are defined when the sequence is created at app initialization based on the \texttt{MIASequences.MIA} file input. If the \texttt{--sequence} flag is specified, the program will instead default to running the sequence entered via the flag. Other options are handled appropriately.
+
+\begin{lstlisting}[style=terminalstyle]
+$ ./MIASequencer -h
+Base MIA application options:
+	-v, --verbose           Enable verbose output.
+	-h, --help              Show this help message
+
+MIATemplate specific options:
+	-c, --config            Specify a config file to use (default = /etc/mia/MIASequences.MIA)
+	-s, --sequence          Run a sequence, then exit.
+	-t, --test              Enables test mode. This mode will only output the sequence to terminal.
+\end{lstlisting}
+
+Using the \texttt{--test} flag enables a dry-run mode. In this mode, no actual input events are triggered. Instead, each parsed sequence and action is printed to the terminal for review. This is useful for verifying sequence definitions without affecting the system.
+
+
+\section{Defining a Sequence}
+
+A sequence is defined by first creating a sequence name using the \inlinecode{SEQUENCENAME} keyword and ending with the \inlinecode{ENDOFSEQUENCE} keyword. Each line in the configuration should represent a valid \textit{action}. The following example will demonstrate all of the valid actions available in a sequencer file. The descriptions of what each line do are below.
+
+\begin{lstlisting}[style=pythonstyle]
+# This combination is for testing.
+SEQUENCENAME=test
+DELAY=3000
+TYPE=abcdefg
+SLEEP=500
+MOVEMOUSE=145,887
+CLICK=RIGHTCLICK
+ENDOFSEQUENCE
+\end{lstlisting}
+
+\begin{enumerate}
+	\item \inlinecode{SEQUENCENAME=test} This line creates a sequence with the name ``test''.
+	\item \inlinecode{DELAY=3000} This sets the timing between each event in the sequence. The units are in milliseconds.
+	\item \inlinecode{TYPE=abcdefg} This command will type the text entered. In this case ``abcdefg'' will be typed.
+	\item \inlinecode{SLEEP=500} This defines the time to sleep when the hover keyword is used.
+	\item \inlinecode{MOVEMOUSE=145,887} This is a command signaling to move the mouse to the coordinates (145,887).
+	\item \inlinecode{CLICK=RIGHTCLICK} This is a command signaling to perform a right click.
+	\item \inlinecode{ENDOFSEQUENCE} This ends the sequence and prepares the sequencer for a new defined sequence.
+\end{enumerate}
+
+The below table shows the valid action keywords and their valid values.
+
+\begin{table}[h]
+	\centering
+	\label{tab:sequencer_keywords}
+	\begin{tabularx}{\textwidth}{|l|l|X|}
+		\hline
+		\textbf{Keyword} & \textbf{Input Type} & \textbf{Valid Values / Description} \\
+		\hline
+		\texttt{SEQUENCENAME} & String & A unique identifier for the sequence. Must be defined at the start of each sequence. \\
+		\hline
+		\texttt{DELAY} & Integer (ms) & Delay between actions in milliseconds.  \\
+		\hline
+		\texttt{TYPE} & String & Any string of characters to be typed as keystrokes. \\
+		\hline
+		\texttt{SLEEP} & Integer (ms) & Sleep/pause time in milliseconds before next action. \\
+		\hline
+		\texttt{MOVEMOUSE} & Integer pair & X,Y screen coordinates to move the mouse to. Format: \texttt{MOVEMOUSE=x,y}, i.e., \texttt{MOVEMOUSE=145,887} \\
+		\hline
+		\texttt{CLICK} & Enum (ClickType) & One of: \texttt{LEFTCLICK}, \texttt{RIGHTCLICK}, \texttt{MIDDLECLICK} \\
+		\hline
+		\texttt{ENDOFSEQUENCE} & None & Terminates the current sequence definition. Must appear at the end of a sequence. \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+
+\section{Notes on Using The Sequencer}
+
+At the time of writing this, the sequencer is completely new and yet to be fully tested. It will continue to be improved as it is used. It is important to follow the scheme above for defining sequences above closely as errors and bugs are not yet determined. It is also important that all needed parameters be defined properly and no sequences have a duplicate name. The program is not programmed to handle this as of yet.

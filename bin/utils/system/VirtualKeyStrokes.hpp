@@ -16,12 +16,12 @@
 #include <cstdio>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-#include <windows.h>
+    #include <windows.h>
 #elif __linux__
-extern "C" 
-{
-#include <xdo.h>
-}
+    extern "C" 
+    {
+    #include <xdo.h>
+    }
 #endif
 
 namespace MIA_system
@@ -35,7 +35,9 @@ namespace MIA_system
     public:
     
         /**
-         * An enum representing the various types of clicks available via a mouse.
+         * @enum ClickType
+         * @brief Represents the various mouse click types.
+         * Used to identify the type of mouse click interaction.
          */
         enum ClickType
         {
@@ -45,10 +47,18 @@ namespace MIA_system
             MIDDLE_CLICK  ///< Represents a middle click.
         };
         
-        /// Converts a ClickType to a human readable string.
+        /**
+         * @brief Converts a ClickType enum value to its corresponding human-readable string.
+         * @param clickType The ClickType to convert.
+         * @return A string representation of the given ClickType.
+         */
         static std::string clickTypeToString(ClickType clickType);
-        
-        /// Converts a string to a ClickType.
+
+        /**
+         * @brief Converts a string to the corresponding ClickType enum value.
+         * @param input The string representing the click type.
+         * @return The matching ClickType, or ClickType::UNKNOWN if no match is found.
+         */
         static ClickType stringToClickType(const std::string& input);
     
         /**
@@ -102,83 +112,7 @@ namespace MIA_system
          * @param holdTime[int] - Duration in milliseconds to hold the key before releasing.
          * @param verboseMode[bool] - If true, prints the pressed character to standard output.
          */
-        void VirtualKeyStrokes::pressChar(char ch, int holdTime = 0, bool verboseMode = false);
-        
-        // The old methods which are now deprecated.
-        [[deprecated("Use pressNumber(1) instead.")]]
-        void one(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(2) instead.")]]
-        void two(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(3) instead.")]]
-        void three(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(4) instead.")]]
-        void four(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(5) instead.")]]
-        void five(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(6) instead.")]]
-        void six(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(7) instead.")]]
-        void seven(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(8) instead.")]]
-        void eight(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(9) instead.")]]
-        void nine(int holdTime = 0, bool verboseMode = false);
-        [[deprecated("Use pressNumber(0) instead.")]]
-        void zero(int holdTime = 0, bool verboseMode = false);
-        
-        // @TODO - these methods can be simplified into one (or at least a few).
-        [[deprecated("Use pressChar(a) instead.")]]
-        void a(int holdTime = 0);
-        [[deprecated("Use pressChar(b) instead.")]]
-        void b(int holdTime = 0);
-        [[deprecated("Use pressChar(c) instead.")]]
-        void c(int holdTime = 0);
-        [[deprecated("Use pressChar(d) instead.")]]
-        void d(int holdTime = 0);
-        [[deprecated("Use pressChar(e) instead.")]]
-        void e(int holdTime = 0);
-        [[deprecated("Use pressChar(f) instead.")]]
-        void f(int holdTime = 0);
-        [[deprecated("Use pressChar(g) instead.")]]
-        void g(int holdTime = 0);
-        [[deprecated("Use pressChar(h) instead.")]]
-        void h(int holdTime = 0);
-        [[deprecated("Use pressChar(i) instead.")]]
-        void i(int holdTime = 0);
-        [[deprecated("Use pressChar(j) instead.")]]
-        void j(int holdTime = 0);
-        [[deprecated("Use pressChar(k) instead.")]]
-        void k(int holdTime = 0);
-        [[deprecated("Use pressChar(l) instead.")]]
-        void l(int holdTime = 0);
-        [[deprecated("Use pressChar(m) instead.")]]
-        void m(int holdTime = 0);
-        [[deprecated("Use pressChar(n) instead.")]]
-        void n(int holdTime = 0);
-        [[deprecated("Use pressChar(o) instead.")]]
-        void o(int holdTime = 0);
-        [[deprecated("Use pressChar(p) instead.")]]
-        void p(int holdTime = 0);
-        [[deprecated("Use pressChar(q) instead.")]]
-        void q(int holdTime = 0);
-        [[deprecated("Use pressChar(r) instead.")]]
-        void r(int holdTime = 0);
-        [[deprecated("Use pressChar(s) instead.")]]
-        void s(int holdTime = 0);
-        [[deprecated("Use pressChar(t) instead.")]]
-        void t(int holdTime = 0);
-        [[deprecated("Use pressChar(u) instead.")]]
-        void u(int holdTime = 0);
-        [[deprecated("Use pressChar(v) instead.")]]
-        void v(int holdTime = 0);
-        [[deprecated("Use pressChar(w) instead.")]]
-        void w(int holdTime = 0);
-        [[deprecated("Use pressChar(x) instead.")]]
-        void x(int holdTime = 0);
-        [[deprecated("Use pressChar(y) instead.")]]
-        void y(int holdTime = 0);
-        [[deprecated("Use pressChar(z) instead.")]]
-        void z(int holdTime = 0);
+        void pressChar(char ch, int holdTime = 0, bool verboseMode = false);
         
         void enter();
         void numlock();
@@ -187,13 +121,6 @@ namespace MIA_system
         void paste();
         void backslash();
         void slash();
-    
-
-        /**
-         * Functions relating to Minecraft. // @TODO - move to an app
-         * This can stay here for now since it has no internal dependancies. 
-         */
-        void minecraftDig(int time);
     
         // Other useful functions.
         void findMouseCoords(int waitTime);
@@ -222,12 +149,14 @@ namespace MIA_system
     
     #endif
     
+        /**
+         * @brief Simulates a mouse click of the specified type.
+         * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
+         * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
+         */
         void mouseClick(ClickType clickType, bool verboseMode = false);
     
-        [[deprecated("Use mouseClick(ClickType::LEFT_CLICK) instead.")]]
-        void leftclick(bool verboseMode = false);
-        
-        [[deprecated("Use mouseClick(ClickType::RIGHT_CLICK) instead.")]]
+        void leftclick(bool verboseMode = false);        
         void rightclick(bool verboseMode = false);
     
         void moveMouseTo(int x, int y);
