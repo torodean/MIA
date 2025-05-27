@@ -378,7 +378,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
 	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
 	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
-	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling.
+	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling. See section \ref{sec:logging-Framework} for more details.
 \end{itemize}
 
 \subsection*{Protected Members}
@@ -736,7 +736,7 @@ This design ensures portability and flexibility across different environments (d
 
 
 
-\section{Configuration System: \texttt{MIAConfig}}
+\section{Configuration System}
 
 The \texttt{MIAConfig} class provides a flexible and extensible interface for managing configuration data in the MIA system. It replaces the legacy \texttt{Configurator} from the previous MIA project. The system is designed using the PIMPL (Pointer to IMPLementation) idiom, encapsulating implementation details and allowing for multiple configuration types such as key-value pairs or raw-line formats (with the flexibility to add more later).
 
@@ -867,6 +867,53 @@ New configuration formats can be supported by deriving new classes from \texttt{
 
 
 
+\section{Logging Framework}
+\label{sec:logging-Framework}
+
+\subsection{Overview}
+The \texttt{Logger} component provides centralized logging functionality for all MIA applications. It supports simple, thread-safe log message recording to either a default or user-defined log file, with optional verbosity to print messages to \texttt{stdout}.
+
+\subsection{Free Logging Functions}
+Two free-standing functions are provided for lightweight, context-independent logging:
+
+\begin{itemize}
+	\item \texttt{logToDefaultFile(message, verbose = false)}\\
+	Logs a message to a default log file (typically \texttt{MIA.log}). If \texttt{verbose} is \texttt{true}, the message is also printed to \texttt{stdout}.
+	
+	\item \texttt{logToFile(message, filename, verbose = false)}\\
+	Logs a message to a specified file. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
+\end{itemize}
+
+\subsection{The \texttt{Logger} Class}
+For more structured applications, the \texttt{Logger} class provides an object-oriented interface for managing log state:
+
+\begin{itemize}
+	\item \texttt{Logger(filename = DEFAULT\_LOG\_FILE)}\\
+	Constructor that initializes logging to the specified file. If not provided, defaults to \texttt{MIA.log}.
+	
+	\item \texttt{setLogFile(filename)}\\
+	Changes the log file during runtime. Closes the existing stream and opens a new one.
+	
+	\item \texttt{log(message, verbose = false)}\\
+	Logs a message to the current file. If \texttt{verbose} is enabled, also prints to \texttt{stdout}.
+	
+	\item \texttt{getLogFile()}\\
+	Returns the current log file name in use.
+\end{itemize}
+
+\subsection{Internals}
+Internally, the \texttt{Logger} class maintains:
+
+\begin{itemize}
+	\item \texttt{currentLogFileName} -- User-specified or default log filename.
+	\item \texttt{currentLogFileFullPath} -- Resolved full path for the log file.
+	\item \texttt{logStream} -- A mutable \texttt{std::ofstream} used for log writes.
+\end{itemize}
+
+The method \texttt{openLogFile()} is called during construction and when switching log files, ensuring the stream is always open and ready for use.
+
+\subsection{Summary}
+This logging framework simplifies and unifies log message handling across MIA tools. It supports both procedural and object-oriented usage styles, allows runtime control over log destinations, and integrates with the system's standard output for interactive diagnostics.
 
 
 
