@@ -18,7 +18,8 @@ set(Core_SRC
     KeyValueData.cpp
     RawLinesData.cpp
     CommandParser.cpp
-    MIAApplication.cpp )
+    MIAApplication.cpp 
+    Logger.cpp )
 set(Core_INC 
     Error.hpp
     ErrorDescriptions.hpp
@@ -30,7 +31,8 @@ set(Core_INC
     MIAApplication.hpp
     CommandParser.hpp
     CommandOption.hpp
-    AppFramework.hpp )
+    AppFramework.hpp 
+    Logger.hpp )
 add_library(Core_LIB ${Core_SRC} ${Core_INC})
 target_link_libraries(Core_LIB PUBLIC Constants_LIB BasicUtilities_LIB)
 

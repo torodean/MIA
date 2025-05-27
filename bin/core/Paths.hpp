@@ -135,6 +135,32 @@ namespace paths
             else
                 return REPO_CONFIG_FILE_DIR;
         }
+    }    
+    
+    /**
+     * Returns the default log directory path based on the runtime context.
+     *
+     * If the application is running from a system-installed location, this returns the
+     * system log directory. If a 'resources' folder exists in the same direcrory
+     * as the executable, that will be returned second. Otherwise, it returns the git-repository 
+     * log directory, typically used for development or testing.
+     *
+     * @return [std::string] - Path to the appropriate configuration directory.
+     */
+    inline std::string getDefaultLogDirToUse()
+    {
+        if (isInstalled())
+        {
+            return SYSTEM_LOG_DIR;
+        }
+        else
+        {
+            std::string resourcesFolder = getExecutableDir() + "/resources";
+            if (std::filesystem::exists(resourcesFolder))
+                return resourcesFolder;
+            else
+                return REPO_LOG_DIR;
+        }
     }
 
 } // namespace paths
