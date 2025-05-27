@@ -13,6 +13,8 @@
 // Used for exception throws.
 #include "MIAException.hpp"
 #include "Paths.hpp"
+// Used for printing the time string in the logs output.
+#include "BasicUtilities.hpp"
 
 
 namespace logger
@@ -30,6 +32,11 @@ namespace logger
         if (filename.front() == '/') 
         {
             fullpath = filename; // Assume absolute path.
+        
+            // Create the necessary directory if it does not exist.
+            std::filesystem::path filePath(fullpath);
+            std::string parentDir = filePath.parent_path().string();
+            BasicUtilities::ensureDirectoryExists(parentDir, true);
         } 
         else 
         {
@@ -39,7 +46,7 @@ namespace logger
         std::ofstream ofs(fullpath, std::ios::app);
         if (ofs.is_open())
         {
-            ofs << message << std::endl;
+            ofs << BasicUtilities::getCurrentDateTime() << ": " << message << std::endl;
         }
         if (verbose)
         {
@@ -75,7 +82,7 @@ namespace logger
     void Logger::log(const std::string& message, bool verbose) const
     {
         if (logStream.is_open())
-            logStream << message << std::endl;
+            logStream << BasicUtilities::getCurrentDateTime() << ": " << message << std::endl;
             
         if (verbose)
             std::cout << message << std::endl;
@@ -88,6 +95,11 @@ namespace logger
         if (currentLogFileName.front() == '/') 
         {
             currentLogFileFullPath = currentLogFileName; // Assume absolute path.
+        
+            // Create the necessary directory if it does not exist.
+            std::filesystem::path filePath(currentLogFileFullPath);
+            std::string parentDir = filePath.parent_path().string();            
+            BasicUtilities::ensureDirectoryExists(parentDir, true);
         } 
         else 
         {
@@ -95,6 +107,11 @@ namespace logger
         }
     
         logStream.open(currentLogFileFullPath, std::ios::app);
+        if (!logStream.is_open())
+        {
+            // TODO - throw MIAException.
+            std::cerr << "Failed to open logStream: " << currentLogFileFullPath << std::endl;
+        }
     }
 
 } // namespace logger

@@ -8,6 +8,7 @@ PARENT_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")"
 
 # remove system installed files
 rm -vrf /usr/local/mia
+rm -vrf /var/log/mia
 rm -vrf /etc/mia
 
 # remove build directory

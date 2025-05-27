@@ -12,7 +12,7 @@
 namespace logger
 {
     /// Default log file name used by the free functions
-    constexpr const char* DEFAULT_LOG_FILE = "MIA.log";
+    const std::string DEFAULT_LOG_FILE = "MIA.log";
 
     /**
      * Logs a message to the default log file. This calls logToFile().

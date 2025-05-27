@@ -19,6 +19,9 @@
 #include <string>
 #include <filesystem>
 
+// Used for creating directories.
+#include "BasicUtilities.hpp"
+
 /**
  * @namespace MIA_paths
  * @brief Provides global paths for key file and directory paths.
@@ -125,6 +128,7 @@ namespace paths
     {
         if (isInstalled())
         {
+            BasicUtilities::ensureDirectoryExists(SYSTEM_CONFIG_FILE_DIR, true);
             return SYSTEM_CONFIG_FILE_DIR;
         }
         else
@@ -133,7 +137,10 @@ namespace paths
             if (std::filesystem::exists(resourcesFolder))
                 return resourcesFolder;
             else
+            {
+                BasicUtilities::ensureDirectoryExists(REPO_CONFIG_FILE_DIR, true);
                 return REPO_CONFIG_FILE_DIR;
+            }
         }
     }    
     
@@ -151,6 +158,7 @@ namespace paths
     {
         if (isInstalled())
         {
+            BasicUtilities::ensureDirectoryExists(SYSTEM_LOG_DIR, true);
             return SYSTEM_LOG_DIR;
         }
         else
@@ -159,7 +167,10 @@ namespace paths
             if (std::filesystem::exists(resourcesFolder))
                 return resourcesFolder;
             else
+            {
+                BasicUtilities::ensureDirectoryExists(REPO_LOG_DIR, true);
                 return REPO_LOG_DIR;
+            }
         }
     }
 

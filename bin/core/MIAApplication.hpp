@@ -11,6 +11,7 @@
 
 // Used for base configuration values.
 #include "CommandOption.hpp"
+#include "Logger.hpp"
 
 /**
  * @class MIAApplication
@@ -57,10 +58,14 @@ protected:
      */
     virtual void printHelp() const;
     
+    /// The basic logger for this an application to use.
+    logger::Logger logger;
+    
 private:
     /// Base command options used by the MIAApplication.
     CommandOption verboseOpt;
     CommandOption helpOpt;
+    CommandOption logFileOpt;
     
     /// Stores verboseMode.
     bool verboseMode{false};

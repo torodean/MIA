@@ -37,6 +37,13 @@ else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
 
+# Create the log directories
+if(UNIX AND NOT APPLE)
+    install(CODE "execute_process(COMMAND mkdir -p ${DEFAULT_SYSTEM_LOG_DIR})")
+elseif(WIN32)
+    install(CODE "execute_process(COMMAND cmd /c \"if not exist ${DEFAULT_SYSTEM_LOG_DIR} mkdir ${DEFAULT_SYSTEM_LOG_DIR}\")")
+endif()
+
 # Specifies a system install.
 option(SYSTEM_INSTALL "Enable system-installation behavior" OFF)
 if(SYSTEM_INSTALL)

@@ -41,4 +41,20 @@ namespace BasicUtilities
      * @return [std::string] - A new string with both leading and trailing whitespace removed.
      */
     std::string strip(const std::string& input);
+    
+    /**
+     * @brief Returns the current local date and time as a formatted string.
+     * The format is "YYYY-MM-DD HH:MM:SS", suitable for use in log file entries.
+     * Thread-safe on both POSIX and Windows systems.
+     * @return std::string The current date and time as a human-readable string.
+     */
+    std::string getCurrentDateTime();
+    
+    /**
+     * @brief Checks if a directory exists, and optionally creates it if it does not.
+     * @param path The path to the directory.
+     * @param createIfMissing If true, the directory will be created (including parent directories) if it doesn't exist.
+     * @return true if the directory exists or was successfully created; false otherwise.
+     */
+    bool ensureDirectoryExists(const std::string& path, bool createIfMissing = false);
 }

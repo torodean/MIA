@@ -103,12 +103,13 @@ void MIATemplate::TemplateConfig::printConfigValues() const
 
 int MIATemplate::run()
 {
-    std::cout << "...Loading MIATemplate app. " << std::endl;
+    std::cout << "Loading MIATemplate app!" << std::endl;
     
     if(testMode)
     {
         std::cout << "Test mode running!" << std::endl;
         configFileVals.printConfigValues();
+        logger.log("MIATemplate: Logging a test message!", true);
         std::cout << "Test mode finished! Exiting!" << std::endl;
         return 0;
     }
