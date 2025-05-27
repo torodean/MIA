@@ -28,6 +28,7 @@ namespace logger
      * paths::getDefaultLogDirToUse() to find the full file name. If a "/" is the first
      * character of the filename, a full path is assumed.
      * Optionally prints the message to stdout if verbose is true.
+     * @note - This will assume the log directory for the output file already exists.
      * @param message[const std::string&] - The message to log.
      * @param filename[const std::string&] - The log file name to write to.
      * @param verbose [bool] - Whether to print the message to stdout. Default: false.

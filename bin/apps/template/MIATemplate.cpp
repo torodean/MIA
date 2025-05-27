@@ -109,7 +109,7 @@ int MIATemplate::run()
     {
         std::cout << "Test mode running!" << std::endl;
         configFileVals.printConfigValues();
-        logger.log("MIATemplate: Logging a test message!", true);
+        log("MIATemplate: Logging a test message!", true);
         std::cout << "Test mode finished! Exiting!" << std::endl;
         return 0;
     }

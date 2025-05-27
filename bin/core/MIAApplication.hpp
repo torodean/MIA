@@ -34,6 +34,22 @@ public:
     bool getVerboseMode() const 
     { return verboseMode; }
     
+    /**
+     * Log a message using the logger object. This will automatically set the verbose
+     * mode based on the verbose flag.
+     * @param message The message to log.
+     */
+    void log(const std::string& message) const
+    { logger.log(message, verboseMode); }
+    
+    /**
+     * Log a message using the logger object with an optional verboseMode flag.
+     * @param message The message to log.
+     * @param verbose Whether to print the message to stdout.
+     */
+    void log(const std::string& message, bool verbose) const
+    { logger.log(message, verbose); }
+    
 protected:
     /**
      * Virtual initialize() method. This should be overridden by the inheriting app, but a call
@@ -58,14 +74,14 @@ protected:
      */
     virtual void printHelp() const;
     
-    /// The basic logger for this an application to use.
-    logger::Logger logger;
-    
 private:
     /// Base command options used by the MIAApplication.
     CommandOption verboseOpt;
     CommandOption helpOpt;
     CommandOption logFileOpt;
+    
+    /// The basic logger for this an application to use.
+    logger::Logger logger;
     
     /// Stores verboseMode.
     bool verboseMode{false};

@@ -49,13 +49,16 @@ build: build.sh [options...]
 This build script will automate the build and install of MIA.
 
 Options:
-	-h    Display this help message.
+    -h    Display this help message.
+	-S    Run the initial setup to install dependancies and such. then exit.
 	-C    Perform a clean build by removing the build directory first.
 	-v    Enable verbose output during build process.
 	-D    Attempt to Install dependencies.
 	-I    Install MIA after building (requires admin). Use a clean build if errors occur.
 	-R    Update the release files. Use a clean build if errors occur.
 	-U    Uninstall all MIA files. This will uninstall then quit without other actions.
+	-T    Run all tests.
+	-d    Add flags to cmake for a debug build (useful if gdb is needed).
 \end{lstlisting}
 This build script is continually evolving and new options are added.
 
@@ -357,7 +360,7 @@ Some tips and considerations follow:
 \label{sec:base-application}
 
 \subsection*{Overview and Purpose}
-The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{sec:app-framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help). This class is intended to be subclassed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
+The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{sec:app-framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
 
 \subsection*{Initialization and Execution Interface}
 \begin{itemize}
@@ -375,6 +378,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
 	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
 	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
+	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling.
 \end{itemize}
 
 \subsection*{Protected Members}
@@ -433,6 +437,14 @@ void MIATemplate::printHelp() const
               // Add app-specific help output here...
               << std::endl;
 }
+	\end{lstlisting}
+	\item Call the \texttt{log()} method in order to log information.
+	\begin{lstlisting}[style=cppstyle]
+log("This is a message to log");
+	\end{lstlisting}
+	In the rare case that the user wants to overload the standard verbose handling, an overloaded \texttt{log(string, bool)} method exists which accepts a verbose flag as the second argument.
+	\begin{lstlisting}[style=cppstyle]
+log("This is a message to log", true);
 	\end{lstlisting}
 \end{enumerate}
 
@@ -831,6 +843,27 @@ void MIATemplate::loadConfig()
 \subsection{Extensibility}
 
 New configuration formats can be supported by deriving new classes from \texttt{ConfigData} and implementing the required interface. \texttt{MIAConfig} will manage the polymorphic pointer and delegate appropriately based on the \texttt{ConfigType}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
