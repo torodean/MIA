@@ -95,8 +95,11 @@ void MIAOriginal::printSplash()
     cout << "....................     Programmer: Antonius Torode      ...................." << endl;
     cout << "....................      Compiled on: " << __DATE__ << "        ...................." << endl;
     cout << ".............................................................................." << endl;
+    cout << "...WARNING: Some features remain untested after migrating MIA to app format..." << endl;
+    cout << ".............................................................................." << endl;
     cout << "..." << endl;
     cout << "... Greetings! I am MIA.                                                   ..." << endl;
+    
 }
 
 
