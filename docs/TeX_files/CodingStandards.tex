@@ -1,14 +1,14 @@
-\section{Coding Standards}
+\chapter{Coding Standards}
 
-\subsection{Overview}
+\section{Overview}
 
 As of MIA version 2\footnote{Note: Although the coding standards are adopted in version 2, not all of the code yet conforms to this standard. Much of the old code which was migrated over still needs improvements and fixes in order to fit these standards.}, a set of coding standards has been adopted by this project. To maintain consistency, readability, and maintainability across the project, a unified coding standard for all C++, CMake, and Bash code is used. This section outlines the conventions and best practices to be followed by all current and future contributors. Adhering to these guidelines helps reduce bugs, ease code reviews, and improve collaboration if MIA ever became a multi-developer environment.
 
 Since this project was (and still is at the time of writing this) solely for personal edification, learning, and experimentation, its primary purpose has been to explore new tools, techniques, and patterns across C++, CMake, and Bash. However, it also serves as a practical demonstration of my coding style and development practices - much like a portfolio, though firmly within the realm of hobby code. As such, while the codebase may not meet production-level rigor in every detail, this coding standards documentation exists to highlight the conventions I choose to follow, the rationale behind them, and how they reflect what I believe to be a synthesis of the best practices across the diverse landscape of existing standards. This includes adapting principles from well-known style guides while also incorporating personal preferences that I’ve found to improve clarity, maintainability, and efficiency through hands-on experience.
 
-\subsection{C++ Coding Standards}
+\section{C++ Coding Standards}
 
-\subsubsection*{Formatting and Style}
+\subsection{Formatting and Style}
 \begin{itemize}
     \item Indentation: Use \texttt{spaces} with a width of \texttt{4} spaces.
     \item Line length: Limit lines to \texttt{120} to \texttt{140} characters. Traditionally, less characters are used. However, with newer computers and displays, this rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time wth an additional file-browser window. The range in values comes from a standput of developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the, range allows the developer to use discretion based on the code itself. 
@@ -28,7 +28,7 @@ Since this project was (and still is at the time of writing this) solely for per
     \end{itemize}
 \end{itemize}
 
-\subsubsection*{Code Organization and Practices}
+\subsection{Code Organization and Practices}
 \begin{itemize}
     \item Header files should include include guards or \texttt{\#pragma once}.
     \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \texttt{std::unique\_ptr} and \texttt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
@@ -39,9 +39,108 @@ Since this project was (and still is at the time of writing this) solely for per
     \item Document all public interfaces with Doxygen-style comments.
 \end{itemize}
 
-\subsection{CMake Standards}
+\subsection{Comments and Documentation}
 
-\subsubsection*{Structure and Conventions}
+All code elements including classes, namespaces, methods, typedefs, variables, and files must have Doxygen comments. These comments should primarily be placed in header files to serve as the main documentation source. For methods not declared in headers but implemented in \texttt{.cpp} files, corresponding Doxygen comments should be added in the implementation files. In-code comments must be sufficiently informative to allow any developer to understand the purpose, usage, and modification requirements of the code without needing to consult external documentation. This includes describing the intent of classes and methods, explaining parameters and return values, and clarifying design decisions where applicable.
+
+In \texttt{.cpp} implementation files, comments should be added at the developer’s discretion but are ideally included:
+\begin{itemize}
+    \item Before blocks of code that perform distinct tasks,
+    \item When specific literal values or “magic numbers” are used for particular reasons,
+    \item Where behavior might not be immediately clear from the code itself,
+    \item To highlight important side-effects or assumptions.
+\end{itemize}
+
+For ease of navigation and maintenance, closing braces of namespaces, classes, and long code blocks should be followed by simple trailing comments indicating their scope, for example:
+\begin{lstlisting}[style=cppstyle]
+} // namespace myNamespace
+\end{lstlisting}
+This convention helps match braces quickly without excessive scrolling.
+
+\subsubsection*{Additional guidelines}
+\begin{itemize}
+    \item Avoid redundant comments that restate obvious code.
+    \item Use consistent terminology and formatting in all comments.
+    \item Prefer clarity and brevity over verbosity.
+    \item Update comments promptly alongside code changes to keep them accurate.
+\end{itemize}
+
+\subsubsection*{Example Doxygen comment in a header file}
+
+\begin{lstlisting}[style=cppstyle]
+/**
+ * @brief Represents a configurable widget.
+ * This class manages widget configuration and state.
+ * @param config[Config] - Configuration settings for the widget.
+ * @return Widget instance initialized with given config.
+ */
+class Widget 
+{
+public:
+    /**
+     * @brief Initializes the widget with given settings.
+     * @param settings[Config] - The configuration to apply.
+     */
+    void initialize(const Config& settings);
+};
+\end{lstlisting}
+
+\subsubsection*{Example comment in a \texttt{.cpp} implementation file}
+
+\begin{lstlisting}[style=cppstyle]
+// Apply default configuration values if not explicitly set
+if (!settings.hasTimeout()) 
+{
+    settings.setTimeout(DEFAULT_TIMEOUT); // DEFAULT_TIMEOUT defined in config.h
+}
+\end{lstlisting}
+
+
+
+\subsection{README Files and Higher-Level Documentation}
+
+Each code directory must contain a \texttt{README} file that provides a concise overview of the directory’s purpose. The README should include:
+\begin{itemize}
+    \item A brief description of the contents of the directory (key files, subfolders).
+    \item The role and relationship of these files or components within the larger project.
+    \item Any special instructions or notes relevant to developers navigating or modifying the directory.
+\end{itemize}
+This ensures quick orientation for developers and aids maintainability across the codebase.
+
+At the project level, comprehensive documentation is maintained in the main MIA manual. This manual offers a high-level overview of:
+\begin{itemize}
+    \item The complete set of features and functionality.
+    \item Descriptions of libraries and core components.
+    \item Available tools and utilities.
+    \item Architectural design decisions and workflows.
+\end{itemize}
+The MIA manual serves as the primary reference for understanding the system holistically and should be kept up-to-date as the project evolves.
+
+Together, directory-level README files and the MIA manual provide layered documentation: granular, file-level guidance paired with broad, conceptual understanding, facilitating both detailed development work and strategic planning.
+
+\subsubsection*{Example README excerpt}
+
+\begin{lstlisting}[style=cppstyle]
+# src/utils
+
+This directory contains utility functions and helper classes used across the project.
+
+- string_helpers.h/cpp: String manipulation utilities.
+- file_io.h/cpp: Functions for file reading and writing.
+- README.md: Overview and usage notes for utilities.
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\section{CMake Standards}
+
+\subsection{Structure and Conventions}
 A clean CMake structure improves build reproducibility and portability. Modern practices enable more maintainable and scalable build definitions. Clear separation of targets and dependencies reduces cross-target pollution.
 \begin{itemize}
     \item Use lowercase CMake commands (e.g., \texttt{add\_executable}, \texttt{target\_link\_libraries}).
@@ -58,9 +157,19 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
     \end{lstlisting}
 \end{itemize}
 
-\subsection{Bash Scripting Standards}
 
-\subsubsection*{Style and Safety}
+
+
+
+
+
+
+
+
+
+\section{Bash Scripting Standards}
+
+\subsection{Style and Safety}
 \begin{itemize}
     \item Use \texttt{#!/bin/bash} (or \texttt{#!/usr/bin/env bash}) at the top of scripts.
     %\item Always use \texttt{set -euo pipefail} to catch errors early.
@@ -70,14 +179,24 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
     %\item Prefer \texttt{\$(...)} over backticks for command substitution.
 \end{itemize}
 
-\subsubsection*{Documentation and Naming}
+\subsection{Documentation and Naming}
 \begin{itemize}
     \item Start each script with a brief comment block describing its purpose and usage.
     \item Use descriptive function and variable names.
     \item Use comments to clarify non-obvious logic, especially when using subshells or traps.
 \end{itemize}
 
-\subsection{Enforcement and Exceptions}
+
+
+
+
+
+
+
+
+
+
+\section{Enforcement and Exceptions}
 
 \begin{itemize}
     \item Continuous integration pipelines are still in development for this project which will enforce code quality.
