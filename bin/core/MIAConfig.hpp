@@ -67,7 +67,7 @@ namespace MIA_System
         void initialize(bool verboseMode = false);
         
         /**
-         * This will reloadthe configuration file by calling initialize. This is mainly just semantically different
+         * This will reload the configuration file by calling initialize. This is mainly just semantically different
          * so that the call makes sense in contexts where it is used.
          * @param verboseMode[bool] - Enables verbose output.
          * @throws MIAException If the underlying initialize() call fails.
