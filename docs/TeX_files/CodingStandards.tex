@@ -39,6 +39,68 @@ Since this project was (and still is at the time of writing this) solely for per
     \item Document all public interfaces with Doxygen-style comments.
 \end{itemize}
 
+
+
+\subsection{Virtual Classes, Abstractions, and PIMPL}
+
+Object-oriented abstractions such as virtual classes and the PIMPL (Pointer to Implementation) idiom are powerful tools but must be used judiciously to avoid unnecessary complexity and indirection. Code should prioritize readability and simplicity over overengineering. Clear, straightforward implementations are easier to maintain, debug, and extend than overly abstract or generalized solutions. Avoid premature optimization or architectural complexity unless justified by concrete requirements. The goal is to make the intent and behavior of the code immediately understandable to other developers. When in doubt, favor code that communicates clearly over code that attempts to be overly clever or flexible without a proven need.
+
+\subsubsection*{Virtual Classes and Abstract Interfaces}
+
+Abstract classes (i.e., classes with pure virtual functions) should be used to define clean, minimal interfaces that enable polymorphism and decouple high-level logic from specific implementations. These interfaces are particularly appropriate in the following cases:
+\begin{itemize}
+    \item Multiple interchangeable implementations are required.
+    \item Code must be testable via mocks or stubs.
+    \item A plugin or extensibility mechanism is being designed.
+\end{itemize}
+Avoid over-engineering by introducing interfaces prematurely. When there is no clear need for polymorphism, prefer concrete classes for simplicity and clarity. Overall, free-functions are preferred where applicable.
+
+\subsubsection*{PIMPL Idiom}
+
+The PIMPL (Pointer to Implementation) idiom is used to:
+\begin{itemize}
+    \item Hide private data members and internal implementation details.
+    \item Reduce build dependencies and improve compilation times.
+    \item Achieve binary interface stability across library versions.
+\end{itemize}
+
+PIMPL should only be used when these benefits are specifically needed. It introduces runtime indirection and heap allocation, which may be unnecessary in simpler or performance-sensitive components.
+\begin{lstlisting}[style=cppstyle]
+// In header file (example without sufficient commenting).
+class MyClass 
+{
+public:
+    MyClass();
+    ~MyClass();
+private:
+    class Data;
+    std::unique_ptr<Data> data;
+};
+\end{lstlisting}
+
+\paragraph{Usage Guidelines}
+
+\begin{itemize}
+    \item Use virtual functions only where dynamic behavior is explicitly required.
+    \item Keep interfaces small, focused, and consistent.
+    \item Use PIMPL for library boundaries or complex internals where ABI stability or encapsulation justifies the added indirection.
+    \item Avoid using PIMPL as a default or substitute for proper modular design.
+\end{itemize}
+
+By adhering to these principles, the code remains both flexible and maintainable without incurring the overhead of unnecessary abstraction.
+
+
+
+
+
+
+
+
+
+
+
+
+
 \subsection{Comments and Documentation}
 
 All code elements including classes, namespaces, methods, typedefs, variables, and files must have Doxygen comments. These comments should primarily be placed in header files to serve as the main documentation source. For methods not declared in headers but implemented in \texttt{.cpp} files, corresponding Doxygen comments should be added in the implementation files. In-code comments must be sufficiently informative to allow any developer to understand the purpose, usage, and modification requirements of the code without needing to consult external documentation. This includes describing the intent of classes and methods, explaining parameters and return values, and clarifying design decisions where applicable.
