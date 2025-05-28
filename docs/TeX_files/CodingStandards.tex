@@ -32,8 +32,11 @@ Since this project was (and still is at the time of writing this) solely for per
 \begin{itemize}
     \item Header files should include include guards or \texttt{\#pragma once}.
     \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \texttt{std::unique\_ptr} and \texttt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
-    \item Avoid using \texttt{using namespace std;} in headers. Placing \texttt{using namespace} directives in headers pollutes the global namespace for any file that includes that header, potentially causing name collisions and ambiguous references. This can lead to subtle and hard-to-debug errors, especially in large codebases or when integrating with third-party libraries. Instead, fully qualify names (e.g., \texttt{std::vector}) in headers to keep dependencies explicit and avoid unintended side effects.
+    \item Avoid using \texttt{using namespace std;} in headers. Placing \texttt{using namespace} directives in headers pollutes the global namespace for any file that includes that header, potentially causing name collisions and ambiguous references. This can lead to subtle and hard-to-debug errors, especially in large codebases or when integrating with third-party libraries. Instead, fully qualify names (i.e., \texttt{std::vector}) in headers to keep dependencies explicit and avoid unintended side effects.
     \item Separate declaration and implementation: use headers (\texttt{.hpp}) for interfaces and source files (\texttt{.cpp}) for implementation.
+    \item Prefer forward declarations over includes in headers when only a pointer or reference to a type is needed. Only include full headers when access to the complete type is required.
+    \item Where applicable, default fallback values (i.e., 0, "", false) may be returned in lieu of exceptions for non-critical failures, provided this behavior is explicitly documented. This includes all get*() functions for configuration access.
+    \item Exceptions should be used only for unrecoverable errors or contract violations, and custom exceptions (i.e., MIAException) should encapsulate error context where possible.
     \item Use Resource acquisition is initialization (RAII) for resource management.
     \item Use const correctness to express immutability.
     \item Document all public interfaces with Doxygen-style comments.
@@ -57,7 +60,7 @@ Avoid over-engineering by introducing interfaces prematurely. When there is no c
 
 \subsubsection*{PIMPL Idiom}
 
-The PIMPL (Pointer to Implementation) idiom is used to:
+The PIMPL idiom may be used to encapsulate implementation details and reduce compilation dependencies, particularly for public interfaces that are expected to remain stable while their internals may change. Its use must be justified by the need to isolate dependencies, improve build performance, or enforce ABI stability. The PIMPL (Pointer to Implementation) idiom is used to:
 \begin{itemize}
     \item Hide private data members and internal implementation details.
     \item Reduce build dependencies and improve compilation times.
@@ -91,14 +94,51 @@ By adhering to these principles, the code remains both flexible and maintainable
 
 
 
+\subsection{Attributes, Specifiers, and Member Annotation Standards}
 
+\subsubsection*{C++ Attribute Specifiers}
 
+C++ standard attributes such as \texttt{\textbf{[[deprecated]]}}, \texttt{\textbf{[[maybe\_unused]]}}, and others should be used appropriately to enhance clarity, compiler diagnostics, and maintainability.
+\begin{itemize}
+  \item \textbf{\texttt{[[deprecated]]}} \\
+  Use to mark deprecated interfaces explicitly. Always include an explanatory message:
+  \begin{lstlisting}[style=cppstyle]
+[[deprecated("Use newMethod() instead")]]
+void oldMethod();
+  \end{lstlisting}
 
+  \item \textbf{\texttt{[[maybe\_unused]]}} \\
+  Apply to functions or variables that may be unused in some contexts (i.e., for debugging or optional features):
+  \begin{lstlisting}[style=cppstyle]
+[[maybe_unused]]
+void dumpConfigMap(std::ostream& os = std::cout) const;
+  \end{lstlisting}
 
+  \item \textbf{\texttt{[[nodiscard]]}} \\
+  Use for return values where the result must be used by the caller (i.e., for error codes or ownership types).
+\end{itemize}
 
+\textbf{Guideline:} Use attribute specifiers only when their intended behavior is part of the API contract or serves a specific, useful purpose. Avoid excessive or speculative use.
 
+\subsubsection*{\texttt{override} and \texttt{final} Usage}
 
+All overridden virtual methods must be explicitly marked with \texttt{override}. Do \textbf{not} use the \texttt{virtual} keyword on the overriding declaration.
+\begin{itemize}
+  \item Correct:
+  \begin{lstlisting}[style=cppstyle]
+void onStart() override;
+  \end{lstlisting}
+  \item Incorrect:
+  \begin{lstlisting}[style=cppstyle]
+virtual void onStart() override;
+  \end{lstlisting}
+\end{itemize}
 
+Use \texttt{final} on classes or methods where further subclassing or overriding is explicitly disallowed:
+\begin{lstlisting}[style=cppstyle]
+class Logger final { ... };
+void onShutdown() final;
+\end{lstlisting}
 
 
 \subsection{Comments and Documentation}
@@ -122,13 +162,16 @@ This convention helps match braces quickly without excessive scrolling.
 \subsubsection*{Additional guidelines}
 \begin{itemize}
     \item Avoid redundant comments that restate obvious code.
+    \item Use complete sentences, present tense, punctuation, and consistent phrasing for clarity.
     \item Use consistent terminology and formatting in all comments.
     \item Prefer clarity and brevity over verbosity.
     \item Update comments promptly alongside code changes to keep them accurate.
+    \item All functions that may throw exceptions must document them using @throws. 
 \end{itemize}
 
-\subsubsection*{Example Doxygen comment in a header file}
+\subsubsection*{Example Doxygen comments}
 
+For multiline comments, use the \texttt{/** .. */} comment block.
 \begin{lstlisting}[style=cppstyle]
 /**
  * @brief Represents a configurable widget.
@@ -146,9 +189,38 @@ public:
     void initialize(const Config& settings);
 };
 \end{lstlisting}
+For single-line comments that document member variables, use \texttt{///} directly above the definition. These comments should be clear, concise, and written in full sentences when appropriate.
+\begin{lstlisting}[style=cppstyle]
+/// The name of the configuration file for this object.
+std::string configFileName;
+\end{lstlisting}
+\textbf{Guidelines:}
+\begin{itemize}
+    \item Use \texttt{///} rather than \texttt{//} for documentation intended to be parsed by tools like Doxygen.
+    \item Comments must describe the purpose or semantics of the variable, not its type or structure (which should be clear from the code).
+    \item Maintain grammatical consistency and use proper punctuation.
+\end{itemize}
+Each enumeration should be preceded by a Doxygen-style comment block explaining its purpose. Individual enum values must use \texttt{///<} inline comments to document their meaning. This ensures that documentation tools capture the purpose of each constant clearly, and that readers can understand the intent without leaving the context of the declaration.
+\begin{lstlisting}[style=cppstyle]
+/**
+ * These are the various actions which the sequencer supports.
+ */
+enum SequenceActionType
+{
+    UNKNOWN,     ///< Unknown action - do nothing.
+    TYPE,        ///< This will type a sequence of characters.
+    SLEEP,       ///< This will wait/pause some time.
+    DELAY,       ///< This is the time to wait between each action.
+    MOVEMOUSE,   ///< This will move the mouse to a specific coordinate.
+    CLICK        ///< This will perform a click with the mouse.
+};
+\end{lstlisting}
+\textbf{Guideline:} Always use \texttt{///<} on the same line as the enum value, not on a new line above. Comments should be concise, use present tense, and describe the runtime behavior.
 
-\subsubsection*{Example comment in a \texttt{.cpp} implementation file}
 
+\subsubsection*{Line Comments in Implementation Files}
+
+Use \texttt{//} for brief, inline, or explanatory comments within function implementations. These should clarify logic, document assumptions, or highlight non-obvious decisions.
 \begin{lstlisting}[style=cppstyle]
 // Apply default configuration values if not explicitly set
 if (!settings.hasTimeout()) 
@@ -156,6 +228,13 @@ if (!settings.hasTimeout())
     settings.setTimeout(DEFAULT_TIMEOUT); // DEFAULT_TIMEOUT defined in config.h
 }
 \end{lstlisting}
+\textbf{Guidelines:}
+\begin{itemize}
+    \item Place standalone comments on their own line above the code they describe.
+    \item Use inline comments sparingly and only when the code is not self-explanatory.
+    \item Do not restate what the code does—explain why it does it, if not obvious.
+    \item Maintain clarity and brevity; comments should add value, not clutter.
+\end{itemize}
 
 
 
@@ -204,9 +283,9 @@ This directory contains the standalone apps for the MIA project. Below is a brie
 \subsection{Structure and Conventions}
 A clean CMake structure improves build reproducibility and portability. Modern practices enable more maintainable and scalable build definitions. Clear separation of targets and dependencies reduces cross-target pollution.
 \begin{itemize}
-    \item Use lowercase CMake commands (e.g., \texttt{add\_executable}, \texttt{target\_link\_libraries}).
+    \item Use lowercase CMake commands (i.e., \texttt{add\_executable}, \texttt{target\_link\_libraries}).
     \item Group CMake files logically and modularly using subdirectories and \texttt{add\_subdirectory()}.
-    \item Use modern CMake features (e.g., target\_include\_directories, target\_compile\_features).
+    \item Use modern CMake features (i.e., target\_include\_directories, target\_compile\_features).
     \item External dependencies must be managed using \texttt{FetchContent} or \texttt{find\_package}.
     \item Add comments to any blocks of cmake code which function together to perform a particular task. For example:
     \begin{lstlisting}[style=cmakestyle]
@@ -264,6 +343,6 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
     \item Code reviews are expected to evaluate adherence to these standards.
 \end{itemize}
 
-If a contributor proposes a deviation from these standards for good reason (e.g., performance, cross-platform needs), it must be documented and justified in the merge request. In all other cases, adherence is expected.
+If a contributor proposes a deviation from these standards for good reason (i.e., performance, cross-platform needs), it must be documented and justified in the merge request. In all other cases, adherence is expected.
 
 % End of coding standards section
