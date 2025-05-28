@@ -5,6 +5,9 @@ This directory contains the primary code for the MIA project and associated libr
 - **template/**  
   Contains a fully functional app featuring most of the basic application framework techniques used in developing MIA apps. This is used to both test new features and provide a common template for storing correct usage of the various features.
 
+- **mia_original/**  
+  This app contains many of the random features from the original MIA project that don't exist in other apps (before it was moved to an app-based system). Still in dev.
+
 - **MIASequencer/**  
   the MIASequencer loads various defined 'sequences', which are combinations of various 'actions' (such as pressing characters, waiting, clicking the mouse, etc) and then performs those (or a subset of those) sequences.
 

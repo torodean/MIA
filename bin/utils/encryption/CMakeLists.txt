@@ -8,3 +8,6 @@ set(Encryption_INC
     D3CEncryptPW.hpp 
     MIAEncrypt.hpp ) 
 add_library(Encryption_LIB ${Encryption_SRC} ${Encryption_INC})
+
+# Expose this library's source directory for #include access by dependent targets
+target_include_directories(Encryption_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

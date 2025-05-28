@@ -12,3 +12,7 @@ target_include_directories(System_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
 add_subdirectory( test )
+
+if(WIN32 OR CYGWIN)
+    add_subdirectory( windows )
+endif()

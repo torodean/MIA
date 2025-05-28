@@ -847,31 +847,6 @@ namespace math
     }
     */
     
-    template<class numberType>
-    bool D3CMath::isPrime(numberType number)
-    {
-        short Counter = 0;   // A counter for how many numbers can divide evenly into the number.
-        if (number == 0 || number == 1 || number == 4)
-        {
-            return false;
-        }
-        for (numberType i = 1; i <= ((number + 1) / 2); i++)
-        {
-            if (Counter < 2)
-            {
-                if (number % i == 0)
-                {
-                    Counter++;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    
     
     bool isPalindrome(long number)
     {

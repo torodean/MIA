@@ -2,7 +2,13 @@
  * File: Commands.cpp
  * Author: Antonius Torode
  * Creation Date: 03/01/2021
- * Description: This file contains the Commands class, which defines the available terminal commands and their runner commands.
+ * Description: This file contains the Commands class, which defines the 
+ *     available terminal commands and their runner commands. This file
+ *     was copied from the original MIA code with minimal changes. A few
+ *     commands were removed (those moved to standalone apps) and simple
+ *     refactoring was done to allow the code to function with the new setup.
+ *
+ *     Do NOT use this code as an example of what to-do, as it is quite old.
  */
 
 #include <string>
@@ -28,7 +34,6 @@ public:
         CRYPT_D0S1,
         CRYPT_D0S2,
         CRYPT_D0S3,
-        DATABASE,
         DATE,
         DECRYPT_D0S1,
         DECRYPT_D0S2,
@@ -42,11 +47,8 @@ public:
         EXCUSE,
         FACTORS,
         FINDMOUSE,
-        FISHBOT,
         HELP,
         LATTICE,
-        MCDIG,
-        MCEXPLORE,
         MULTIPLY,
         NETHELP,
         NETSESSION,
@@ -62,16 +64,10 @@ public:
         PRANJAL,
         QUADRATICFORM,
         RANDFROMFILE,
-        SEQUENCER,
-        SEQUENCER_L,
         SPLASH,
         SUBTRACT,
         TRIANGLE,
         TEST,
-        WORKOUT,
-        WORKOUT_W,
-        WOWDUPLETTER,
-        WOWUNLOAD
     };
 
     /**
@@ -166,26 +162,6 @@ public:
     static void buttonSpamRunner(bool enableTab);
 
     /**
-     * performs a sequence to perpetually dig as you would in minecraft.
-     */
-    static void minecraftDigRunner();
-
-    /**
-     * used to explore a minecraft map given that the user is gamemode=1.
-     */
-    static void exploreMinecraft();
-
-    /**
-     * Runs the duplicate letter function which is useful for World of Warcraft.
-     */
-    static void duplicateLetterRunner();
-
-    /**
-     * Runs the duplicate letter function which is useful for World of Warcraft.
-     */
-    static void unloadLetterRunner();
-
-    /**
      * Runs d0s3 encryption
      */
     void d0s3CryptRunner();
@@ -258,28 +234,10 @@ public:
      */
     static int rollDice(const std::string& input);
 
-    /**
-     * Main runner for the sequencer.
-     */
-    static void runSequencer();
-
-    /**
-     * Main runner for the sequencer.
-     */
-    static void loopSequencer();
-
-    /**
-     * Function made for generating a workout via the Misc class.
-     * @param weekly
-     */
-    static void workoutRunner(bool weekly);
-
 	/**
 	 * A method to repeat an alarm sound on a regular cadence.
 	 */
     [[noreturn]] static void runRepeatingAlarm();
-
-    void runDatabaseInterface();
 
     static void entangleTextRunner();
 
