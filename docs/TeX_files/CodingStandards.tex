@@ -69,16 +69,24 @@ The PIMPL idiom may be used to encapsulate implementation details and reduce com
 
 PIMPL should only be used when these benefits are specifically needed. It introduces runtime indirection and heap allocation, which may be unnecessary in simpler or performance-sensitive components.
 \begin{lstlisting}[style=cppstyle]
-// In header file (example without sufficient commenting).
+/**
+ * @brief A class demonstrating the PIMPL idiom for encapsulation.
+ */
 class MyClass 
 {
 public:
+    /**
+     * @brief Constructs a MyClass instance.
+     */
     MyClass();
+    
+    /**
+     * @brief Destroys the MyClass instance, freeing resources.
+     */
     ~MyClass();
 private:
-    class Data;
-    std::unique_ptr<Data> data;
-};
+    class Data; ///< Forward declaration of implementation details.
+    std::unique_ptr<Data> data; ///< Pointer to implementation.
 \end{lstlisting}
 
 \paragraph{Usage Guidelines}
