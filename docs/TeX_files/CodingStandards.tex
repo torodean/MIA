@@ -1,0 +1,89 @@
+\section{Coding Standards}
+
+\subsection{Overview}
+
+As of MIA version 2\footnote{Note: Although the coding standards are adopted in version 2, not all of the code yet conforms to this standard. Much of the old code which was migrated over still needs improvements and fixes in order to fit these standards.}, a set of coding standards has been adopted by this project. To maintain consistency, readability, and maintainability across the project, a unified coding standard for all C++, CMake, and Bash code is used. This section outlines the conventions and best practices to be followed by all current and future contributors. Adhering to these guidelines helps reduce bugs, ease code reviews, and improve collaboration if MIA ever became a multi-developer environment.
+
+Since this project was (and still is at the time of writing this) solely for personal edification, learning, and experimentation, its primary purpose has been to explore new tools, techniques, and patterns across C++, CMake, and Bash. However, it also serves as a practical demonstration of my coding style and development practices - much like a portfolio, though firmly within the realm of hobby code. As such, while the codebase may not meet production-level rigor in every detail, this coding standards documentation exists to highlight the conventions I choose to follow, the rationale behind them, and how they reflect what I believe to be a synthesis of the best practices across the diverse landscape of existing standards. This includes adapting principles from well-known style guides while also incorporating personal preferences that I’ve found to improve clarity, maintainability, and efficiency through hands-on experience.
+
+\subsection{C++ Coding Standards}
+
+\subsubsection*{Formatting and Style}
+\begin{itemize}
+    \item Indentation: Use \texttt{spaces} with a width of \texttt{4} spaces.
+    \item Line length: Limit lines to \texttt{120} to \texttt{140} characters. Traditionally, less characters are used. However, with newer computers and displays, this rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time wth an additional file-browser window. The range in values comes from a standput of developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the, range allows the developer to use discretion based on the code itself. 
+    \item Brace placement: \texttt{Allman}. Although the original MIA project was in K\&R format, I've chosen to move to \texttt{Allman} as of version 2. The benefits of Allman include the following:    
+    \begin{itemize}
+        \item Aligned Blocks: With Allman, readability is often enhanced because you do not have to visually search the end of variable-length lines for brackets or rely on tabs. Allman can help reduce cognitive load when scanning code. All brackets are at the start of the line and aligned with the ending bracket. 
+        \item Clearly Separated Blocks: This style makes each block of code more clearly separated.
+        \item Commenting: The initial bracket of a code block can serve as a perfect spot for a brief comment related to the block itself. 
+    \end{itemize}
+    \item Naming conventions:
+    \begin{itemize}
+        \item Classes and structs: \texttt{PascalCase}
+        \item Enums and typedefs: \texttt{PascalCase}
+        \item Functions and methods: \texttt{camelCase}
+        \item Variables: \texttt{camelCase}
+        \item Constants: \texttt{ALL\_CAPS} 
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Code Organization and Practices}
+\begin{itemize}
+    \item Header files should include include guards or \texttt{\#pragma once}.
+    \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \texttt{std::unique\_ptr} and \texttt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
+    \item Avoid using \texttt{using namespace std;} in headers. Placing \texttt{using namespace} directives in headers pollutes the global namespace for any file that includes that header, potentially causing name collisions and ambiguous references. This can lead to subtle and hard-to-debug errors, especially in large codebases or when integrating with third-party libraries. Instead, fully qualify names (e.g., \texttt{std::vector}) in headers to keep dependencies explicit and avoid unintended side effects.
+    \item Separate declaration and implementation: use headers (\texttt{.hpp}) for interfaces and source files (\texttt{.cpp}) for implementation.
+    \item Use Resource acquisition is initialization (RAII) for resource management.
+    \item Use const correctness to express immutability.
+    \item Document all public interfaces with Doxygen-style comments.
+\end{itemize}
+
+\subsection{CMake Standards}
+
+\subsubsection*{Structure and Conventions}
+A clean CMake structure improves build reproducibility and portability. Modern practices enable more maintainable and scalable build definitions. Clear separation of targets and dependencies reduces cross-target pollution.
+\begin{itemize}
+    \item Use lowercase CMake commands (e.g., \texttt{add\_executable}, \texttt{target\_link\_libraries}).
+    \item Group CMake files logically and modularly using subdirectories and \texttt{add\_subdirectory()}.
+    \item Use modern CMake features (e.g., target\_include\_directories, target\_compile\_features).
+    \item External dependencies must be managed using \texttt{FetchContent} or \texttt{find\_package}.
+    \item Add comments to any blocks of cmake code which function together to perform a particular task. For example:
+    \begin{lstlisting}[style=cmakestyle]
+# Create the MIATemplate executable.
+set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
+set(MIATemplate_INC MIATemplate.hpp )
+add_executable(MIATemplate ${MIATemplate_SRC} ${MIATemplate_INC} )
+target_link_libraries(MIATemplate PRIVATE Core_LIB )
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Bash Scripting Standards}
+
+\subsubsection*{Style and Safety}
+\begin{itemize}
+    \item Use \texttt{#!/bin/bash} (or \texttt{#!/usr/bin/env bash}) at the top of scripts.
+    %\item Always use \texttt{set -euo pipefail} to catch errors early.
+    \item Use functions to encapsulate logic (when appropriate) instead of writing top-level scripts.
+    %\item Use \texttt{local} keyword inside functions for variable scoping.
+    %\item Quote all variable references: \texttt{"\$\{var\}"}.
+    %\item Prefer \texttt{\$(...)} over backticks for command substitution.
+\end{itemize}
+
+\subsubsection*{Documentation and Naming}
+\begin{itemize}
+    \item Start each script with a brief comment block describing its purpose and usage.
+    \item Use descriptive function and variable names.
+    \item Use comments to clarify non-obvious logic, especially when using subshells or traps.
+\end{itemize}
+
+\subsection{Enforcement and Exceptions}
+
+\begin{itemize}
+    \item Continuous integration pipelines are still in development for this project which will enforce code quality.
+    \item Code reviews are expected to evaluate adherence to these standards.
+\end{itemize}
+
+If a contributor proposes a deviation from these standards for good reason (e.g., performance, cross-platform needs), it must be documented and justified in the merge request. In all other cases, adherence is expected.
+
+% End of coding standards section
