@@ -236,6 +236,13 @@ if (!settings.hasTimeout())
     settings.setTimeout(DEFAULT_TIMEOUT); // DEFAULT_TIMEOUT defined in config.h
 }
 \end{lstlisting}
+\begin{lstlisting}[style=cppstyle]
+// Bad: Sets timeout to default
+settings.setTimeout(DEFAULT_TIMEOUT);
+
+// Good: Use default timeout if none specified in config
+settings.setTimeout(DEFAULT_TIMEOUT);
+\end{lstlisting}
 \textbf{Guidelines:}
 \begin{itemize}
     \item Place standalone comments on their own line above the code they describe.
