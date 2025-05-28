@@ -1,6 +1,6 @@
 # apps Directory Overview
 
-This directory contains the primary code for the MIA project and associated libraries. Below is a brief description of each subfolder:
+This directory contains the standalone apps for the MIA project. Below is a brief description of each subfolder:
   
 - **template/**  
   Contains a fully functional app featuring most of the basic application framework techniques used in developing MIA apps. This is used to both test new features and provide a common template for storing correct usage of the various features.
