@@ -495,9 +495,9 @@ MIATemplate::MIATemplate() :
 	\end{lstlisting}
 	
 	\item \textbf{Help Output:} \texttt{getHelp()} returns a formatted string of the form:
-	\begin{verbatim}
-		-s, --long        Description
-	\end{verbatim}
+	\begin{lstlisting}
+-s, --long        Description
+	\end{lstlisting}
 	This method is intended to return a string for each command option in a consistent format in order to make constructing the overridden printHelp() message of the base application class simpler. The getHelp() method can be used in constructing the help message for an app in a way similar to the following:
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::printHelp() const
@@ -835,11 +835,17 @@ void MIATemplate::loadConfig()
 
 \subsection{Quick Example}
 
-\begin{verbatim}
-	MIAConfig cfg("settings.conf", constants::ConfigType::KEY_VALUE);
-	cfg.initialize();
-	int timeout = cfg.getInt("network.timeout");
-\end{verbatim}
+Consider a configuration file containing an integer value with a key of `network.timeout'
+\begin{lstlisting}[style=cppstyle]
+# This is the settings.conf file.
+network.timeout=15
+\end{lstlisting}
+You can collect that value using the following: 
+\begin{lstlisting}[style=cppstyle]
+MIAConfig cfg("settings.conf", constants::ConfigType::KEY_VALUE);
+cfg.initialize();
+int timeout = cfg.getInt("network.timeout");
+\end{lstlisting}
 
 \subsection{Extensibility}
 
