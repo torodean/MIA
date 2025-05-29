@@ -10,15 +10,15 @@ Since this project was (and still is at the time of writing this) solely for per
 
 \subsection{Formatting and Style}
 \begin{itemize}
-    \item Indentation: Use \texttt{spaces} with a width of \texttt{4} spaces.
-    \item Line length: Limit lines to \texttt{120} to \texttt{140} characters. Traditionally, less characters are used. However, with newer computers and displays, this rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time wth an additional file-browser window. The range in values comes from a standput of developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the, range allows the developer to use discretion based on the code itself. 
-    \item Brace placement: \texttt{Allman}. Although the original MIA project was in K\&R format, I've chosen to move to \texttt{Allman} as of version 2. The benefits of Allman include the following:    
+    \item \textbf{Indentation}: Use \texttt{spaces} with a width of \texttt{4} spaces.
+    \item \textbf{Line length}: Limit lines to \texttt{120} to \texttt{140} characters. Traditionally, less characters are used. However, with newer computers and displays, this rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time wth an additional file-browser window. The range in values comes from a standput of developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the, range allows the developer to use discretion based on the code itself. 
+    \item \textbf{Brace placement}: \texttt{Allman}. Although the original MIA project was in K\&R format, I've chosen to move to \texttt{Allman} as of version 2. The benefits of Allman include the following:    
     \begin{itemize}
         \item Aligned Blocks: With Allman, readability is often enhanced because you do not have to visually search the end of variable-length lines for brackets or rely on tabs. Allman can help reduce cognitive load when scanning code. All brackets are at the start of the line and aligned with the ending bracket. 
         \item Clearly Separated Blocks: This style makes each block of code more clearly separated.
         \item Commenting: The initial bracket of a code block can serve as a perfect spot for a brief comment related to the block itself. 
     \end{itemize}
-    \item Naming conventions:
+    \item \textbf{Naming conventions}:
     \begin{itemize}
         \item Classes and structs: \texttt{PascalCase}
         \item Enums and typedefs: \texttt{PascalCase}
@@ -125,8 +125,7 @@ void dumpConfigMap(std::ostream& os = std::cout) const;
   \item \textbf{\texttt{[[nodiscard]]}} \\
   Use for return values where the result must be used by the caller (i.e., for error codes or ownership types).
 \end{itemize}
-
-\textbf{Guideline:} Use attribute specifiers only when their intended behavior is part of the API contract or serves a specific, useful purpose. Avoid excessive or speculative use.
+Use attribute specifiers only when their intended behavior is part of the API contract or serves a specific, useful purpose. Avoid excessive or speculative use.
 
 \subsubsection*{\texttt{override} and \texttt{final} Usage}
 
@@ -141,7 +140,6 @@ void onStart() override;
 virtual void onStart() override;
   \end{lstlisting}
 \end{itemize}
-
 Use \texttt{final} on classes or methods where further subclassing or overriding is explicitly disallowed:
 \begin{lstlisting}[style=cppstyle]
 class Logger final { ... };
@@ -160,7 +158,6 @@ In \texttt{.cpp} implementation files, comments should be added at the developer
     \item Where behavior might not be immediately clear from the code itself,
     \item To highlight important side-effects or assumptions.
 \end{itemize}
-
 For ease of navigation and maintenance, closing braces of namespaces, classes, and long code blocks should be followed by simple trailing comments indicating their scope, for example:
 \begin{lstlisting}[style=cppstyle]
 } // namespace myNamespace
@@ -179,7 +176,7 @@ This convention helps match braces quickly without excessive scrolling.
 
 \subsubsection*{Example Doxygen comments}
 
-For multiline comments, use the \texttt{/** .. */} comment block.
+For multi-line comments, use the \texttt{/** .. */} comment block.
 \begin{lstlisting}[style=cppstyle]
 /**
  * @brief Represents a configurable widget.
@@ -303,7 +300,7 @@ A clean CMake structure improves build reproducibility and portability. Modern p
     \item Use modern CMake features (i.e., target\_include\_directories, target\_compile\_features).
     \item External dependencies must be managed using \texttt{FetchContent} or \texttt{find\_package}.
     \item Add comments to any blocks of cmake code which function together to perform a particular task. For example:
-    \begin{lstlisting}[style=cmakestyle]
+    \begin{lstlisting}[style=pythonstyle]
 # Create the MIATemplate executable.
 set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
 set(MIATemplate_INC MIATemplate.hpp )
@@ -326,7 +323,7 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
 
 \subsection{Style and Safety}
 \begin{itemize}
-    \item Use \texttt{#!/bin/bash} (or \texttt{#!/usr/bin/env bash}) at the top of scripts.
+    \item Use \texttt{\#!/bin/bash} (or \texttt{\#!/usr/bin/env bash}) at the top of scripts.
     %\item Always use \texttt{set -euo pipefail} to catch errors early.
     \item Use functions to encapsulate logic (when appropriate) instead of writing top-level scripts.
     %\item Use \texttt{local} keyword inside functions for variable scoping.
@@ -360,4 +357,7 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
 
 If a contributor proposes a deviation from these standards for good reason (i.e., performance, cross-platform needs), it must be documented and justified in the merge request. In all other cases, adherence is expected.
 
-% End of coding standards section
+
+
+
+
