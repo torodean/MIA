@@ -1,4 +1,4 @@
-# MIA Project Overview
+# MIA Resources Overview
 
 This folder contains a set of `.MIA` configuration files used by the various features and apps of the MIA project.
 
