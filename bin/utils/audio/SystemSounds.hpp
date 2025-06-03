@@ -3,10 +3,14 @@
  * Author: Antonius Torode
  * Created on: 03/09/2021
  * Description:
+ *     This file provides static methods for emitting  basic system-level audio cues 
+ *     such as beeps or alerts. This interface serves  as a lightweight abstraction 
+ *     over platform-specific sound signaling, and is  intended for use in diagnostics, 
+ *     notifications, or simple user feedback.
  */
 
 /**
- * This class is for system sounds and methods related ot such.
+ * This class is for system sounds and methods related to such.
  */
 class SystemSounds
 {
