@@ -21,4 +21,4 @@ This folder contains reusable utility libraries that provide common functionalit
   Contains utility functions and algorithms related to data encryption, decryption, encoding, and cryptographic operations. Intended to support secure data handling and protection mechanisms within the application.
 
 - **ml/**  
-  Contains utilities, models, and components related to machine learning, artificial intelligence, and neural networks. Intended to support the development and integration of intelligent behaviors and predictive systems within the application.
+  Contains utilities, models, and components related to machine learning, artificial intelligence, and neural networks. Intended to support the development and integration of intelligent behaviors and predictive systems within the application. "ml" is short for "machine-learning".
