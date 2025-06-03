@@ -16,8 +16,7 @@ The project is organized into layers to manage dependencies clearly:
 \item Libraries: Depend on Core and Utilities, implementing domain-specific logic such as math functions.
 \item Applications: Depend on Core, Utilities, and Libraries to build and run the final executable.
 \end{itemize}
-Modules within the same layer may depend on each other as needed. The key rule is to avoid circular dependencies between layers to maintain clear and manageable dependency flow. This layering ensures a unidirectional dependency flow, promoting modularity and easier maintenance.
-
+Modules within the same layer may depend on each other as needed. The key rule is to avoid circular dependencies between layers to maintain clear and manageable dependency flow. This layering ensures a unidirectional dependency flow, promoting modularity and easier maintenance. Details on utility modules can be found in Chapter \ref{chap:utilities}. Details on domain-specific libraries are in Chapter \ref{chap:libraries}.
 
 
 
