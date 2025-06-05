@@ -6,7 +6,7 @@
  *     This file contains unit tests for the StringUtils module using Google Test.
  *     It verifies the correctness of string manipulation functions such as case
  *     conversion, character removal, substring extraction, format validation,
- *     and other utility operations defined in the `types` namespace.
+ *     and other utility operations defined in the `StringUtils` namespace.
  * 
  *     The tests ensure reliable behavior and correctness of the StringUtils
  *     functions across typical use cases.
@@ -16,7 +16,7 @@
 // Include the associated files to test.
 #include "StringUtils.hpp"
 
-using namespace types;
+using namespace StringUtils;
 
 TEST(StringUtilsTest, ToLowerConvertsAllCharacters) 
 {

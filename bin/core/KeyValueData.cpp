@@ -4,7 +4,6 @@
  * Created on: 05/24/2025
  * Description: 
  */
-#pragma once
 
 #include <fstream>
 #include <sstream>
@@ -53,7 +52,7 @@ namespace MIA_System
         for (int i=0; i<size;i++)
         {
             equalSignLocation = BasicUtilities::findCharInString(lines[i], '=');
-            if (equalSignLocation <= 0 || equalSignLocation >= lines[i].size() - 1)
+            if (equalSignLocation <= 0 || equalSignLocation >= static_cast<int>(lines[i].size()) - 1)
                 continue; // or log malformed line
                 
             variable = BasicUtilities::strip(lines[i].substr(0, equalSignLocation));

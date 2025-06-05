@@ -70,7 +70,6 @@ namespace error
      * Prints information about a specified known error or all of the known errors.
      * @param error[int] - The error to return information about.
      */
-    [[deprecated("Use MIAException instead!")]]
     void errorInfo(int error);
 
     /**
@@ -83,7 +82,6 @@ namespace error
      * Inquires for an error code to gather info about.
      * @param all[bool] - option to print all error info (default = false).
      */
-    [[deprecated("Use MIAException instead!")]]
     void errorInfoRun(bool all = false);
 
 } // namespace error

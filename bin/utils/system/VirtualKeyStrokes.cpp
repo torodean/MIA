@@ -15,6 +15,7 @@
 #include "Timing.hpp"
 // Include for error handling.
 #include "Error.hpp"
+#include "MIAException.hpp"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #pragma comment (lib, "gdi32.lib")
@@ -95,7 +96,8 @@ namespace MIA_system
         } else if (character == ' '){
             space();
         } else{
-            error::returnError(31424, std::to_string(character));
+            std::string err = std::to_string(character);
+            throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
         }
     #elif __linux__
         bool skipHold = false;
@@ -125,8 +127,9 @@ namespace MIA_system
     //    } else if (character == '/') {
     //        slash();
         } else {
-            skipHold = true;
-            error::returnError(31424, std::to_string(character));
+            skipHold = true;            
+            std::string err = std::to_string(character);
+            throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
         }
         if(!skipHold)
             MIA_system::sleepMilliseconds(holdTime);

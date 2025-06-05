@@ -10,7 +10,7 @@
  *     simplify common string manipulation tasks and support text processing
  *     across different parts of the application.
  * 
- *     These functions are encapsulated within the `types` namespace and are
+ *     These functions are encapsulated within the `StringUtils` namespace and are
  *     intended for general-purpose use with standard string types.
  */
 #pragma once
@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-namespace types
+namespace StringUtils
 {
     /**
      * Converts a string to lower case.

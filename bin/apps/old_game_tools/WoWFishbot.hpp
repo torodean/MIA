@@ -43,7 +43,11 @@ public:
      */
     void initialize(int argc, char* argv[]) override;
     
-    /// Runs the fishbot.
+    /**
+     * Runs the fishbot.
+     * @throw [MIAException] - Throws if not implemented for the OS.
+     * @return [int] - Returns 0 on success.
+     */
     int run() override;
 
 protected:
@@ -65,6 +69,9 @@ private:
     /// Intro text for the fishbot. This is mostly for flavor.
     void fishBotIntro();
     
+    /// The configuration loader for this app.
+    MIA_System::MIAConfig config;
+    
     // Command options for this app.
     CommandOption configFileOpt;
     
@@ -73,9 +80,6 @@ private:
     
     /// Load the configuration variables.
     void loadConfig();
-    
-    /// The configuration loader for this app.
-    MIA_System::MIAConfig config;
     
     /**
      * WoW WoWFishbot variables. These have default values for a specific setup.

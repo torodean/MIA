@@ -26,7 +26,7 @@ using std::endl;
 using std::vector;
 using std::to_string;
 
-namespace types
+namespace StringUtils
 {
     std::string toLower(std::string &input)
     {

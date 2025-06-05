@@ -120,7 +120,7 @@ void MIAOriginal::standby()
     {
         getline(cin,input);
         cout << endl;
-        if(types::toLower(input) == "exit" || types::toLower(input) == "quit")
+        if(StringUtils::toLower(input) == "exit" || StringUtils::toLower(input) == "quit")
         {
             break;
         }
@@ -230,7 +230,7 @@ void MIAOriginal::helpNet()
 
 void MIAOriginal::performMIACommand(string& input)
 {
-    string cmdInput = types::toLower(input);
+    string cmdInput = StringUtils::toLower(input);
     Commands::MIAInput in = Commands::commandToInputEnum(cmdInput);
 
     switch( in ){
@@ -343,7 +343,7 @@ void MIAOriginal::performMIACommand(string& input)
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
             WindowsUtilities::terminalCommand("DATE");
 #else
-            error::returnError(error::ErrorCode::Windows_Only_Feature);
+            throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
             break;
         case Commands::MIAInput::DICEROLL:

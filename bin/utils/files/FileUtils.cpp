@@ -19,6 +19,7 @@
 
 // Used for error handling.
 #include "Error.hpp"
+#include "MIAException.hpp"
 
 using std::string;
 using std::cout;
@@ -97,8 +98,7 @@ namespace files
         } 
         else 
         {
-            // @TODO - change this to use the new MIA Exception class.
-            error::returnError(41404);
+            throw error::MIAException(error::ErrorCode::FATAL_File_Not_Found);
         }
     }
 

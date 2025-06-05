@@ -21,8 +21,8 @@ namespace files
      * Takes a file as an input and prints an input number of random lines from it.
      * @param filePath[std::string] - the input file path to use.
      * @param numberOfLines[int] - The number of lines to return.
+     * @throw [MIAException] - Throws if the file is not found or accessible.
      */
-    [[deprecated("This method has changed. Review the new usage.")]]
     void printRandomLinesFromFile(std::string filePath, int numberOfLines);
 
     /**

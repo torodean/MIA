@@ -96,8 +96,7 @@ int WoWFishbot::run()
 	
 	WoWFishBot(fishButton, lureButton);
 #else
-    error::returnError(31416);
-    return 1;
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
     return 0;
 }

@@ -70,6 +70,9 @@ private:
         void printConfigValues() const;
     };
     TemplateConfig configFileVals; 
+    
+    /// The configuration loader for this app.
+    MIA_System::MIAConfig config;
 
     // Command options for this app.
     CommandOption configFileOpt;
@@ -83,7 +86,4 @@ private:
     
     /// Load the configuration variables.
     void loadConfig();
-    
-    /// The configuration loader for this app.
-    MIA_System::MIAConfig config;
 }; // class MIATemplate

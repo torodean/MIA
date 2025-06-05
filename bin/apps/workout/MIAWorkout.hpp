@@ -53,6 +53,9 @@ private:
      * Returns a workout generated based on the difficulty.
      */
     void generateWorkout();
+    
+    /// The configuration loader for this app.
+    MIA_System::MIAConfig config;
 
     // Command options for this app.
     CommandOption configFileOpt;
@@ -79,9 +82,6 @@ private:
     
     /// Load the configuration variables.
     void loadConfig();
-    
-    /// The configuration loader for this app.
-    MIA_System::MIAConfig config;
 
     /**
      * Convert input file line to proper format (doubles.

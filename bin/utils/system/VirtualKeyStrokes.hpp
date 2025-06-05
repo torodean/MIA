@@ -76,6 +76,7 @@ namespace MIA_system
          * @param character[const char&] - the key to press.
          * @param holdTime [int] - A time to gold after the keypress in ms (default = 0)
          * @param verboseMode[bool] If true, prints the pressed number to standard output.
+         * @throw [MIAException] - Throws if an unsupported character is entered.
          */
         void press(const char& character, int holdTime = 0, bool verboseMode = false);
     

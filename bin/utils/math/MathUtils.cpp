@@ -50,8 +50,8 @@ namespace math
     
     int roll(const std::string& input, bool verboseMode)
     {
-        int numOfDice = std::stoi(types::getBeforeChar(input, 'd'));
-        int sizeOfDice = std::stoi(types::getAfterChar(input, 'd'));
+        int numOfDice = std::stoi(StringUtils::getBeforeChar(input, 'd'));
+        int sizeOfDice = std::stoi(StringUtils::getAfterChar(input, 'd'));
         int totalRolled = 0;
     
         if (verboseMode)

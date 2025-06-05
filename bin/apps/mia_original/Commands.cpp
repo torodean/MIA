@@ -10,6 +10,7 @@
 #include "StringUtils.hpp"
 #include "D3CMath.hpp"
 #include "Error.hpp"
+#include "MIAException.hpp"
 #include "FileUtils.hpp"
 #include "MathUtils.hpp"
 #include "SystemSounds.hpp"
@@ -115,7 +116,7 @@ Commands::MIAInput Commands::commandToInputEnum(string& input)
         output = MIAInput::NETSERVER_S;
     else if (input == "date")
         output = MIAInput::DATE;
-    else if (types::inputRoll(input))
+    else if (StringUtils::inputRoll(input))
         output = MIAInput::DICEROLL;
     else if (input == "error info")
         output = MIAInput::ERRORINFO;
@@ -447,7 +448,7 @@ void Commands::minecraftDigRunner()
 	cout << "...Beginning in 5 seconds." << endl;
 	key.minecraftDig(time);
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -525,7 +526,7 @@ void Commands::exploreMinecraft()
 		x+=stepSize-1;
 	}
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 */
@@ -558,7 +559,7 @@ void Commands::duplicateLetterRunner()
 	
 	cout << "...Finished duplicating letters." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -585,7 +586,7 @@ void Commands::unloadLetterRunner()
 	
 	cout << "...Finished unloading letters." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 */
@@ -595,8 +596,8 @@ void Commands::d0s3CryptRunner()
     /*
     MIAEncrypt crypt(3);
     string inputFile;
-    */
-    error::returnError(31415); // Still in dev.
+    */    
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 
     /*
     cout << "...Please enter a file (using default file path) to be encrypted: " << endl;
@@ -610,7 +611,7 @@ void Commands::d0s3CryptRunner()
 
 void Commands::d0s3DeCryptRunner()
 {
-    error::returnError(31415);
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 }
 
 
@@ -652,7 +653,7 @@ void Commands::solveQuadraticFormulaRunner()
 
 void Commands::pranjal()
 {
-    string output = types::shuffleString("pranjal");
+    string output = StringUtils::shuffleString("pranjal");
     cout << "...Did you mean " << output << "?" << endl;
 }
 
@@ -663,7 +664,7 @@ void Commands::findMouse()
 	cout << "...Locating mouse in 2 seconds." << endl;
 	keys.findMouseCoords(2);
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -674,7 +675,7 @@ void Commands::eyedropper()
     VirtualKeyStrokes keys;
 	keys.getPixelColorAtMouse();
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -682,7 +683,7 @@ void Commands::eyedropper()
 void Commands::runNetSessionEnum()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    error::returnError(31415);
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 	LOLANetUse lola;
 	string server;
 	int argc = 4;  //set to 4 indicating that all fields [0] -> [3] of argv are filled.
@@ -707,7 +708,7 @@ void Commands::runNetSessionEnum()
 	cout << "..." << endl;
 	cout << "...NetSessionEnumRunner Finished." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -715,7 +716,7 @@ void Commands::runNetSessionEnum()
 void Commands::runNetServerEnum(char mode)
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    error::returnError(31415);
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 	LOLANetUse lola;
 	string domain;
 	int argc = 2;  //set to 2 indicating that all fields [0] -> [1] of argv are filled.
@@ -745,7 +746,7 @@ void Commands::runNetServerEnum(char mode)
 	cout << "..." << endl;
 	cout << "...NetServerEnum Finished!." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -753,7 +754,7 @@ void Commands::runNetServerEnum(char mode)
 void Commands::runNetWkstaGetInfo()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    error::returnError(31415);
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 	LOLANetUse lola;
 	string wkst;
 	int argc = 2;  //set to 4 indicating that all fields [0] -> [1] of argv are filled.
@@ -776,7 +777,7 @@ void Commands::runNetWkstaGetInfo()
 	cout << "..." << endl;
 	cout << "...NetSessionEnum Finished." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -784,7 +785,7 @@ void Commands::runNetWkstaGetInfo()
 void Commands::runNetRemoteComputerSupports()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    error::returnError(31415);
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 	LOLANetUse lola;
 	string wkst;
 	int argc = 2;  //set to 4 indicating that all fields [0] -> [1] of argv are filled.
@@ -807,7 +808,7 @@ void Commands::runNetRemoteComputerSupports()
 	cout << "..." << endl;
 	cout << "...NetRemoteComputerSupports Finished." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -815,7 +816,7 @@ void Commands::runNetRemoteComputerSupports()
 void Commands::runNetUserEnum()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    error::returnError(31415);
+    throw error::MIAException(error::ErrorCode::Feature_In_Dev);
 	LOLANetUse lola;
 	string wkst;
 	int argc = 2;  //set to 4 indicating that all fields [0] -> [1] of argv are filled.
@@ -838,7 +839,7 @@ void Commands::runNetUserEnum()
 	cout << "..." << endl;
 	cout << "...NetUserEnum Finished." << endl;
 #else
-    error::returnError(31416);
+    throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
 }
 
@@ -897,7 +898,7 @@ void Commands::entangleTextRunner()
     cout << "..." << endl;
     cout << "...Enter text to entangle: " << endl;
     getline(std::cin,input);
-    std::vector<std::string> output = types::entangleText(input);
+    std::vector<std::string> output = StringUtils::entangleText(input);
     cout << " First half: " << output[0] << endl;
     cout << "second half: " << output[1] << endl;
 }

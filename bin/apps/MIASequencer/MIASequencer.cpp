@@ -24,11 +24,11 @@
 // Used for sleep.
 #include "Timing.hpp"
 
-using types::stringContainsChar;
-using types::getBeforeChar;
-using types::getAfterChar;
-using types::contains;
-using types::trim;
+using StringUtils::stringContainsChar;
+using StringUtils::getBeforeChar;
+using StringUtils::getAfterChar;
+using StringUtils::contains;
+using StringUtils::trim;
 using MIA_system::VirtualKeyStrokes;
 
 MIASequencer::MIASequencer() : 
@@ -277,6 +277,8 @@ std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::Virtu
     
     if (testMode)
         std::cout << std::endl;
+        
+    return std::nullopt;
 }
 
 
