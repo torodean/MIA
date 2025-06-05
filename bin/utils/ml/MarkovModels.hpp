@@ -150,23 +150,39 @@ namespace markov_models
     }
 
     /**
-     * Prints the probability matrix to the specified output stream.
-     * Useful for debugging or visualization.
+     * Prints the transitions for a specific state.
+     * @tparam T The type of the state.
+     * @param state[const T&] - The state whose transitions are to be printed.
+     * @param transitions[const std::unordered_map<T, double>&] - Map of successor states and their probabilities.
+     * @param os[std::ostream&] - The output stream to write to (defaults to std::cout).
+     */
+    template <typename T>
+    void printTransition(const T& state, 
+                         const std::unordered_map<T, double>& transitions, 
+                         std::ostream& os = std::cout)
+    {
+        os << state << " -> { ";
+        for (const auto& [next, prob] : transitions)
+        {
+            os << next << ": " << prob << ", ";
+        }
+        os << "}\n";
+    }
+
+    /**
+     * Prints the entire probability matrix to the specified output stream.
+     * Uses printTransition() to print each state's transitions.
      * @tparam T The type of the state.
      * @param matrix[const ProbabilityMatrix<T>&] - The probability matrix to print.
      * @param os[std::ostream&] - The output stream to write to (defaults to std::cout).
      */
     template <typename T>
-    void print_probability_matrix(const ProbabilityMatrix<T>& matrix, std::ostream& os = std::cout) 
+    void printProbabilityMatrix(const ProbabilityMatrix<T>& matrix, 
+                                std::ostream& os = std::cout)
     {
         for (const auto& [state, transitions] : matrix)
         {
-            os << state << " -> { ";
-            for (const auto& [next, prob] : transitions)
-            {
-                os << next << ": " << prob << ", ";
-            }
-            os << "}\n";
+            printTransition(state, transitions, os);
         }
     }
 
