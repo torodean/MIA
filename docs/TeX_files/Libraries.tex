@@ -1,5 +1,7 @@
 \chapter{Libraries}
 \label{chap:libraries}
 
-This chapter provides documentation for domain-specific or general-purpose libraries developed or integrated into the project.
-
+This chapter provides documentation for domain-specific or general-purpose libraries developed or integrated into the project. All library modules are defined in CMake using the naming convention \texttt{\textit{Name}\_LIB}. These modules can be linked into your targets via CMake's \texttt{target\_link\_libraries} command. This allows modular inclusion of specific library functionalities based on your build requirements. To use a library, simply add the corresponding library target to your CMake target, for example:
+\begin{lstlisting}[style=cppstyle]
+target_link_libraries(MyTarget PRIVATE Database_LIB)
+\end{lstlisting}

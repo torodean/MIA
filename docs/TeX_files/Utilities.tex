@@ -1,10 +1,20 @@
 \chapter{Utilities}
 \label{chap:utilities}
 
-This chapter documents reusable utility components that support common development needs across the project.
-
-
-
+This chapter documents reusable utility components that support common development needs across the project. All utility modules are defined in CMake using the naming convention \texttt{\textit{Name}\_UTIL}. These modules can be linked into your targets via CMake's \texttt{target\_link\_libraries} command. This allows modular inclusion of specific utility functionalities based on your build requirements. To use a utility, simply add the corresponding utility target to your CMake target, for example:
+\begin{lstlisting}[style=cppstyle]
+target_link_libraries(MyTarget PRIVATE Types_UTIL Math_UTIL)
+\end{lstlisting}
+Below is a list of available utility modules.
+\begin{itemize}
+	\item \textbf{Types\_UTIL} – This contains utilities related to type manipulation and handling.
+	\item \textbf{Math\_UTIL} – This contains mathematical utilities.
+	\item \textbf{System\_UTIL} – This contains utilities related to system commands.
+	\item \textbf{Files\_UTIL} – This contains utilities related to file handling.
+	\item \textbf{Audio\_UTIL} – This contains utilities related to audio handling.
+	\item \textbf{Encryption\_UTIL} – This contains various encryption utilities.
+	\item \textbf{ML\_UTIL} – This contains various Machine-learning utilities.
+\end{itemize}
 
 
 
@@ -15,6 +25,8 @@ This chapter documents reusable utility components that support common developme
 
 
 \section{Markov Model Generation Module}
+
+These features are all part of the \texttt{ML\_UTIL}.
 
 \subsection{Overview}
 
@@ -106,6 +118,75 @@ The transition matrix is represented using nested \texttt{std::unordered\_map} c
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{D0sag3 Command (D3C) Integration} \label{D3C}
+
+These features are all part of the \texttt{Encryption\_UTIL}.
+
+\subsection{D3C Introduction and Overview}
+
+The D3C encryption was an incorporation of an old encryption program I created many years ago as part of the D3C (d0sag3 command) program. The original code was made when I was first learning C++ and this was used as a project for educational purposes. The encryption algorithm utilizes random numbers, bit analysis, variable type conversions, and more. 
+
+\subsection{d0s1 Encryption}
+
+The d0s1 encryption algorithm was the first implementation of encryption within the D3C program. The d0s1 algorithm is programmed solely to encrypt an input string value. To outline the algorithm that d0s1 uses, we will start with an example string "hello." The algorithm follows.
+
+\begin{lstlisting}
+	# Start with an input string
+	Hello
+	
+	# Each character is examined individually.
+	H e l l o
+	
+	# The string get's converted to integers based on the ascii value of each character.
+	72 101 108 108 111
+	
+	# The integers are converted to a binary representation.
+	1001000 1100101 1101100 1101100 1101111
+	
+	# A random number is generated for each character that existed.
+	103 70 105 115 81
+	
+	# The random numbers are converted to binary representations.
+	1100111 1000110 1101001 1110011 1010001
+	
+	# The string and random binary numbers are added to a trinary number.
+	1001000 1100101 1101100 1101100 1101111
+	+	1100111 1000110 1101001 1110011 1010001
+	-------------------------------------------
+	=	2101111 2100211 2202101 2211111 2111112
+	
+	# The random numbers selected before are converted to base 12 numbers.
+	103 70 105 115 81 = 87 5A 89 97 69
+	
+	# The base 12 random numbers are placed at the end of the trinary string.
+	210111187 21002115A 220210189 221111197 211111269
+	
+	# The ouput of the encryption is then these values.
+	21011118721002115A220210189221111197211111269
+\end{lstlisting}
+
+The encryption was meant to have a final stage to decrease the length of the output by assigning different characters to the number sequences output; however, this was never finished.
+
+\subsection{d0s2 Encryption}
+
+d0s2 encryption is a very similar algorithm to d0s1 with one major difference. The encryption of d0s2 requires a user input password that is added into the encryption process. The password and string are both encrypted and then added together in a way that the password is needed for quick decryption.
+
+\subsection{d0s3 Encryption}
+
+The d0s3 encryption algorithm was (as of the time writing this) never finished. The d0s3 was the actual D3C encryption that was originally desired with d0s1 and d0s2 being practice runs for the creator to experiment with C++ first before employing an actual complicated algorithm. MIA currently has parts of the d0s3 encryption programmed in but they are still in development and not yet deployed. The d0s3 encryption algorithm is not related to d0s1 and d0s3 but will instead have a unique and complicated algorithm that can encrypt entire files instead of just string values. The D3C encryption utilities, including d0s1, d0s2, and the partial implementation of d0s3, are included in MIA as general-purpose utilities. These components are designed to be accessible for use across various MIA applications and libraries, providing a consistent and centralized encryption interface where needed.
 
 
 
