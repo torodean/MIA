@@ -81,7 +81,6 @@ namespace markov_models
 
     /**
      * Retrieves the successor probabilities for a given input state.
-     * 
      * @tparam T - The type of the state.
      * @param prob_matrix [const ProbabilityMatrix<T>&] - The probability matrix generated 
      *     by generate_probability_matrix.
@@ -118,7 +117,6 @@ namespace markov_models
 
     /**
      * Returns a vector containing all states present in the probability matrix.
-     * 
      * @tparam T The type of the state.
      * @param matrix[const ProbabilityMatrix<T>&] - The probability matrix.
      * @return [std::vector<T>] - A vector of all states.
@@ -161,10 +159,10 @@ namespace markov_models
     template <typename T>
     void print_probability_matrix(const ProbabilityMatrix<T>& matrix, std::ostream& os = std::cout) 
     {
-        for (const auto& [state, transitions] : matrix) 
+        for (const auto& [state, transitions] : matrix)
         {
             os << state << " -> { ";
-            for (const auto& [next, prob] : transitions) 
+            for (const auto& [next, prob] : transitions)
             {
                 os << next << ": " << prob << ", ";
             }
