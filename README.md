@@ -30,3 +30,7 @@ This folder contains resources and configuration files used by the MIA applicati
 ---
 
 Additional directories may be added as the project evolves to support new tools, modules, or documentation needs.
+
+---
+
+MIA is a personal hobby project built primarily for experimentation, learning, and utility (primarily utilities which I need for whatever other projects I am working on at the time). It’s not intended for production use, and as such, parts of the codebase may be rough, inconsistent, or incomplete. This is due to some elements being very old, outdated, or other reasons. At the same time, I’ve made an effort to keep things reasonably clean and well-documented—especially to showcase my general approach to design and structure. This is ultimately a sandbox. The goal isn’t perfection, but exploration. MIA also doubles as a portfolio piece, offering a brief view into how I think about code, tools, documentation, designs and systems in a more relaxed, informal setting.
