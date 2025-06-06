@@ -266,4 +266,16 @@ namespace StringUtils
         // Return the trimmed string
         return (first <= last) ? std::string(first, last) : "";
     }
+    
+    
+    std::string charVecToString(const std::vector<char>& charVec)
+    {
+        return std::string(charVec.begin(), charVec.end());
+    }
+
+
+    std::vector<char> stringToCharVec(const std::string& str)
+    {
+        return std::vector<char>(str.begin(), str.end());
+    }
 } // namespace types

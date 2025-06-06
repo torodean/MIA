@@ -48,22 +48,22 @@ namespace markov_models
      *     between states.
      */
     template <typename T>
-    ProbabilityMatrix<T> generate_probability_matrix(const std::vector<std::vector<T>>& sequences) 
+    ProbabilityMatrix<T> generateProbabilityMatrix(const std::vector<std::vector<T>>& sequences) 
     {
-        std::unordered_map<T, std::unordered_map<T, int>> count_matrix;
+        std::unordered_map<T, std::unordered_map<T, int>> countMatrix;
 
         // Count occurrences for each type in all sequences.
         for (const auto& seq : sequences) 
         {
             for (size_t i=0; i+1<seq.size(); ++i) 
             {
-                count_matrix[seq[i]][seq[i + 1]]++;
+                countMatrix[seq[i]][seq[i + 1]]++;
             }
         }
 
         // Normalize occurrences to probabilities.
-        ProbabilityMatrix<T> prob_matrix;
-        for (const auto& [input, outputs] : count_matrix) 
+        ProbabilityMatrix<T> probMatrix;
+        for (const auto& [input, outputs] : countMatrix) 
         {
             int total = 0;
             for (const auto& [_, count] : outputs) 
@@ -72,34 +72,33 @@ namespace markov_models
             }
             for (const auto& [output, count] : outputs) 
             {
-                prob_matrix[input][output] = static_cast<double>(count) / total;
+                probMatrix[input][output] = static_cast<double>(count) / total;
             }
         }
 
-        return prob_matrix;
+        return probMatrix;
     }
 
     /**
      * Retrieves the successor probabilities for a given input state.
      * @tparam T - The type of the state.
-     * @param prob_matrix [const ProbabilityMatrix<T>&] - The probability matrix generated 
-     *     by generate_probability_matrix.
+     * @param probMatrix [const ProbabilityMatrix<T>&] - The probability matrix generated 
+     *     by generateProbabilityMatrix.
      * @param state [const T&] - The current state for which successors are requested.
      * @return A const reference to the unordered_map of successors and their probabilities.
      *         Returns an empty static map if the state is not found.
      */
     template <typename T>
-    const std::unordered_map<T, double>& get_transitions(
-        const ProbabilityMatrix<T>& prob_matrix, 
-        const T& state) 
+    const std::unordered_map<T, double>& getTransitions(const ProbabilityMatrix<T>& probMatrix, 
+                                                        const T& state) 
     {
-        static const std::unordered_map<T, double> empty_map{};
-        auto it = prob_matrix.find(state);
-        if (it != prob_matrix.end()) 
+        static const std::unordered_map<T, double> emptyMap{};
+        auto it = probMatrix.find(state);
+        if (it != probMatrix.end()) 
         {
             return it->second;
         }
-        return empty_map;
+        return emptyMap;
     }
 
     /**
@@ -110,7 +109,7 @@ namespace markov_models
      * @return [bool] - true if the state exists in the matrix, false otherwise.
      */
     template <typename T>
-    bool has_state(const ProbabilityMatrix<T>& matrix, const T& state) 
+    bool hasState(const ProbabilityMatrix<T>& matrix, const T& state) 
     {
         return matrix.find(state) != matrix.end();
     }
@@ -122,7 +121,7 @@ namespace markov_models
      * @return [std::vector<T>] - A vector of all states.
      */
     template <typename T>
-    std::vector<T> get_states(const ProbabilityMatrix<T>& matrix) 
+    std::vector<T> getStates(const ProbabilityMatrix<T>& matrix) 
     {
         std::vector<T> states;
         states.reserve(matrix.size());
@@ -144,7 +143,7 @@ namespace markov_models
      * @return The sampled next state.
      */
     template <typename T>
-    T sample_next_state(const ProbabilityMatrix<T>& matrix, const T& state) 
+    T sampleNextState(const ProbabilityMatrix<T>& matrix, const T& state) 
     {
         // TODO - implement this.
     }
@@ -192,7 +191,7 @@ namespace markov_models
      * @param matrix[ProbabilityMatrix<T>&] - The probability matrix to clear.
      */
     template <typename T>
-    void clear_matrix(ProbabilityMatrix<T>& matrix) 
+    void clearMatrix(ProbabilityMatrix<T>& matrix) 
     {
         matrix.clear();
     }

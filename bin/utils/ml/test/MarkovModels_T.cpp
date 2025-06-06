@@ -12,7 +12,7 @@
 using namespace markov_models;
 
 // Test data setup
-const std::vector<std::vector<char>> char_sequences = {
+const std::vector<std::vector<char>> charSequences = {
     {'a', 'b', 'a', 'c'},
     {'a', 'b', 'b'},
     {'b', 'a'}
@@ -20,7 +20,7 @@ const std::vector<std::vector<char>> char_sequences = {
 
 TEST(GenerateProbabilityMatrixTest, BasicProbabilityCalculation) 
 {
-    auto matrix = generate_probability_matrix(char_sequences);
+    auto matrix = generateProbabilityMatrix(charSequences);
 
     ASSERT_TRUE(matrix.contains('a'));
     ASSERT_TRUE(matrix.contains('b'));
@@ -37,27 +37,27 @@ TEST(GenerateProbabilityMatrixTest, BasicProbabilityCalculation)
 
 TEST(GetTransitionsTest, ExistingAndMissingState) 
 {
-    auto matrix = generate_probability_matrix(char_sequences);
+    auto matrix = generateProbabilityMatrix(charSequences);
 
-    const auto& transitions = get_transitions(matrix, 'a');
+    const auto& transitions = getTransitions(matrix, 'a');
     EXPECT_GT(transitions.size(), 0);
     EXPECT_TRUE(transitions.contains('b'));
 
-    const auto& missing = get_transitions(matrix, 'z');
+    const auto& missing = getTransitions(matrix, 'z');
     EXPECT_EQ(missing.size(), 0);
 }
 
 TEST(HasStateTest, DetectsPresence) 
 {
-    auto matrix = generate_probability_matrix(char_sequences);
-    EXPECT_TRUE(has_state(matrix, 'a'));
-    EXPECT_FALSE(has_state(matrix, 'z'));
+    auto matrix = generateProbabilityMatrix(charSequences);
+    EXPECT_TRUE(hasState(matrix, 'a'));
+    EXPECT_FALSE(hasState(matrix, 'z'));
 }
 
 TEST(GetStatesTest, ExtractsAllStates) 
 {
-    auto matrix = generate_probability_matrix(char_sequences);
-    auto states = get_states(matrix);
+    auto matrix = generateProbabilityMatrix(charSequences);
+    auto states = getStates(matrix);
 
     EXPECT_NE(std::find(states.begin(), states.end(), 'a'), states.end());
     EXPECT_NE(std::find(states.begin(), states.end(), 'b'), states.end());
@@ -65,8 +65,8 @@ TEST(GetStatesTest, ExtractsAllStates)
 
 TEST(ClearMatrixTest, EmptiesMatrix) 
 {
-    auto matrix = generate_probability_matrix(char_sequences);
-    clear_matrix(matrix);
+    auto matrix = generateProbabilityMatrix(charSequences);
+    clearMatrix(matrix);
     EXPECT_TRUE(matrix.empty());
 }
 

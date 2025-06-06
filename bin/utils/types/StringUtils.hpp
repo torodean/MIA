@@ -184,5 +184,19 @@ namespace StringUtils
      * @return [std::string] - The trimmed string.
      */
     std::string trim(const std::string& str);
+    
+    /**
+     * Converts a vector of characters into a single concatenated string.
+     * @param charVec[const std::vector<char>&] - The vector of characters to convert.
+     * @return [std::string] - A string formed by concatenating all characters in the vector.
+     */
+    std::string charVecToString(const std::vector<char>& charVec);
+
+    /**
+     * Converts a string into a vector of its individual characters.
+     * @param str[const std::string&] - The input string to convert.
+     * @return [std::vector<char>] - A vector containing each character from the string.
+     */
+    std::vector<char> stringToCharVec(const std::string& str);
 
 } // namespace types

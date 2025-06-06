@@ -1,0 +1,3 @@
+add_executable(CharacterMarkovModel_T CharacterMarkovModel_T.cpp)
+target_link_libraries(CharacterMarkovModel_T PRIVATE Markov_LIB Types_UTIL GTest::gtest_main)
+add_test(NAME CharacterMarkovModel_T COMMAND CharacterMarkovModel_T)
