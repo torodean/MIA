@@ -34,7 +34,26 @@ namespace logger
      * @param verbose [bool] - Whether to print the message to stdout. Default: false.
      * @see paths::getDefaultLogDirToUse()
      */
-    void logToFile(const std::string& message, const std::string& filename, bool verbose = false);
+    void logToFile(const std::string& message, 
+                   const std::string& filename, 
+                   bool verbose = false);
+    
+    /**
+     * @brief Logs the name of the calling method along with optional parameters.
+     * 
+     * This function should be called at the start of a method to automatically log
+     * the method name and optionally any parameters. It delegates to the `logToFile()` method.
+     * This method is mostly for debugging and tracking method calls.
+     * 
+     * @param methodName[const std::string&] - Name of the calling method (typically passed via __func__).
+     * @param filename[const std::string&] - The log file name to write to.
+     * @param params[const std::string&] - Optional string representing parameters to include in the log.
+     * @param verbose [bool] - Whether to print the message to stdout. Default: false.
+     */
+    void logMethodCallToFile(const std::string& methodName, 
+                             const std::string& filename, 
+                             const std::string& params = "", 
+                             bool verbose = false);
 
     /**
      * Logger class for simplified logging in apps.
