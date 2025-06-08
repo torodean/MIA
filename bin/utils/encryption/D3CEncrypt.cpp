@@ -16,6 +16,8 @@
 
 // Include the associated header file.
 #include "D3CEncrypt.hpp"
+// Used for some string manipulations
+#include "StringUtils.hpp"
 
 using std::vector;
 using std::string;
@@ -25,8 +27,7 @@ using std::cout;
 using std::endl;
 
 //Constructor for the D3CEncrypt class.
-D3CEncrypt::D3CEncrypt() : stringLength (0), vectorSize (0), digit (0), powerofDigit (0), 
-		powerofTen (0), devise (0), random7bitNum (0), random7bitbinary (0), encodedVec (0)
+D3CEncrypt::D3CEncrypt()
 {
     //Chuck Norris doesn’t use web standards as the web will conform to him.
 }
@@ -37,32 +38,19 @@ D3CEncrypt::~D3CEncrypt()
     //Chuck Norris finished World of Warcraft.
 }
 
-//Converts a string to a vector.
-vector<int> D3CEncrypt::stringToVector(string a) 
-{ 
-    stringLength = a.size();
-    vector<int> vector(stringLength);
-	
-	//converts string one into an array of integers.
-    for (int i = 0; i < stringLength; i++) { 
-        vector[i] = a[i];
-    }
-    return vector;
-}
 
-//Converts each term in the vector array to a binary representation of that term.
 vector<int> D3CEncrypt::binaryVector(vector<int> inputVector)
 { 
-    vectorSize = inputVector.size();
+    int vectorSize = inputVector.size();
     for(int i=0;i<vectorSize;i++)
 	{
-        digit = inputVector[i];
+        int digit = inputVector[i];
         inputVector[i]=0;
         for(int x=6;x>=0;x--)
 		{
-            powerofDigit = pow(2,x);
-            powerofTen = pow(10, x);
-            devise=digit/powerofDigit;
+            int powerofDigit = pow(2,x);
+            int powerofTen = pow(10, x);
+            int devise=digit/powerofDigit;
             if(devise == 1)
 			{
                 inputVector[i]+=powerofTen;
@@ -74,23 +62,22 @@ vector<int> D3CEncrypt::binaryVector(vector<int> inputVector)
     return inputVector;
 }
 
-//Creates a random number between 0-127.
+
 int D3CEncrypt::random7bit()
 {	
-    random7bitNum = rand()% 128;
+    int random7bitNum = rand()% 128;
     return random7bitNum;
 }
 
-//Changes a number from base 10 format to a binary look but still in base 
-//10 so that addition in base ten can be used on the binary number.
+
 int D3CEncrypt::numberToBinary(int num) 
 { 
-    random7bitbinary=0;
+    int random7bitbinary = 0;
     for (int x = 6; x >= 0; x--) 
 	{
-        powerofDigit = pow(2, x);
-        powerofTen = pow(10, x);
-        devise = num / powerofDigit;
+        int powerofDigit = pow(2, x);
+        int powerofTen = pow(10, x);
+        int devise = num / powerofDigit;
         if (devise == 1) 
 		{
             random7bitbinary += powerofTen;
@@ -100,8 +87,7 @@ int D3CEncrypt::numberToBinary(int num)
     return random7bitbinary;
 }
 
-//Converts an integer to a custom a11b12 formatted number. 
-//the first digit is in base 11 and the second in base 12.
+
 string D3CEncrypt::a11b12(int x)
 {	
     int remaind, num;
@@ -151,7 +137,7 @@ string D3CEncrypt::a11b12(int x)
     return a11b12string;
 }
 
-//Converts a vector<string> (each position holding a string of length 9) to one combined string.
+
 string D3CEncrypt::stringVectorToString(vector<string> a)
 {	
 	//sets the integet of size to the size of the inputted vector.
@@ -191,13 +177,15 @@ string D3CEncrypt::stringVectorToString(vector<string> a)
     return total; //Returns the total string.
 }
 
-//Encrypts the characters of a vector array with a random number.
+
 string D3CEncrypt::cryptCharsNoRand(vector<int> inputVector)
 { 
     bool fix=false;
+    int random7bitbinary = 0;
+    int encodedVec = 0;
 	
 	//sets the Int of vectorSize to the size of the input.
-    vectorSize = inputVector.size(); 
+    int vectorSize = inputVector.size(); 
 	
 	//Creates a vector of type strings named encoded. 
 	//It is set to the vectorSize and will be used to store the encoded vectors once they are combined with the random numbers.
@@ -271,11 +259,14 @@ string D3CEncrypt::cryptCharsNoRand(vector<int> inputVector)
 }
 
 //Encrypts the characters of a vector array with a random number.
-string D3CEncrypt::cryptChars(vector<int> inputVector){ 
+string D3CEncrypt::cryptChars(vector<int> inputVector)
+{ 
     bool fix=false;
+    int random7bitbinary = 0;
+    int encodedVec = 0;
 	
 	//sets the Int of vectorSize to the size of the input.
-    vectorSize = inputVector.size(); 
+    int vectorSize = inputVector.size(); 
 	
 	//Creates a vector of type strings named encoded. 
 	//It is set to the vectorSize and will be used to store the encoded vectors once they are combined with the random numbers.
@@ -348,13 +339,13 @@ string D3CEncrypt::cryptChars(vector<int> inputVector){
     return outputVector;
 }
 
-//Encrypts a string.
+
 string D3CEncrypt::CryptNoRand(string input, bool toSquish)
 {	
     string cryptedVector;
     vector<int> baseTwoVector, inputVector;
 
-    inputVector = stringToVector(std::move(input));
+    inputVector = StringUtils::stringToIntVector(input);
     baseTwoVector = binaryVector(inputVector);
     cryptedVector = cryptCharsNoRand(baseTwoVector);
 
@@ -366,12 +357,12 @@ string D3CEncrypt::CryptNoRand(string input, bool toSquish)
     return cryptedVector;
 }
 
-//Encrypts a string.
+
 string D3CEncrypt::Crypt(const string& input, bool toSquish)
 {
     string cryptedVector;
     vector<int> baseTwoVector, inputVector;
-    inputVector = stringToVector(std::move(input));
+    inputVector = StringUtils::stringToIntVector(input);
     baseTwoVector = binaryVector(inputVector);
     cryptedVector = cryptChars(baseTwoVector);
 	
@@ -385,9 +376,10 @@ string D3CEncrypt::Crypt(const string& input, bool toSquish)
     return cryptedVector;
 }
 
-//Converts a string after being encrypted using crypt() to a vector seperating each character into it's own position.
-vector<string> D3CEncrypt::cryptedStringToVector(string a) { 
-    stringLength = a.size()/9;
+
+vector<string> D3CEncrypt::cryptedStringToVector(string a) 
+{ 
+    int stringLength = a.size()/9;
     long fact;
     string temp;
     temp.resize(9);
@@ -407,7 +399,7 @@ vector<string> D3CEncrypt::cryptedStringToVector(string a) {
 vector<string> D3CEncrypt::seperateRandom(vector<string> input)
 {
     vector<string> seperatedRandoms;
-    vectorSize = input.size();
+    int vectorSize = input.size();
     string temp="00", temp2, tempchar1, tempchar2;
     temp.resize(2);
     temp2.resize(9);
@@ -427,7 +419,7 @@ vector<string> D3CEncrypt::seperateRandom(vector<string> input)
 
 vector<int> D3CEncrypt::vectorStringToInt(vector<string> a)
 {
-    vectorSize = a.size();
+    int vectorSize = a.size();
     vector<int> intVec (vectorSize);
     int tempInt;
     string tempString;
@@ -446,7 +438,7 @@ vector<int> D3CEncrypt::vectorStringToInt(vector<string> a)
 
 vector<int> D3CEncrypt::seperateBinary(vector<string> input)
 {
-    vectorSize = input.size();
+    int vectorSize = input.size();
     vector<string> trimmed (vectorSize);
     vector<int> seperatedChars (vectorSize);
     string temp;
@@ -498,13 +490,13 @@ int D3CEncrypt::a11b12toReg(string a11b12)
 
 vector<int> D3CEncrypt::converta11b12vecToReg(vector<string> a)
 {
-    vectorSize = a.size();
+    int vectorSize = a.size();
     vector<int> randomVector (vectorSize);
     string temp;
     int randomNum;
 
     for(int i=0;i<vectorSize;i++)
-{
+    {
         temp = a[i];
         randomNum = a11b12toReg(temp);
         randomVector[i] = randomNum;
@@ -514,7 +506,7 @@ vector<int> D3CEncrypt::converta11b12vecToReg(vector<string> a)
 
 vector<int> D3CEncrypt::numberVectorToBinaryVector(vector<int> a)
 {
-    vectorSize=a.size();
+    int vectorSize=a.size();
     vector<int> binaryRandomVector (vectorSize);
     int temp;
 
@@ -528,7 +520,7 @@ vector<int> D3CEncrypt::numberVectorToBinaryVector(vector<int> a)
 
 vector<int> D3CEncrypt::DeCryptChars(vector<int> a, vector<int> b)
 {
-    vectorSize = a.size();
+    int vectorSize = a.size();
     vector<int> deCryptedBinaryVector (vectorSize);
 
     for(int i=0;i<vectorSize;i++)
@@ -538,40 +530,28 @@ vector<int> D3CEncrypt::DeCryptChars(vector<int> a, vector<int> b)
     return deCryptedBinaryVector;
 }
 
-vector<int> D3CEncrypt::binaryVectorToASCII(vector<int> a)
+vector<int> D3CEncrypt::binaryVecToASCIIVec(const vector<int>& inputVec)
 {
-    vectorSize = a.size();
-    vector<int> deCryptedIntVector (vectorSize);
+    vector<int> asciiVec(inputVec.size());
     int val, character, power, twoPower;
-    for(int i=0;i<vectorSize;i++){
+    
+    for(std::size_t i=0; i<inputVec.size(); i++)
+    {
         character = 0;
-        val = a[i];
-        for(int x=6;x>=0;x--)
+        val = inputVec[i];
+        
+        for(int x=6; x>=0; x--)
 		{
-            power = pow(10,x);
+            power = pow(10, x);
             twoPower = pow(2, x);
             character += ((val/power)%10)*(twoPower);
         }
-        deCryptedIntVector[i] = character;
+        asciiVec[i] = character;
     }
-    return deCryptedIntVector;
+    return asciiVec;
 }
 
-string D3CEncrypt::intVectorToString(vector<int> a)
-{
-    vectorSize = a.size();
-    string deCryptedVector;
-    deCryptedVector.resize(vectorSize);
-    int character;
-    for(int i=0;i<vectorSize;i++)
-	{
-        character = a[i];
-        deCryptedVector[i] = character;
-    }
-    return deCryptedVector;
-}
 
-//Decrypts a string encrypted with D3Crypt.
 string D3CEncrypt::DeCrypt(string input, bool squish)
 {
     string deCryptedVector;
@@ -588,13 +568,13 @@ string D3CEncrypt::DeCrypt(string input, bool squish)
     randomBinaryVector = numberVectorToBinaryVector(randomVector);
     deCryptedBinaryVector = DeCryptChars(seperatedcharacterVector,randomBinaryVector);
 
-    deCryptedIntVector = binaryVectorToASCII(deCryptedBinaryVector);
-    deCryptedVector = intVectorToString(deCryptedIntVector);
+    deCryptedIntVector = binaryVecToASCIIVec(deCryptedBinaryVector);
+    deCryptedVector = StringUtils::intVectorToString(deCryptedIntVector);
 
     return deCryptedVector;
 }
 
-//Shortens the encrypted message created by the d0s1 encryption.
+
 string D3CEncrypt::squish(string input)
 {
 	string output;
@@ -777,7 +757,7 @@ string D3CEncrypt::squish(string input)
 	return output;
 }
 
-//Shortens the encrypted message created by the d0s1 encryption.
+
 string D3CEncrypt::expand(string input){
 	string output;
 	long size = input.size();

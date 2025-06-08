@@ -123,14 +123,6 @@ TEST(StringUtilsTest, GetAfterCharReturnsCorrectSubstring)
     EXPECT_EQ(getAfterChar(input, '='), "value");
 }
 
-/* Deprecated method.
-TEST(StringUtilsTest, GetBetweenEqualAndSemiColonReturnsCorrectSubstring) 
-{
-    std::string input = "param=1234;";
-    EXPECT_EQ(getBetweenEqualAndSemiColon(input), "1234");
-}
-*/
-
 TEST(StringUtilsTest, GetBetweenXAndYReturnsCorrectSubstring) 
 {
     std::string input = "[data]";
@@ -144,4 +136,74 @@ TEST(StringUtilsTest, EntangleTextCreatesTwoStrings)
     ASSERT_EQ(result.size(), 2);
     EXPECT_EQ(result[0], "a c e ");
     EXPECT_EQ(result[1], " b d f");
+}
+
+TEST(StringUtilsTest, TestStringToIntVector) 
+{
+    // Test empty string
+    EXPECT_EQ(stringToIntVector(""), std::vector<int>{});
+
+    // Test single uppercase character
+    EXPECT_EQ(stringToIntVector("A"), std::vector<int>({65}));
+
+    // Test multiple uppercase characters
+    EXPECT_EQ(stringToIntVector("ABC"), std::vector<int>({65, 66, 67}));
+
+    // Test lowercase characters
+    EXPECT_EQ(stringToIntVector("abc"), std::vector<int>({97, 98, 99}));
+
+    // Test numeric characters
+    EXPECT_EQ(stringToIntVector("0123456789"), std::vector<int>({48, 49, 50, 51, 52, 53, 54, 55, 56, 57}));
+
+    // Test special characters
+    EXPECT_EQ(stringToIntVector("!@#"), std::vector<int>({33, 64, 35}));
+
+    // Test mixed characters
+    EXPECT_EQ(stringToIntVector("a1B!"), std::vector<int>({97, 49, 66, 33}));
+}
+
+
+TEST(StringUtilsTest, IntVectorToStringCases)
+{
+    // Empty vector
+    EXPECT_EQ(intVectorToString({}), "");
+
+    // Single character
+    EXPECT_EQ(intVectorToString({65}), "A");
+
+    // ASCII letters
+    EXPECT_EQ(intVectorToString({72, 101, 108, 108, 111}), "Hello");
+
+    // Digits as characters
+    EXPECT_EQ(intVectorToString({48, 49, 50, 51, 52}), "01234");
+
+    // Special characters
+    EXPECT_EQ(intVectorToString({33, 64, 35}), "!@#");
+
+    // Mixed content
+    EXPECT_EQ(intVectorToString({97, 49, 66, 33}), "a1B!");
+
+    // Non-printable ASCII (e.g., newline)
+    EXPECT_EQ(intVectorToString({72, 10, 87}), "H\nW");
+}
+
+TEST(StringUtilsTest, InvertStringTests) 
+{
+    // Empty string returns empty string
+    EXPECT_EQ(invertString(""), "");
+
+    // Single character returns same character
+    EXPECT_EQ(invertString("A"), "A");
+
+    // Palindrome string returns same string
+    EXPECT_EQ(invertString("madam"), "madam");
+
+    // Normal string reverses correctly
+    EXPECT_EQ(invertString("hello"), "olleh");
+
+    // String with spaces and punctuation
+    EXPECT_EQ(invertString("a b!"), "!b a");
+
+    // String with numbers
+    EXPECT_EQ(invertString("12345"), "54321");
 }

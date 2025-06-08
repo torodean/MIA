@@ -5,6 +5,11 @@
 //				 General Purpose License (AGPL).
 // Created on  : October, 2014
 // Description : The header file for use with D3CEncryptPW.cpp
+//               This file is very old. Many of the comments don't make much 
+//               sense or are non-existant. I have kept it mostly in its
+//               original form with only a few minor improvements since then.
+//               Most of the improvements involve moving utility methods outside of
+//               this class, refactoring, and adding comments.
 //============================================================================
 #pragma once
 
@@ -33,13 +38,14 @@ public:
     void d0s2DeCryptRunner();
 
 private:
+    /// Message is the original message and PW is the password used.
     string EncryptPW(string message, string password);
+    
+    /// Message is the original message and PW is the password used.
     string DecryptPW(const string& message, string password);
-    std::vector<int> stringToVector(string a);
+    
     string PWRepeat(string PW, int PWR, int PWM);
     string PWmessageCombine(string message, string PW);
     string PWmessageUnCombine(string message, string PW);
-    string invertString(string str);
-
 };
 

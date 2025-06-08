@@ -13,8 +13,9 @@
 
 #include "D3CEncryptPW.hpp"
 #include "D3CEncrypt.hpp"
+// Used for various string manipulations.
+#include "StringUtils.hpp"
 
-using std::vector;
 using std::string;
 using std::cout;
 using std::endl;
@@ -27,23 +28,6 @@ D3CEncryptPW::D3CEncryptPW(){
 //Deconstructor for D3CEncryptPW class.
 D3CEncryptPW::~D3CEncryptPW() {
     //All arrays Chuck Norris declares are of infinite size, because Chuck Norris knows no bounds.
-}
-
-vector<int> D3CEncryptPW::stringToVector(string a){
-    vector<int> vect;
-    int aL = a.length(); //stores the length of string a in AL
-    vect.reserve(aL);
-
-    for (int i=0;i<aL;i++){
-        vect[i] = a[i] - 48; //this changes 1,2,3,... as chars to 1,2,3,... as ints
-    }
-    for(int i=0;i<aL;i++){
-        if(vect[i] > 10){
-            vect[i] -=7; //this changes A, and B, to 10 and 11 respectively
-        }
-    }
-
-    return vect;
 }
 
 string D3CEncryptPW::PWRepeat(string PW, int PWNeeded, int PWRemainder){
@@ -68,7 +52,7 @@ string D3CEncryptPW::PWRepeat(string PW, int PWNeeded, int PWRemainder){
     return output;
 }
 
-vector<int> messageVectorStringToInt(std::vector<string> messageVector){
+std::vector<int> messageVectorStringToInt(std::vector<string> messageVector){
 
     long size = messageVector.size();
     std::vector<int> output;
@@ -112,20 +96,21 @@ vector<int> messageVectorStringToInt(std::vector<string> messageVector){
     return output;
 }
 
-std::vector<int> combineMandPW(std::vector<int> messageVectorValues, std::vector<int> PWVectorValues){
-    vector<int> total;
-    total.resize(messageVectorValues.size());
-    total.reserve(messageVectorValues.size());
-
+std::vector<int> combineMandPW(std::vector<int> messageVectorValues, std::vector<int> PWVectorValues)
+{
+    std::vector<int> total;
     int size = messageVectorValues.size();
-    for(int i=0;i<size;i++){
+    total.resize(size);
+    total.reserve(size);
+    
+    for(int i=0; i<size; i++)
         total[i] = messageVectorValues[i] + PWVectorValues[i];
-    }
+        
     return total;
 }
 
 std::vector<int> UncombineMandPW(std::vector<int> messageVectorValues, std::vector<int> PWVectorValues){
-    vector<int> total;
+    std::vector<int> total;
     total.resize(messageVectorValues.size());
     total.reserve(messageVectorValues.size());
 
@@ -136,7 +121,7 @@ std::vector<int> UncombineMandPW(std::vector<int> messageVectorValues, std::vect
     return total;
 }
 
-string combinedVecTostring(vector<int> a){
+string combinedVecTostring(std::vector<int> a){
     string output;
     char temp;
     int size = a.size();
@@ -243,28 +228,11 @@ string D3CEncryptPW::PWmessageUnCombine(string message, string PW){
     return output;
 }
 
-string D3CEncryptPW::invertString(string str){
-    string output;
 
-    int strSize = str.length();
-	
-	if(strSize == 0){
-		return "$@d0sag3_EmptyPW.fail_error555$$&**&()";
-	}
-	
-    output.resize(strSize);
-    for(int i=0;i<strSize;i++){
-        output[i] = str[strSize -1 - i];
-    }
-
-    return output;
-}
-
-//message is the original message and PW is the password used.
 string D3CEncryptPW::EncryptPW(string message, string PW){  
     D3CEncrypt crypt;
 
-    PW = invertString(PW);
+    PW = StringUtils::invertString(PW);
 	
 	//CM stands for crypted message, which is the string that will be returned by the function.
     string CM; 
@@ -275,9 +243,8 @@ string D3CEncryptPW::EncryptPW(string message, string PW){
     int MLength = message.length(), PWLength = PW.length(), PWNeeded = MLength/PWLength, PWRemainder = MLength % PWLength; 
 
     //does a regular d0s crypt if the password field is left blank.
-    if (PW == "$@d0sag3_EmptyPW.fail_error555$$&**&()"){
+    if (PW == "")
         return crypt.Crypt(message, true);
-    }
 
     string PWRepeated = PWRepeat(PW, PWNeeded, PWRemainder);
 
@@ -293,10 +260,10 @@ string D3CEncryptPW::EncryptPW(string message, string PW){
     return CM;
 }
 
-//message is the original message and PW is the password used.
+
 string D3CEncryptPW::DecryptPW(const string& message, string PW){  	
     D3CEncrypt crypt;
-    PW = invertString(PW);
+    PW = StringUtils::invertString(PW);
 	
 	//message = crypt.expand(message);
 	cout << message << endl;

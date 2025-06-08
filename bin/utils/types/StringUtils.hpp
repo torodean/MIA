@@ -198,5 +198,39 @@ namespace StringUtils
      * @return [std::vector<char>] - A vector containing each character from the string.
      */
     std::vector<char> stringToCharVec(const std::string& str);
+    
+    /**
+     * @brief Converts a string into a vector of integer values.
+     *
+     * Each character in the input string is cast to its corresponding
+     * integer (ASCII) value and stored in a vector of integers.
+     *
+     * @param inputStr[const std::string&] - The input string to convert.
+     * @return [std::vector<int>] - A vector of integers representing the ASCII 
+     *     values of the input string's characters.
+     */
+    std::vector<int> stringToIntVector(const std::string& inputStr);
+    
+    /**
+     * @brief Converts a vector of integers to a string.
+     *
+     * Each integer in the input vector is cast to a character and inserted
+     * into the corresponding position of the output string. Assumes that all
+     * integers are valid ASCII character codes.
+     *
+     * @param inputVec[const std::vector<int>&] - The vector of integers to convert.
+     * @return [std::string] - A string composed of characters corresponding to the input integers.
+     */
+    std::string intVectorToString(const std::vector<int>& inputVec);
+    
+    /**
+     * @brief Returns the reversed version of the input string.
+     *
+     * If the input string is empty, returns an empty string.
+     *
+     * @param inputStr[const std::string&] - The string to invert.
+     * @return [std::string] - A new string which is the reverse of inputStr.
+     */
+    std::string invertString(const std::string& inputStr);
 
 } // namespace types

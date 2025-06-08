@@ -278,4 +278,45 @@ namespace StringUtils
     {
         return std::vector<char>(str.begin(), str.end());
     }
+    
+    
+    std::vector<int> stringToIntVector(const std::string& inputStr) 
+    { 
+        std::vector<int> outVec(inputStr.size());
+	    
+	    // converts string one into an array of integers.
+        for (std::size_t i=0; i<inputStr.size(); i++)
+            outVec[i] = inputStr[i];
+            
+        return outVec;
+    }
+    
+    
+    std::string intVectorToString(const std::vector<int>& inputVec)
+    {
+    
+        std::string outputStr;
+        outputStr.resize(inputVec.size());
+        
+        for (std::size_t i=0; i<inputVec.size(); i++)
+            outputStr[i] = inputVec[i];
+            
+        return outputStr;
+    }
+    
+    
+    std::string invertString(const std::string& inputStr)
+    {
+        std::string output;
+        std::size_t strSize = inputStr.size();
+        output.resize(strSize);
+	    
+	    if(strSize == 0)
+		    return "";
+		    
+        for(std::size_t i=0; i<strSize; i++)
+            output[i] = inputStr[strSize-1-i];
+
+        return output;
+    }
 } // namespace types

@@ -9,5 +9,7 @@ set(Encryption_INC
     MIAEncrypt.hpp ) 
 add_library(Encryption_UTIL ${Encryption_SRC} ${Encryption_INC})
 
+target_link_libraries( Encryption_UTIL PUBLIC Types_UTIL )
+
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(Encryption_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
