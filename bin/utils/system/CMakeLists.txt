@@ -4,7 +4,7 @@ find_library(XDO_LIB xdo)
 set(System_SRC Timing.cpp VirtualKeyStrokes.cpp )
 set(System_INC Timing.hpp VirtualKeyStrokes.hpp )
 add_library(System_UTIL ${System_SRC} ${System_INC})
-target_link_libraries(System_UTIL PUBLIC Core_LIB)
+target_link_libraries(System_UTIL PUBLIC Framework_CORE)
 target_link_libraries(System_UTIL PRIVATE ${XDO_LIB})
 
 # Expose this library's source directory for #include access by dependent targets

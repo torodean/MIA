@@ -1,5 +1,5 @@
 
-# This is needed before Core_LIB is created.
+# This is needed before Framework_CORE is created.
 add_subdirectory( basic_utilities )
 
 # Header-only Constants_LIB (no source files)
@@ -10,7 +10,7 @@ set(Constants_INC
 add_library(Constants_LIB INTERFACE)
 target_include_directories(Constants_LIB INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Create the Core_LIB.
+# Create the Framework_CORE.
 set(Core_SRC 
     Error.cpp
     ErrorDescriptions.cpp
@@ -33,9 +33,9 @@ set(Core_INC
     CommandOption.hpp
     AppFramework.hpp 
     Logger.hpp )
-add_library(Core_LIB ${Core_SRC} ${Core_INC})
-target_link_libraries(Core_LIB PUBLIC Constants_LIB BasicUtilities_LIB)
+add_library(Framework_CORE ${Core_SRC} ${Core_INC})
+target_link_libraries(Framework_CORE PUBLIC Constants_LIB BasicUtilities_CORE)
 
 # Expose this library's source directory for #include access by dependent targets
-target_include_directories(Core_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Framework_CORE PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -2,7 +2,7 @@
 set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
 set(MIATemplate_INC MIATemplate.hpp )
 add_executable(MIATemplate ${MIATemplate_SRC} ${MIATemplate_INC} )
-target_link_libraries(MIATemplate PRIVATE Core_LIB )
+target_link_libraries(MIATemplate PRIVATE Framework_CORE )
 
 if(SYSTEM_INSTALL)
     install(TARGETS MIATemplate DESTINATION ${APP_INSTALL_LOCATION})
