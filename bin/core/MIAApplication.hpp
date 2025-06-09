@@ -90,6 +90,10 @@ private:
     bool helpRequested{false};
 };
 
+// TODO: Replace macros with an inline method using C++20 std::source_location
+// to automatically capture the caller function name without needing __func__ or macros.
+// This improves maintainability and type safety.
+
 /**
  * @def LOG_METHOD_CALL
  * @brief Macro for logging the entry point of a method.
