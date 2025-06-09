@@ -1,4 +1,4 @@
-\chapter{MIA Development}
+\chapter{MIA Development \& Framework Features}
 \pagestyle{fancy}
 
 
@@ -389,6 +389,26 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	Set to \texttt{true} if the user requested help via the command-line.
 \end{itemize}
 
+
+\subsection*{Macros}
+Macros are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve debuggability. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
+\begin{itemize}
+    \item \textbf{Code Reusability:} Encapsulate repetitive code patterns, reducing duplication and the chance for errors.
+    \item \textbf{Consistent Behavior:} Enforce standardized procedures (e.g., logging conventions) across multiple classes and methods.
+    \item \textbf{Ease of Use:} Provide simple interfaces for complex operations, enabling developers to invoke functionality with minimal syntax.
+    \item \textbf{Conditional Logic:} Enable compile-time or runtime conditional behavior without adding verbose control flow code in the method body.
+\end{itemize}
+While macros can have drawbacks such as reduced type safety and debugging complexity, careful design and limited scope within the framework help mitigate these issues. The framework favors macros for lightweight abstraction where inline functions or templates would be overly verbose or less practical.
+
+\subsubsection*{Logging Macros}
+To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable macros for standardized logging. These macros improve traceability during debugging, especially when verbose mode is enabled.
+\begin{itemize}
+    \item \texttt{LOG_METHOD_CALL()} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag.
+    \item \texttt{LOG_METHOD_CALL_WITH_PARAMS(params)} extends this functionality by allowing the caller to specify a string of parameters or context data to include in the log output.
+\end{itemize}
+These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \texttt{__func__} identifier for method name capture and rely on the internal \texttt{logger::Logger} instance.
+
+
 \subsection*{Usage Guidelines}
 An example application exists in \texttt{bin/apps/template} which demonstrates how the base application class is used.
 \begin{enumerate}
@@ -397,6 +417,7 @@ An example application exists in \texttt{bin/apps/template} which demonstrates h
 class MIATemplate : public MIAApplication
 { // Class details... }
 	\end{lstlisting}
+ 
 	\item Override \texttt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling at the start of the application initialize() implementation.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::initialize(int argc, char* argv[])
@@ -415,6 +436,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 	// Other init code...
 }
 	\end{lstlisting}
+ 
 	\item Implement the \texttt{run()} method with the application's main logic.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::run()
@@ -422,11 +444,13 @@ void MIATemplate::run()
 	// Perform app functions...
 }
 	\end{lstlisting}
+ 
 	\item Use \texttt{getVerboseMode()} to conditionally enable verbose output (if the verbose flag was used when running the application).
 	\begin{lstlisting}[style=cppstyle]
 if (getVerboseMode())
     std::cout << "This is verbose output!" << std::endl;
 	\end{lstlisting}
+ 
 	\item Override \texttt{printHelp()} to add help output specific to the application. Call the base method to retain base application help menu output.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::printHelp() const
@@ -438,6 +462,7 @@ void MIATemplate::printHelp() const
               << std::endl;
 }
 	\end{lstlisting}
+ 
 	\item Call the \texttt{log()} method in order to log information.
 	\begin{lstlisting}[style=cppstyle]
 log("This is a message to log");
@@ -445,6 +470,21 @@ log("This is a message to log");
 	In the rare case that the user wants to overload the standard verbose handling, an overloaded \texttt{log(string, bool)} method exists which accepts a verbose flag as the second argument.
 	\begin{lstlisting}[style=cppstyle]
 log("This is a message to log", true);
+	\end{lstlisting}
+ 
+	 \item Use the \texttt{LOG_METHOD_CALL()} and \texttt{LOG_METHOD_CALL_WITH_PARAMS(params)} macros at the start of methods to automatically log method entry points. These macros use the internal logger and respect the verbose mode flag.
+	\begin{lstlisting}[style=cppstyle]
+void MyClass::compute()
+{
+    LOG_METHOD_CALL(); // Logs method entry if verbose mode is enabled
+    // ...
+}
+
+void MyClass::computeWithInput(int x)
+{
+    LOG_METHOD_CALL_WITH_PARAMS("x=" + std::to_string(x));
+    // ...
+}
 	\end{lstlisting}
 \end{enumerate}
 
@@ -877,10 +917,10 @@ New configuration formats can be supported by deriving new classes from \texttt{
 \label{sec:logging-Framework}
 
 \subsection{Overview}
-The \texttt{Logger} component provides centralized logging functionality for all MIA applications. It supports simple, thread-safe log message recording to either a default or user-defined log file, with optional verbosity to print messages to \texttt{stdout}.
+The \texttt{Logger} component provides centralized logging functionality for all MIA applications. It supports simple log message recording to either a default or user-defined log file, with optional verbosity to print messages to \texttt{stdout}.
 
 \subsection{Free Logging Functions}
-Two free-standing functions are provided for lightweight, context-independent logging:
+Three free-standing functions are provided for lightweight, context-independent logging:
 
 \begin{itemize}
 	\item \texttt{logToDefaultFile(message, verbose = false)}\\
@@ -888,6 +928,9 @@ Two free-standing functions are provided for lightweight, context-independent lo
 	
 	\item \texttt{logToFile(message, filename, verbose = false)}\\
 	Logs a message to a specified file. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
+
+ 	\item \texttt{void logMethodCallToFile(methodName, filename, params = "", verbose = false)}\\
+  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 \end{itemize}
 
 \subsection{The \texttt{Logger} Class}
