@@ -22,6 +22,8 @@ Modules within the same layer may depend on each other as needed. The key rule i
 
 
 
+
+
 \section{Build Script Overview}
 \label{sec:build-script}
 
@@ -114,6 +116,21 @@ This script abstracts complexity away from the end user, provides a repeatable a
 
 
 
+
+
+
+
+
+
+\section{C++ Macros}\label{sec:cpp_macros}
+Macros are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve debuggability. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
+\begin{itemize}
+    \item \textbf{Code Reusability:} Encapsulate repetitive code patterns, reducing duplication and the chance for errors.
+    \item \textbf{Consistent Behavior:} Enforce standardized procedures (e.g., logging conventions) across multiple classes and methods.
+    \item \textbf{Ease of Use:} Provide simple interfaces for complex operations, enabling developers to invoke functionality with minimal syntax.
+    \item \textbf{Conditional Logic:} Enable compile-time or runtime conditional behavior without adding verbose control flow code in the method body.
+\end{itemize}
+While macros can have drawbacks such as reduced type safety and debugging complexity, careful design and limited scope within the framework help mitigate these issues. The framework favors macros for lightweight abstraction where inline functions or templates would be overly verbose or less practical.
 
 
 
@@ -389,18 +406,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	Set to \texttt{true} if the user requested help via the command-line.
 \end{itemize}
 
-
-\subsection*{Macros}
-Macros are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve debuggability. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
-\begin{itemize}
-    \item \textbf{Code Reusability:} Encapsulate repetitive code patterns, reducing duplication and the chance for errors.
-    \item \textbf{Consistent Behavior:} Enforce standardized procedures (e.g., logging conventions) across multiple classes and methods.
-    \item \textbf{Ease of Use:} Provide simple interfaces for complex operations, enabling developers to invoke functionality with minimal syntax.
-    \item \textbf{Conditional Logic:} Enable compile-time or runtime conditional behavior without adding verbose control flow code in the method body.
-\end{itemize}
-While macros can have drawbacks such as reduced type safety and debugging complexity, careful design and limited scope within the framework help mitigate these issues. The framework favors macros for lightweight abstraction where inline functions or templates would be overly verbose or less practical.
-
-\subsubsection*{Logging Macros}
+\subsection*{Logging Macros}
 To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable macros for standardized logging. These macros improve traceability during debugging, especially when verbose mode is enabled.
 \begin{itemize}
     \item \texttt{LOG_METHOD_CALL()} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag.
@@ -506,6 +512,7 @@ void MyClass::computeWithInput(int x)
 
 
 \section{Command Option System}
+\label{sec:cmd-option-system}
 
 The command option system provides structured parsing and management of command-line arguments. It is composed of two main components: the \texttt{CommandOption} class and the \texttt{command\_parser} namespace. Together, they offer a consistent and type-safe interface for defining, parsing, and validating command-line options. An example application exists in \texttt{bin/apps/template} which demonstrates how the command options can be used.
 
@@ -653,18 +660,41 @@ Several older functions exist but are marked deprecated in favor of \texttt{MIAE
 	\item These are flagged with \texttt{[[deprecated]]} attributes.
 \end{itemize}
 
+
+\subsection*{Exception Throwing Macro}
+To streamline exception throwing and ensure consistent inclusion of contextual metadata, the framework defines a macro \texttt{THROW_MIA_EXCEPTION(code, ...)}. This macro reduces boilerplate when throwing exceptions while ensuring that the error message includes file, line, and function information. This contextual data is critical for debugging and tracing issues during runtime. Instead of manually constructing exception messages with source location details, developers can use this macro for clarity and convenience:
+\begin{lstlisting}[style=cppstyle]
+if (!configLoaded)
+{
+    THROW_MIA_EXCEPTION(error::ErrorCode::Config_File_Not_Set, "Configuration missing");
+}
+\end{lstlisting}
+The macro assists with the following features:
+\begin{itemize}
+    \item Automatically captures and appends \texttt{\_\_FILE\_\_}, \texttt{\_\_LINE\_\_}, and \texttt{\_\_func\_\_}.
+    \item Accepts an optional message string describing the error context.
+    \item Safely wrapped in a \texttt{do \{...\} while(0)} block for predictable macro expansion.
+\end{itemize}
+This macro enhances code readability, enforces consistent exception formatting, and aids postmortem analysis or log review. It should be preferred over manual \texttt{MIAException} construction unless special behavior is required.
+
+
+
 \subsection*{Usage Guidelines}
 \begin{enumerate}
 	\item Throw \texttt{MIAException} in place of manual error returns. An appropriate error code from \texttt{error::ErrorCodes} should be used. If one does not exist, one should be added.
 	\begin{lstlisting}[style=cppstyle]
-try
-{    
-    // Do some code...
-}
-catch (const error::MIAException& ex)
+if (someErrorCondition) 
 {
     std::string err = "Details of this error!";
     throw error::MIAException(error::ErrorCode::Catastrophic_Failure, err); 
+}
+	\end{lstlisting}
+	\item Throw \texttt{MIAException} using the pre-defined macro if file name, line number, and method name are desired in the output. An appropriate error code from \texttt{error::ErrorCodes} should be used. If one does not exist, one should be added.
+	\begin{lstlisting}[style=cppstyle]
+if (someErrorCondition) 
+{
+    std::string err = "Details of this error!";
+    THROW_MIA_EXCEPTION(error::ErrorCode::Catastrophic_Failure, err); 
 }
 	\end{lstlisting}
 	\item Use \texttt{getErrorDescription()} to log or report known error codes.
@@ -715,6 +745,7 @@ namespace error
 
 
 \section{Global Constants and Paths}
+\label{sec:global-constants-and-paths}
 
 This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version. See section \ref{sec:CMake-setup-cpp} for some related information on adding global paths and compile time through CMake.
 
@@ -777,6 +808,7 @@ This design ensures portability and flexibility across different environments (d
 
 
 \section{Configuration System}
+\label{sec:configuration-system}
 
 The \texttt{MIAConfig} class provides a flexible and extensible interface for managing configuration data in the MIA system. It replaces the legacy \texttt{Configurator} from the previous MIA project. The system is designed using the PIMPL (Pointer to IMPLementation) idiom, encapsulating implementation details and allowing for multiple configuration types such as key-value pairs or raw-line formats (with the flexibility to add more later).
 
@@ -930,7 +962,7 @@ Three free-standing functions are provided for lightweight, context-independent 
 	Logs a message to a specified file. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 
  	\item \texttt{void logMethodCallToFile(methodName, filename, params = "", verbose = false)}\\
-  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
+  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). See \ref{sec:base-application} to see how these macros are (and should be) called. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 \end{itemize}
 
 \subsection{The \texttt{Logger} Class}
