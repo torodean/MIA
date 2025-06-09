@@ -90,6 +90,21 @@ namespace logger
         void log(const std::string& message, bool verbose = false) const;
 
         /**
+         * @brief Logs the name of the calling method and optional parameters using the Logger's current log file.
+         * 
+         * This function should be called at the start of a method to automatically log
+         * the method name and optionally any parameters. It delegates to the `log()` method.
+         * This method is mostly for debugging and tracking method calls.
+         * 
+         * @param methodName[const std::string&] - Name of the calling method (typically passed via __func__).
+         * @param params[const std::string&] - Optional string representing parameters to include in the log.
+         * @param verbose [bool] - Whether to print the message to stdout. Default: false.
+         */
+        void logMethodCall(const std::string& methodName,
+                           const std::string& params = "",
+                           bool verbose = false);
+
+        /**
          * Get the current log file name.
          * @return The current log file name.
          */
