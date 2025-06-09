@@ -89,3 +89,52 @@ private:
     /// True if the user specified the help flag in command options.
     bool helpRequested{false};
 };
+
+/**
+ * @def LOG_METHOD_CALL
+ * @brief Macro for logging the entry point of a method.
+ *
+ * Automatically logs the name of the calling method using the application's logger instance.
+ * Internally passes `__func__` to logger::Logger::logMethodCall().
+ * This macro should be used at the start of a method to aid debugging and traceability.
+ *
+ * Example:
+ * @code
+ * void MyClass::doWork() {
+ *     LOG_METHOD_CALL();
+ *     // method logic...
+ * }
+ * @endcode
+ */
+#define LOG_METHOD_CALL()                                   \
+    do {                                                    \
+        if (this->getVerboseMode())                         \
+            this->logger.logMethodCall(__func__, "", true); \
+        else                                                \
+            this->logger.logMethodCall(__func__);           \           
+    } while (0)                                      
+
+
+/**
+ * @def LOG_METHOD_CALL_WITH_PARAMS
+ * @brief Macro for logging the entry point of a method with parameters.
+ *
+ * Logs the name of the calling method along with a string representation of parameters.
+ * Uses `__func__` and the supplied param string, forwarding them to
+ * logger::Logger::logMethodCall().
+ *
+ * Example:
+ * @code
+ * void MyClass::process(int x) {
+ *     LOG_METHOD_CALL_WITH_PARAMS("x=" + std::to_string(x));
+ *     // method logic...
+ * }
+ * @endcode
+ */
+#define LOG_METHOD_CALL_WITH_PARAMS(params)                     \
+    do {                                                        \
+        if (this->getVerboseMode())                             \
+            this->logger.logMethodCall(__func__, params, true); \
+        else                                                    \
+            this->logger.logMethodCall(__func__, params);       \           
+    } while (0)   
