@@ -53,7 +53,8 @@ namespace logger
             std::cout << message << std::endl;
         }
     }
-    
+
+
     void logMethodCallToFile(const std::string& methodName, 
                              const std::string& filename, 
                              const std::string& params, 
@@ -95,6 +96,15 @@ namespace logger
             
         if (verbose)
             std::cout << message << std::endl;
+    }
+
+
+    void Logger::logMethodCall(const std::string& methodName,
+                               const std::string& params, 
+                               bool verbose) 
+    {
+        std::string msg = methodName + "(" + params + ")";
+        log(msg, verbose);
     }
 
 
