@@ -65,3 +65,34 @@ namespace error
         std::string cachedWhatMessage;
     }; // class MIAException
 } // namespace error
+
+
+/**
+ * @def THROW_MIA_EXCEPTION
+ * @brief Throws a MIAException with contextual debugging information.
+ *
+ * This macro simplifies exception throwing by automatically appending the file name,
+ * line number, and function name to the provided error message. It wraps construction
+ * and throwing of a `MIAException` with a given `ErrorCode` and optional message string.
+ * The macro ensures consistent error reporting across the application, helping to
+ * quickly identify the origin of thrown exceptions during debugging or logging.
+ *
+ * @param code The ErrorCode representing the type of error.
+ * @param ... (Optional) Additional error message details. If omitted, only context information is included.
+ *
+ * @note Internally wraps its logic in a `do { ... } while(0)` block to ensure safe usage in any scope.
+ *
+ * @example
+ * @code
+ * if (someFailureCondition) {
+ *     THROW_MIA_EXCEPTION(ErrorCode::InvalidInput, "Input value was null");
+ * }
+ * @endcode
+ */
+#define THROW_MIA_EXCEPTION(code, ...)                                                            \
+    do {                                                                                          \
+        std::string _msg = std::string(#__VA_ARGS__).empty() ? "" : std::string(__VA_ARGS__);     \
+        _msg += " [at " + std::string(__FILE__) + ":" + std::to_string(__LINE__)                  \
+                    + " in " + std::string(__func__) + "]";                                       \
+        throw error::MIAException((code), _msg);                                                  \
+    } while (0)
