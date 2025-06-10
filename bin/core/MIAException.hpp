@@ -68,7 +68,7 @@ namespace error
 
 
 /**
- * @def THROW_MIA_EXCEPTION
+ * @def MIA_THROW
  * @brief Throws a MIAException with contextual debugging information.
  *
  * This macro simplifies exception throwing by automatically appending the file name,
@@ -85,14 +85,14 @@ namespace error
  * @example
  * @code
  * if (someFailureCondition) {
- *     THROW_MIA_EXCEPTION(ErrorCode::InvalidInput, "Input value was null");
+ *     MIA_THROW(ErrorCode::InvalidInput, "Input value was null");
  * }
  * @endcode
  */
-#define THROW_MIA_EXCEPTION(code, ...)                                                            \
-    do {                                                                                          \
-        std::string _msg = std::string(#__VA_ARGS__).empty() ? "" : std::string(__VA_ARGS__);     \
-        _msg += " [at " + std::string(__FILE__) + ":" + std::to_string(__LINE__)                  \
-                    + " in " + std::string(__func__) + "]";                                       \
-        throw error::MIAException((code), _msg);                                                  \
+#define MIA_THROW(code, ...)                                                                   \
+    do {                                                                                       \
+        std::string _msg = std::string(#__VA_ARGS__).empty() ? "" : std::string(__VA_ARGS__);  \
+        _msg += " [at " + std::string(__FILE__) + ":" + std::to_string(__LINE__)               \
+                    + " in " + std::string(__func__) + "]";                                    \
+        throw error::MIAException((code), _msg);                                               \
     } while (0)

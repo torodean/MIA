@@ -409,10 +409,9 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 \subsection*{Logging Macros}
 To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable macros for standardized logging. These macros improve traceability during debugging, especially when verbose mode is enabled.
 \begin{itemize}
-    \item \texttt{LOG_METHOD_CALL()} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag.
-    \item \texttt{LOG_METHOD_CALL_WITH_PARAMS(params)} extends this functionality by allowing the caller to specify a string of parameters or context data to include in the log output.
+    \item \texttt{LOG\_METHOD\_CALL(...)} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag. Optional parameters can be entered which allow the caller to specify a string of parameters or context data to include in the log output.
 \end{itemize}
-These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \texttt{__func__} identifier for method name capture and rely on the internal \texttt{logger::Logger} instance.
+These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \texttt{\_\_func\_\_} identifier for method name capture and rely on the internal \texttt{logger::Logger} instance.
 
 
 \subsection*{Usage Guidelines}
@@ -478,7 +477,7 @@ log("This is a message to log");
 log("This is a message to log", true);
 	\end{lstlisting}
  
-	 \item Use the \texttt{LOG_METHOD_CALL()} and \texttt{LOG_METHOD_CALL_WITH_PARAMS(params)} macros at the start of methods to automatically log method entry points. These macros use the internal logger and respect the verbose mode flag.
+	 \item Use the \texttt{LOG\_METHOD\_CALL()} macro at the start of methods to automatically log method entry points. These macros use the internal logger and respect the verbose mode flag.
 	\begin{lstlisting}[style=cppstyle]
 void MyClass::compute()
 {
@@ -488,7 +487,7 @@ void MyClass::compute()
 
 void MyClass::computeWithInput(int x)
 {
-    LOG_METHOD_CALL_WITH_PARAMS("x=" + std::to_string(x));
+    LOG_METHOD_CALL("x=" + std::to_string(x));
     // ...
 }
 	\end{lstlisting}
@@ -662,11 +661,11 @@ Several older functions exist but are marked deprecated in favor of \texttt{MIAE
 
 
 \subsection*{Exception Throwing Macro}
-To streamline exception throwing and ensure consistent inclusion of contextual metadata, the framework defines a macro \texttt{THROW_MIA_EXCEPTION(code, ...)}. This macro reduces boilerplate when throwing exceptions while ensuring that the error message includes file, line, and function information. This contextual data is critical for debugging and tracing issues during runtime. Instead of manually constructing exception messages with source location details, developers can use this macro for clarity and convenience:
+To streamline exception throwing and ensure consistent inclusion of contextual metadata, the framework defines a macro \texttt{MIA\_THROW(code, ...)}. This macro reduces boilerplate when throwing exceptions while ensuring that the error message includes file, line, and function information. This contextual data is critical for debugging and tracing issues during runtime. Instead of manually constructing exception messages with source location details, developers can use this macro for clarity and convenience:
 \begin{lstlisting}[style=cppstyle]
 if (!configLoaded)
 {
-    THROW_MIA_EXCEPTION(error::ErrorCode::Config_File_Not_Set, "Configuration missing");
+    MIA_THROW(error::ErrorCode::Config_File_Not_Set, "Configuration missing");
 }
 \end{lstlisting}
 The macro assists with the following features:
