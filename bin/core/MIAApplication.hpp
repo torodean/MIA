@@ -115,7 +115,7 @@ private:
         if (this->getVerboseMode())                         \
             this->logger.logMethodCall(__func__, "", true); \
         else                                                \
-            this->logger.logMethodCall(__func__);           \           
+            this->logger.logMethodCall(__func__);           \
     } while (0)                                      
 
 
@@ -140,5 +140,5 @@ private:
         if (this->getVerboseMode())                             \
             this->logger.logMethodCall(__func__, params, true); \
         else                                                    \
-            this->logger.logMethodCall(__func__, params);       \           
+            this->logger.logMethodCall(__func__, params);       \
     } while (0)   
