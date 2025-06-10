@@ -62,12 +62,22 @@ namespace logger
     class Logger
     {
     public:
+    
+        /**
+         * @brief Default constructor for Logger. This will initialize the log file name
+         * to DEFAULT_LOG_FILE.
+         * 
+         * Initializes the Logger with the default log file name and opens the log file.
+         * Ensures that logging is ready to use immediately after construction.
+         */
+        Logger();
+        
         /**
          * Construct a Logger with a specific log file name. This will open the log file 
          * as logStream to use for logging.
-         * @param filename The log file to use. Defaults to DEFAULT_LOG_FILE.
+         * @param filename The log file to use.
          */
-        explicit Logger(const std::string& filename = DEFAULT_LOG_FILE);
+        explicit Logger(const std::string& filename);
 
         /**
          * Destructor closes the log file. This will close the log file open by logStream.

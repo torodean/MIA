@@ -55,7 +55,7 @@ namespace error
     
     private:
         std::string generateFullErrorMsg()
-        { return getErrorDescription(errorCode) + " " + errorDetails; } 
+        { return getErrorDescription(errorCode) + " " + errorDetails; }
 
         /// The specific error code associated with this exception.
         ErrorCode errorCode;

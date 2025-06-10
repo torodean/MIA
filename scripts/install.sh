@@ -4,3 +4,5 @@
 # cmake build. This can include adding configuration files or changing config values.
 
 sudo mkdir -p /var/log/mia
+sudo touch /var/log/mia/MIA.log
+sudo chmod a+rw /var/log/mia/MIA.log

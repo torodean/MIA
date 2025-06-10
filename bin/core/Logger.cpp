@@ -65,8 +65,12 @@ namespace logger
     }
 
 
-    Logger::Logger(const std::string& filename)
-        : currentLogFileName(filename)
+    Logger::Logger() : currentLogFileName(DEFAULT_LOG_FILE)
+    {
+        openLogFile();
+    }
+
+    Logger::Logger(const std::string& filename) : currentLogFileName(filename)
     { 
         openLogFile();
     }

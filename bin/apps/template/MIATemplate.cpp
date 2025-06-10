@@ -50,6 +50,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 
 void MIATemplate::loadConfig()
 {
+    LOG_METHOD_CALL();
     try
     {
         // Load configuration here.
@@ -103,6 +104,7 @@ void MIATemplate::TemplateConfig::printConfigValues() const
 
 int MIATemplate::run()
 {
+    LOG_METHOD_CALL();
     std::cout << "Loading MIATemplate app!" << std::endl;
     
     if(testMode)

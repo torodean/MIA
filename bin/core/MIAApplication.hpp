@@ -37,18 +37,31 @@ public:
     /**
      * Log a message using the logger object. This will automatically set the verbose
      * mode based on the verbose flag.
-     * @param message The message to log.
+     * @param message[const std::string&] - The message to log.
      */
     void log(const std::string& message) const
     { logger.log(message, verboseMode); }
     
     /**
      * Log a message using the logger object with an optional verboseMode flag.
-     * @param message The message to log.
-     * @param verbose Whether to print the message to stdout.
+     * @param message[const std::string&] - The message to log.
+     * @param verbose[bool] - Whether to print the message to stdout.
      */
     void log(const std::string& message, bool verbose) const
     { logger.log(message, verbose); }
+    
+    /**
+     * Logs the name of the calling method and optional parameters using the logger object.
+     * This is needed here to be called in the LOG_METHOD_CALL() and LOG_METHOD_CALL_WITH_PARAMS()
+     * macros so that logger can stay a private member variable. Verbosity is handled internally
+     * within the macros, but can be overloaded by calling this method directly.
+     * @param methodName[const std::string&] - Name of the calling method (typically passed via __func__).
+     * @param params[const std::string&] - Optional string representing parameters to include in the log.
+    */
+    void logMethodCall(const std::string& methodName,
+                       const std::string& params = "",
+                       bool verbose = false)
+    { logger.logMethodCall(methodName, params, verbose); }
     
 protected:
     /**
@@ -99,8 +112,13 @@ private:
  * @brief Macro for logging the entry point of a method.
  *
  * Automatically logs the name of the calling method using the application's logger instance.
- * Internally passes `__func__` to logger::Logger::logMethodCall().
+ * with an optional string representation of parameters.
+ * Internally passes `__func__` to logger::Logger::logMethodCall() through the
+ * MIAApplication::logMethodCall() method.
  * This macro should be used at the start of a method to aid debugging and traceability.
+ *
+ * @note This macro must be called after MIAApplication::initialize() has finished in order
+ * to have access to the automatic verbose handling.
  *
  * Example:
  * @code
@@ -110,35 +128,8 @@ private:
  * }
  * @endcode
  */
-#define LOG_METHOD_CALL()                                   \
-    do {                                                    \
-        if (this->getVerboseMode())                         \
-            this->logger.logMethodCall(__func__, "", true); \
-        else                                                \
-            this->logger.logMethodCall(__func__);           \
+#define LOG_METHOD_CALL(...)                                                                         \
+    do {                                                                                             \
+        std::string _params = std::string(#__VA_ARGS__).empty() ? "" : std::string(__VA_ARGS__);     \
+        this->logMethodCall(__func__, _params, this->getVerboseMode());                              \
     } while (0)                                      
-
-
-/**
- * @def LOG_METHOD_CALL_WITH_PARAMS
- * @brief Macro for logging the entry point of a method with parameters.
- *
- * Logs the name of the calling method along with a string representation of parameters.
- * Uses `__func__` and the supplied param string, forwarding them to
- * logger::Logger::logMethodCall().
- *
- * Example:
- * @code
- * void MyClass::process(int x) {
- *     LOG_METHOD_CALL_WITH_PARAMS("x=" + std::to_string(x));
- *     // method logic...
- * }
- * @endcode
- */
-#define LOG_METHOD_CALL_WITH_PARAMS(params)                     \
-    do {                                                        \
-        if (this->getVerboseMode())                             \
-            this->logger.logMethodCall(__func__, params, true); \
-        else                                                    \
-            this->logger.logMethodCall(__func__, params);       \
-    } while (0)   
