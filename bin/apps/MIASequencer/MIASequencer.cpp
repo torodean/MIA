@@ -39,7 +39,11 @@ MIASequencer::MIASequencer() :
     testOpt("-t", "--test", "Enables test mode. This mode will only output the sequence to terminal.",
                                 CommandOption::commandOptionType::boolOption),
     sequenceNameOpt("-s", "--sequence", "Run a sequence, then exit.",
-                                CommandOption::commandOptionType::stringOption)
+                                CommandOption::commandOptionType::stringOption),
+	loopModeOpt("-L", "--loop", "Loop over the activated sequence indefinitely.",
+								CommandOption::commandOptionType::boolOption),
+	printSequencesOpt("-P", "--list", "Print a list of all valid sequences when ran.",
+								CommandOption::commandOptionType::boolOption)
 { };
 
 
@@ -52,6 +56,8 @@ void MIASequencer::initialize(int argc, char* argv[])
         // Set the values from the command line arguments.
         testOpt.getOptionVal<bool>(argc, argv, testMode);
         sequenceNameOpt.getOptionVal<std::string>(argc, argv, sequenceName);
+		loopModeOpt.getOptionVal<bool>(argc, argv, loopMode);
+		printSequencesOpt.getOptionVal<bool>(argc, argv, printSequences);
         
         // Set and load the config file.
         std::string sequencesFile = defaultSequencesFile;
@@ -189,6 +195,8 @@ void MIASequencer::printHelp() const
               << sequencesFileOpt.getHelp() << std::endl
               << sequenceNameOpt.getHelp() << std::endl
               << testOpt.getHelp() << std::endl
+			  << loopModeOpt.getHelp() << std::endl
+			  << printSequencesOpt.getHelp() << std::endl
               << std::endl;
 }
 
@@ -363,26 +371,39 @@ void MIASequencer::runSequence(const std::string& sequenceName)
 }
 
 
+void MIASequencer::printSequenceList(std::ostream& out)
+{
+	out << "All valid sequences listed below:" << std::endl;
+	for(const auto& sequence : sequences)
+	{
+		out << " -> " << sequence.first << std::endl;
+	}
+}
+
+
 void MIASequencer::defaultFrontEnd()
 {
     std::string input;
     // Loop over the default interface.
     while (true) 
     {
-		std::cout << "Enter a sequence to perform: " << std::endl;
+		std::cout << "Enter a sequence to perform: ";
         std::getline(std::cin, input);
 
         if (input.empty()) 
             continue;
             
         // Run the sequence.
-        runSequence(input);
+		do { runSequence(input); } while (loopMode);
     }
 }
 
 
 int MIASequencer::run()
 {
+	if (printSequences)
+		printSequenceList();
+	
     // This would indicate no sequenceNameOpt specified.
     if (sequenceName.empty())
     {
@@ -391,8 +412,8 @@ int MIASequencer::run()
     else
     {
         std::cout << "Activating sequence: " << sequenceName << std::endl;
-        runSequence(sequenceName);
-        return 0;
+		do { runSequence(sequenceName); } while (loopMode);
+		return 0;
     }
     return 0;
 }

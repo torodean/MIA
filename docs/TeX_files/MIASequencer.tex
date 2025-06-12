@@ -49,6 +49,8 @@ MIATemplate specific options:
 	-c, --config            Specify a config file to use (default = /etc/mia/MIASequences.MIA)
 	-s, --sequence          Run a sequence, then exit.
 	-t, --test              Enables test mode. This mode will only output the sequence to terminal.
+	-L, --loop              Loop over the activated sequence indefinitely.
+	-P, --list              Print a list of all valid sequences when ran.
 \end{lstlisting}
 
 Using the \texttt{--test} flag enables a dry-run mode. In this mode, no actual input events are triggered. Instead, each parsed sequence and action is printed to the terminal for review. This is useful for verifying sequence definitions without affecting the system.

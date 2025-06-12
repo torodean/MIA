@@ -12,6 +12,7 @@
 #include <vector>
 #include <map>
 #include <optional>
+#include <iostream>
 
 // Used for the configuration.
 #include "MIAConfig.hpp"
@@ -132,6 +133,12 @@ public:
     
     /// Maps sequence names to their corresponding list of actions.
     using sequenceList = std::unordered_map<std::string, CompleteSequence>;
+	
+	/**
+	 * Dumps the list of the valid sequences to output stream.
+	 * @param out[std::ostream&] - The output stream to print the output to.
+	 */
+	void printSequenceList(std::ostream& out = std::cout);
 
     /**
      * The main constructor of the MIASequencer class. This will construct the command options.
@@ -205,6 +212,14 @@ private:
     CommandOption sequencesFileOpt;  ///< Used for loading a custom sequences file.
     CommandOption testOpt;           ///< Used for enabling test mode.
     CommandOption sequenceNameOpt;   ///< Used for running a particular sequence.
+    CommandOption loopModeOpt;       ///< Used for setting the sequence loop mode option.
+    CommandOption printSequencesOpt; ///< Used for printing all valid sequences.
+	
+	/// Determines whether to loop sequences or terminate after they finish.
+	bool loopMode{false};
+	
+	/// Determines whether to print the sequences on application start.
+	bool printSequences{false};
     
     /// Name of the option-entered sequence to run. Empty if no sequence option used.
     std::string sequenceName{};
