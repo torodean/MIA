@@ -864,6 +864,31 @@ MIATemplate::MIATemplate() :
 	config(defaultConfigFile, constants::ConfigType::KEY_VALUE)                      
 { };
 	\end{lstlisting}
+	\textbf{Important:} If you create a private data member within a class for a default configuration file, that variable must be constructed before the \texttt{MIAConfig} object.
+	\begin{lstlisting}[style=cppstyle]
+// This is the CORRECT usage.
+class WoWFishbot {
+public:
+	WoWFishbot() : config(defaultConfigFile, constants::ConfigType::KEY_VALUE)
+private:
+	std::string defaultConfigFile{"WoWConfig.MIA"};
+	config::MIAConfig config;
+}
+	\end{lstlisting}
+	\begin{lstlisting}[style=cppstyle]
+// This is the INCORRECT usage.
+class WoWFishbot {
+public:
+	WoWFishbot() : config(defaultConfigFile, constants::ConfigType::KEY_VALUE)
+private:
+	config::MIAConfig config;
+	std::string defaultConfigFile{"WoWConfig.MIA"};
+}
+
+// Throws this error:
+terminate called after throwing an instance of 'std::bad_alloc'
+what():  std::bad_alloc
+	\end{lstlisting}
 	\item Call \texttt{initialize()}, \texttt{reload()} or \texttt{setConfigFileName(..)} during application initialization to parse and load the base configuration file into the appropriate config implementation (this is based on the specified configuration type).
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::initialize(int argc, char* argv[])
