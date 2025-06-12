@@ -69,14 +69,14 @@ private:
     /// Intro text for the fishbot. This is mostly for flavor.
     void fishBotIntro();
     
+    /// The name of the defauilt config file that this class uses.
+    std::string defaultConfigFile{"WoWConfig.MIA"};
+    
     /// The configuration loader for this app.
     config::MIAConfig config;
     
     // Command options for this app.
     CommandOption configFileOpt;
-    
-    /// The name of the defauilt config file that this class uses.
-    std::string defaultConfigFile{"WoWConfig.MIA"};
     
     /// Load the configuration variables.
     void loadConfig();

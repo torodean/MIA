@@ -369,6 +369,7 @@ void MIASequencer::defaultFrontEnd()
     // Loop over the default interface.
     while (true) 
     {
+		std::cout << "Enter a sequence to perform: " << std::endl;
         std::getline(std::cin, input);
 
         if (input.empty()) 

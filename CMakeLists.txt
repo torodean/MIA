@@ -25,7 +25,7 @@ if(RELEASE_BUILD)
 endif()
 
 # OS-Specific Path Configuration
-if(WIN32)
+if(WIN32 OR CYGWIN)
     set(APP_INSTALL_LOCATION "C:/Program Files/mia")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "C:/ProgramData/mia")
     set(DEFAULT_SYSTEM_LOG_DIR "C:/ProgramData/mia/logs")

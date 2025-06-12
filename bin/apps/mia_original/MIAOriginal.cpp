@@ -26,7 +26,7 @@
 
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    #include "windows/WindowsUtilities.hpp"
+    #include "WindowsUtils.hpp"
 #endif
 
 
@@ -345,7 +345,7 @@ void MIAOriginal::performMIACommand(string& input)
             break;
         case Commands::MIAInput::DATE:
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-            WindowsUtilities::terminalCommand("DATE");
+            windows_utils::terminalCommand("DATE");
 #else
             throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 #endif
