@@ -387,18 +387,14 @@ namespace virtual_keys
     
         std::cout << "...Finished." << std::endl;
     }
-    #endif
     
     void VirtualKeyStrokes::getRGB(COLORREF& color, int& r, int& g, int&b)
     {
-	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         r = GetRValue(color);
         g = GetGValue(color);
         b = GetBValue(color);
-	#elif __linux__
-		throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
-	#endif
-    }    
+    } 
+    #endif   
     
     void VirtualKeyStrokes::leftclick(bool verboseMode)
     {

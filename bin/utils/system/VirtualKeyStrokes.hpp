@@ -187,7 +187,9 @@ namespace virtual_keys
          */
         void buttonSpamTab(const std::string& button, int amount, int pause);
 		
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         void getRGB(COLORREF& color, int& r, int& g, int& b);
+	#endif
     
     private:
     
