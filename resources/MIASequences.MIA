@@ -38,3 +38,14 @@ TYPE=hijk
 MOVEMOUSE=145,887
 CLICK=RIGHTCLICK
 ENDOFSEQUENCE
+
+
+###################################################
+# Spam left click - used for random clicker things.
+###################################################
+SEQUENCENAME=spam_left_click
+DELAY=2
+CLICK=LEFTCLICK
+CLICK=LEFTCLICK
+CLICK=LEFTCLICK
+ENDOFSEQUENCE
