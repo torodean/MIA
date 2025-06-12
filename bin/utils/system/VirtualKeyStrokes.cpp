@@ -8,6 +8,7 @@
  */
 
 // @TODO - this file needs some work.
+#include <algorithm>
 
 // Include the associated header file.
 #include "VirtualKeyStrokes.hpp"
@@ -21,8 +22,6 @@
 #pragma comment (lib, "gdi32.lib")
 #endif
 
-using std::cout;
-using std::endl;
 using std::string;
 
 namespace virtual_keys
@@ -71,7 +70,7 @@ namespace virtual_keys
         } 
         else if(std::isalpha(static_cast<unsigned char>(character)))
         {        
-            pressCharacter(character, holdTime, verboseMode);
+            pressChar(character, holdTime, verboseMode);
         } 
         else if(character == ' '){
             space();
@@ -161,7 +160,7 @@ namespace virtual_keys
     
         timing::sleepMilliseconds(holdTime);
         if(verboseMode)
-            cout << num << endl;
+            std::cout << num << std::endl;
     
         // Release the "num" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -215,10 +214,10 @@ namespace virtual_keys
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
     
-        zero();
-        two();
-        four();
-        eight();
+        pressNumber(0);
+        pressNumber(2);
+        pressNumber(4);
+        pressNumber(8);
     
         // Release the "alt" key
         ip.ki.wVk = VK_MENU; // virtual-key code for the "alt" key
@@ -235,9 +234,9 @@ namespace virtual_keys
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
     
-        one();
-        three();
-        six();
+        pressNumber(1);
+        pressNumber(3);
+        pressNumber(6);
     
         // Release the "alt" key
         ip.ki.wVk = VK_MENU;
@@ -253,7 +252,7 @@ namespace virtual_keys
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
     
-        v();
+        pressChar('v');
     
         // Release the "ctrl" key
         ip.ki.wVk = VK_CONTROL; // virtual-key code for the "ctrl" key
@@ -330,10 +329,10 @@ namespace virtual_keys
         timing::sleepMilliseconds(wait);
         GetCursorPos(&cursor);
     
-        cout << ".." << endl;
+        std::cout << ".." << std::endl;
         int x = cursor.x, y = cursor.y;
-        cout << "The mouse curse is at: " << x << ", " << y << endl;
-        cout << ".." << endl;
+        std::cout << "The mouse curse is at: " << x << ", " << y << std::endl;
+        std::cout << ".." << std::endl;
     }
     
     // Prints the pixel color at a scan of ranges in a 100 x 100 grid from the mouse location.
@@ -346,7 +345,7 @@ namespace virtual_keys
         COLORREF color;
         int red=0,green=0,blue=0;
     
-        cout << "...Scanning." << endl;
+        std::cout << "...Scanning." << std::endl;
     
         for (int i=cursor.x;i<cursor.x+100;i+=4)
         {
@@ -356,13 +355,13 @@ namespace virtual_keys
     
                 getRGB(color, red, green, blue);
     
-                cout << "(x,y): " << "(" << i << "," << j << ")" << endl;
-                cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
+                std::cout << "(x,y): " << "(" << i << "," << j << ")" << std::endl;
+                std::cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << std::endl;
             }
         }
         ReleaseDC(NULL, dc);
     
-        cout << "...Finished." << endl;
+        std::cout << "...Finished." << std::endl;
     }
     
     // Prints the pixel color at the cursor location.
@@ -373,33 +372,37 @@ namespace virtual_keys
     
         HDC dc = GetDC(NULL);
     
-        cout << "...Scanning." << endl;
+        std::cout << "...Scanning." << std::endl;
     
         COLORREF color = GetPixel(dc, cursor.x, cursor.y);
     
         int red = 0, green = 0, blue = 0;
         getRGB(color, red, green, blue);
     
-        cout << "(x,y): " << "(" << cursor.x << "," << cursor.y << ")" << endl;
-        cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
-        cout << "RGB: (" << red << "," << green << "," << blue << ")" << endl;
+        std::cout << "(x,y): " << "(" << cursor.x << "," << cursor.y << ")" << std::endl;
+        std::cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << std::endl;
+        std::cout << "RGB: (" << red << "," << green << "," << blue << ")" << std::endl;
     
         ReleaseDC(NULL, dc);
     
-        cout << "...Finished." << endl;
+        std::cout << "...Finished." << std::endl;
     }
+    #endif
     
     void VirtualKeyStrokes::getRGB(COLORREF& color, int& r, int& g, int&b)
     {
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         r = GetRValue(color);
         g = GetGValue(color);
         b = GetBValue(color);
+	#elif __linux__
+		throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+	#endif
     }    
-    #endif    
     
     void VirtualKeyStrokes::leftclick(bool verboseMode)
     {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         INPUT Input;
         // left down
         Input.type = INPUT_MOUSE;
@@ -407,20 +410,20 @@ namespace virtual_keys
         SendInput(1,&Input,sizeof(INPUT));
     
         if(verboseMode)
-            cout << "LEFT CLICK" << endl;
+            std::cout << "LEFT CLICK" << std::endl;
     
         // left up
         ZeroMemory(&Input,sizeof(INPUT));
         Input.type  = INPUT_MOUSE;
         Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-        SendInput(1,&Input,sizeof(INPUT));
-        std::this_thread::sleep_for(std::chrono::milliseconds(2*globalSleep));
-#endif
+        SendInput(1,&Input,sizeof(INPUT));        
+        timing::sleepMilliseconds(2*globalSleep);
+	#endif
     }
     
     void VirtualKeyStrokes::rightclick(bool verboseMode)
     {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         INPUT Input;
         // right down
         Input.type = INPUT_MOUSE;
@@ -428,15 +431,15 @@ namespace virtual_keys
         SendInput(1,&Input,sizeof(INPUT));
     
         if(verboseMode)
-            cout << "RIGHT CLICK" << endl;
+            std::cout << "RIGHT CLICK" << std::endl;
     
         // right up
         ZeroMemory(&Input,sizeof(INPUT));
         Input.type = INPUT_MOUSE;
         Input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
         SendInput(1,&Input,sizeof(INPUT));
-        std::this_thread::sleep_for(std::chrono::milliseconds(2*globalSleep));
-#endif
+        timing::sleepMilliseconds(2*globalSleep);
+	#endif
     }
     
     void VirtualKeyStrokes::mouseClick(VirtualKeyStrokes::ClickType clickType, bool verboseMode)
@@ -456,10 +459,10 @@ namespace virtual_keys
     
     void VirtualKeyStrokes::moveMouseTo(int x, int y)
     {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         SetCursorPos(x,y);
         timing::sleepMilliseconds(40);
-#endif
+	#endif
     }
     
     void VirtualKeyStrokes::minus(bool verboseMode)
@@ -472,7 +475,7 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         if(verboseMode)
-            cout << "-" << endl;
+            std::cout << "-" << std::endl;
     
         // Release the "-" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -493,7 +496,7 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         if(verboseMode)
-            cout << "=" << endl;
+            std::cout << "=" << std::endl;
     
         // Release the "=" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -514,7 +517,7 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         if(verboseMode)
-            cout << "space" << endl;
+            std::cout << "space" << std::endl;
     
         // Release the "space" key
         ip.ki.wVk = VK_SPACE; // virtual-key code for the "space" key
@@ -536,7 +539,7 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         if(verboseMode)
-            cout << "TAB" << endl;
+            std::cout << "TAB" << std::endl;
     
         // Release the "tab" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release

@@ -1,11 +1,20 @@
 
 # Create the System_UTIL
-find_library(XDO_LIB xdo)
 set(System_SRC Timing.cpp VirtualKeyStrokes.cpp )
 set(System_INC Timing.hpp VirtualKeyStrokes.hpp )
 add_library(System_UTIL ${System_SRC} ${System_INC})
 target_link_libraries(System_UTIL PUBLIC Framework_CORE)
-target_link_libraries(System_UTIL PRIVATE ${XDO_LIB})
+if(UNIX AND NOT APPLE AND NOT CYGWIN)
+    find_library(XDO_LIB xdo)
+    if(XDO_LIB)
+        target_link_libraries(System_UTIL PRIVATE ${XDO_LIB})
+    else()
+        message(FATAL_ERROR "Could not find xdo library")
+    endif()
+elseif(WIN32 OR CYGWIN)
+	target_link_libraries(System_UTIL PRIVATE gdi32 )
+endif()
+
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(System_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -107,6 +107,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     fishBotIntro();
+	virtual_keys::VirtualKeyStrokes keys;
 
     //Begin useful variable initialization.
     HDC dc = GetDC(NULL);
@@ -152,19 +153,19 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     long elapsed_time = 0;
 
     //Run the fishbot for some number of casts - determined by the config file variable WoWFishBotNumOfCasts.
-    while(counter < WoWFishBotNumOfCasts){
-
+    while(counter < WoWFishBotNumOfCasts)
+	{
         //Applies lure.
         if (useLure && counter % 100 == 0)
         {
             cout << "...Applying lure." << endl;
-            type(lureButton);
+            keys.type(lureButton);
             timing::sleepMilliseconds(3000);
         }
 
         //Casts.
         cout << "...Casting." << endl;
-        type(fishButton);
+        keys.type(fishButton);
         timing::sleepMilliseconds(1500);
         cout << "...Scanning." << endl;
 
@@ -178,17 +179,19 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
                 color = GetPixel(dc, i, j);
                 //color = GetPixel(dc, cursor.x, cursor.y);
 
-                getRGB(color, red, green, blue);
+                keys.getRGB(color, red, green, blue);
 
                 //Troubleshooting printouts for color of pixels detected.
-                if (getVerboseMode()){
+                if (getVerboseMode())
+				{
                     cout << "(x,y): " << "(" << i << "," << j << ")" << endl;
                     cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << endl;
                     cout << "RGB: (" << red << "," << green << "," << blue << ")" << endl;
                 }
 
                 //Check if the mouse is over the bobber.
-                if(red > green + 35 || red > blue + 35){
+                if(red > green + 35 || red > blue + 35)
+				{
                     cout << "...The bobber has been found!! ...I think." << endl;
                     bobberFound=true;
                     break;
@@ -207,9 +210,10 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
         }
 
         //Waits a delay time and then clocks the bobber if it was found.
-        if(bobberFound){
+        if(bobberFound)
+		{
             timing::sleepMilliseconds(WoWFishBotDelay);
-            leftclick();
+            keys.leftclick();
         }
         timing::sleepMilliseconds(1000);
 

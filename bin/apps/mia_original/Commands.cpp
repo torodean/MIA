@@ -694,8 +694,7 @@ void Commands::runNetSessionEnum()
 	cout << endl;
 	
 	const size_t len = server.length() + 1;
-	if(Configurator::getVerboseMode())
-		cout << "len: " << len << endl;
+	cout << "Server len: " << len << endl;
     wchar_t w_server[len];
 
     swprintf(w_server, len, L"%s", server.c_str());

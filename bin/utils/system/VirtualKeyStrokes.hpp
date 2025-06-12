@@ -186,6 +186,8 @@ namespace virtual_keys
          * @param pause[int] - The time to pause between key presses in ms.
          */
         void buttonSpamTab(const std::string& button, int amount, int pause);
+		
+        void getRGB(COLORREF& color, int& r, int& g, int& b);
     
     private:
     
@@ -194,7 +196,6 @@ namespace virtual_keys
     
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         INPUT ip;
-        void getRGB(COLORREF& color, int& r, int& g, int& b);
     #elif __linux__
         /**
          * This pointer is used for the xdotool which can simulate key strokes on linux through X11.
