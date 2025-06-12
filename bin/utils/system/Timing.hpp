@@ -9,7 +9,7 @@
  */
 #pragma once
 
-namespace MIA_system
+namespace timing
 {    
     /**
      * Causes the current thread to sleep for some number of milliseconds.
@@ -35,4 +35,4 @@ namespace MIA_system
      */
     void sleepSeconds(double time);
 
-} // namespace MIA_system
+} // namespace timing

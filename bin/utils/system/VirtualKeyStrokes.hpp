@@ -24,7 +24,7 @@
     }
 #endif
 
-namespace MIA_system
+namespace virtual_keys
 {
     /**
      * This class is for sending virtual key strokes and simulating user input.
@@ -206,4 +206,4 @@ namespace MIA_system
         xdo_t *xdo;
     #endif
     }; // class VirtualKeyStrokes
-} // namespace MIA_system
+} // namespace virtual_keys

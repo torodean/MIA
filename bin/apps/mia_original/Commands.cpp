@@ -30,7 +30,7 @@ using std::cout;
 using std::endl;
 using std::string;
 using math::D3CMath;
-using MIA_system::VirtualKeyStrokes;
+using virtual_keys::VirtualKeyStrokes;
 
 
 Commands::MIAInput Commands::commandToInputEnum(string& input)
@@ -873,19 +873,19 @@ int Commands::rollDice(const string& input)
         for(int i=0;i<10;i++)
         {
             SystemSounds::beep();
-            MIA_system::sleepMilliseconds(75);
+            timing::sleepMilliseconds(75);
         }
         if(interval % 60 == 0)
         {
             for (int i = 0; i < minutes; i++)
             {
                 std::cout << "Countdown: T - " << minutes - i << " minutes!" << std::endl;
-                MIA_system::sleepMilliseconds(totalTimeMS / minutes);
+                timing::sleepMilliseconds(totalTimeMS / minutes);
             }
         }
         else
         {
-            MIA_system::sleepMilliseconds(totalTimeMS);
+            timing::sleepMilliseconds(totalTimeMS);
         }
     }
 }

@@ -32,17 +32,17 @@ void WoWUtils::unloadLetters(int copies)
 
     for(int i=0;i<copies;i++){
         SetCursorPos(x0, y0);
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
         leftclick();
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
         SetCursorPos(x1, y1);
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
         leftclick();
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
         SetCursorPos(x2, y2);
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
         leftclick();
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
     }
 }
 
@@ -57,19 +57,19 @@ void WoWUtils::duplicateLetter(int copies, string recipient)
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     for(int i=0;i<copies;i++){
         type(recipient);
-        MIA_system::sleepMilliseconds(200);
+        timing::sleepMilliseconds(200);
         tab();
-        MIA_system::sleepMilliseconds(200);
+        timing::sleepMilliseconds(200);
         type("subject");
-        MIA_system::sleepMilliseconds(200);
+        timing::sleepMilliseconds(200);
         tab();
-        MIA_system::sleepMilliseconds(200);
+        timing::sleepMilliseconds(200);
         paste();
-        MIA_system::sleepMilliseconds(400);
+        timing::sleepMilliseconds(400);
         SetCursorPos(x, y);
-        MIA_system::sleepMilliseconds(300);
+        timing::sleepMilliseconds(300);
         leftclick();
-        MIA_system::sleepMilliseconds(2500);
+        timing::sleepMilliseconds(2500);
     }
 }
 

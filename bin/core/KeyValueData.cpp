@@ -17,7 +17,7 @@
 // Used for various string manipulation.
 #include "BasicUtilities.hpp"
 
-namespace MIA_System
+namespace config
 {     
     void KeyValueData::load(const std::string& filePath, bool verboseMode)
     {
@@ -232,4 +232,4 @@ namespace MIA_System
     {
         return constants::ConfigType::KEY_VALUE;
     }
-} // namespace MIA_System
+} // namespace config

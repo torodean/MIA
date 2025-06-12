@@ -55,7 +55,7 @@ private:
     void generateWorkout();
     
     /// The configuration loader for this app.
-    MIA_System::MIAConfig config;
+    config::MIAConfig config;
 
     // Command options for this app.
     CommandOption configFileOpt;

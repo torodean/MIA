@@ -16,7 +16,7 @@
 // Included for the abstract base class.
 #include "ConfigData.hpp"
 
-namespace MIA_System
+namespace config
 {
     /**
      * @class RawLinesData
@@ -86,4 +86,4 @@ namespace MIA_System
          */
         std::vector<std::string> rawConfigLines;
     };
-} // namespace MIA_System
+} // namespace config

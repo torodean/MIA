@@ -25,7 +25,7 @@
 #include "MIAException.hpp"
 
 
-namespace MIA_System
+namespace config
 {
     // default to RawLinesData since it is perfectly valid for any type of file.
     MIAConfig::MIAConfig() : configData(std::make_unique<RawLinesData>()) {}
@@ -132,5 +132,5 @@ namespace MIA_System
     {
         configData->dump(os);
     }    
-} // namespace MIA_System
+} // namespace config
 

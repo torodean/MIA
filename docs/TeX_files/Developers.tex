@@ -856,7 +856,7 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 	\item Include a configuration object as a private member of the application class for each configuration file which is needed (used) by the application.
 	\begin{lstlisting}[style=cppstyle]
 /// The configuration loader for this app.
-MIA_System::MIAConfig config;
+config::MIAConfig config;
 	\end{lstlisting}
 	\item Instantiate \texttt{MIAConfig} with a file name and configuration type. This should be done at application construction so that the configuration is available to parse and use during initialization. A default configuration file name can be defined and used at object construction or defined later. The file name can contain a full file path, but if it does not, the MIAConfig class will attempt to identify an appropriate configuration directory during config initialization using the \texttt{paths::getDefaultConfigDirToUse()} method (see section \ref{sec:global-constants-utilities} for more details).
 	\begin{lstlisting}[style=cppstyle]

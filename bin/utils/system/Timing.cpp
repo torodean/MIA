@@ -14,7 +14,7 @@
 // Include the associated header file.
 #include "Timing.hpp"
 
-namespace MIA_system
+namespace timing
 {
     void sleepMilliseconds(int time)
     {
@@ -35,4 +35,4 @@ namespace MIA_system
     {
         std::this_thread::sleep_for(std::chrono::duration<double>(time));
     }
-} // namespace MIA_system
+} // namespace timing

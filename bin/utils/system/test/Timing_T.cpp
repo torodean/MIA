@@ -14,7 +14,7 @@
 // Include the associated headers we are testing.
 #include "Timing.hpp"
 
-using namespace MIA_system;
+using namespace timing;
 
 TEST(TimingTest, SleepMilliseconds) 
 {

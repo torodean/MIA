@@ -29,7 +29,7 @@ using StringUtils::getBeforeChar;
 using StringUtils::getAfterChar;
 using StringUtils::contains;
 using StringUtils::trim;
-using MIA_system::VirtualKeyStrokes;
+using virtual_keys::VirtualKeyStrokes;
 
 MIASequencer::MIASequencer() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
@@ -208,9 +208,9 @@ bool MIASequencer::SequenceAction::isValid()
             return true;  // No restriction on coords
 
         case SequenceActionType::CLICK:
-            return click == MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK ||
-                   click == MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK ||
-                   click == MIA_system::VirtualKeyStrokes::ClickType::MIDDLE_CLICK;
+            return click == VirtualKeyStrokes::ClickType::LEFT_CLICK ||
+                   click == VirtualKeyStrokes::ClickType::RIGHT_CLICK ||
+                   click == VirtualKeyStrokes::ClickType::MIDDLE_CLICK;
 
         default:
             return false;
@@ -233,7 +233,7 @@ void MIASequencer::CompleteSequence::clear()
 }
 
 
-std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::VirtualKeyStrokes& keys, 
+std::optional<int> MIASequencer::SequenceAction::performAction(VirtualKeyStrokes& keys, 
                                                                bool testMode)
 {
     if (testMode)
@@ -248,7 +248,7 @@ std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::Virtu
                 keys.type(strToType);
                 break;
             case SequenceActionType::SLEEP:
-                MIA_system::sleepMilliseconds(timeValue);
+                timing::sleepMilliseconds(timeValue);
                 break;
             case SequenceActionType::MOVEMOUSE:
                 keys.moveMouseTo(coords.x, coords.y);
@@ -256,10 +256,10 @@ std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::Virtu
             case SequenceActionType::CLICK:
                 switch(click)
                 {
-                    case MIA_system::VirtualKeyStrokes::ClickType::LEFT_CLICK:
+                    case VirtualKeyStrokes::ClickType::LEFT_CLICK:
                         keys.mouseClick(click);
                         break;
-                    case MIA_system::VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+                    case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
                         keys.mouseClick(click);
                         break;
                     default:
@@ -282,7 +282,7 @@ std::optional<int> MIASequencer::SequenceAction::performAction(MIA_system::Virtu
 }
 
 
-void MIASequencer::CompleteSequence::performActions(MIA_system::VirtualKeyStrokes& keys, 
+void MIASequencer::CompleteSequence::performActions(VirtualKeyStrokes& keys, 
                                                     bool testMode)
 {
     for (auto& action : actions)
@@ -298,7 +298,7 @@ void MIASequencer::CompleteSequence::performActions(MIA_system::VirtualKeyStroke
             if (auto newDelay = action.performAction(keys))
                 delayTime = *newDelay;
             
-            MIA_system::sleepMilliseconds(delayTime);
+            timing::sleepMilliseconds(delayTime);
         }
     }
     

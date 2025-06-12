@@ -63,7 +63,7 @@ public:
         int timeValue{};                  ///< Timing information (for pause or delay).
         constants::Coordinate coords{};   ///< Coordinates (for moving mouse).
         std::string strToType{};          ///< A string (for typing).
-        MIA_system::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
+        virtual_keys::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
         
         /// Returns true if this is a valid action.
         bool isValid();
@@ -84,7 +84,7 @@ public:
          * @return [optional<int>] - Returns optional new delay time (ms) to use for 
          *     subsequent actions if it needs updated via an action.
          */
-        std::optional<int> performAction(MIA_system::VirtualKeyStrokes& keys, 
+        std::optional<int> performAction(virtual_keys::VirtualKeyStrokes& keys, 
                                          bool testMode = false);
     };
     
@@ -126,7 +126,7 @@ public:
          * @param testMode[bool] - Enables test mode (default = false).
          * @param [bool] - Enables test mode.
          */
-        void performActions(MIA_system::VirtualKeyStrokes& keys, 
+        void performActions(virtual_keys::VirtualKeyStrokes& keys, 
                             bool testMode = false);
     };
     
@@ -184,7 +184,7 @@ private:
     void defaultFrontEnd();
     
     /// An instance of VirtualKeyStrokes for calling the virtual key strokes.
-    MIA_system::VirtualKeyStrokes keys;
+    virtual_keys::VirtualKeyStrokes keys;
 
     /**
      * This will load in the configuration file and load the sequences.
@@ -199,7 +199,7 @@ private:
      * constants::ConfigType::RAW_LINES format since it also loads the sequencer fields
      * in which need custom parsing and interpretation.
      */
-    MIA_System::MIAConfig config;
+    config::MIAConfig config;
 		
     // Command options for this app.
     CommandOption sequencesFileOpt;  ///< Used for loading a custom sequences file.

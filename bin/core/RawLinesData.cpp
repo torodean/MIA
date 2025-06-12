@@ -14,7 +14,7 @@
 #include "MIAException.hpp"
 #include "Error.hpp"
 
-namespace MIA_System
+namespace config
 {
     void RawLinesData::load(const std::string& filePath, bool verboseMode)
     {
@@ -114,4 +114,4 @@ namespace MIA_System
     {
         return constants::ConfigType::RAW_LINES;
     }
-} // namespace MIA_System
+} // namespace config

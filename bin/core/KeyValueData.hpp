@@ -16,7 +16,7 @@
 // Included for the abstract base class.
 #include "ConfigData.hpp"
 
-namespace MIA_System
+namespace config
 {
     /**
      * @class KeyValueData
@@ -140,4 +140,4 @@ namespace MIA_System
          */
         BasicConfigMap rawConfigValsMap;
     };
-} // namespace MIA_System
+} // namespace config

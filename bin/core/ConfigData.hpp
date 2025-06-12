@@ -14,7 +14,7 @@
 // Used for the ConfigType
 #include "Constants.hpp"
 
-namespace MIA_System
+namespace config
 {
     /**
      * @class ConfigData
@@ -119,4 +119,4 @@ namespace MIA_System
          */
         virtual constants::ConfigType getType() const = 0;
     };
-} // namespace MIA_System
+} // namespace config

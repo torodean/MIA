@@ -16,7 +16,7 @@
 // Included for various common-types.
 #include "ConfigData.hpp"
 
-namespace MIA_System
+namespace config
 {   
     // Forward declaration of ConfigData class where the configuration data is stored.
     class ConfigData;
@@ -199,4 +199,4 @@ namespace MIA_System
         /// Stores the configuration data (PIMPL idiom).
         std::unique_ptr<ConfigData> configData;
     }; // class MIAConfig
-} // namespace MIA_System
+} // namespace config

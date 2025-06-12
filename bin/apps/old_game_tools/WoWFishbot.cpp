@@ -159,13 +159,13 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
         {
             cout << "...Applying lure." << endl;
             type(lureButton);
-            MIA_system::sleepMilliseconds(3000);
+            timing::sleepMilliseconds(3000);
         }
 
         //Casts.
         cout << "...Casting." << endl;
         type(fishButton);
-        MIA_system::sleepMilliseconds(1500);
+        timing::sleepMilliseconds(1500);
         cout << "...Scanning." << endl;
 
         //Finds bobber.
@@ -174,7 +174,7 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
             for (int i=startX;i<endX;i+=increment)
             {
                 SetCursorPos(i,j);
-                MIA_system::sleepMilliseconds(2);
+                timing::sleepMilliseconds(2);
                 color = GetPixel(dc, i, j);
                 //color = GetPixel(dc, cursor.x, cursor.y);
 
@@ -208,10 +208,10 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
 
         //Waits a delay time and then clocks the bobber if it was found.
         if(bobberFound){
-            MIA_system::sleepMilliseconds(WoWFishBotDelay);
+            timing::sleepMilliseconds(WoWFishBotDelay);
             leftclick();
         }
-        MIA_system::sleepMilliseconds(1000);
+        timing::sleepMilliseconds(1000);
 
         //Determines elapsed time and progress information.
         end = std::chrono::steady_clock::now();
@@ -237,25 +237,25 @@ void WoWFishbot::fishBotIntro()
     //Some gibberish for dramatic effect.
     //Also serves as a brief load time before bot starts.
     cout << "...Loading Fishbot Modules." << endl;
-    MIA_system::sleepMilliseconds(drama);
+    timing::sleepMilliseconds(drama);
     cout << "...Calculating response functions." << endl;
-    MIA_system::sleepMilliseconds(drama);
+    timing::sleepMilliseconds(drama);
     cout << "...Detecting saved crypto-keys." << endl;
-    MIA_system::sleepMilliseconds(2*drama);
+    timing::sleepMilliseconds(2*drama);
     cout << "...Saved keys found!" << endl;
     cout << "...Decrypting password hash values." << endl;
-    MIA_system::sleepMilliseconds(drama);
+    timing::sleepMilliseconds(drama);
     cout << "...MIA_Success!." << endl;
     cout << "...Sending security information to host." << endl;
-    MIA_system::sleepMilliseconds(2*drama);
+    timing::sleepMilliseconds(2*drama);
     cout << "...MIA_Success!." << endl;
     cout << "...Disabling daemon ninja process." << endl;
-    MIA_system::sleepMilliseconds(drama);
+    timing::sleepMilliseconds(drama);
     cout << ".." << endl;
     cout << "...Number of casts set to: " << WoWFishBotNumOfCasts << endl;
-    MIA_system::sleepMilliseconds(drama);
+    timing::sleepMilliseconds(drama);
     cout << "...Starting fishbot!" << endl;
-    MIA_system::sleepMilliseconds(drama);
+    timing::sleepMilliseconds(drama);
     cout << ".." << endl;
 }
 

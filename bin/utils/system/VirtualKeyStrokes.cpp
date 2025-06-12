@@ -25,7 +25,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-namespace MIA_system
+namespace virtual_keys
 {
     VirtualKeyStrokes::VirtualKeyStrokes()
     {
@@ -132,14 +132,14 @@ namespace MIA_system
             throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
         }
         if(!skipHold)
-            MIA_system::sleepMilliseconds(holdTime);
+            timing::sleepMilliseconds(holdTime);
     #endif
     }
     
     
     void VirtualKeyStrokes::defaultSleep() const
     {
-        MIA_system::sleepMilliseconds(globalSleep);
+        timing::sleepMilliseconds(globalSleep);
     }
     
     
@@ -159,7 +159,7 @@ namespace MIA_system
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
     
-        MIA_system::sleepMilliseconds(holdTime);
+        timing::sleepMilliseconds(holdTime);
         if(verboseMode)
             cout << num << endl;
     
@@ -190,7 +190,7 @@ namespace MIA_system
         ip.ki.dwFlags = 0; // Press key
         SendInput(1, &ip, sizeof(INPUT));
 
-        MIA_system::sleepMilliseconds(holdTime);
+        timing::sleepMilliseconds(holdTime);
         if (verboseMode)
             std::cout << ch << std::endl;
 
@@ -327,7 +327,7 @@ namespace MIA_system
     
         POINT cursor;
     
-        MIA_system::sleepMilliseconds(wait);
+        timing::sleepMilliseconds(wait);
         GetCursorPos(&cursor);
     
         cout << ".." << endl;
@@ -458,7 +458,7 @@ namespace MIA_system
     {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
         SetCursorPos(x,y);
-        MIA_system::sleepMilliseconds(40);
+        timing::sleepMilliseconds(40);
 #endif
     }
     
@@ -549,25 +549,25 @@ namespace MIA_system
     
     void VirtualKeyStrokes::buttonSpam(const std::string& button, int amount, int pause)
     {
-        MIA_system::sleepMilliseconds(5); //Waits 5 seconds before beginning.
+        timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
     
         for (int i=0;i<amount;i++)
         {
             type(button);
-            MIA_system::sleepMilliseconds(pause);
+            timing::sleepMilliseconds(pause);
         }
     }
     
     void VirtualKeyStrokes::buttonSpamTab(const std::string& button, int amount, int pause)
     {
-        MIA_system::sleepMilliseconds(5); //Waits 5 seconds before beginning.
+        timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
     
         for (int i=0;i<amount;i++)
         {
             type(button);
             defaultSleep();
             tab();
-            MIA_system::sleepMilliseconds(pause);
+            timing::sleepMilliseconds(pause);
         }
     }
     
@@ -599,4 +599,4 @@ namespace MIA_system
         else
             return ClickType::UNKNOWN;
     }
-} // namespace MIA_system
+} // namespace virtual_keys
