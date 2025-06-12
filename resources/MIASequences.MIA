@@ -44,7 +44,7 @@ ENDOFSEQUENCE
 # Spam left click - used for random clicker things.
 ###################################################
 SEQUENCENAME=spam_left_click
-DELAY=2
+DELAY=5
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
