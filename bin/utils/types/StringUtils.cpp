@@ -13,6 +13,7 @@
 #include <random>
 #include <vector>
 #include <ctime>
+#include <algorithm>
 
 // The corresponding header file.
 #include "StringUtils.hpp"
@@ -147,7 +148,7 @@ namespace StringUtils
     string shuffleString(string input)
     {
         string output = std::move(input);
-        shuffle(output.begin(), output.end(), std::mt19937(std::random_device()()));
+        std::shuffle(output.begin(), output.end(), std::mt19937(std::random_device()()));
         return output;
     }
     
