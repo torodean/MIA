@@ -1,0 +1,30 @@
+\chapter{Automated Features and CI/CD Pipeline}
+\label{ch:ci-cd}
+\pagestyle{fancy}
+
+This chapter documents the automation and continuous integration mechanisms used in the project. The goal is to ensure consistent, reproducible builds and automated testing during development.
+
+\section{GitHub Actions: Build and Test Pipeline}
+\label{sec:github-actions}
+
+The project uses GitHub Actions for continuous integration. The primary workflow is defined in the file \texttt{.github/workflows/tests.yml}. This workflow is configured to automatically build the project and run tests when changes are pushed to the \texttt{main} branch or when a pull request is opened, but only if the \texttt{bin/} directory is modified.
+
+\subsection*{Trigger Conditions}
+
+The workflow is triggered on:
+\begin{itemize}
+	\item \textbf{Push} events to the \texttt{main} branch.
+	\item \textbf{Pull requests} targeting \texttt{main}.
+\end{itemize}
+However, it only runs if files inside the \texttt{bin/} directory have been modified. This is specified using the \texttt{paths} filter in the workflow configuration.
+
+\subsection*{Workflow Steps}
+
+The workflow consists of the following steps:
+\begin{enumerate}
+	\item \textbf{Checkout the repository.} Uses the \texttt{actions/checkout@v3} action to retrieve the code.
+	\item \textbf{Install dependencies.} Runs the \texttt{scripts/setup.sh} script, which installs required packages including CMake, compilers, and Google Test.
+	\item \textbf{Configure and build.} Executes the \texttt{build.sh -v} script to configure and compile the project using CMake.
+	\item \textbf{Run tests.} Runs \texttt{ctest} on the \texttt{build/} directory and prints test output on failure.
+\end{enumerate}
+This automation ensures that every relevant code change is verified through build and test steps without manual intervention, improving code reliability and reducing regressions.
