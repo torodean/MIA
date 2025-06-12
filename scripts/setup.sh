@@ -6,7 +6,7 @@
 sudo apt-get update
 sudo apt-get install -y cmake
 sudo apt-get install -y libxdo-dev
-sudo apt-get install libmysqlcppconn-dev
+sudo apt-get install -y libmysqlcppconn-dev
 
 
 # Setup gtest for testing

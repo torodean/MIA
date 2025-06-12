@@ -1,0 +1,22 @@
+name: CMake Build and Test
+
+on:
+  push:
+    branches: main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: ./scripts/setup.sh
+      
+    - name: Configure and build
+      run: ./build.sh -v
+
+    - name: Run tests
+      run: ctest --test-dir build --output-on-failure
