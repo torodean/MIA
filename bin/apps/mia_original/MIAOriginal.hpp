@@ -14,8 +14,6 @@
 // Used for command options.
 #include "CommandOption.hpp"
 
-#include "D3CEncrypt.hpp"
-#include "D3CEncryptPW.hpp"
 #include "Commands.hpp"
 
 /**
@@ -60,8 +58,6 @@ private:
     
     /// Create an instance of various utility classes.
     Commands cmd;
-    D3CEncrypt d0s1;
-    D3CEncryptPW d0s2;
     
     /**
      * Prints the splash screen for MIA. Prints the original MIA splash screen.

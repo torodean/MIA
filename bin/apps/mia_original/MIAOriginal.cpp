@@ -20,6 +20,10 @@
 #include "Constants.hpp"
 #include "Paths.hpp"
 
+// Used for encryption features.
+#include "D3CEncrypt.hpp"
+#include "D3CEncryptPW.hpp"
+
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     #include "windows/WindowsUtilities.hpp"
@@ -238,16 +242,16 @@ void MIAOriginal::performMIACommand(string& input)
             printMIAHelp();
             break;
         case Commands::MIAInput::CRYPT_D0S1:
-            d0s1.d0s1CryptRunner();
+            d0s1::d0s1CryptRunner();
             break;
         case Commands::MIAInput::DECRYPT_D0S1:
-            d0s1.d0s1DeCryptRunner();
+            d0s1::d0s1DeCryptRunner();
             break;
         case Commands::MIAInput::CRYPT_D0S2:
-            d0s2.d0s2CryptRunner();
+            d0s2::d0s2CryptRunner();
             break;
         case Commands::MIAInput::DECRYPT_D0S2:
-            d0s2.d0s2DeCryptRunner();
+            d0s2::d0s2DeCryptRunner();
             break;
         case Commands::MIAInput::ENTANGLETEXT:
             Commands::entangleTextRunner();
