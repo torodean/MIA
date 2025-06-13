@@ -18,9 +18,10 @@
 #include "Error.hpp"
 #include "MIAException.hpp"
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+
+#if defined(IS_WINDOWS)
     #pragma comment (lib, "gdi32.lib")
-#elif __linux__
+#elif defined(__linux__)
     #include <X11/extensions/XTest.h>
 #endif
 
@@ -30,13 +31,13 @@ namespace virtual_keys
 {
     VirtualKeyStrokes::VirtualKeyStrokes()
     {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
     	// Set up a generic keyboard event.
         ip.type = INPUT_KEYBOARD;
         ip.ki.wScan = 0; // hardware scan code for key
         ip.ki.time = 0;
         ip.ki.dwExtraInfo = 0;
-    #elif __linux__
+    #elif defined(__linux__)
         xdo = xdo_new(":1.0");
         display = XOpenDisplay(nullptr);
     #endif
@@ -67,7 +68,7 @@ namespace virtual_keys
     
     void VirtualKeyStrokes::press(const char& character, int holdTime, bool verboseMode)
     {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
         if (std::isdigit(character)) 
         {
             pressNumber(character - '0', holdTime, verboseMode);
@@ -102,7 +103,7 @@ namespace virtual_keys
             std::string err = std::to_string(character);
             throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
         }
-    #elif __linux__
+    #elif defined(__linux__)
         bool skipHold = false;
         if (std::isdigit(static_cast<unsigned char>(character)) || 
             std::isalpha(static_cast<unsigned char>(character)) ) 
@@ -146,7 +147,7 @@ namespace virtual_keys
     }
     
     
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
     
     void VirtualKeyStrokes::pressNumber(int num, int holdTime, bool verboseMode)  
     {
@@ -402,7 +403,7 @@ namespace virtual_keys
     
     void VirtualKeyStrokes::leftclick(bool verboseMode)
     {
-	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(IS_WINDOWS)
         INPUT Input;
         // left down
         Input.type = INPUT_MOUSE;
@@ -418,7 +419,7 @@ namespace virtual_keys
         Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
         SendInput(1,&Input,sizeof(INPUT));        
         timing::sleepMilliseconds(2*globalSleep);
-    #elif __linux__
+    #elif defined(__linux__)
         // Press left button (Button1)
         XTestFakeButtonEvent(display, 1, True, CurrentTime);
 
@@ -434,7 +435,7 @@ namespace virtual_keys
     
     void VirtualKeyStrokes::rightclick(bool verboseMode)
     {
-	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(IS_WINDOWS)
         INPUT Input;
         // right down
         Input.type = INPUT_MOUSE;
@@ -450,7 +451,7 @@ namespace virtual_keys
         Input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
         SendInput(1,&Input,sizeof(INPUT));
         timing::sleepMilliseconds(2*globalSleep);
-    #elif __linux__
+    #elif defined(__linux__)
         // Press right button (Button1)
         XTestFakeButtonEvent(display, 3, True, CurrentTime);
 
@@ -481,15 +482,17 @@ namespace virtual_keys
     
     void VirtualKeyStrokes::moveMouseTo(int x, int y)
     {
-	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(IS_WINDOWS)
         SetCursorPos(x,y);
         timing::sleepMilliseconds(40);
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 	#endif
     }
     
     void VirtualKeyStrokes::minus(bool verboseMode)
     {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
     
         // Press the "-" key
         ip.ki.wVk = VK_OEM_MINUS; // virtual-key code for the "-" key
@@ -503,14 +506,14 @@ namespace virtual_keys
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
-    #elif __linux__
+    #elif defined(__linux__)
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "minus", 0);
     #endif
     }
     
     void VirtualKeyStrokes::equal(bool verboseMode)
     {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
     
         // Press the "=" key
         ip.ki.wVk = VK_OEM_PLUS; // virtual-key code for the "=" key
@@ -524,14 +527,14 @@ namespace virtual_keys
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
-    #elif __linux__
+    #elif defined(__linux__)
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "equal", 0);
     #endif
     }
     
     void VirtualKeyStrokes::space(bool verboseMode)
     {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
     
         // Press the "space" key
         ip.ki.wVk = VK_SPACE; // virtual-key code for the "space" key
@@ -546,14 +549,14 @@ namespace virtual_keys
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
-    #elif __linux__
+    #elif defined(__linux__)
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "space", 0);
     #endif
     }
     
     void VirtualKeyStrokes::tab(bool verboseMode)
     {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
     
         // Press the "tab" key
         ip.ki.wVk = VK_TAB; // virtual-key code for the "tab" key
@@ -567,7 +570,7 @@ namespace virtual_keys
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
-    #elif __linux__
+    #elif defined(__linux__)
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Tab", 0);
     #endif
     }

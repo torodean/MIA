@@ -142,6 +142,43 @@ While macros can have drawbacks such as reduced type safety and debugging comple
 
 
 
+
+
+
+
+
+\section{Cross-Platform Support}
+
+The \texttt{MIA} project is designed to be cross-platform, with support for both Windows and Linux systems (and maybe more at later dates). This portability is achieved in part through the use of preprocessor macros that enable platform-specific compilation paths where necessary.
+
+A key component of this system is the use of centralized platform detection macros defined in the \texttt{constants.hpp} file, which is included in the \texttt{Framework\_CORE} CMake library. These macros simplify platform checks throughout the codebase by abstracting away verbose compiler-defined flags. This code (which will look something like the example below) defines platform-specific macros, \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX}, based on standard compiler-defined macros. The purpose is to centralize platform detection logic in one place for easier maintenance and extension when supporting additional platforms.
+
+By defining \texttt{IS\_WINDOWS} when any common Windows-related macros are detected, and \texttt{IS\_LINUX} when the Linux macro \texttt{\_\_linux\_\_} is detected, the code enables simpler conditional compilation. Developers can then write platform-specific code using straightforward checks like \texttt{\#ifdef IS\_WINDOWS} or \texttt{\#if defined(IS\_LINUX)} rather than repeating complex or lengthy preprocessor conditionals throughout the codebase.
+
+\begin{lstlisting}[style=cppstyle]
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#define IS_WINDOWS
+#elif defined(__linux__)
+	#define IS_LINUX
+#endif
+\end{lstlisting}
+
+By defining \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX} in a single, shared header, platform-specific logic in the rest of the code can be expressed clearly and concisely using \texttt{\#ifdef} or \texttt{\#if defined(...)} blocks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{CMake Setup}
 \label{sec:CMake-setup}
 

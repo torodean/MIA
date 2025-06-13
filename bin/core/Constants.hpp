@@ -11,6 +11,21 @@
 #include <string>
 
 /**
+ * Defines platform-specific macros (IS_WINDOWS, IS_LINUX) to simplify preprocessor checks.
+ * They are placed here so they are in a centralized location and can be easily changed everywhere
+ * if additions or new platforms are added.
+ * This allows using the following instead of repeating long platform-specific conditionals:
+ *     #ifdef IS_WINDOWS || #if defined(IS_WINDOWS)
+ *     #ifdef IS_LINUX || #if defined(IS_LINUX)
+ */
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #define IS_WINDOWS
+#elif defined(__linux__)
+    #define IS_LINUX
+#endif
+
+
+/**
  * @namespace constants
  * @brief Provides global constants.
  *

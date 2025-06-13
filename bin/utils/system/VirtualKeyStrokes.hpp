@@ -15,9 +15,12 @@
 #include <iostream>
 #include <cstdio>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+/// Used for preprocessor definitions.
+#include "Constants.hpp"
+
+#if defined(IS_WINDOWS)
     #include <windows.h>
-#elif __linux__
+#elif defined(__linux__)
     #include <X11/Xlib.h>
     extern "C" 
     {
@@ -87,7 +90,7 @@ namespace virtual_keys
          */
         void type(const std::string& word);
     
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
 
         /**
          * @brief Simulates pressing a number key (0–9) using virtual key codes.
@@ -188,8 +191,10 @@ namespace virtual_keys
          */
         void buttonSpamTab(const std::string& button, int amount, int pause);
 		
-	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+	#if defined(IS_WINDOWS)
+	
         void getRGB(COLORREF& color, int& r, int& g, int& b);
+        
 	#endif
     
     private:
@@ -197,9 +202,12 @@ namespace virtual_keys
         /// Global time to sleep between each key press (in ms).
         int globalSleep = 10;
     
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+    #if defined(IS_WINDOWS)
+    
         INPUT ip;
-    #elif __linux__
+        
+    #elif defined(__linux__)
+    
         /**
          * This pointer is used for the xdotool which can simulate key strokes on linux through X11.
          * Useful docs of the library and related files can be found here"
@@ -216,6 +224,7 @@ namespace virtual_keys
          * Used internally for issuing fake mouse events via the XTest extension.
          */
         Display *display;
+        
     #endif
     }; // class VirtualKeyStrokes
 } // namespace virtual_keys
