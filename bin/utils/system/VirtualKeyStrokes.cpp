@@ -19,7 +19,9 @@
 #include "MIAException.hpp"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-#pragma comment (lib, "gdi32.lib")
+    #pragma comment (lib, "gdi32.lib")
+#elif __linux__
+    #include <X11/extensions/XTest.h>
 #endif
 
 using std::string;
@@ -36,6 +38,7 @@ namespace virtual_keys
         ip.ki.dwExtraInfo = 0;
     #elif __linux__
         xdo = xdo_new(":1.0");
+        display = XOpenDisplay(nullptr);
     #endif
     }
     
@@ -43,6 +46,7 @@ namespace virtual_keys
     {
     #if __linux__
         delete xdo;
+        XCloseDisplay(display);
     #endif
     }
     
@@ -414,6 +418,17 @@ namespace virtual_keys
         Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
         SendInput(1,&Input,sizeof(INPUT));        
         timing::sleepMilliseconds(2*globalSleep);
+    #elif __linux__
+        // Press left button (Button1)
+        XTestFakeButtonEvent(display, 1, True, CurrentTime);
+
+        if (verboseMode)
+            std::cout << "LEFT CLICK" << std::endl;
+
+        // Release left button
+        XTestFakeButtonEvent(display, 1, False, CurrentTime);
+        XFlush(display);
+        timing::sleepMilliseconds(2*globalSleep);
 	#endif
     }
     
@@ -434,6 +449,17 @@ namespace virtual_keys
         Input.type = INPUT_MOUSE;
         Input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
         SendInput(1,&Input,sizeof(INPUT));
+        timing::sleepMilliseconds(2*globalSleep);
+    #elif __linux__
+        // Press right button (Button1)
+        XTestFakeButtonEvent(display, 3, True, CurrentTime);
+
+        if (verboseMode)
+            std::cout << "RIGHT CLICK" << std::endl;
+
+        // Release right button
+        XTestFakeButtonEvent(display, 3, False, CurrentTime);
+        XFlush(display);
         timing::sleepMilliseconds(2*globalSleep);
 	#endif
     }

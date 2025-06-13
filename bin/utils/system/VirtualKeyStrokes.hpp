@@ -18,6 +18,7 @@
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     #include <windows.h>
 #elif __linux__
+    #include <X11/Xlib.h>
     extern "C" 
     {
     #include <xdo.h>
@@ -207,6 +208,14 @@ namespace virtual_keys
          * https://wiki.linuxquestions.org/wiki/List_of_keysyms
          */
         xdo_t *xdo;
+        
+        /**
+         * @brief Pointer to the X11 display connection used for simulating input events.
+         *
+         * Initialized with XOpenDisplay(nullptr) to connect to the default display.
+         * Used internally for issuing fake mouse events via the XTest extension.
+         */
+        Display *display;
     #endif
     }; // class VirtualKeyStrokes
 } // namespace virtual_keys
