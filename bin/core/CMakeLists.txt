@@ -39,3 +39,4 @@ target_link_libraries(Framework_CORE PUBLIC Constants_LIB BasicUtilities_CORE)
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(Framework_CORE PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_subdirectory( test )

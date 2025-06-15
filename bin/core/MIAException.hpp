@@ -38,6 +38,17 @@ namespace error
         { 
             cachedWhatMessage = getErrorDescription(code) + (details.empty() ? "" : (" " + details));
         }
+        
+        /**
+         * @brief Constructs a MIAException with the given error code and message.
+         * @param code The ErrorCode indicating the type of error.
+         * @param details A descriptive message explaining the details of the error (default = "").
+         */
+        MIAException(ErrorCode code, const char* details)
+            : errorCode(code), errorDetails(details) 
+        { 
+            cachedWhatMessage = getErrorDescription(code) + (std::string(details).empty() ? "" : (" " + std::string(details)));
+        }
     
         /**
          * @brief Returns a C-style character string describing the error.
