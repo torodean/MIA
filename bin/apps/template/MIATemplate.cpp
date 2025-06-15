@@ -113,7 +113,7 @@ int MIATemplate::run()
         configFileVals.printConfigValues();
         log("MIATemplate: Logging a test message!", true);
         if (getVerboseMode())
-            std::cout << "Verbose mode enabled!" << std::endl;
+            std::cout << "Verbose mode enabled!" << std::endl; // This line used for testing verbose mode.
         std::cout << "Test mode finished! Exiting!" << std::endl;
         return 0;
     }
