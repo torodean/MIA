@@ -23,3 +23,8 @@ add_test(NAME MIAConfig_T COMMAND MIAConfig_T )
 add_executable(Logger_T Logger_T.cpp)
 target_link_libraries(Logger_T PRIVATE Framework_CORE GTest::gtest_main)
 add_test(NAME Logger_T COMMAND Logger_T )
+
+# Add tests for the AppFramework features.
+add_executable(AppFramework_T AppFramework_T.cpp)
+target_link_libraries(AppFramework_T PRIVATE Framework_CORE GTest::gtest_main)
+add_test(NAME AppFramework_T COMMAND AppFramework_T )
