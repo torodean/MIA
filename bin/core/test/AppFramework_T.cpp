@@ -32,7 +32,6 @@ public:
 // Test that ValidApp satisfies AppInterface and runApp calls initialize and run correctly
 TEST(AppFramework, ValidAppRunsCorrectly)
 {
-    ValidApp app;
     int argc = 0;
     char** argv = nullptr;
 
