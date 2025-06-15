@@ -13,3 +13,13 @@ add_test(NAME CommandOption_T COMMAND CommandOption_T )
 add_executable(CommandParser_T CommandParser_T.cpp)
 target_link_libraries(CommandParser_T PRIVATE Framework_CORE GTest::gtest_main)
 add_test(NAME CommandParser_T COMMAND CommandParser_T )
+
+# Add tests for the MIAConfig features.
+add_executable(MIAConfig_T MIAConfig_T.cpp)
+target_link_libraries(MIAConfig_T PRIVATE Framework_CORE GTest::gtest_main)
+add_test(NAME MIAConfig_T COMMAND MIAConfig_T )
+
+# Add tests for the Logger features.
+add_executable(Logger_T Logger_T.cpp)
+target_link_libraries(Logger_T PRIVATE Framework_CORE GTest::gtest_main)
+add_test(NAME Logger_T COMMAND Logger_T )
