@@ -19,7 +19,10 @@
 
 
 /**
- * A template app.
+ * A template app. 
+ * IMPORTANT: This app is setup in a way which tests various key features of the
+ * application framework. Some of these features should be modified with care and
+ * consideration for the automated tests which use this app.
  */
 class MIATemplate : public MIAApplication
 {
@@ -71,6 +74,9 @@ private:
     };
     TemplateConfig configFileVals; 
     
+    /// The name of the defauilt config file that this class uses.
+    std::string defaultConfigFile{"MIATemplate.MIA"};
+    
     /// The configuration loader for this app.
     config::MIAConfig config;
 
@@ -80,9 +86,6 @@ private:
     
     /// Stores whether testOpt was specified or not.
     bool testMode{false};
-    
-    /// The name of the defauilt config file that this class uses.
-    std::string defaultConfigFile{"MIATemplate.MIA"};
     
     /// Load the configuration variables.
     void loadConfig();

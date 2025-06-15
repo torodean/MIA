@@ -50,7 +50,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 
 void MIATemplate::loadConfig()
 {
-    LOG_METHOD_CALL();
+    LOG_METHOD_CALL(); // Used for testing log file calls.
     try
     {
         // Load configuration here.
@@ -90,7 +90,7 @@ void MIATemplate::TemplateConfig::printConfigValues() const
     std::cout << "Printing values read in from the configuration file!" << std::endl;
     std::cout << "boolValue: " << std::boolalpha << boolValue << std::endl;
     std::cout << "intValue: " << intValue << std::endl;
-    std::cout << "doubleValue: " << doubleValue << std::endl;
+    std::cout << "doubleValue: " << std::setprecision(10) << doubleValue << std::endl;
     std::cout << "stringValue: " << stringValue << std::endl;
     std::cout << "listValue: ";
     for (const auto& item : listValue) 
@@ -104,7 +104,7 @@ void MIATemplate::TemplateConfig::printConfigValues() const
 
 int MIATemplate::run()
 {
-    LOG_METHOD_CALL();
+    LOG_METHOD_CALL(); // Used for testing log file calls.
     std::cout << "Loading MIATemplate app!" << std::endl;
     
     if(testMode)
@@ -112,6 +112,8 @@ int MIATemplate::run()
         std::cout << "Test mode running!" << std::endl;
         configFileVals.printConfigValues();
         log("MIATemplate: Logging a test message!", true);
+        if (getVerboseMode())
+            std::cout << "Verbose mode enabled!" << std::endl;
         std::cout << "Test mode finished! Exiting!" << std::endl;
         return 0;
     }

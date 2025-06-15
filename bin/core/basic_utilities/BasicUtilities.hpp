@@ -53,8 +53,23 @@ namespace BasicUtilities
     /**
      * @brief Checks if a directory exists, and optionally creates it if it does not.
      * @param path The path to the directory.
-     * @param createIfMissing If true, the directory will be created (including parent directories) if it doesn't exist.
+     * @param createIfMissing If true, the directory will be created (including parent directories) 
+     *     if it doesn't exist. This will default to true.
      * @return true if the directory exists or was successfully created; false otherwise.
      */
-    bool ensureDirectoryExists(const std::string& path, bool createIfMissing = false);
+    bool ensureDirectoryExists(const std::string& path, bool createIfMissing = true);
+    
+    /**
+     * @brief Ensures that a file exists at the given path.
+     * 
+     * Checks if the file exists. If it does, returns true.
+     * If it doesn't exist and createIfMissing is true, creates an empty file.
+     * Returns false if the path exists but is not a regular file, or on error.
+     * 
+     * @param path The path to the file.
+     * @param createIfMissing If true, the directory will be created (including parent directories) 
+     *     if it doesn't exist. This will default to true.
+     * @return true if file exists or was successfully created, false otherwise.
+     */
+    bool ensureFileExists(const std::string& path, bool createIfMissing = true);
 }

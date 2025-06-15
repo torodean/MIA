@@ -11,3 +11,5 @@ endif()
 if(RELEASE_BUILD)
     install(TARGETS MIATemplate DESTINATION ${RELEASE_INSTALL_LOCATION})
 endif()
+
+add_subdirectory( test )

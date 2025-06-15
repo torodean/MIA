@@ -36,7 +36,11 @@ MIAApplication::MIAApplication() :
 void MIAApplication::initialize(int argc, char* argv[])
 {
     try
-    {    
+    {
+        // Set the executable name.
+        executableName = argv[0];
+        
+        // Set the command option parameters for verbose and help.
         verboseOpt.getOptionVal<bool>(argc, argv, verboseMode);
         helpOpt.getOptionVal<bool>(argc, argv, helpRequested);
         
@@ -64,7 +68,8 @@ void MIAApplication::initialize(int argc, char* argv[])
 
 void MIAApplication::printHelp() const
 {
-    std::cout << "Base MIA application options:" << std::endl
+    std::cout << "Usage: " << executableName << " [args]" << std::endl
+              << "Base MIA application options:" << std::endl
               << verboseOpt.getHelp() << std::endl
               << helpOpt.getHelp()  << std::endl
               << logFileOpt.getHelp()  << std::endl

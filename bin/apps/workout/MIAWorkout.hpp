@@ -54,6 +54,9 @@ private:
      */
     void generateWorkout();
     
+    /// The name of the defauilt config file that this class uses.
+    std::string defaultConfigFile{"MIAWorkout.MIA"};
+    
     /// The configuration loader for this app.
     config::MIAConfig config;
 
@@ -76,9 +79,6 @@ private:
     double minNumOfExercises{3.0}, maxNumOfExercises{std::numeric_limits<double>::infinity()};
     /// The min and max number of exercises.
     double minNumOfSets{3.0}, maxNumOfSets{std::numeric_limits<double>::infinity()};
-    
-    /// The name of the defauilt config file that this class uses.
-    std::string defaultConfigFile{"MIAWorkout.MIA"};
     
     /// Load the configuration variables.
     void loadConfig();

@@ -14,6 +14,7 @@
 #include <sstream>
 #include <filesystem>
 #include <iostream>
+#include <fstream>
 
 // Include the associated header file.
 #include "BasicUtilities.hpp"
@@ -91,6 +92,46 @@ namespace BasicUtilities
             return false;
         }        
         catch (const std::filesystem::filesystem_error& e) 
+        {
+            std::cerr << "Filesystem error: " << e.what() << std::endl;
+            return false;
+        }
+    }
+    
+    
+    /**
+     * @brief Ensures that a file exists at the given path.
+     * 
+     * Checks if the file exists. If it does, returns true.
+     * If it doesn't exist and createIfMissing is true, creates an empty file.
+     * Returns false if the path exists but is not a regular file, or on error.
+     * 
+     * @param path The path to the file.
+     * @param createIfMissing Whether to create an empty file if missing.
+     * @return true if file exists or was successfully created, false otherwise.
+     */
+    bool ensureFileExists(const std::string& path, bool createIfMissing)
+    {
+        try
+        {
+            namespace fs = std::filesystem;
+            fs::path filePath(path);
+
+            if (fs::exists(filePath))
+            {
+                return fs::is_regular_file(filePath);
+            }
+
+            if (createIfMissing)
+            {
+                // Create an empty file
+                std::ofstream ofs(path);
+                return ofs.good();
+            }
+
+            return false;
+        }
+        catch (const std::filesystem::filesystem_error& e)
         {
             std::cerr << "Filesystem error: " << e.what() << std::endl;
             return false;

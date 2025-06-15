@@ -87,6 +87,12 @@ protected:
      */
     virtual void printHelp() const;
     
+    /**
+     * Returns the executable name if needed. 
+     */
+    std::string getExecutableName()
+    { return executableName; } 
+    
 private:
     /// Base command options used by the MIAApplication.
     CommandOption verboseOpt;
@@ -101,6 +107,9 @@ private:
     
     /// True if the user specified the help flag in command options.
     bool helpRequested{false};
+    
+    /// Store the executable name for use in the help message.
+    std::string executableName;
 };
 
 // TODO: Replace macros with an inline method using C++20 std::source_location

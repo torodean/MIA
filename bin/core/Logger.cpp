@@ -7,6 +7,7 @@
  
 #include <string>
 #include <iostream>
+#include <filesystem>
 
 // Include the associated header file.
 #include "Logger.hpp"
@@ -42,6 +43,9 @@ namespace logger
         {
             fullpath = paths::getDefaultLogDirToUse() + "/" + filename;
         }
+        
+        if (!BasicUtilities::ensureFileExists(fullpath))
+            MIA_THROW(error::ErrorCode::Failed_To_Open_File);
         
         std::ofstream ofs(fullpath, std::ios::app);
         if (ofs.is_open())
@@ -128,6 +132,9 @@ namespace logger
         {
             currentLogFileFullPath = paths::getDefaultLogDirToUse() + "/" + currentLogFileName;
         }
+        
+        if (!BasicUtilities::ensureFileExists(currentLogFileFullPath))
+            MIA_THROW(error::ErrorCode::Failed_To_Open_File);
     
         logStream.open(currentLogFileFullPath, std::ios::app);
         if (!logStream.is_open())

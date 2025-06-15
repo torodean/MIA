@@ -12,7 +12,8 @@
 # Do not include spaces unless within a string variable. 
 # This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
 
-# some template configuration parameters.
+# some template configuration parameters. 
+# IMPORTANT: These are also used for automated testing and should not be changed.
 MyBoolValue=true
 myIntValue=314
 myDoubleValue=3.141592
