@@ -61,8 +61,7 @@ namespace constants
     struct Coordinate 
     {
         Coordinate(int x_val = 0, int y_val = 0) : x(x_val), y(y_val) {}
-        
-        int x;
-        int y;
+        /// Storage for the coordinate values.
+        int x, y;
     };
 } // namespace constants
