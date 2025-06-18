@@ -62,9 +62,8 @@ namespace constants
      * This enumeration defines general-purpose status codes that can be returned
      * by functions or entire applications to indicate the outcome of an operation.
      * 
-     * It is scoped as an enum class to enforce type safety and prevent accidental
-     * misuse or implicit conversions. Additional return codes can be added to
-     * represent more specific error or success states as needed by the application.
+     * Additional return codes can be added to represent more specific error or success 
+     * states as needed by the application.
      */
     enum ReturnCode: int
     {
