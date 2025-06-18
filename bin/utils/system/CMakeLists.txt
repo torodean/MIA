@@ -1,7 +1,12 @@
 
 # Create the System_UTIL
-set(System_SRC Timing.cpp VirtualKeyStrokes.cpp )
-set(System_INC Timing.hpp VirtualKeyStrokes.hpp )
+set(System_SRC 
+    Timing.cpp 
+    VirtualKeyStrokes.cpp )
+set(System_INC 
+    Timing.hpp 
+    VirtualKeyStrokes.hpp 
+    TerminalColors.hpp )
 add_library(System_UTIL ${System_SRC} ${System_INC})
 target_link_libraries(System_UTIL PUBLIC Framework_CORE)
 if(UNIX AND NOT APPLE AND NOT CYGWIN)

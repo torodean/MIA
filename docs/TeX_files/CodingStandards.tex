@@ -11,17 +11,17 @@ Since this project was (and still is at the time of writing this) solely for per
 \section{C++ Coding Standards}
 
 \subsection{Formatting and Style}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item \textbf{Indentation}: Use \texttt{spaces} with a width of \texttt{4} spaces.
     \item \textbf{Line length}: Limit lines to \texttt{120} to \texttt{140} characters. Traditionally, less characters are used. However, with newer computers and displays, this rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time wth an additional file-browser window. The range in values comes from a standput of developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the, range allows the developer to use discretion based on the code itself. 
     \item \textbf{Brace placement}: \texttt{Allman}. Although the original MIA project was in K\&R format, I've chosen to move to \texttt{Allman} as of version 2. The benefits of Allman include the following:    
-    \begin{itemize}
+    \begin{itemize}\itemsep0em
         \item Aligned Blocks: With Allman, readability is often enhanced because you do not have to visually search the end of variable-length lines for brackets or rely on tabs. Allman can help reduce cognitive load when scanning code. All brackets are at the start of the line and aligned with the ending bracket. 
         \item Clearly Separated Blocks: This style makes each block of code more clearly separated.
         \item Commenting: The initial bracket of a code block can serve as a perfect spot for a brief comment related to the block itself. 
     \end{itemize}
     \item \textbf{Naming conventions}:
-    \begin{itemize}
+    \begin{itemize}\itemsep0em
         \item Classes and structs: \texttt{PascalCase}
         \item Enums and typedefs: \texttt{PascalCase}
         \item Functions and methods: \texttt{camelCase}
@@ -31,7 +31,7 @@ Since this project was (and still is at the time of writing this) solely for per
 \end{itemize}
 
 \subsection{Code Organization and Practices}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Header files should include include guards or \texttt{\#pragma once}.
     \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \texttt{std::unique\_ptr} and \texttt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
     \item Avoid using \texttt{using namespace std;} in headers. Placing \texttt{using namespace} directives in headers pollutes the global namespace for any file that includes that header, potentially causing name collisions and ambiguous references. This can lead to subtle and hard-to-debug errors, especially in large codebases or when integrating with third-party libraries. Instead, fully qualify names (i.e., \texttt{std::vector}) in headers to keep dependencies explicit and avoid unintended side effects.
@@ -53,7 +53,7 @@ Object-oriented abstractions such as virtual classes and the PIMPL (Pointer to I
 \subsubsection*{Virtual Classes and Abstract Interfaces}
 
 Abstract classes (i.e., classes with pure virtual functions) should be used to define clean, minimal interfaces that enable polymorphism and decouple high-level logic from specific implementations. These interfaces are particularly appropriate in the following cases:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Multiple interchangeable implementations are required.
     \item Code must be testable via mocks or stubs.
     \item A plugin or extensibility mechanism is being designed.
@@ -63,7 +63,7 @@ Avoid over-engineering by introducing interfaces prematurely. When there is no c
 \subsubsection*{PIMPL Idiom}
 
 The PIMPL idiom may be used to encapsulate implementation details and reduce compilation dependencies, particularly for public interfaces that are expected to remain stable while their internals may change. Its use must be justified by the need to isolate dependencies, improve build performance, or enforce ABI stability. The PIMPL (Pointer to Implementation) idiom is used to:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Hide private data members and internal implementation details.
     \item Reduce build dependencies and improve compilation times.
     \item Achieve binary interface stability across library versions.
@@ -93,7 +93,7 @@ private:
 
 \paragraph{Usage Guidelines}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Use virtual functions only where dynamic behavior is explicitly required.
     \item Keep interfaces small, focused, and consistent.
     \item Use PIMPL for library boundaries or complex internals where ABI stability or encapsulation justifies the added indirection.
@@ -109,7 +109,7 @@ By adhering to these principles, the code remains both flexible and maintainable
 \subsubsection*{C++ Attribute Specifiers}
 
 C++ standard attributes such as \texttt{\textbf{[[deprecated]]}}, \texttt{\textbf{[[maybe\_unused]]}}, and others should be used appropriately to enhance clarity, compiler diagnostics, and maintainability.
-\begin{itemize}
+\begin{itemize}\itemsep0em
   \item \textbf{\texttt{[[deprecated]]}} \\
   Use to mark deprecated interfaces explicitly. Always include an explanatory message:
   \begin{lstlisting}[style=cppstyle]
@@ -132,7 +132,7 @@ Use attribute specifiers only when their intended behavior is part of the API co
 \subsubsection*{\texttt{override} and \texttt{final} Usage}
 
 All overridden virtual methods must be explicitly marked with \texttt{override}. Do \textbf{not} use the \texttt{virtual} keyword on the overriding declaration.
-\begin{itemize}
+\begin{itemize}\itemsep0em
   \item Correct:
   \begin{lstlisting}[style=cppstyle]
 void onStart() override;
@@ -154,7 +154,7 @@ void onShutdown() final;
 All code elements including classes, namespaces, methods, typedefs, variables, and files must have Doxygen comments. These comments should primarily be placed in header files to serve as the main documentation source. For methods not declared in headers but implemented in \texttt{.cpp} files, corresponding Doxygen comments should be added in the implementation files. In-code comments must be sufficiently informative to allow any developer to understand the purpose, usage, and modification requirements of the code without needing to consult external documentation. This includes describing the intent of classes and methods, explaining parameters and return values, and clarifying design decisions where applicable.
 
 In \texttt{.cpp} implementation files, comments should be added at the developer’s discretion but are ideally included:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Before blocks of code that perform distinct tasks,
     \item When specific literal values or “magic numbers” are used for particular reasons,
     \item Where behavior might not be immediately clear from the code itself,
@@ -167,7 +167,7 @@ For ease of navigation and maintenance, closing braces of namespaces, classes, a
 This convention helps match braces quickly without excessive scrolling.
 
 \subsubsection*{Additional guidelines}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Avoid redundant comments that restate obvious code.
     \item Use complete sentences, present tense, punctuation, and consistent phrasing for clarity.
     \item Use consistent terminology and formatting in all comments.
@@ -202,7 +202,7 @@ For single-line comments that document member variables, use \texttt{///} direct
 std::string configFileName;
 \end{lstlisting}
 \textbf{Guidelines:}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Use \texttt{///} rather than \texttt{//} for documentation intended to be parsed by tools like Doxygen.
     \item Comments must describe the purpose or semantics of the variable, not its type or structure (which should be clear from the code).
     \item Maintain grammatical consistency and use proper punctuation.
@@ -243,7 +243,7 @@ settings.setTimeout(DEFAULT_TIMEOUT);
 settings.setTimeout(DEFAULT_TIMEOUT);
 \end{lstlisting}
 \textbf{Guidelines:}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Place standalone comments on their own line above the code they describe.
     \item Use inline comments sparingly and only when the code is not self-explanatory.
     \item Do not restate what the code does—explain why it does it, if not obvious.
@@ -255,7 +255,7 @@ settings.setTimeout(DEFAULT_TIMEOUT);
 \subsection{README Files and Higher-Level Documentation}
 
 Each code directory must contain a \texttt{README} file that provides a concise overview of the directory’s purpose. The README should include:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item A brief description of the contents of the directory (key files, subfolders).
     \item The role and relationship of these files or components within the larger project.
     \item Any special instructions or notes relevant to developers navigating or modifying the directory.
@@ -263,7 +263,7 @@ Each code directory must contain a \texttt{README} file that provides a concise 
 This ensures quick orientation for developers and aids maintainability across the codebase.
 
 At the project level, comprehensive documentation is maintained in the main MIA manual. This manual offers a high-level overview of:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item The complete set of features and functionality.
     \item Descriptions of libraries and core components.
     \item Available tools and utilities.
@@ -296,7 +296,7 @@ This directory contains the standalone apps for the MIA project. Below is a brie
 
 \subsection{Structure and Conventions}
 A clean CMake structure improves build reproducibility and portability. Modern practices enable more maintainable and scalable build definitions. Clear separation of targets and dependencies reduces cross-target pollution.
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Use lowercase CMake commands (i.e., \texttt{add\_executable}, \texttt{target\_link\_libraries}).
     \item Group CMake files logically and modularly using subdirectories and \texttt{add\_subdirectory()}.
     \item Use modern CMake features (i.e., target\_include\_directories, target\_compile\_features).
@@ -324,7 +324,7 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
 \section{Bash Scripting Standards}
 
 \subsection{Style and Safety}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Use \texttt{\#!/bin/bash} (or \texttt{\#!/usr/bin/env bash}) at the top of scripts.
     %\item Always use \texttt{set -euo pipefail} to catch errors early.
     \item Use functions to encapsulate logic (when appropriate) instead of writing top-level scripts.
@@ -334,7 +334,7 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
 \end{itemize}
 
 \subsection{Documentation and Naming}
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Start each script with a brief comment block describing its purpose and usage.
     \item Use descriptive function and variable names.
     \item Use comments to clarify non-obvious logic, especially when using subshells or traps.
@@ -352,7 +352,7 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
 
 \section{Enforcement and Exceptions}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Continuous integration pipelines are still in development for this project which will enforce code quality.
     \item Code reviews are expected to evaluate adherence to these standards.
 \end{itemize}

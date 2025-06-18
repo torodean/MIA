@@ -10,7 +10,7 @@
 \label{sec:dependancy-structure}
 
 The project is organized into layers to manage dependencies clearly:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 \item Core: Contains fundamental types, error codes, and logging interfaces. It has no dependencies on other modules.
 \item Utilities: Depend on Core and provide reusable helper functions like file and string operations.
 \item Libraries: Depend on Core and Utilities, implementing domain-specific logic such as math functions.
@@ -32,7 +32,7 @@ The build process for MIA is orchestrated through a Bash script, \texttt{build.s
 \subsection{Purpose}
 
 The build script serves as a centralized interface for developers and users to:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Configure and build the MIA project using CMake.
 	\item Install the application on the system.
 	\item Manage dependencies for supported platforms.
@@ -124,7 +124,7 @@ This script abstracts complexity away from the end user, provides a repeatable a
 
 \section{C++ Macros}\label{sec:cpp_macros}
 Macros are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve debuggability. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item \textbf{Code Reusability:} Encapsulate repetitive code patterns, reducing duplication and the chance for errors.
     \item \textbf{Consistent Behavior:} Enforce standardized procedures (e.g., logging conventions) across multiple classes and methods.
     \item \textbf{Ease of Use:} Provide simple interfaces for complex operations, enabling developers to invoke functionality with minimal syntax.
@@ -191,7 +191,7 @@ The CMake configuration begins by specifying a minimum required CMake version an
 \subsection{Build Options}
 
 Two primary options control build behavior:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{RELEASE\_BUILD}: When enabled, modifies install paths and triggers release-specific build behavior.
 	\item \texttt{SYSTEM\_INSTALL}: When enabled, configures installation paths and behaviors suitable for system-wide deployment.
 	\item NOTE: The two build behaviors are somewhat incompatible and a clean build needs done when switching between them.
@@ -200,7 +200,7 @@ Two primary options control build behavior:
 \subsection{Platform-Specific Path Configuration}
 
 Installation paths and default directories for configuration files and logs are set depending on the operating system:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \textbf{Windows:} Uses \texttt{C:/Program Files} for the install and \texttt{C:/ProgramData} for supporting files.
 	\item \textbf{Linux/Unix:} Uses \texttt{/usr/local} for the install, \texttt{/etc} for supporting resource files, and \texttt{/var/log} for logging.
 	\item Unsupported platforms produce a configuration error.
@@ -247,7 +247,7 @@ These values are typically added within the \texttt{Constants\_LIB} files which 
 
 The project is organized into subdirectories for executables, libraries, resources, and tests:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \textbf{Executables:} Targets like \texttt{MIATemplate} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
 	\begin{lstlisting}[style=shellstyle]
 # Create the MIATemplate executable.
@@ -326,7 +326,7 @@ The application framework provides a minimal structure for C++ applications that
 
 \subsection*{Life Cycle Model}
 Applications using this framework must implement the following life cycle methods:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{void initialize(int argc, char** argv)} \\
 	Performs startup logic, such as argument parsing and resource allocation.
 	\item \texttt{int run()} \\
@@ -347,7 +347,7 @@ concept AppInterface = requires(App app, int argc, char** argv)
 
 \subsection*{Application Launch}
 Applications are launched using the \texttt{runApp} template function:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Accepts any type satisfying \texttt{AppInterface}.
 	\item Calls \texttt{initialize} followed by \texttt{run}, in that order.
 	\item Returns the result of \texttt{run} as the application's exit code.
@@ -365,7 +365,7 @@ int runApp(int argc, char** argv)
 
 \subsection*{Entry Point Definition}
 To reduce boilerplate (code needing to be implemented by the end user) and unify application entry points, the framework provides an application macro entry point:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{MIA\_MAIN(AppClass)} defines a \texttt{main()} function that delegates to \texttt{runApp<AppClass>}.
 	\item This enables consistent startup across applications while preserving type safety and clarity.
 \end{itemize}
@@ -393,7 +393,7 @@ Some tips and considerations follow:
 \end{enumerate}
 
 \subsection*{Benefits}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Promotes a consistent lifecycle across applications.
 	\item Enables interface enforcement at compile time.
 	\item Minimizes boilerplate in entry point logic.
@@ -417,18 +417,18 @@ Some tips and considerations follow:
 The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{sec:app-framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
 
 \subsection*{Initialization and Execution Interface}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{virtual void initialize(int argc, char* argv[])} \\
 	Handles initial setup, including parsing common command-line arguments. This method is intended to be overloaded to handle app-specific command line arguments and app loading. Derived classes should override this method to extend parsing logic but should still invoke the base implementation to preserve flag handling.
 \end{itemize}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{virtual int run() = 0} \\
 	A pure virtual function that must be implemented by all derived classes. It defines the main operational logic of the application and must return an integer exit code.
 \end{itemize}
 
 \subsection*{Flag Handling}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
 	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
 	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
@@ -436,7 +436,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 \end{itemize}
 
 \subsection*{Protected Members}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{bool verboseMode} \\
 	Indicates whether verbose output was requested.
 	\item \texttt{bool helpRequested} \\
@@ -445,7 +445,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 
 \subsection*{Logging Macros}
 To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable macros for standardized logging. These macros improve traceability during debugging, especially when verbose mode is enabled.
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item \texttt{LOG\_METHOD\_CALL(...)} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag. Optional parameters can be entered which allow the caller to specify a string of parameters or context data to include in the log output.
 \end{itemize}
 These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \texttt{\_\_func\_\_} identifier for method name capture and rely on the internal \texttt{logger::Logger} instance.
@@ -531,7 +531,7 @@ void MyClass::computeWithInput(int x)
 \end{enumerate}
 
 \subsection*{Benefits}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Standardizes life cycle structure across applications.
 	\item Centralizes command-line flag logic.
 	\item Reduces redundancy in application setup.
@@ -557,9 +557,9 @@ The command option system provides structured parsing and management of command-
 The \texttt{CommandOption} class encapsulates metadata and behavior for individual command-line arguments. It supports a variety of data types and provides a standardized help display format.
 
 \subsubsection*{Key Features}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \textbf{Supported Types:} These define the type of command option that is expected. Each command option should only have one expected type which is defined by the \texttt{commandOptionType} enum:
-	\begin{itemize}
+	\begin{itemize}\itemsep0em
 		\item \texttt{boolOption}: A single command flag to store true when used (false otherwise).
 		\item \texttt{intOption}: A command flag followed by an integer.
 		\item \texttt{doubleOption}: A command flag option followed by a double.
@@ -623,7 +623,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 This namespace implements the actual logic for extracting typed values from \texttt{argc}/\texttt{argv}. Each function accepts short and long option names, and a reference to the variable where the parsed value should be stored.
 
 \subsubsection*{Parsing Functions}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{void parseBoolFlag(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, bool\& outValue);}
 	\item \texttt{void parseIntOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, int\& outValue, bool required = false);}
 	\item \texttt{void parseDoubleOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, double\& outValue, bool required = false);}
@@ -632,7 +632,7 @@ This namespace implements the actual logic for extracting typed values from \tex
 
 \subsubsection*{Behavior and Integration}
 Each parser:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Validates the presence of the option.
 	\item Converts the argument to the correct type.
 	\item Throws a \texttt{MIAException} on error, such as type mismatch or missing required value.
@@ -660,7 +660,7 @@ The MIA error handling system provides a structured and consistent mechanism for
 
 \subsection*{Error Codes}
 The \texttt{ErrorCode} enumeration defines a comprehensive list of standardized error values used throughout the MIA framework. These include:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item System-aligned codes (e.g., \texttt{Access\_denied = 5})
 	\item Application-specific codes starting at 31415 (i.e., \texttt{int}($\pi$ × 10000)), e.g., \texttt{Feature\_In\_Dev}
 	\item Custom fatal and configuration errors (e.g., \texttt{FATAL\_File\_Not\_Found}, \texttt{Config\_File\_Not\_Set})
@@ -673,14 +673,14 @@ const std::string& getErrorDescription(ErrorCode code);
 
 \subsection*{MIAException Class}
 The primary mechanism for structured error propagation is the \texttt{MIAException} class:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Inherits from \texttt{std::exception}.
 	\item Encapsulates an \texttt{ErrorCode} and an optional detailed message.
 	\item Supports integration with standard C++ \texttt{try/catch} error handling.
 \end{itemize}
 
 \textbf{Interface Summary:}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{MIAException(ErrorCode, const std::string\& details = "")} \\
 	Constructs an exception with a specific code and optional extra context.
 	\item \texttt{const char* what() const noexcept} \\
@@ -691,7 +691,7 @@ The primary mechanism for structured error propagation is the \texttt{MIAExcepti
 
 \subsection*{Deprecated Legacy Functions}
 Several older functions exist but are marked deprecated in favor of \texttt{MIAException}:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{returnError()}, \texttt{errorInfo()}, and \texttt{errorInfoRun()} are retained for backward compatibility but should be avoided.
 	\item These are flagged with \texttt{[[deprecated]]} attributes.
 \end{itemize}
@@ -706,7 +706,7 @@ if (!configLoaded)
 }
 \end{lstlisting}
 The macro assists with the following features:
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item Automatically captures and appends \texttt{\_\_FILE\_\_}, \texttt{\_\_LINE\_\_}, and \texttt{\_\_func\_\_}.
     \item Accepts an optional message string describing the error context.
     \item Safely wrapped in a \texttt{do \{...\} while(0)} block for predictable macro expansion.
@@ -767,7 +767,7 @@ namespace error
 \end{enumerate}
 
 \subsection*{Benefits}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Unifies error handling across the application ecosystem.
 	\item Enables richer debugging and logging through descriptive errors.
 	\item Supports granular response logic based on typed error codes.
@@ -790,7 +790,7 @@ This section documents the centralized constants and path utilities used across 
 The \texttt{constants} namespace provides globally accessible constant values compiled into the application.
 
 \subsubsection*{Defined Constant}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{MIA\_VERSION}: A \texttt{std::string} representing the version of the MIA application, injected from CMake via the \texttt{MIA\_VERSION\_VAL} macro.
 \end{itemize}
 
@@ -799,7 +799,7 @@ The \texttt{constants} namespace provides globally accessible constant values co
 The \texttt{paths} namespace offers a centralized interface for accessing directory and file paths used by the system. These include installation-specific and repository-relative locations, as well as runtime-determined paths.
 
 \subsubsection*{Static Path Constants}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{SYSTEM\_CONFIG\_FILE\_DIR}, \texttt{SYSTEM\_CONFIG\_FILE}: Paths to the configuration directory and file for system installations.
 	\item \texttt{REPO\_CONFIG\_FILE\_DIR}, \texttt{REPO\_CONFIG\_FILE}: Paths used during development and testing.
 	\item \texttt{SYSTEM\_LOG\_DIR}, \texttt{SYSTEM\_LOG}: Default logging directory and file when installed.
@@ -808,13 +808,13 @@ The \texttt{paths} namespace offers a centralized interface for accessing direct
 \end{itemize}
 
 \subsubsection*{Runtime Utilities} \label{sec:global-constants-utilities}
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
 	
 	\item \texttt{isInstalled()}: Determines whether the application is running from the system-installed location by comparing the executable path with the install directory.
 	
 	\item \texttt{getDefaultConfigDirToUse()}: Selects the configuration directory based on execution context:
-	\begin{itemize}
+	\begin{itemize}\itemsep0em
 		\item If installed: returns \texttt{SYSTEM\_CONFIG\_FILE\_DIR}.
 		\item If a \texttt{resources} folder exists in the executable directory: returns that path.
 		\item Otherwise: returns \texttt{REPO\_CONFIG\_FILE\_DIR}.
@@ -850,7 +850,7 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 
 \subsection{Overview}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{MIAConfig} is the main public interface that users interact with.
 	\item \texttt{ConfigData} is an abstract base class defining the interface for internal configuration storage.
 	\item \texttt{KeyValueData} is a concrete implementation of \texttt{ConfigData::KEY\_VALUE}, supporting standard key-value format parsing and access.
@@ -860,7 +860,7 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 
 \subsection{Key Features}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Supports setting and retrieving configuration files and types dynamically.
 	\item Provides typed accessors: \texttt{getInt()}, \texttt{getDouble()}, \texttt{getString()}, \texttt{getBool()}, and vector versions.
 	\item Supports verbose logging during file parsing for debugging.
@@ -1015,7 +1015,7 @@ The \texttt{Logger} component provides centralized logging functionality for all
 \subsection{Free Logging Functions}
 Three free-standing functions are provided for lightweight, context-independent logging:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{logToDefaultFile(message, verbose = false)}\\
 	Logs a message to a default log file (typically \texttt{MIA.log}). If \texttt{verbose} is \texttt{true}, the message is also printed to \texttt{stdout}.
 	
@@ -1029,7 +1029,7 @@ Three free-standing functions are provided for lightweight, context-independent 
 \subsection{The \texttt{Logger} Class}
 For more structured applications, the \texttt{Logger} class provides an object-oriented interface for managing log state:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{Logger(filename = DEFAULT\_LOG\_FILE)}\\
 	Constructor that initializes logging to the specified file. If not provided, defaults to \texttt{MIA.log}.
 	
@@ -1046,7 +1046,7 @@ For more structured applications, the \texttt{Logger} class provides an object-o
 \subsection{Internals}
 Internally, the \texttt{Logger} class maintains:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{currentLogFileName} -- User-specified or default log filename.
 	\item \texttt{currentLogFileFullPath} -- Resolved full path for the log file.
 	\item \texttt{logStream} -- A mutable \texttt{std::ofstream} used for log writes.

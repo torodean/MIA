@@ -15,7 +15,8 @@
 #include "MIAException.hpp"
 
 #include "Constants.hpp"
-
+// Used for changing terminal colors.
+#include "TerminalColors.hpp"
 
 MIATemplate::MIATemplate() : 
     config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
@@ -121,7 +122,9 @@ int MIATemplate::run()
     {
         std::cout << "Press ENTER to continue..." << std::endl;
         std::cin.get(); // Waits for ENTER key
-        std::cout << "Success! Well done." << std::endl;
+        
+        // This success method demonstrates the optional TerminalColors.
+        std::cout << terminal_colors::green << "Success! Well done." << terminal_colors::reset << std::endl;
         configFileVals.printConfigValues();
         std::cout << "Exiting." << std::endl;
         return 0;

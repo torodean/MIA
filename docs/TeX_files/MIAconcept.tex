@@ -33,11 +33,11 @@ As MIA is continually under development, this document is also. Due to this, it 
 One of the main features of MIA is the core framework and internal setup. The MIA project's core framework and modular architecture form the backbone of its design, providing a robust, extensible, and developer-friendly ecosystem for building and managing applications. This framework enforces a standardized application life cycle, ensures clear dependency management, and integrates seamlessly with supporting systems such as error handling, configuration, and logging. By leveraging modern C++20 features, the core framework promotes type-safe, maintainable, and scalable application development, making it a cornerstone feature of MIA.
 
 The core framework is built around several interconnected components that collectively enhance modularity and usability:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \textbf{Layered Dependency Structure:} The project is organized into distinct layers---Core, Utilities, Libraries, and Applications---to ensure a unidirectional dependency flow. The Core layer provides fundamental types, error codes, and logging interfaces with no external dependencies. Utilities depend on Core, offering reusable functions like file and string operations. Libraries build upon Core and Utilities for domain-specific logic, such as mathematical functions, while Applications integrate all layers to create executable programs. This structure prevents circular dependencies, enhancing maintainability and scalability. See section \ref{sec:dependancy-structure} for more information.
 	\item \textbf{Application Framework:} The framework defines a consistent life cycle for applications, requiring \texttt{initialize} and \texttt{run} methods, enforced at compile-time using C++20 concepts (\texttt{AppInterface}). The \texttt{MIAApplication} base class standardizes command-line argument parsing (e.g., \texttt{-v} for verbose, \texttt{-h} for help) and provides a template function (\texttt{runApp}) and macro (\texttt{MIA\_MAIN}) to streamline application entry points, reducing boilerplate code and ensuring uniform behavior. See section \ref{sec:app-framework} for more information.
 	\item \textbf{Supporting Systems:} The framework integrates with robust subsystems:
-	\begin{itemize}
+	\begin{itemize}\itemsep0em
 		\item \textbf{Error Handling:} The \texttt{MIAException} class and \texttt{ErrorCode} enumeration provide structured error propagation and descriptive reporting (see section \ref{sec:error-handling}).
 		\item \textbf{Configuration:} The \texttt{MIAConfig} class supports multiple formats (e.g., key-value, raw lines) with typed accessors and extensible design (see section \ref{sec:configuration-system}).
 		\item \textbf{Logging:} The \texttt{Logger} class and free functions enable thread-safe logging to customizable files with optional verbose output (see section \ref{sec:logging-Framework}).
@@ -48,7 +48,7 @@ The core framework is built around several interconnected components that collec
 
 \subsubsection{Benefits}
 The core framework offers several advantages for developers and end-users:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \textbf{Modularity and Maintainability:} The layered architecture ensures clear separation of concerns, making it easier to modify or extend individual components without affecting others.
 	\item \textbf{Type Safety and Consistency:} C++20 concepts enforce interface compliance at compile-time, reducing runtime errors and ensuring uniform application behavior.
 	\item \textbf{Developer Productivity:} Standardized interfaces, macros, and automated build tools minimize boilerplate code and streamline development workflows.
@@ -99,7 +99,7 @@ For a comprehensive list of commands, features, and usage guidelines, refer to t
 
 \subsection{Project Structure}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{bin/} \hfill \\ 
 	Contains the main source code for all integrated applications and core libraries, organized by module and functionality.
 	

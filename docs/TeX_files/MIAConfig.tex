@@ -15,7 +15,7 @@ The format of the configuration file is simple and strictly line-based. Each set
 
 \subsection*{General Rules}
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Comment lines begin with the \texttt{\#} character. These lines are ignored during parsing.
 	\item Empty lines are allowed and ignored.
 	\item Whitespace around the equals sign is not permitted and may result in incorrect key parsing.
@@ -57,7 +57,7 @@ At runtime, the MIA system utilizes the \texttt{MIAConfig} class to locate, read
 
 The following mechanisms are supported:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item If a full file path is provided to the \texttt{MIAConfig} object, that path is used directly.
 	\item If only a filename is provided, the system will search default paths for a matching file.
 	\item Once loaded, the configuration can be queried using accessor functions like \texttt{getString()}, \texttt{getInt()}, or \texttt{getVector()}.

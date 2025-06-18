@@ -6,7 +6,7 @@ This chapter documents reusable utility components that support common developme
 target_link_libraries(MyTarget PRIVATE Types_UTIL Math_UTIL)
 \end{lstlisting}
 Below is a list of available utility modules.
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \textbf{Types\_UTIL} – This contains utilities related to type manipulation and handling.
 	\item \textbf{Math\_UTIL} – This contains mathematical utilities.
 	\item \textbf{System\_UTIL} – This contains utilities related to system commands.
@@ -86,13 +86,13 @@ One important feature of these models is that under low-entropy (the model is de
 
 This module provides the following key features:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
     \item \textbf{Probability Matrix Construction:} 
     Generates a normalized transition matrix from a collection of input sequences, where transitions between adjacent elements are counted and then normalized into probabilities.
 
     \item \textbf{State Querying:}
     Provides utility functions to:
-    \begin{itemize}
+    \begin{itemize}\itemsep0em
         \item Retrieve successor probabilities for a given state.
         \item Check whether a given state exists in the matrix.
         \item Extract the list of all states in the model.
@@ -100,7 +100,7 @@ This module provides the following key features:
 
     \item \textbf{Matrix Utilities:}
     Includes functions to:
-    \begin{itemize}
+    \begin{itemize}\itemsep0em
         \item Clear the matrix.
         \item Print the matrix to an output stream.
     \end{itemize}
@@ -187,6 +187,148 @@ d0s2 encryption is a very similar algorithm to d0s1 with one major difference. T
 \subsection{d0s3 Encryption}
 
 The d0s3 encryption algorithm was (as of the time writing this) never finished. The d0s3 was the actual D3C encryption that was originally desired with d0s1 and d0s2 being practice runs for the creator to experiment with C++ first before employing an actual complicated algorithm. MIA currently has parts of the d0s3 encryption programmed in but they are still in development and not yet deployed. The d0s3 encryption algorithm is not related to d0s1 and d0s3 but will instead have a unique and complicated algorithm that can encrypt entire files instead of just string values. The D3C encryption utilities, including d0s1, d0s2, and the partial implementation of d0s3, are included in MIA as general-purpose utilities. These components are designed to be accessible for use across various MIA applications and libraries, providing a consistent and centralized encryption interface where needed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Terminal Color Codes}
+
+The terminal color features are part of the \texttt{System\_UTIL} utility. It provides a set of inline functions that insert ANSI escape sequences into output streams to enable colored terminal text. To use it in an application or library, the utility needs included in Cmake, similar to the following example:
+\begin{lstlisting}[style=shellstyle]
+target_link_libraries(MIATemplate PRIVATE Framework_CORE System_UTIL )
+\end{lstlisting}
+
+\subsection*{Usage}
+
+Each color function takes a reference to an \texttt{std::ostream} and returns the stream with the appropriate ANSI code inserted. The \texttt{TerminalColors.hpp} file needs included to use these features. For example, to print red text:
+
+\begin{lstlisting}[style=cppstyle]
+#include "TerminalColors.hpp"
+	
+std::cout << red << "This text is red" << reset << std::endl;
+\end{lstlisting}
+
+\subsection*{Available Colors}
+
+\begin{multicols}{2}
+\begin{itemize}\itemsep0em
+	\item \texttt{red}
+	\item \texttt{bgred} (background color)
+	\item \texttt{green}
+	\item \texttt{bggreen} (background color)
+	\item \texttt{yellow}
+	\item \texttt{blue}
+	\item \texttt{bgblue} (background color)
+	\item \texttt{magenta}
+	\item \texttt{cyan}
+	\item \texttt{white}
+	\item \texttt{def} (default color)
+	\item \texttt{bgdef} (default background color)
+	\item \texttt{reset} (resets all formatting)
+\end{itemize}
+\end{multicols}
+These functions leverage ANSI escape codes and are compatible with Unix-like systems and modern Windows terminals supporting ANSI sequences.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Virtual Key Strokes Utility}
+\label{sec:virtualkeystrokes}
+
+These features are all part of the \texttt{System\_UTIL}.
+
+
+The \texttt{VirtualKeyStrokes} class provides a cross-platform interface for simulating keyboard and mouse input on Windows and Linux systems. It supports character and string input emulation, basic automation, and platform-specific input features. This utility is designed for automation and testing scenarios requiring simulated user input. It abstracts platform-specific details, providing a unified API for key and mouse event generation.
+
+\textit{Note:} The current implementation is very old code, which could definitely use improvements and may require further work for full feature completeness and robustness.
+
+\subsection{Features}
+\begin{itemize}\itemsep0em
+	\item Simulate key presses for individual characters and strings.
+	\item Support for mouse clicks: left, right, and middle click.
+	\item Specialized key presses on Windows (numbers, letters, special keys).
+	\item Functions to move the mouse cursor and retrieve pixel color at or near the mouse.
+	\item Automation support with sequential key typing and custom delays.
+	\item Cross-platform support via Windows API and X11/\texttt{xdo} library on Linux.
+\end{itemize}
+
+\subsection{Usage Example}
+To simulate typing a string and a mouse left click:
+\begin{lstlisting}[style=cppstyle]
+virtual_keys::VirtualKeyStrokes vk;
+vk.type("Hello, World!");
+vk.leftclick();
+\end{lstlisting}
+
+\subsection{API Highlights}
+
+\begin{description}
+	\item[\texttt{void press(const char\& character, int holdTime = 0, bool verboseMode = false)}]  
+	Simulates pressing a single key with optional hold time and verbose output.
+	
+	\item[\texttt{void type(const std::string\& word)}]  
+	Simulates typing a sequence of characters.
+	
+	\item[\texttt{void mouseClick(ClickType clickType, bool verboseMode = false)}]  
+	Simulates mouse clicks of different types (\texttt{LEFT\_CLICK}, \texttt{RIGHT\_CLICK}, \texttt{MIDDLE\_CLICK}).
+	
+	\item[\texttt{void moveMouseTo(int x, int y)}]  
+	Moves the mouse pointer to specified screen coordinates.
+	
+	\item[\texttt{void getPixelColorAtMouse()}]  
+	Retrieves and prints the RGB color of the pixel under the mouse cursor (Windows only).
+\end{description}
+
+\subsection{Platform Details}
+
+\begin{itemize}\itemsep0em
+	\item \textbf{Windows:} Uses the Windows \texttt{SendInput} API for keyboard and mouse simulation.
+
+	\item \textbf{Linux:} Utilizes the \texttt{xdo} library along with X11 functions to emulate input events.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
