@@ -20,9 +20,8 @@
 #include "MIAApplication.hpp"
 // Used for command options.
 #include "CommandOption.hpp"
-
-#include "Constants.hpp"
-
+// Used for Coordinate type.
+#include "MathTypes.hpp"
 //Used for virtual key strokes.
 #include "VirtualKeyStrokes.hpp"
 
@@ -62,7 +61,7 @@ public:
     {
         SequenceActionType actionType{};  ///< An action type (what to perform).
         int timeValue{};                  ///< Timing information (for pause or delay).
-        constants::Coordinate coords{};   ///< Coordinates (for moving mouse).
+        math::Coordinate coords{};   ///< Coordinates (for moving mouse).
         std::string strToType{};          ///< A string (for typing).
         virtual_keys::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
         

@@ -54,14 +54,4 @@ namespace constants
      * where both key and value are strings.
      */
     using KeyValuePair = std::pair<std::string, std::string>;
-    
-    /**
-     * @brief Represents a 2D coordinate with named integer components.
-     */
-    struct Coordinate 
-    {
-        Coordinate(int x_val = 0, int y_val = 0) : x(x_val), y(y_val) {}
-        /// Storage for the coordinate values.
-        int x, y;
-    };
 } // namespace constants

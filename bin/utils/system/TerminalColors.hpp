@@ -45,6 +45,10 @@ namespace terminal_colors
      * @brief These methods insert the ANSI escape sequence for the colors into the stream.
      * @param os[std::ostream&] - The output stream.
      * @return [std::ostream&] - The modified output stream.
+     *
+     * Example usage:
+     *     std::cout << terminal_colors::red   << "This text is red" 
+     *               << terminal_colors::reset << "This is normal text";
      */
     inline std::ostream& red(std::ostream& os)    { return os << "\033[" << ColorCode::FG_RED     << "m"; }
     inline std::ostream& bgred(std::ostream& os)  { return os << "\033[" << ColorCode::BG_RED     << "m"; }

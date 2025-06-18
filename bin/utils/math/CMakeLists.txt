@@ -5,7 +5,8 @@ set(Math_SRC
     D3CMath.cpp )
 set(Math_INC 
     MathUtils.hpp
-    D3CMath.hpp )
+    D3CMath.hpp 
+    MathTypes.hpp )
 add_library(Math_UTIL ${Math_SRC} ${Math_INC})
 target_link_libraries(Math_UTIL PUBLIC Types_UTIL)
 

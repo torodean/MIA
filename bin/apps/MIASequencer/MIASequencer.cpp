@@ -23,6 +23,8 @@
 #include "StringUtils.hpp"
 // Used for sleep.
 #include "Timing.hpp"
+// Used for config type.
+#include "Constants.hpp"
 
 using StringUtils::stringContainsChar;
 using StringUtils::getBeforeChar;
@@ -156,7 +158,7 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     else if (key == "MOVEMOUSE") 
     {
         action.actionType = SequenceActionType::MOVEMOUSE;
-        constants::Coordinate coords(0,0);
+        math::Coordinate coords(0,0);
         if (stringContainsChar(value, ','))
         {
             coords.x = std::stoi(getBeforeChar(value, ','));
