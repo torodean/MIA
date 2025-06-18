@@ -20,6 +20,7 @@
 // Used for default path locations.
 #include "Paths.hpp"
 #include "Logger.hpp"
+#include "Constants.hpp"
 
 
 MIAApplication::MIAApplication() :
@@ -61,7 +62,7 @@ void MIAApplication::initialize(int argc, char* argv[])
     if (helpRequested)
     {
         printHelp();
-        std::exit(0); // Call exit after the --help flag is used. 
+        std::exit(constants::SUCCESS); // Call exit after the --help flag is used. 
     }
 }
 
