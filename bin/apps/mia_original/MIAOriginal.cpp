@@ -80,7 +80,7 @@ int MIAOriginal::run()
 {
     printSplash();
     standby();
-    return 0;
+    return constants::SUCCESS;
 }
 
 

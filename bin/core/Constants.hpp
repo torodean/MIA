@@ -54,4 +54,21 @@ namespace constants
      * where both key and value are strings.
      */
     using KeyValuePair = std::pair<std::string, std::string>;
+    
+    /**
+     * @enum ReturnCode
+     * @brief Represents standardized return codes for application execution results.
+     *
+     * This enumeration defines general-purpose status codes that can be returned
+     * by functions or entire applications to indicate the outcome of an operation.
+     * 
+     * It is scoped as an enum class to enforce type safety and prevent accidental
+     * misuse or implicit conversions. Additional return codes can be added to
+     * represent more specific error or success states as needed by the application.
+     */
+    enum ReturnCode: int
+    {
+        SUCCESS = 0,   ///< Indicates that the operation completed successfully.
+        FAILURE = 1    ///< Indicates that the operation failed due to a general error.
+    };
 } // namespace constants

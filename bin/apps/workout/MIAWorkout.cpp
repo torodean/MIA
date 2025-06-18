@@ -393,5 +393,5 @@ int MIAWorkout::run()
     cout << "..." << endl;
 
     generateWorkout();
-    return 0;
+    return constants::SUCCESS;
 }

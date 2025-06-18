@@ -75,8 +75,8 @@ protected:
     virtual void initialize(int argc, char* argv[]);
 
     /**
-     * Runs the main application logic.
-     * Must be implemented by derived classes.
+     * Runs the main application logic. Must be implemented by derived classes. When implemented, 
+     * this should ideally return a valid return code from constants::ReturnCode. 
      *
      * @return int Exit status code.
      */

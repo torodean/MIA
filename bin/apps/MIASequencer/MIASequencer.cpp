@@ -415,9 +415,8 @@ int MIASequencer::run()
     {
         std::cout << "Activating sequence: " << sequenceName << std::endl;
 		do { runSequence(sequenceName); } while (loopMode);
-		return 0;
     }
-    return 0;
+    return constants::SUCCESS;
 }
 
 

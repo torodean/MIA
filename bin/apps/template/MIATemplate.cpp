@@ -116,7 +116,6 @@ int MIATemplate::run()
         if (getVerboseMode())
             std::cout << "Verbose mode enabled!" << std::endl; // This line used for testing verbose mode.
         std::cout << "Test mode finished! Exiting!" << std::endl;
-        return 0;
     }
     else
     {
@@ -127,7 +126,6 @@ int MIATemplate::run()
         std::cout << terminal_colors::green << "Success! Well done." << terminal_colors::reset << std::endl;
         configFileVals.printConfigValues();
         std::cout << "Exiting." << std::endl;
-        return 0;
     }
-    return 0;
+    return constants::SUCCESS;
 }
