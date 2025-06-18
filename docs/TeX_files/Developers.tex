@@ -1,7 +1,7 @@
 \chapter{MIA Development \& Framework Features}
 \pagestyle{fancy}
 
-
+This chapter provides an overview of the core features, architectural design, and internal conventions of the MIA development framework. It is strongly recommended that all developers read this chapter to gain a clear understanding of the various components available within the framework and how they interact. Familiarity with these features will streamline development, ensure consistency across modules, and enable effective use of the utilities and services provided by the MIA suite.
 
 
 
@@ -330,7 +330,7 @@ Applications using this framework must implement the following life cycle method
 	\item \texttt{void initialize(int argc, char** argv)} \\
 	Performs startup logic, such as argument parsing and resource allocation.
 	\item \texttt{int run()} \\
-	Contains the main execution logic of the application. The return value is propagated as the process exit code.
+	Contains the main execution logic of the application. The return value is propagated as the process exit code. This value should be chosen from one of the valid return codes defined in the \texttt{Constants.hpp} file (see section \ref{sec:return-codes}).
 \end{itemize}
 
 \subsection*{Interface Enforcement}
@@ -1023,7 +1023,7 @@ Three free-standing functions are provided for lightweight, context-independent 
 	Logs a message to a specified file. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 
  	\item \texttt{void logMethodCallToFile(methodName, filename, params = "", verbose = false)}\\
-  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). See \ref{sec:base-application} to see how these macros are (and should be) called. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
+  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). See section \ref{sec:base-application} to see how these macros are (and should be) called. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 \end{itemize}
 
 \subsection{The \texttt{Logger} Class}
@@ -1056,6 +1056,63 @@ The method \texttt{openLogFile()} is called during construction and when switchi
 
 \subsection{Summary}
 This logging framework simplifies and unifies log message handling across MIA tools. It supports both procedural and object-oriented usage styles, allows runtime control over log destinations, and integrates with the system's standard output for interactive diagnostics.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Return Codes}
+\label{sec:return-codes}
+
+To standardize and simplify status reporting across the framework, the \texttt{ReturnCode} enumeration defines a consistent set of return values that functions and applications can use to indicate the outcome of their execution. This allows for clearer control flow, easier debugging, and predictable integration behavior.
+
+The \texttt{ReturnCode} values are primarily intended to be returned from the \texttt{run()} method of application classes conforming to the framework's interface (see section \ref{sec:app-framework}). This ensures that exit codes are standardized across all applications and compatible with the expectations of the \texttt{runApp} launcher and \texttt{MIA\_MAIN} macro. Developers should select an appropriate \texttt{ReturnCode} value to reflect the result of their application logic.
+
+\begin{lstlisting}[style=cppstyle]
+namespace constants
+{
+	enum ReturnCode: int
+	{
+		SUCCESS = 0,   ///< Indicates that the operation completed successfully.
+		FAILURE = 1    ///< Indicates that the operation failed due to a general error.
+		// Other codes...
+	};
+}
+\end{lstlisting}
+
+Use of the \texttt{ReturnCode} enum improves type clarity and encourages consistent exit handling across the MIA ecosystem. The main return codes are \texttt{SUCCESS} and \texttt{FAILURE}. This enumeration can be extended with additional codes to cover specific operational contexts (e.g., \texttt{FILE\_NOT\_FOUND}, \texttt{INVALID\_INPUT}, etc.) if the need exists.
+
+
+
+
+
 
 
 
