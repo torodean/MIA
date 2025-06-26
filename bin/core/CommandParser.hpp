@@ -38,6 +38,22 @@ namespace command_parser
                         const std::string& longArg,
                         int& outValue,
                         bool required = false);
+                        
+    /**
+     * Parses an unsigned integer option from command-line arguments.
+     * @param argc[int] - Argument count.
+     * @param argv[char**] - Argument values.
+     * @param shortArg[const std::string&] - Short option (e.g., "-d").
+     * @param longArg[const std::string&] - Long option (e.g., "--debug").
+     * @param outValue[unsigned int&] - Output unsigned integer value to set.
+     * @param required[bool] - If this option is required or not when parsing.
+     * @throws MIAException - Thrown if the option is not found or the value is not a valid integer.
+     */
+    void parseUnsignedIntOption(int argc, char* argv[], 
+                                const std::string& shortArg,
+                                const std::string& longArg,
+                                unsigned int& outValue,
+                                bool required = false);
 
     /**
      * Parses a double option from command-line arguments.

@@ -116,7 +116,7 @@ private:
      */
     Display *display;
       
-    static constexpr unsigned int modifiers = ControlMask;    
+    static constexpr unsigned int modifiers = AnyModifier;    
     Window root;
     bool grabbed{false}; // To track if key was grabbed
 #endif

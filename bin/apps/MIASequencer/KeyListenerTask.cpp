@@ -62,28 +62,17 @@ if (!isActive())
 #if defined(__linux__)
     if (display && root) 
     {
-        int grabResult = XGrabKey(display, keyCode, modifiers, root, True, GrabModeAsync, GrabModeAsync);
+        XGrabKey(display, keyCode, modifiers, root, True, GrabModeAsync, GrabModeAsync);
         XFlush(display);
         XSelectInput(display, root, KeyPressMask);
         grabbed = true;
-        if (grabResult == 0) std::cout << "XGrabKey failed\n";
-        else std::cout << "Key grab successful\n";
     }
 #endif
 }
 
-int count = 0;
-unsigned long counter = 0;
 
 void KeyListenerTask::run()
 {
-    if (count %1000 == 0)
-    {
-        std::cout << "run(): " << counter << std::endl;
-        counter++;   
-    }
-    count++;
-    
     if (!isActive())
     {
         // TODO - throw MIAException here.
@@ -116,8 +105,20 @@ void KeyListenerTask::run()
         if (event.type == KeyPress)
         {
             auto* keyEvent = reinterpret_cast<XKeyEvent*>(&event);
-            std::cout << "Listening for keycode: " << keyCode << std::endl;
-            if (keyEvent->keycode == keyCode && (keyEvent->state & modifiers) == modifiers) 
+            KeySym sym = XLookupKeysym(keyEvent, 0);
+            char* keyString = XKeysymToString(sym);
+
+            if (context->verboseMode)
+            {
+                std::cout << "Listening for keycode: " << keyCode << std::endl;
+
+                std::cout << "Detected key press: keycode=" << keyEvent->keycode
+                          << ", keysym=" << sym
+                          << ", string=" << (keyString ? keyString : "unknown")
+                          << std::endl;
+            }
+            
+            if (keyEvent->keycode == keyCode) 
                 toggleCondition();
         }
     }

@@ -15,6 +15,9 @@
 #include <atomic>
 #include <iostream>
 
+// Used for including a RuntimeContext.
+#include "MIAApplication.hpp"
+
 namespace threading
 {
     /**
@@ -93,9 +96,29 @@ namespace threading
          * Useful for handling state changes triggered by events such as key presses.
          */
         void toggleCondition()
-        { setConditionMet(!isConditionMet()); std::cout << "TOGGLE CONDITION: " << (isConditionMet() ? "ON" : "OFF") << std::endl; }
+        { 
+            setConditionMet(!isConditionMet());
+            if (context->verboseMode) 
+                std::cout << "TOGGLED BACKGROUND CONDITION: " 
+                          << (isConditionMet() ? "1" : "0") << std::endl;
+        }
+        
+        /**
+         * @brief Sets the given RuntimeContext into this instance's context pointer.
+         * 
+         * Allows this class to update its runtime variables by pointing to another
+         * RuntimeContext instance.
+         * 
+         * @param otherContext The RuntimeContext to point to.
+         */
+        void setContext(const RuntimeContext& ctx) 
+        { context = &ctx; }
 
     protected:
+        
+        /// The runtime context object to enable application output.
+        const RuntimeContext* context{nullptr};
+        
         /**
          * @brief Task logic should be implemented here in derived classes.
          *

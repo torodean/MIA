@@ -64,6 +64,36 @@ namespace command_parser
     }
 
 
+    void parseUnsignedIntOption(int argc, char* argv[],
+                                const std::string& shortArg,
+                                const std::string& longArg,
+                                unsigned int& outValue,
+                                bool required)
+    {
+        for (int i = 1; i < argc - 1; ++i)
+        {
+            if (argv[i] == shortArg || argv[i] == longArg)
+            {
+                char* end = nullptr;
+                long val = std::strtol(argv[i + 1], &end, 10);
+                if (*end != '\0')
+                {
+                    std::string err = std::string("Invalid unsigned integer value for ") + argv[i];
+                    throw error::MIAException(error::ErrorCode::Invalid_Argument, err);
+                }
+                outValue = static_cast<unsigned int>(val);
+                return;
+            }
+        }
+        
+        if (required)
+        {
+            std::string err = std::string("Integer option ") + longArg + std::string(" not found");
+            throw error::MIAException(error::ErrorCode::Missing_Argument, err);
+        }
+    }
+
+
     void parseDoubleOption(int argc, char* argv[],
                            const std::string& shortArg,
                            const std::string& longArg,

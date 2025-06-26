@@ -65,6 +65,9 @@ void MIASequencer::initialize(int argc, char* argv[])
         std::string sequencesFile = defaultSequencesFile;
         sequencesFileOpt.getOptionVal<std::string>(argc, argv, sequencesFile);
         config.setConfigFileName(sequencesFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
+    
+        // By this point, verbose, debug, etc are all set.
+        listener.setContext(getContext());
     }
     catch (const error::MIAException& ex)
     {
