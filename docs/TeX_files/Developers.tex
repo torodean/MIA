@@ -1148,3 +1148,30 @@ Use of the \texttt{ReturnCode} enum improves type clarity and encourages consist
 
 
 
+
+
+
+\section*{Threading: BackgroundTask Class}
+
+The \texttt{BackgroundTask} class defines an abstract base for executing background operations on a separate thread, enabling asynchronous processing within an application framework. Derived classes must implement the \texttt{run()} method, which contains the task-specific logic. This method is repeatedly called in the internal \texttt{threadLoop()} until a stop is requested.
+
+Key features include:
+
+\begin{itemize}
+	\item \textbf{Thread Management:} The class encapsulates a \texttt{std::thread} object that runs the background task. The \texttt{start()} method launches the thread, and \texttt{stop()} signals termination by setting an atomic \texttt{stopRequested} flag, then joins the thread to ensure clean shutdown.
+	
+	\item \textbf{Thread-Safe Stop Signaling:} Uses \texttt{std::atomic<bool>} for the stop flag to allow safe, lock-free communication of stop requests between threads.
+	
+	\item \textbf{Condition Flag:} An additional atomic \texttt{conditionMet} flag allows the background task to track or toggle a condition without stopping the thread, supporting scenarios like toggling state based on external events.
+	
+	\item \textbf{Runtime Context Access:} The task holds a pointer to a shared \texttt{RuntimeContext} instance, providing access to global application settings such as logging facilities and verbosity flags. The context is injected via \texttt{setContext()} to allow flexible runtime configuration without copying.
+	
+	\item \textbf{Safety and Correctness:} Copy and move constructors and assignment operators are deleted to prevent accidental thread object duplication or transfer, which could lead to undefined behavior.
+	
+	\item \textbf{Extensibility:} A protected \texttt{doWhenStopped()} hook can be overridden to perform cleanup or finalization logic after the task stops.
+\end{itemize}
+
+Developers implementing subclasses should ensure that \texttt{run()} periodically checks \texttt{stopRequested} to enable responsive shutdown. The class design facilitates robust and reusable background task management suitable for long-running or repeating operations within multi-threaded applications.
+
+
+
