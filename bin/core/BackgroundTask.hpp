@@ -52,7 +52,7 @@ namespace threading
          * @brief Starts the background thread and invokes the threadLoop() method.
          */
         void start() 
-        { std::cout << "BackgroundTask::start() called\n"; worker = std::thread([this] { this->threadLoop(); }); }
+        { worker = std::thread([this] { this->threadLoop(); }); }
 
         /**
          * @brief Requests the background task to stop.
