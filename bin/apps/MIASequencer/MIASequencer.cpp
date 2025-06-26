@@ -445,7 +445,10 @@ int MIASequencer::run()
                 do // Perform the sequence (and loop if needed). 
 		        {
 		            while (!listener.isConditionMet())
+		            {
 		                runSequence(sequence);
+		                if (!loopMode) break;
+	                }
 		        } while (loopMode);
             }
             else

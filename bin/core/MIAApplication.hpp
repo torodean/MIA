@@ -35,7 +35,7 @@ struct RuntimeContext
     /// Stores verboseMode.
     bool verboseMode{false};
     
-    /// Stores debugMode.
+    /// Stores debug level.
     unsigned int debugLevel{0};
 };
 
