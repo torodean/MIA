@@ -32,7 +32,8 @@ set(Core_INC
     CommandParser.hpp
     CommandOption.hpp
     AppFramework.hpp 
-    Logger.hpp )
+    Logger.hpp 
+    BackgroundTask.hpp )
 add_library(Framework_CORE ${Core_SRC} ${Core_INC})
 target_link_libraries(Framework_CORE PUBLIC Constants_LIB BasicUtilities_CORE)
 

@@ -13,6 +13,7 @@
 #include <map>
 #include <optional>
 #include <iostream>
+#include <limits>
 
 // Used for the configuration.
 #include "MIAConfig.hpp"
@@ -24,6 +25,7 @@
 #include "MathTypes.hpp"
 //Used for virtual key strokes.
 #include "VirtualKeyStrokes.hpp"
+#include "KeyListenerTask.hpp"
 
 /**
  * @class MIASequencer
@@ -48,7 +50,8 @@ public:
         SLEEP,       ///< This will wait/pause some time.
         DELAY,       ///< This is the time to wait between each action.
         MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
-        CLICK        ///< This will perform a click with the mouse.
+        CLICK,       ///< This will perform a click with the mouse.
+        LISTEN,      ///< This will listen for a key press and stop or restart the sequence.
     };
     
     /**
@@ -61,9 +64,10 @@ public:
     {
         SequenceActionType actionType{};  ///< An action type (what to perform).
         int timeValue{};                  ///< Timing information (for pause or delay).
-        math::Coordinate coords{};   ///< Coordinates (for moving mouse).
+        math::Coordinate coords{};        ///< Coordinates (for moving mouse).
         std::string strToType{};          ///< A string (for typing).
         virtual_keys::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
+        unsigned int keyCode{};           ///< A generic key code.
         
         /// Returns true if this is a valid action.
         bool isValid();
@@ -98,12 +102,16 @@ public:
      * - A unique name identifying the sequence,
      * - A delay time in milliseconds between each action,
      * - An ordered list of SequenceAction items to execute.
+     * - An optional listenerKeyCode for stop/restarts.
      */
     struct CompleteSequence
     {
         std::string name{};        ///< The name of this sequence.
         int delayTime{1000};       ///< The time between each action (ms).
         SequenceActions actions{}; ///< All actions in this sequence.
+        
+        /// This stores a key code to listen for in order to stop or restart the sequence.
+        unsigned int listenerKeyCode{std::numeric_limits<unsigned int>::max()}; 
         
         /// Returns true if this is a valid sequence.
         bool isValid();
@@ -181,6 +189,12 @@ private:
      * @param sequenceName[const std::String&] - The name of the sequence to run.
      */
     void runSequence(const std::string& sequenceName);
+    
+    /**
+     * Runs a sequence.
+     * @param sequence[const CompleteSequence&] - The sequence to run.
+     */
+    void runSequence(CompleteSequence& sequence);
      
     /**
      * This will load a default front-end. This will continually loop, while asking the
@@ -227,5 +241,13 @@ private:
     
     /// The complete list of sequences.
     sequenceList sequences;
+          
+    /**
+     * This is a listener, which will (if initialized and set), monitor for a specific
+     * user-defined key-press throughout the sequence to stop and/or restart the sequence looping.
+     * Since this is a threaded class, this will be constructed outside of the sequences when it
+     * is needed and used.
+     */
+    KeyListenerTask listener{};
     
 }; // class MIASequencer
