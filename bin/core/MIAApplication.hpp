@@ -13,6 +13,33 @@
 #include "CommandOption.hpp"
 #include "Logger.hpp"
 
+
+/**
+ * @brief Holds runtime configuration and shared services for application components.
+ *
+ * This struct encapsulates context information that is useful throughout the execution 
+ * of the application, such as the global logger instance and runtime flags.
+ * It is intended to be passed to subsystems or utility classes that require 
+ * consistent access to application-wide settings.
+ *
+ * Members:
+ * - logger: A shared logger instance for uniform logging across components.
+ * - verboseMode: Enables verbose output when true.
+ * - debugLevel: Indicates the level of debug verbosity (0 = none).
+ */
+struct RuntimeContext
+{
+    /// The basic logger for this an application to use.
+    logger::Logger logger;
+    
+    /// Stores verboseMode.
+    bool verboseMode{false};
+    
+    /// Stores debug level.
+    unsigned int debugLevel{0};
+};
+
+
 /**
  * @class MIAApplication
  * @brief Base class for MIA applications, providing a standard interface
@@ -32,7 +59,13 @@ public:
      * Get verbose mode flag.
      */
     bool getVerboseMode() const 
-    { return verboseMode; }
+    { return context.verboseMode; }
+
+    /**
+     * Get the debugLevel.
+     */
+    unsigned int getdebugLevel() const 
+    { return context.debugLevel; }
     
     /**
      * Log a message using the logger object. This will automatically set the verbose
@@ -40,7 +73,7 @@ public:
      * @param message[const std::string&] - The message to log.
      */
     void log(const std::string& message) const
-    { logger.log(message, verboseMode); }
+    { context.logger.log(message, context.verboseMode); }
     
     /**
      * Log a message using the logger object with an optional verboseMode flag.
@@ -48,7 +81,7 @@ public:
      * @param verbose[bool] - Whether to print the message to stdout.
      */
     void log(const std::string& message, bool verbose) const
-    { logger.log(message, verbose); }
+    { context.logger.log(message, verbose); }
     
     /**
      * Logs the name of the calling method and optional parameters using the logger object.
@@ -61,7 +94,7 @@ public:
     void logMethodCall(const std::string& methodName,
                        const std::string& params = "",
                        bool verbose = false)
-    { logger.logMethodCall(methodName, params, verbose); }
+    { context.logger.logMethodCall(methodName, params, verbose); }
     
 protected:
     /**
@@ -93,17 +126,27 @@ protected:
     std::string getExecutableName()
     { return executableName; } 
     
-private:
+    /**
+     * @brief Provides read-only access to the runtime context.
+     * 
+     * Returns a constant reference to the RuntimeContext instance,
+     * allowing other classes to inspect runtime variables without
+     * modifying them.
+     * 
+     * @return const RuntimeContext& Reference to the runtime context.
+     */
+    const RuntimeContext& getContext() const 
+    { return context; }
+    
+private:    
+    /// The RuntimeContext for this class - stores common runtime variables.
+    RuntimeContext context;
+    
     /// Base command options used by the MIAApplication.
     CommandOption verboseOpt;
+    CommandOption debugOpt;
     CommandOption helpOpt;
     CommandOption logFileOpt;
-    
-    /// The basic logger for this an application to use.
-    logger::Logger logger;
-    
-    /// Stores verboseMode.
-    bool verboseMode{false};
     
     /// True if the user specified the help flag in command options.
     bool helpRequested{false};

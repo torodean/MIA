@@ -27,6 +27,10 @@ The `MIAConfig.hpp` and `MIAConfig.cpp` files support multiple configuration for
 
 The `Logger.hpp` and `Logger.cpp` files provide a logging class and free functions (`logToDefaultFile`, `logToFile`) which enable logging to customizable files, integrated with system paths.
 
+## Threaded Background System
+
+The `BackgroundTask.hpp` file introduces a generic threading utility that allows background tasks to run in separate threads with controlled lifecycle management. It defines an abstract base class that handles thread creation, termination, and safe stop signaling using atomic flags. Derived classes implement specific task logic by overriding the `run()` method, enabling consistent, reusable, and thread-safe background processing across the application.
+
 
 ---
 

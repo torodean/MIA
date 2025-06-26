@@ -65,6 +65,9 @@ void MIASequencer::initialize(int argc, char* argv[])
         std::string sequencesFile = defaultSequencesFile;
         sequencesFileOpt.getOptionVal<std::string>(argc, argv, sequencesFile);
         config.setConfigFileName(sequencesFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
+    
+        // By this point, verbose, debug, etc are all set.
+        listener.setContext(getContext());
     }
     catch (const error::MIAException& ex)
     {
@@ -106,6 +109,10 @@ void MIASequencer::loadConfig()
         else if (key == "DELAY")
         {
             sequence.delayTime = std::stoi(value);
+        }
+        else if (key == "LISTEN")
+        {
+            sequence.listenerKeyCode = static_cast<unsigned int>(std::stoul(value));
         }
         else if (key == "ENDOFSEQUENCE") // Complete the sequence.
         {
@@ -238,6 +245,7 @@ void MIASequencer::CompleteSequence::clear()
 {
     name.clear();
     delayTime = 1000; // The default value.
+    listenerKeyCode = std::numeric_limits<unsigned int>::max();
     actions.clear();
     return;
 }
@@ -340,7 +348,7 @@ void MIASequencer::SequenceAction::dump() const
         case SequenceActionType::DELAY:
             std::cout << "DELAY:" << timeValue << "ms";
             break;
-            
+                        
         default:
             std::cout << "UNKNOWN";
             break;
@@ -351,8 +359,11 @@ void MIASequencer::SequenceAction::dump() const
 
 void MIASequencer::CompleteSequence::dump() const 
 {
-    std::cout << " -- { " << name << ", ";
+    std::cout << " -- { " << name << ", DELAY=";
     std::cout << delayTime << "ms";
+    
+    if (listenerKeyCode != std::numeric_limits<unsigned int>::max())
+        std::cout << ", LISTEN=" << listenerKeyCode;
 
     for (const auto& action : actions) 
     {
@@ -363,11 +374,17 @@ void MIASequencer::CompleteSequence::dump() const
 }
 
 
+void MIASequencer::runSequence(CompleteSequence& sequence)
+{
+    sequence.performActions(keys, testMode);
+}
+
+
 void MIASequencer::runSequence(const std::string& sequenceName)
 {
     auto it = sequences.find(sequenceName);
     if (it != sequences.end())
-        it->second.performActions(keys, testMode);
+        runSequence(it->second);
     else
         std::cout << "Sequence not found/loaded: " << sequenceName << std::endl;
 }
@@ -414,7 +431,39 @@ int MIASequencer::run()
     else
     {
         std::cout << "Activating sequence: " << sequenceName << std::endl;
-		do { runSequence(sequenceName); } while (loopMode);
+        auto it = sequences.find(sequenceName);
+        if (it != sequences.end())
+        {
+            CompleteSequence& sequence = it->second;
+            
+            // If this is false, then a LISTEN value is not set for this sequence.
+            if (sequence.listenerKeyCode != std::numeric_limits<unsigned int>::max())
+            {
+                listener.setKeyCode(sequence.listenerKeyCode);
+                listener.initialize();
+                listener.start();
+                do // Perform the sequence (and loop if needed). 
+		        {
+		            while (!listener.isConditionMet())
+		            {
+		                runSequence(sequence);
+		                if (!loopMode) break;
+	                }
+		        } while (loopMode);
+            }
+            else
+            {
+                do // Perform the sequence (and loop if needed). 
+	            {
+                    runSequence(sequence);
+	            } while (loopMode);
+            }
+
+        }
+        else
+        {
+            std::cout << "Sequence not found/loaded: " << sequenceName << std::endl;
+        }
     }
     return constants::SUCCESS;
 }

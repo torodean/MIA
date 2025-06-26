@@ -26,6 +26,8 @@
 MIAApplication::MIAApplication() :
     verboseOpt("-v", "--verbose", "Enable verbose output.",
         CommandOption::commandOptionType::boolOption),
+    debugOpt("-d", "--debug", "Enable debug output at a specified level.",
+        CommandOption::commandOptionType::unsignedIntOption),
     helpOpt("-h", "--help", "Show this help message",
         CommandOption::commandOptionType::boolOption),
     logFileOpt("-l", "--logfile", "Set a custom logfile. Default = " +
@@ -42,14 +44,15 @@ void MIAApplication::initialize(int argc, char* argv[])
         executableName = argv[0];
         
         // Set the command option parameters for verbose and help.
-        verboseOpt.getOptionVal<bool>(argc, argv, verboseMode);
+        verboseOpt.getOptionVal<bool>(argc, argv, context.verboseMode);
+        debugOpt.getOptionVal<unsigned int>(argc, argv, context.debugLevel);
         helpOpt.getOptionVal<bool>(argc, argv, helpRequested);
         
         // Load (optionally if specified) the custom log file. 
         std::string customLogFile;
         logFileOpt.getOptionVal<std::string>(argc, argv, customLogFile);
         if (!customLogFile.empty())
-            logger.setLogFile(customLogFile);
+            context.logger.setLogFile(customLogFile);
     }
     catch (const error::MIAException& ex)
     {
@@ -72,6 +75,7 @@ void MIAApplication::printHelp() const
     std::cout << "Usage: " << executableName << " [args]" << std::endl
               << "Base MIA application options:" << std::endl
               << verboseOpt.getHelp() << std::endl
+              << debugOpt.getHelp() << std::endl
               << helpOpt.getHelp()  << std::endl
               << logFileOpt.getHelp()  << std::endl
               << std::endl;

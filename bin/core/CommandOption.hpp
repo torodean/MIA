@@ -32,11 +32,12 @@ public:
      */
     enum commandOptionType
     {
-        boolOption,    ///< bool
-        intOption,     ///< int
-        doubleOption,  ///< double
-        stringOption,  ///< std::string
-        unknownOption  ///< unknown type
+        boolOption,         ///< bool
+        intOption,          ///< int
+        unsignedIntOption,  ///< unsigned int
+        doubleOption,       ///< double
+        stringOption,       ///< std::string
+        unknownOption       ///< unknown type
     };
     
     /**
@@ -101,6 +102,15 @@ public:
                 throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
             }
             command_parser::parseIntOption(argc, argv, shortArg, longArg, out, requiredOption);
+        }
+        else if constexpr (std::is_same_v<Type, unsigned int>)
+        {
+            if (type != unsignedIntOption)
+            {
+                std::string err = std::string("Expected unsigned int for option: ") + longArg;
+                throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
+            }
+            command_parser::parseUnsignedIntOption(argc, argv, shortArg, longArg, out, requiredOption);
         }
         else if constexpr (std::is_same_v<Type, double>)
         {

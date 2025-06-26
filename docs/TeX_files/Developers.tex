@@ -414,7 +414,7 @@ Some tips and considerations follow:
 \label{sec:base-application}
 
 \subsection*{Overview and Purpose}
-The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{sec:app-framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
+The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{sec:app-framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose), \texttt{-d} (debug level) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
 
 \subsection*{Initialization and Execution Interface}
 \begin{itemize}\itemsep0em
@@ -430,17 +430,39 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 \subsection*{Flag Handling}
 \begin{itemize}\itemsep0em
 	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
+	\item Debug level is handled internally and can be queried via \texttt{getDebugLevel()}.
 	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
 	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
 	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling. See section \ref{sec:logging-Framework} for more details.
 \end{itemize}
 
+\subsection*{Runtime Context}
+\textbf{RuntimeContext} is a struct designed to encapsulate shared runtime configuration and services used across application components. It holds common data such as a global \texttt{logger} instance for consistent logging, a \texttt{verboseMode} flag to control verbose output, and a \texttt{debugLevel} indicating the debug verbosity. This context struct is intended to be passed by reference or pointer to subsystems and utilities that require uniform access to these application-wide settings during execution.
+\begin{lstlisting}[style=cppstyle]
+struct RuntimeContext
+{
+	logger::Logger logger;      // The application logger.
+	bool verboseMode{false};    // Stores verboseMode.
+	unsigned int debugLevel{0}; // Stores the debuglevel.
+};
+\end{lstlisting}
+The \texttt{MIAApplication} class provides a \texttt{getContext()} method which returns a pointer to this context object which can be used by other classes. If another class desires the information from context, it should store a pointer to the context object of the application using something similar to the below:
+\begin{lstlisting}[style=cppstyle]
+void setContext(const RuntimeContext& ctx) 
+{ context = &ctx; }
+
+const RuntimeContext* context{nullptr};
+\end{lstlisting}
+
+
 \subsection*{Protected Members}
 \begin{itemize}\itemsep0em
-	\item \texttt{bool verboseMode} \\
-	Indicates whether verbose output was requested.
+	\item \texttt{RuntimeContext context} \\
+	The runtime context members used by the application.
 	\item \texttt{bool helpRequested} \\
 	Set to \texttt{true} if the user requested help via the command-line.
+	\item \texttt{std::string executableName} \\
+	Store the executable name for use in the help message or other areas.
 \end{itemize}
 
 \subsection*{Logging Macros}
@@ -492,6 +514,14 @@ void MIATemplate::run()
 if (getVerboseMode())
     std::cout << "This is verbose output!" << std::endl;
 	\end{lstlisting}
+
+	\item Use \texttt{getdebugLevel()} to conditionally enable debug output (if the debug flag was used when running the application).
+\begin{lstlisting}[style=cppstyle]
+if (getdebugLevel() >= 1)
+	std::cout << "This is debug output!" << std::endl;
+if (getdebugLevel() >= 2)
+	std::cout << "This is higher level debug output!" << std::endl;
+\end{lstlisting}
  
 	\item Override \texttt{printHelp()} to add help output specific to the application. Call the base method to retain base application help menu output.
 	\begin{lstlisting}[style=cppstyle]
@@ -1115,6 +1145,33 @@ Use of the \texttt{ReturnCode} enum improves type clarity and encourages consist
 
 
 
+
+
+
+
+
+
+\section*{Threading: BackgroundTask Class}
+
+The \texttt{BackgroundTask} class defines an abstract base for executing background operations on a separate thread, enabling asynchronous processing within an application framework. Derived classes must implement the \texttt{run()} method, which contains the task-specific logic. This method is repeatedly called in the internal \texttt{threadLoop()} until a stop is requested.
+
+Key features include:
+
+\begin{itemize}
+	\item \textbf{Thread Management:} The class encapsulates a \texttt{std::thread} object that runs the background task. The \texttt{start()} method launches the thread, and \texttt{stop()} signals termination by setting an atomic \texttt{stopRequested} flag, then joins the thread to ensure clean shutdown.
+	
+	\item \textbf{Thread-Safe Stop Signaling:} Uses \texttt{std::atomic<bool>} for the stop flag to allow safe, lock-free communication of stop requests between threads.
+	
+	\item \textbf{Condition Flag:} An additional atomic \texttt{conditionMet} flag allows the background task to track or toggle a condition without stopping the thread, supporting scenarios like toggling state based on external events.
+	
+	\item \textbf{Runtime Context Access:} The task holds a pointer to a shared \texttt{RuntimeContext} instance, providing access to global application settings such as logging facilities and verbosity flags. The context is injected via \texttt{setContext()} to allow flexible runtime configuration without copying.
+	
+	\item \textbf{Safety and Correctness:} Copy and move constructors and assignment operators are deleted to prevent accidental thread object duplication or transfer, which could lead to undefined behavior.
+	
+	\item \textbf{Extensibility:} A protected \texttt{doWhenStopped()} hook can be overridden to perform cleanup or finalization logic after the task stops.
+\end{itemize}
+
+Developers implementing subclasses should ensure that \texttt{run()} periodically checks \texttt{stopRequested} to enable responsive shutdown. The class design facilitates robust and reusable background task management suitable for long-running or repeating operations within multi-threaded applications.
 
 
 

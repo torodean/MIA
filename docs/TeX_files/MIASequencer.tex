@@ -28,6 +28,7 @@ The sequencer acquires its programmable sequence functionality from the \texttt{
 # SLEEP=200
 # MOVEMOUSE=xxx,yyy
 # CLICK=RIGHTCLICK
+# LISTEN=10
 #-----------------------------------------
 # Actions and program variables should be capitalized.
 # The sequence name must be defined at the start of a sequence.
@@ -43,7 +44,9 @@ The sequencer app has two main modes of operation. If ran without the \texttt{--
 $ ./MIASequencer -h
 Base MIA application options:
 	-v, --verbose           Enable verbose output.
+	-d, --debug             Enable debug output at a specified level.
 	-h, --help              Show this help message
+	-l, --logfile           Set a custom logfile.
 
 MIATemplate specific options:
 	-c, --config            Specify a config file to use (default = /etc/mia/MIASequences.MIA)
@@ -64,6 +67,7 @@ A sequence is defined by first creating a sequence name using the \inlinecode{SE
 # This combination is for testing.
 SEQUENCENAME=test
 DELAY=3000
+LISTEN=10
 TYPE=abcdefg
 SLEEP=500
 MOVEMOUSE=145,887
@@ -74,6 +78,7 @@ ENDOFSEQUENCE
 \begin{enumerate}
 	\item \inlinecode{SEQUENCENAME=test} This line creates a sequence with the name ``test''.
 	\item \inlinecode{DELAY=3000} This sets the timing between each event in the sequence. The units are in milliseconds.
+	\item \inlinecode{LISTEN=10} This will open a background thread which listens for the key corresponding to a key code of 10 (the 1 key). When detected, the sequence will toggle on and off. When toggled, the sequence will stop or restart. 
 	\item \inlinecode{TYPE=abcdefg} This command will type the text entered. In this case ``abcdefg'' will be typed.
 	\item \inlinecode{SLEEP=500} This defines the time to sleep when the hover keyword is used.
 	\item \inlinecode{MOVEMOUSE=145,887} This is a command signaling to move the mouse to the coordinates (145,887).
@@ -93,6 +98,8 @@ The below table shows the valid action keywords and their valid values.
 		\texttt{SEQUENCENAME} & String & A unique identifier for the sequence. Must be defined at the start of each sequence. \\
 		\hline
 		\texttt{DELAY} & Integer (ms) & Delay between actions in milliseconds.  \\
+		\hline
+		\texttt{LISTEN} & Unsigned Integer & The key code used for stopping and restarting the sequence.  \\
 		\hline
 		\texttt{TYPE} & String & Any string of characters to be typed as keystrokes. \\
 		\hline
