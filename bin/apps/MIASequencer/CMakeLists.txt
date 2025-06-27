@@ -16,3 +16,5 @@ endif()
 if(RELEASE_BUILD)
     install(TARGETS MIASequencer DESTINATION ${RELEASE_INSTALL_LOCATION})
 endif()
+
+add_subdirectory( test )

@@ -28,3 +28,8 @@ add_test(NAME Logger_T COMMAND Logger_T )
 add_executable(AppFramework_T AppFramework_T.cpp)
 target_link_libraries(AppFramework_T PRIVATE Framework_CORE GTest::gtest_main)
 add_test(NAME AppFramework_T COMMAND AppFramework_T )
+
+# Add tests for the BackgroundTask features.
+add_executable(BackgroundTask_T BackgroundTask_T.cpp)
+target_link_libraries(BackgroundTask_T PRIVATE Framework_CORE GTest::gtest_main)
+add_test(NAME BackgroundTask_T COMMAND BackgroundTask_T )

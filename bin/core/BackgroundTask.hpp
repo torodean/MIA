@@ -55,18 +55,21 @@ namespace threading
          * @brief Starts the background thread and invokes the threadLoop() method.
          */
         void start() 
-        { worker = std::thread([this] { this->threadLoop(); }); }
+        { 
+            if (!worker.joinable()) // Only start if no thread is running
+                worker = std::thread([this] { this->threadLoop(); });
+        }
 
         /**
          * @brief Requests the background task to stop.
          *
          * This sets the stopRequested flag. The threadLoop() method checks this flag.
          */
-        void stop() 
+        virtual void stop() 
         {     
-            if (!stopRequested.exchange(true)) 
-                if (worker.joinable())
-                    worker.join();
+            stopRequested = true; // Set the flag unconditionally
+                if (worker.joinable()) 
+                    worker.join(); // Always join if the thread is joinable
         }
 
         /**
@@ -98,7 +101,7 @@ namespace threading
         void toggleCondition()
         { 
             setConditionMet(!isConditionMet());
-            if (context->verboseMode) 
+            if (context != nullptr && context->verboseMode) 
                 std::cout << "TOGGLED BACKGROUND CONDITION: " 
                           << (isConditionMet() ? "1" : "0") << std::endl;
         }
