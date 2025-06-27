@@ -10,6 +10,9 @@
 #include <limits>
 #include "BackgroundTask.hpp"
 
+/// Used for preprocessor definitions.
+#include "Constants.hpp"
+
 #if defined(__linux__)
     #include <X11/Xlib.h>
 #endif
