@@ -6,9 +6,8 @@
  *     TODO
  */
 
+#include <cstring>
 #include "KeyListenerTask.hpp"
-/// Used for preprocessor definitions.
-#include "Constants.hpp"
 #include "Timing.hpp"
 
 #if defined(IS_WINDOWS)
@@ -26,7 +25,7 @@ KeyListenerTask::KeyListenerTask()
 { }
 
 
-KeyListenerTask::KeyListenerTask(unsigned int keyCode) : keyCode(keyCode)
+KeyListenerTask::KeyListenerTask(char keyCode) : keyCode(keyCode)
 #if defined(__linux__)
     , display(XOpenDisplay(nullptr))
     , root(display ? DefaultRootWindow(display) : 0)
@@ -40,7 +39,7 @@ KeyListenerTask::~KeyListenerTask()
 {
 #if defined(__linux__)
     if (grabbed) 
-        XUngrabKey(display, keyCode, modifiers, root);
+        XUngrabKey(display, linuxKeyCode, modifiers, root);
         
     if (display) 
         XCloseDisplay(display);
@@ -56,13 +55,11 @@ if (!isActive())
     return;
 }
 
-// TODO - remove this after testing.
-//keyCode = XKeysymToKeycode(display, XK_1);
-
 #if defined(__linux__)
     if (display && root) 
     {
-        XGrabKey(display, keyCode, modifiers, root, True, GrabModeAsync, GrabModeAsync);
+        linuxKeyCode = charToKeyCode(keyCode); // Set the linux key code value.
+        XGrabKey(display, linuxKeyCode, modifiers, root, True, GrabModeAsync, GrabModeAsync);
         XFlush(display);
         XSelectInput(display, root, KeyPressMask);
         grabbed = true;
@@ -70,6 +67,19 @@ if (!isActive())
 #endif
 }
 
+
+#if defined(__linux__)
+unsigned int KeyListenerTask::charToKeyCode(char c) 
+{
+    char str[2] = {c, '\0'};
+    KeySym keysym = XStringToKeysym(str);
+    
+    if (keysym == NoSymbol) 
+        return 0;
+        
+    return XKeysymToKeycode(display, keysym);
+}
+#endif
 
 void KeyListenerTask::run()
 {
@@ -80,7 +90,7 @@ void KeyListenerTask::run()
     }
 
 #if defined(IS_WINDOWS)
-    SHORT keyState = GetAsyncKeyState(keyCode);
+    SHORT keyState = GetAsyncKeyState(static_cast<unsigned int>(keyCode));
     
     // GetAsyncKeyState() returns a SHORT (16-bit int) with two relevant bits:
     // Bit 15 (0x8000) — high-order bit — is 1 if the key is currently down.
@@ -106,19 +116,19 @@ void KeyListenerTask::run()
         {
             auto* keyEvent = reinterpret_cast<XKeyEvent*>(&event);
             KeySym sym = XLookupKeysym(keyEvent, 0);
-            char* keyString = XKeysymToString(sym);
+            char* keyString = XKeysymToString(sym);            
 
             if (context->verboseMode)
             {
-                std::cout << "Listening for keycode: " << keyCode << std::endl;
+                std::cout << "Listening for keycode: " << linuxKeyCode << std::endl;
 
                 std::cout << "Detected key press: keycode=" << keyEvent->keycode
                           << ", keysym=" << sym
                           << ", string=" << (keyString ? keyString : "unknown")
                           << std::endl;
             }
-            
-            if (keyEvent->keycode == keyCode) 
+			
+            if (keyEvent->keycode == linuxKeyCode) 
                 toggleCondition();
         }
     }

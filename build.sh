@@ -137,17 +137,6 @@ make -j16 || exit
 
 echo "...MIA Build done!"
 
-# Install MIA if specified
-if [[ -z $installMIA && -n $updateReleaseFiles ]]; then
-  echo "...Updating Release files!"
-  cmake --install "$rootDirectory"/build
-  $rootDirectory/scripts/install.sh
-elif [[ $installMIA ]]; then
-  echo "...Installing MIA files!"
-  sudo cmake --install "$rootDirectory"/build
-  $rootDirectory/scripts/install.sh
-fi
-
 #Run tests if specified
 if [[ $enableTesting ]]; then
   echo "Running the MIA tests!"
@@ -159,6 +148,17 @@ if [[ $enableTesting ]]; then
   fi
   cd -
   echo "Finished with tests!"
+fi
+
+# Install MIA if specified
+if [[ -z $installMIA && -n $updateReleaseFiles ]]; then
+  echo "...Updating Release files!"
+  cmake --install "$rootDirectory"/build
+  $rootDirectory/scripts/install.sh
+elif [[ $installMIA ]]; then
+  echo "...Installing MIA files!"
+  sudo cmake --install "$rootDirectory"/build
+  $rootDirectory/scripts/install.sh
 fi
 
 

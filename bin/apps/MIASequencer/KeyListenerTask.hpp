@@ -7,7 +7,6 @@
  */
 #pragma once
 
-#include <limits>
 #include "BackgroundTask.hpp"
 
 /// Used for preprocessor definitions.
@@ -41,9 +40,9 @@ public:
      * Initializes the listener with the specified key code. When started, the task
      * will monitor for the key press and toggle its internal condition state.
      *
-     * @param [unsigned int] - keyCode The key code to listen for (platform-specific).
+     * @param keyCode[char] - The key code to listen for (platform-specific).
      */
-    KeyListenerTask(unsigned int keyCode);
+    KeyListenerTask(char keyCode);
     
     /**
      * @brief Destructor for KeyListenerTask.
@@ -63,7 +62,7 @@ public:
      *
      * @param code The key code to be assigned for listening.
      */
-    void setKeyCode(unsigned int code)
+    void setKeyCode(char code)
     { keyCode = code; }
     
     /**
@@ -72,7 +71,7 @@ public:
      * @return true if a valid keyCode has been set (non-default); otherwise false.
      */
     bool isActive()
-    { return keyCode != std::numeric_limits<unsigned int>::max(); }
+    { return keyCode != '\0'; }
     
     /**
      * @brief Initializes the key listener by registering the key grab with the system.
@@ -104,13 +103,23 @@ protected:
 private:
 
     /// Storage for the key-code used by this listener.
-    unsigned int keyCode{std::numeric_limits<unsigned int>::max()};
+    char keyCode{'\0'};
     
 #if defined(IS_WINDOWS)
 
     bool lastPressed{false};
     
-#elif defined(__linux__)       
+#elif defined(__linux__)   
+    /// Storage for the int key-code used by this listener.
+	unsigned int linuxKeyCode{0};
+	
+    /**
+     * @brief Converts a single ASCII character to its corresponding X11 keycode.
+     * @param c[char] - The character to convert (must be a single printable ASCII character).
+     * @return [unsigned int] - The X11 keycode as an unsigned int, or 0 if the character has no corresponding keycode.
+     */
+    unsigned int charToKeyCode(char c);
+    
     /**
      * @brief Pointer to the X11 display connection used for listening to input events.
      *

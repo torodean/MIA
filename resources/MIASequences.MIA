@@ -18,7 +18,7 @@
 # SLEEP=200
 # MOVEMOUSE=xxx,yyy
 # CLICK=RIGHTCLICK
-# LISTEN=10
+# LISTEN=1
 #-----------------------------------------
 # Actions and program variables should be capitalized.
 # The sequence name must be defined at the start of a sequence.
@@ -47,7 +47,7 @@ ENDOFSEQUENCE
 ###################################################
 SEQUENCENAME=spam_left_click
 DELAY=5
-LISTEN=10
+LISTEN=1
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
