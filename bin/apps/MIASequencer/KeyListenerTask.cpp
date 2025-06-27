@@ -6,6 +6,7 @@
  *     TODO
  */
 
+#include <cstring>
 #include "KeyListenerTask.hpp"
 #include "Timing.hpp"
 
@@ -38,7 +39,7 @@ KeyListenerTask::~KeyListenerTask()
 {
 #if defined(__linux__)
     if (grabbed) 
-        XUngrabKey(display, keyCode, modifiers, root);
+        XUngrabKey(display, linuxKeyCode, modifiers, root);
         
     if (display) 
         XCloseDisplay(display);
@@ -54,13 +55,11 @@ if (!isActive())
     return;
 }
 
-// TODO - remove this after testing.
-//keyCode = XKeysymToKeycode(display, XK_1);
-
 #if defined(__linux__)
     if (display && root) 
     {
-        XGrabKey(display, keyCode, modifiers, root, True, GrabModeAsync, GrabModeAsync);
+        linuxKeyCode = charToKeyCode(keyCode); // Set the linux key code value.
+        XGrabKey(display, linuxKeyCode, modifiers, root, True, GrabModeAsync, GrabModeAsync);
         XFlush(display);
         XSelectInput(display, root, KeyPressMask);
         grabbed = true;
@@ -68,6 +67,19 @@ if (!isActive())
 #endif
 }
 
+
+#if defined(__linux__)
+unsigned int KeyListenerTask::charToKeyCode(char c) 
+{
+    char str[2] = {c, '\0'};
+    KeySym keysym = XStringToKeysym(str);
+    
+    if (keysym == NoSymbol) 
+        return 0;
+        
+    return XKeysymToKeycode(display, keysym);
+}
+#endif
 
 void KeyListenerTask::run()
 {
@@ -106,14 +118,9 @@ void KeyListenerTask::run()
             KeySym sym = XLookupKeysym(keyEvent, 0);
             char* keyString = XKeysymToString(sym);            
 
-			if (keyString && strlen(keyString) == 1)
-			{
-				linuxKeyCode = static_cast<unsigned int>(keyString[0]);
-			}
-
             if (context->verboseMode)
             {
-                std::cout << "Listening for keycode: " << keyCode << std::endl;
+                std::cout << "Listening for keycode: " << linuxKeyCode << std::endl;
 
                 std::cout << "Detected key press: keycode=" << keyEvent->keycode
                           << ", keysym=" << sym

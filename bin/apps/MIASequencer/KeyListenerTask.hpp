@@ -112,6 +112,13 @@ private:
 #elif defined(__linux__)   
     /// Storage for the int key-code used by this listener.
 	unsigned int linuxKeyCode{0};
+	
+    /**
+     * @brief Converts a single ASCII character to its corresponding X11 keycode.
+     * @param c[char] - The character to convert (must be a single printable ASCII character).
+     * @return [unsigned int] - The X11 keycode as an unsigned int, or 0 if the character has no corresponding keycode.
+     */
+    unsigned int charToKeyCode(char c);
     
     /**
      * @brief Pointer to the X11 display connection used for listening to input events.
