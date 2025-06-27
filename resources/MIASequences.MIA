@@ -47,7 +47,7 @@ ENDOFSEQUENCE
 ###################################################
 SEQUENCENAME=spam_left_click
 DELAY=5
-LISTEN=10
+LISTEN=1
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK

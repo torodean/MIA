@@ -7,8 +7,6 @@
  */
 
 #include "KeyListenerTask.hpp"
-/// Used for preprocessor definitions.
-#include "Constants.hpp"
 #include "Timing.hpp"
 
 #if defined(IS_WINDOWS)
@@ -26,7 +24,7 @@ KeyListenerTask::KeyListenerTask()
 { }
 
 
-KeyListenerTask::KeyListenerTask(unsigned int keyCode) : keyCode(keyCode)
+KeyListenerTask::KeyListenerTask(char keyCode) : keyCode(keyCode)
 #if defined(__linux__)
     , display(XOpenDisplay(nullptr))
     , root(display ? DefaultRootWindow(display) : 0)
@@ -80,7 +78,7 @@ void KeyListenerTask::run()
     }
 
 #if defined(IS_WINDOWS)
-    SHORT keyState = GetAsyncKeyState(keyCode);
+    SHORT keyState = GetAsyncKeyState(static_cast<unsigned int>(keyCode));
     
     // GetAsyncKeyState() returns a SHORT (16-bit int) with two relevant bits:
     // Bit 15 (0x8000) — high-order bit — is 1 if the key is currently down.
@@ -106,7 +104,12 @@ void KeyListenerTask::run()
         {
             auto* keyEvent = reinterpret_cast<XKeyEvent*>(&event);
             KeySym sym = XLookupKeysym(keyEvent, 0);
-            char* keyString = XKeysymToString(sym);
+            char* keyString = XKeysymToString(sym);            
+
+			if (keyString && strlen(keyString) == 1)
+			{
+				linuxKeyCode = static_cast<unsigned int>(keyString[0]);
+			}
 
             if (context->verboseMode)
             {
@@ -117,8 +120,8 @@ void KeyListenerTask::run()
                           << ", string=" << (keyString ? keyString : "unknown")
                           << std::endl;
             }
-            
-            if (keyEvent->keycode == keyCode) 
+			
+            if (keyEvent->keycode == linuxKeyCode) 
                 toggleCondition();
         }
     }

@@ -111,7 +111,7 @@ public:
         SequenceActions actions{}; ///< All actions in this sequence.
         
         /// This stores a key code to listen for in order to stop or restart the sequence.
-        unsigned int listenerKeyCode{std::numeric_limits<unsigned int>::max()}; 
+        char listenerKeyCode{'\0'}; 
         
         /// Returns true if this is a valid sequence.
         bool isValid();

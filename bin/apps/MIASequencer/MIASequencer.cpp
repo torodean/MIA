@@ -112,7 +112,7 @@ void MIASequencer::loadConfig()
         }
         else if (key == "LISTEN")
         {
-            sequence.listenerKeyCode = static_cast<unsigned int>(std::stoul(value));
+            sequence.listenerKeyCode = value[0];
         }
         else if (key == "ENDOFSEQUENCE") // Complete the sequence.
         {
@@ -245,7 +245,7 @@ void MIASequencer::CompleteSequence::clear()
 {
     name.clear();
     delayTime = 1000; // The default value.
-    listenerKeyCode = std::numeric_limits<unsigned int>::max();
+    listenerKeyCode = '\0';
     actions.clear();
     return;
 }
@@ -362,7 +362,7 @@ void MIASequencer::CompleteSequence::dump() const
     std::cout << " -- { " << name << ", DELAY=";
     std::cout << delayTime << "ms";
     
-    if (listenerKeyCode != std::numeric_limits<unsigned int>::max())
+    if (listenerKeyCode != '\0')
         std::cout << ", LISTEN=" << listenerKeyCode;
 
     for (const auto& action : actions) 
@@ -437,14 +437,19 @@ int MIASequencer::run()
             CompleteSequence& sequence = it->second;
             
             // If this is false, then a LISTEN value is not set for this sequence.
-            if (sequence.listenerKeyCode != std::numeric_limits<unsigned int>::max())
+            if (sequence.listenerKeyCode != '\0')
             {
+				std::cout << "Press the '" << sequence.listenerKeyCode 
+				          << "' key to start/stop the sequence." << std::endl;
+						  
                 listener.setKeyCode(sequence.listenerKeyCode);
                 listener.initialize();
                 listener.start();
+				
                 do // Perform the sequence (and loop if needed). 
 		        {
-		            while (!listener.isConditionMet())
+					// Start with the sequence off until the condition is met.
+		            while (listener.isConditionMet())
 		            {
 		                runSequence(sequence);
 		                if (!loopMode) break;
