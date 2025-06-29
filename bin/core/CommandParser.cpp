@@ -15,8 +15,32 @@
 // The associated header file with the method definitions.
 #include "CommandParser.hpp"
 
+
 namespace command_parser
 {
+    /**
+     * This namespace defines internal helper methods which are meant to be used only by this file. 
+     */
+    namespace internal
+    {
+        /**
+         * This is a helper method to throw an exception when required is true. Does nothing otherwise.
+         * @param required[bool] - Whether the option is required or not.
+         * @param longArg[const std::string&] - Long option (e.g., "--debug").
+         * @param typeName[const std::string&] - A string describing the type to throw an error about.
+         */
+        void checkRequired(bool required,
+                           const std::string& longArg,
+                           const std::string& typeName)
+        {
+            if (required)
+            {
+                std::string err = typeName + std::string(" option ") + longArg + std::string(" not found");
+                throw error::MIAException(error::ErrorCode::Missing_Argument, err);
+            }
+        }
+    }
+
     void parseBoolFlag(int argc, char* argv[],
                        const std::string& shortArg,
                        const std::string& longArg,
@@ -24,7 +48,7 @@ namespace command_parser
     {
         for (int i = 1; i < argc; ++i)
         {
-            if (argv[i] == shortArg || argv[i] == longArg)
+            if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
             {
                 outValue = true;
                 return;
@@ -42,7 +66,7 @@ namespace command_parser
     {
         for (int i = 1; i < argc - 1; ++i)
         {
-            if (argv[i] == shortArg || argv[i] == longArg)
+            if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
             {
                 char* end = nullptr;
                 long val = std::strtol(argv[i + 1], &end, 10);
@@ -55,12 +79,8 @@ namespace command_parser
                 return;
             }
         }
-        
-        if (required)
-        {
-            std::string err = std::string("Integer option ") + longArg + std::string(" not found");
-            throw error::MIAException(error::ErrorCode::Missing_Argument, err);
-        }
+
+        internal::checkRequired(required, longArg, "Integer");
     }
 
 
@@ -72,7 +92,7 @@ namespace command_parser
     {
         for (int i = 1; i < argc - 1; ++i)
         {
-            if (argv[i] == shortArg || argv[i] == longArg)
+            if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
             {
                 char* end = nullptr;
                 long val = std::strtol(argv[i + 1], &end, 10);
@@ -85,12 +105,8 @@ namespace command_parser
                 return;
             }
         }
-        
-        if (required)
-        {
-            std::string err = std::string("Integer option ") + longArg + std::string(" not found");
-            throw error::MIAException(error::ErrorCode::Missing_Argument, err);
-        }
+
+        internal::checkRequired(required, longArg, "Unsigned Integer");
     }
 
 
@@ -102,7 +118,7 @@ namespace command_parser
     {
         for (int i = 1; i < argc - 1; ++i)
         {
-            if (argv[i] == shortArg || argv[i] == longArg)
+            if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
             {
                 char* end = nullptr;
                 double val = std::strtod(argv[i + 1], &end);
@@ -116,11 +132,7 @@ namespace command_parser
             }
         }
 
-        if (required)
-        {
-            std::string err = std::string("Double option ") + longArg + std::string(" not found");
-            throw error::MIAException(error::ErrorCode::Missing_Argument, err);
-        }
+        internal::checkRequired(required, longArg, "Double");
     }
 
 
@@ -132,17 +144,13 @@ namespace command_parser
     {
         for (int i = 1; i < argc - 1; ++i)
         {
-            if (argv[i] == shortArg || argv[i] == longArg)
+            if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
             {
                 outValue = argv[i + 1];
                 return;
             }
         }
 
-        if (required)
-        {
-            std::string err = std::string("String option ") + longArg + std::string(" not found");
-            throw error::MIAException(error::ErrorCode::Missing_Argument, err);
-        }
+        internal::checkRequired(required, longArg, "String");
     }
 } // namespace command_parser

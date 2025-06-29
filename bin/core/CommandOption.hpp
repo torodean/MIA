@@ -69,7 +69,10 @@ public:
         // Calculate spaces needed, at least 2 spaces for readability
         size_t spaces = std::max<size_t>(2, paddingWidth > currentLength ? paddingWidth - currentLength : 2);
 
-        return "  " + shortArg + ", " + longArg + std::string(spaces, ' ') + description;
+        if (shortArg == "")
+            return "      " + longArg + std::string(spaces, ' ') + description;
+        else
+            return "  " + shortArg + ", " + longArg + std::string(spaces, ' ') + description;
     }
     
     /**

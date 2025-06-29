@@ -128,3 +128,15 @@ TEST(CommandParserTest, ParseStringOptionMissingRequired)
     }, MIAException);
 }
 
+/**
+ * @brief Test no shortArg option.
+ */
+TEST(CommandParserTest, ParseOptionMissingShortArg) 
+{
+    char* argv[] = { (char*)"prog", (char*)"--output", (char*)"file.txt" };
+    int argc = 3;
+    std::string out;
+    parseStringOption(argc, argv, "", "--output", out);
+    EXPECT_EQ(out, "file.txt");
+}
+
