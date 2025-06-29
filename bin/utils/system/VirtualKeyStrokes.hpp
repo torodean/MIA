@@ -43,7 +43,7 @@ namespace virtual_keys
          * @brief Represents the various mouse click types.
          * Used to identify the type of mouse click interaction.
          */
-        enum ClickType
+        enum class ClickType
         {
             UNKNOWN,      ///< An unknown click type.
             LEFT_CLICK,   ///< Represents a left click.
@@ -64,6 +64,35 @@ namespace virtual_keys
          * @return The matching ClickType, or ClickType::UNKNOWN if no match is found.
          */
         static ClickType stringToClickType(const std::string& input);
+        
+        /**
+         * @enum SpecialButton
+         * @brief Represents the various 'special' button types (non-alpha-numeric). Typically,
+         * these are buttons which can't be represented by a single character. 
+         * Used to identify the type of button interaction for special cases.
+         */
+        enum class SpecialButton
+        {
+            UNKNOWN,      ///< An unknown button type.
+            ENTER,
+            TAB,
+            SPACE,
+            NUM_LOCK
+        };
+        
+        /**
+         * @brief Converts a SpecialButton enum value to its corresponding human-readable string.
+         * @param specialButton The SpecialButton to convert.
+         * @return A string representation of the given SpecialButton.
+         */
+        static std::string specialButtonToString(SpecialButton specialButton);
+
+        /**
+         * @brief Converts a string to the corresponding SpecialButton enum value.
+         * @param input The string representing the click type.
+         * @return The matching SpecialButton, or SpecialButton::UNKNOWN if no match is found.
+         */
+        static SpecialButton stringToSpecialButton(const std::string& input);        
     
         /**
          * Main default constructor for the VirtualKeyStrokes class.
@@ -90,7 +119,51 @@ namespace virtual_keys
          */
         void type(const std::string& word);
     
-    #if defined(IS_WINDOWS)
+        /**
+         * @brief Simulates a mouse click of the specified type.
+         * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
+         * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
+         */
+        void mouseClick(ClickType clickType, bool verboseMode = false);        
+        
+        /**
+         * @brief Simulates a mouse click of the specified type.
+         * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
+         * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
+         */
+        void pressSpecialButton(SpecialButton specialButton, bool verboseMode = false);
+    
+        void leftclick(bool verboseMode = false);        
+        void rightclick(bool verboseMode = false);
+    
+        void moveMouseTo(int x, int y);
+    
+        void minus(bool verboseMode = false);       ///< Simulates press of the minus key.
+        void equal(bool verboseMode = false);       ///< Simulates press of the equal key.
+        void space(bool verboseMode = false);       ///< Simulates press of the space key.
+        void tab(bool verboseMode = false);         ///< Simulates press of the tab key.
+        void enter(bool verboseMode = false);       ///< Simulates press of the enter key.
+        void numlock(bool verboseMode = false);     ///< Simulates press of the numlock key.
+    
+        /// Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class..
+        void defaultSleep() const;
+    	void sleep(int time);
+    
+        /**
+         * This will spam a key press a certain number of times with a pause between each press.
+         * @param button[char button] - the character to press.
+         * @param amount[int] - The number of times to press the key.
+         * @param pause[int] - The time to pause between key presses in ms.
+         */
+        void buttonSpam(const std::string& button, int amount, int pause);
+    
+        /**
+         * This will spam a key press a certain number of times with a pause between each press and a tab after.
+         * @param button[char button] - the character to press.
+         * @param amount[int] - The number of times to press the key.
+         * @param pause[int] - The time to pause between key presses in ms.
+         */
+        void buttonSpamTab(const std::string& button, int amount, int pause);
 
         /**
          * @brief Simulates pressing a number key (0–9) using virtual key codes.
@@ -119,8 +192,6 @@ namespace virtual_keys
          */
         void pressChar(char ch, int holdTime = 0, bool verboseMode = false);
         
-        void enter();
-        void numlock();
         void alt0248();
         void alt136();
         void paste();
@@ -151,51 +222,10 @@ namespace virtual_keys
          * color, and `getRGB` to extract the red, green, and blue components.
          */
         void getPixelColorAtMouse();
-    
-    #endif
-    
-        /**
-         * @brief Simulates a mouse click of the specified type.
-         * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
-         * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
-         */
-        void mouseClick(ClickType clickType, bool verboseMode = false);
-    
-        void leftclick(bool verboseMode = false);        
-        void rightclick(bool verboseMode = false);
-    
-        void moveMouseTo(int x, int y);
-    
-        void minus(bool verboseMode = false);       ///< Simulates press of the minus key.
-        void equal(bool verboseMode = false);       ///< Simulates press of the equal key.
-        void space(bool verboseMode = false);       ///< Simulates press of the space key.
-        void tab(bool verboseMode = false);         ///< Simulates press of the tab key.
-    
-        /// Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class..
-        void defaultSleep() const;
-    	void sleep(int time);
-    
-        /**
-         * This will spam a key press a certain number of times with a pause between each press.
-         * @param button[char button] - the character to press.
-         * @param amount[int] - The number of times to press the key.
-         * @param pause[int] - The time to pause between key presses in ms.
-         */
-        void buttonSpam(const std::string& button, int amount, int pause);
-    
-        /**
-         * This will spam a key press a certain number of times with a pause between each press and a tab after.
-         * @param button[char button] - the character to press.
-         * @param amount[int] - The number of times to press the key.
-         * @param pause[int] - The time to pause between key presses in ms.
-         */
-        void buttonSpamTab(const std::string& button, int amount, int pause);
-		
-	#if defined(IS_WINDOWS)
-	
-        void getRGB(COLORREF& color, int& r, int& g, int& b);
         
-	#endif
+    #if defined(IS_WINDOWS)
+        void getRGB(COLORREF& color, int& r, int& g, int& b);
+    #endif
     
     private:
     

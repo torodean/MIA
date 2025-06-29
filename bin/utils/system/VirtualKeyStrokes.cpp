@@ -43,6 +43,7 @@ namespace virtual_keys
     #endif
     }
     
+    
     VirtualKeyStrokes::~VirtualKeyStrokes()
     {
     #if __linux__
@@ -50,6 +51,7 @@ namespace virtual_keys
         XCloseDisplay(display);
     #endif
     }
+    
     
     std::string VirtualKeyStrokes::clickTypeToString(VirtualKeyStrokes::ClickType click) 
     {
@@ -66,9 +68,66 @@ namespace virtual_keys
         }
     }
     
+    
+    VirtualKeyStrokes::ClickType VirtualKeyStrokes::stringToClickType(const std::string& in)
+    {
+        std::string input = in;
+        // Convert the string to lowercase.
+        std::transform(input.begin(), input.end(), input.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+        if (input == "right_click" || input == "rightclick")
+            return ClickType::RIGHT_CLICK;
+        else if (input == "left_click" || input == "leftclick")
+            return ClickType::LEFT_CLICK;
+        else if (input == "middle_click" || input == "middleclick")
+            return ClickType::MIDDLE_CLICK;
+        else
+            return ClickType::UNKNOWN;
+    }
+    
+    
+    std::string VirtualKeyStrokes::specialButtonToString(VirtualKeyStrokes::SpecialButton specialButton) 
+    {
+        switch (specialButton) 
+        {
+            case VirtualKeyStrokes::SpecialButton::ENTER:
+                return "ENTER"; 
+            case VirtualKeyStrokes::SpecialButton::TAB:
+                return "TAB"; 
+            case VirtualKeyStrokes::SpecialButton::SPACE:
+                return "SPACE";
+            case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
+                return "NUM_LOCK"; 
+            default:
+                return "UNKNOWN"; 
+        }
+    }
+    
+    
+    VirtualKeyStrokes::SpecialButton VirtualKeyStrokes::stringToSpecialButton(const std::string& in)
+    {
+        std::string input = in;
+        // Convert the string to lowercase.
+        std::transform(input.begin(), input.end(), input.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+        if (input == "enter")
+            return SpecialButton::ENTER;
+        else if (input == "tab")
+            return SpecialButton::TAB;
+        else if (input == "space")
+            return SpecialButton::SPACE;
+        else if (input == "num_lock" || input == "numlock")
+            return SpecialButton::NUM_LOCK;
+        else
+            return SpecialButton::UNKNOWN;
+    }
+    
+    
     void VirtualKeyStrokes::press(const char& character, int holdTime, bool verboseMode)
     {
-    #if defined(IS_WINDOWS)
+
         if (std::isdigit(character)) 
         {
             pressNumber(character - '0', holdTime, verboseMode);
@@ -77,67 +136,35 @@ namespace virtual_keys
         {        
             pressChar(character, holdTime, verboseMode);
         } 
-        else if(character == ' '){
+        else if(character == ' ')
+        {
             space();
-        } else if(character == '-'){
+        } 
+        else if(character == '-')
+        {
             minus();
-        }  else if(character == '='){
+        }  
+        else if(character == '=')
+        {
             equal();
-        } else if(character == 'L'){
-            leftclick();
-        } else if(character == 'R'){
-            rightclick();
-        } else if (character == '\\'){
+        } 
+        else if (character == '\\')
+        {
             backslash();
-        } else if (character == '/'){
+        } 
+        else if (character == '/')
+        {
             slash();
-        } else if (character == 'E'){
-            enter();
-        } else if (character == 'T'){
-            tab();
-        } else if (character == 'N'){
-            numlock();
-        } else if (character == ' '){
-            space();
-        } else{
-            std::string err = std::to_string(character);
-            throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
-        }
-    #elif defined(__linux__)
-        bool skipHold = false;
-        if (std::isdigit(static_cast<unsigned char>(character)) || 
-            std::isalpha(static_cast<unsigned char>(character)) ) 
-        {
-            char keyStr[2] = { character, '\0' };
-            xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
-        }
-        else if (character == ' ') 
+        } 
+        else if (character == ' ')
         {
             space();
         } 
-        else if (character == '-') 
+        else 
         {
-            minus();
-        } 
-        else if (character == '=') 
-        {
-            equal();
-    //    } else if (character == 'L') {
-    //        leftclick();
-    //    } else if (character == 'R') {
-    //        rightclick();
-    //    } else if (character == '\\') {
-    //        backslash();
-    //    } else if (character == '/') {
-    //        slash();
-        } else {
-            skipHold = true;            
             std::string err = std::to_string(character);
             throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
         }
-        if(!skipHold)
-            timing::sleepMilliseconds(holdTime);
-    #endif
     }
     
     
@@ -147,7 +174,49 @@ namespace virtual_keys
     }
     
     
+    void VirtualKeyStrokes::numlock(bool verboseMode)
+    {
     #if defined(IS_WINDOWS)
+        // Press the "y" key
+        ip.ki.wVk = 0x90; // virtual-key code for the "y" key
+        ip.ki.dwFlags = 0; // 0 for key press
+        SendInput(1, &ip, sizeof(INPUT));
+    
+        if(verboseMode)
+            std::cout << "NUM_LOCK" << std::endl;
+    
+        // Release the "y" key
+        ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
+        SendInput(1, &ip, sizeof(INPUT));
+    
+        defaultSleep();
+    #elif defined(__linux__)
+        xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Num_Lock", 0);
+    #endif
+    }
+    
+    
+    void VirtualKeyStrokes::enter(bool verboseMode)
+    {    
+    #if defined(IS_WINDOWS)
+        // Press the "ENTER" key
+        ip.ki.wVk = 0x0D; // virtual-key code for the "ENTER" key
+        ip.ki.dwFlags = 0; // 0 for key press
+        SendInput(1, &ip, sizeof(INPUT));
+    
+        if(verboseMode)
+            std::cout << "ENTER" << std::endl;
+    
+        // Release the "ENTER" key
+        ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
+        SendInput(1, &ip, sizeof(INPUT));
+    
+        defaultSleep();
+    #elif defined(__linux__)
+        xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Return", 0);
+    #endif
+    }
+    
     
     void VirtualKeyStrokes::pressNumber(int num, int holdTime, bool verboseMode)  
     {
@@ -157,6 +226,7 @@ namespace virtual_keys
             return;
         }
         
+    #if defined(IS_WINDOWS)        
         int keyCode = 0x30 + num;
         
         ip.ki.wVk = keyCode; // virtual-key code for the "num" key
@@ -171,10 +241,15 @@ namespace virtual_keys
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
         defaultSleep();
+    #elif defined(__linux__)
+        char keyStr[2] = { static_cast<char>('0' + num), '\0' };
+        xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
+    #endif
     }
     
     void VirtualKeyStrokes::pressChar(char ch, int holdTime, bool verboseMode)
     {
+    #if defined(IS_WINDOWS)
         if (!std::isalpha(static_cast<unsigned char>(ch)))
             return;
 
@@ -209,11 +284,17 @@ namespace virtual_keys
         }
 
         defaultSleep();
+    #elif defined(__linux__)
+        char keyStr[2] = { ch, '\0' };
+        xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
+    #endif
     }
     
     
     //In dev.
-    void VirtualKeyStrokes::alt0248(){
+    void VirtualKeyStrokes::alt0248()
+    {
+    #if defined(IS_WINDOWS)
         // Press the "alt" key
         ip.ki.wVk = VK_LMENU; // virtual-key code for the "alt" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -230,10 +311,16 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
     
+    
     //In dev.
-    void VirtualKeyStrokes::alt136(){
+    void VirtualKeyStrokes::alt136()
+    {
+    #if defined(IS_WINDOWS)
         // Press the "alt" key
         ip.ki.wVk = VK_MENU; // virtual-key code for the "alt" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -249,9 +336,15 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
     
-    void VirtualKeyStrokes::paste(){
+    
+    void VirtualKeyStrokes::paste()
+    {
+    #if defined(IS_WINDOWS)
         // Press the "ctrl" key
         ip.ki.wVk = VK_CONTROL; // virtual-key code for the "ctrl" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -265,39 +358,16 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
     
-    void VirtualKeyStrokes::numlock(){
-        // Press the "y" key
-        ip.ki.wVk = 0x90; // virtual-key code for the "y" key
-        ip.ki.dwFlags = 0; // 0 for key press
-        SendInput(1, &ip, sizeof(INPUT));
-    
-        // Release the "y" key
-        ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
-        SendInput(1, &ip, sizeof(INPUT));
-    
-        defaultSleep();
-    }
-    
-    // Press the "ENTER" key
-    void VirtualKeyStrokes::enter()
-    {
-        // Press the "ENTER" key
-        ip.ki.wVk = 0x0D; // virtual-key code for the "ENTER" key
-        ip.ki.dwFlags = 0; // 0 for key press
-        SendInput(1, &ip, sizeof(INPUT));
-    
-        // Release the "ENTER" key
-        ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
-        SendInput(1, &ip, sizeof(INPUT));
-    
-        defaultSleep();
-    }
     
     // Press the "\" key
     void VirtualKeyStrokes::backslash()
     {
+    #if defined(IS_WINDOWS)
         // Press the "\" key
         ip.ki.wVk = 0xE2; // virtual-key code for the "\" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -308,11 +378,16 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
+    
     
     // Press the "/" key
     void VirtualKeyStrokes::slash()
     {
+    #if defined(IS_WINDOWS)
         // Press the "/" key
         ip.ki.wVk = 0x6F; // virtual-key code for the "/" key
         ip.ki.dwFlags = 0; // 0 for key press
@@ -323,12 +398,16 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         defaultSleep();
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }    
 
     
     //Prints the current location of the mouse curser after some wait time.
-    void VirtualKeyStrokes::findMouseCoords(int wait){
-    
+    void VirtualKeyStrokes::findMouseCoords(int wait)
+    {
+    #if defined(IS_WINDOWS)    
         POINT cursor;
     
         timing::sleepMilliseconds(wait);
@@ -338,11 +417,16 @@ namespace virtual_keys
         int x = cursor.x, y = cursor.y;
         std::cout << "The mouse curse is at: " << x << ", " << y << std::endl;
         std::cout << ".." << std::endl;
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
+    
     
     // Prints the pixel color at a scan of ranges in a 100 x 100 grid from the mouse location.
     void VirtualKeyStrokes::getPixelColor()
     {
+    #if defined(IS_WINDOWS)
         POINT cursor;
         GetCursorPos(&cursor);
     
@@ -367,11 +451,16 @@ namespace virtual_keys
         ReleaseDC(NULL, dc);
     
         std::cout << "...Finished." << std::endl;
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
+    
     
     // Prints the pixel color at the cursor location.
     void VirtualKeyStrokes::getPixelColorAtMouse()
     {
+    #if defined(IS_WINDOWS)
         POINT cursor;
         GetCursorPos(&cursor);
     
@@ -391,15 +480,21 @@ namespace virtual_keys
         ReleaseDC(NULL, dc);
     
         std::cout << "...Finished." << std::endl;
+    #elif defined(__linux__)
+        throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
+    #endif
     }
     
+    
+#if defined(IS_WINDOWS)
     void VirtualKeyStrokes::getRGB(COLORREF& color, int& r, int& g, int&b)
     {
         r = GetRValue(color);
         g = GetGValue(color);
         b = GetBValue(color);
-    } 
-    #endif   
+    }
+#endif
+    
     
     void VirtualKeyStrokes::leftclick(bool verboseMode)
     {
@@ -433,6 +528,7 @@ namespace virtual_keys
 	#endif
     }
     
+    
     void VirtualKeyStrokes::rightclick(bool verboseMode)
     {
 	#if defined(IS_WINDOWS)
@@ -465,6 +561,7 @@ namespace virtual_keys
 	#endif
     }
     
+    
     void VirtualKeyStrokes::mouseClick(VirtualKeyStrokes::ClickType clickType, bool verboseMode)
     {
         switch(clickType)
@@ -480,6 +577,29 @@ namespace virtual_keys
         }
     }
     
+    
+    void VirtualKeyStrokes::pressSpecialButton(VirtualKeyStrokes::SpecialButton specialButton, bool verboseMode)
+    {
+        switch(specialButton)
+        {
+            case VirtualKeyStrokes::SpecialButton::ENTER:
+                enter(verboseMode);
+                break;
+            case VirtualKeyStrokes::SpecialButton::TAB:
+                tab(verboseMode);
+                break;
+            case VirtualKeyStrokes::SpecialButton::SPACE:
+                space(verboseMode);
+                break;
+            case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
+                numlock(verboseMode);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    
     void VirtualKeyStrokes::moveMouseTo(int x, int y)
     {
 	#if defined(IS_WINDOWS)
@@ -489,6 +609,7 @@ namespace virtual_keys
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 	#endif
     }
+    
     
     void VirtualKeyStrokes::minus(bool verboseMode)
     {
@@ -511,6 +632,7 @@ namespace virtual_keys
     #endif
     }
     
+    
     void VirtualKeyStrokes::equal(bool verboseMode)
     {
     #if defined(IS_WINDOWS)
@@ -531,6 +653,7 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "equal", 0);
     #endif
     }
+    
     
     void VirtualKeyStrokes::space(bool verboseMode)
     {
@@ -554,6 +677,7 @@ namespace virtual_keys
     #endif
     }
     
+    
     void VirtualKeyStrokes::tab(bool verboseMode)
     {
     #if defined(IS_WINDOWS)
@@ -575,6 +699,7 @@ namespace virtual_keys
     #endif
     }
     
+    
     void VirtualKeyStrokes::buttonSpam(const std::string& button, int amount, int pause)
     {
         timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
@@ -585,6 +710,7 @@ namespace virtual_keys
             timing::sleepMilliseconds(pause);
         }
     }
+    
     
     void VirtualKeyStrokes::buttonSpamTab(const std::string& button, int amount, int pause)
     {
@@ -599,6 +725,7 @@ namespace virtual_keys
         }
     }
     
+    
     void VirtualKeyStrokes::type(const std::string& word)
     {
         int size = word.size();
@@ -608,23 +735,5 @@ namespace virtual_keys
             press(letter);
             defaultSleep();
         }
-    }
-    
-    
-    VirtualKeyStrokes::ClickType VirtualKeyStrokes::stringToClickType(const std::string& in)
-    {
-        std::string input = in;
-        // Convert the string to lowercase.
-        std::transform(input.begin(), input.end(), input.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
-
-        if (input == "right_click" || input == "rightclick")
-            return ClickType::RIGHT_CLICK;
-        else if (input == "left_click" || input == "leftclick")
-            return ClickType::LEFT_CLICK;
-        else if (input == "middle_click" || input == "middleclick")
-            return ClickType::MIDDLE_CLICK;
-        else
-            return ClickType::UNKNOWN;
     }
 } // namespace virtual_keys
