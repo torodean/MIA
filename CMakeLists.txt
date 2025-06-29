@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.030")
+set(MIA_VERSION_VAL "2.031")
 
 message(STATUS "MIA_VERSION_VAL: ${MIA_VERSION_VAL}")
 

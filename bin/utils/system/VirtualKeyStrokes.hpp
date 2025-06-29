@@ -148,22 +148,6 @@ namespace virtual_keys
         /// Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class..
         void defaultSleep() const;
     	void sleep(int time);
-    
-        /**
-         * This will spam a key press a certain number of times with a pause between each press.
-         * @param button[char button] - the character to press.
-         * @param amount[int] - The number of times to press the key.
-         * @param pause[int] - The time to pause between key presses in ms.
-         */
-        void buttonSpam(const std::string& button, int amount, int pause);
-    
-        /**
-         * This will spam a key press a certain number of times with a pause between each press and a tab after.
-         * @param button[char button] - the character to press.
-         * @param amount[int] - The number of times to press the key.
-         * @param pause[int] - The time to pause between key presses in ms.
-         */
-        void buttonSpamTab(const std::string& button, int amount, int pause);
 
         /**
          * @brief Simulates pressing a number key (0–9) using virtual key codes.

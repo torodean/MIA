@@ -29,6 +29,7 @@ The sequencer acquires its programmable sequence functionality from the \texttt{
 # MOVEMOUSE=xxx,yyy
 # CLICK=RIGHTCLICK
 # LISTEN=1
+# PRESS=SPACE
 #-----------------------------------------
 # Actions and program variables should be capitalized.
 # The sequence name must be defined at the start of a sequence.
@@ -69,6 +70,7 @@ SEQUENCENAME=test
 DELAY=3000
 LISTEN=1
 TYPE=abcdefg
+PRESS=SPACE
 SLEEP=500
 MOVEMOUSE=145,887
 CLICK=RIGHTCLICK
@@ -80,6 +82,7 @@ ENDOFSEQUENCE
 	\item \inlinecode{DELAY=3000} This sets the timing between each event in the sequence. The units are in milliseconds.
 	\item \inlinecode{LISTEN=1} This will open a background thread which listens for the key corresponding to a key code of 10 (the '1' key). When detected, the sequence will toggle on and off. When toggled, the sequence will stop or restart. 
 	\item \inlinecode{TYPE=abcdefg} This command will type the text entered. In this case ``abcdefg'' will be typed.
+	\item \inlinecode{PRESS=SPACE} This command will press the space key.
 	\item \inlinecode{SLEEP=500} This defines the time to sleep when the hover keyword is used.
 	\item \inlinecode{MOVEMOUSE=145,887} This is a command signaling to move the mouse to the coordinates (145,887).
 	\item \inlinecode{CLICK=RIGHTCLICK} This is a command signaling to perform a right click.
@@ -103,6 +106,8 @@ The below table shows the valid action keywords and their valid values.
 		\hline
 		\texttt{TYPE} & String & Any string of characters to be typed as keystrokes. \\
 		\hline
+		\texttt{PRESS} & Enum (SpecialButton) & See section \ref{SpecialButton-Enumeration}\\
+		\hline
 		\texttt{SLEEP} & Integer (ms) & Sleep/pause time in milliseconds before next action. \\
 		\hline
 		\texttt{MOVEMOUSE} & Integer pair & X,Y screen coordinates to move the mouse to. Format: \texttt{MOVEMOUSE=x,y}, i.e., \texttt{MOVEMOUSE=145,887} \\
@@ -113,6 +118,31 @@ The below table shows the valid action keywords and their valid values.
 		\hline
 	\end{tabularx}
 \end{table}
+
+\subsection{SpecialButton Enumeration} \label{SpecialButton-Enumeration}
+
+The \texttt{SpecialButton} enumeration defines a set of special, non-alphanumeric button types. These typically correspond to keys that cannot be represented as single characters and are used in scenarios where such special key input needs to be identified or handled explicitly.
+
+\begin{itemize}
+	\item \textbf{UNKNOWN} \hfill \\
+	Represents an unrecognized or unspecified button type.
+	
+	\item \textbf{ENTER} \hfill \\
+	Represents the Enter (Return) key, commonly used to submit input or commands.
+	
+	\item \textbf{TAB} \hfill \\
+	Represents the Tab key, used to move focus or navigate between input fields.
+	
+	\item \textbf{SPACE} \hfill \\
+	Represents the Spacebar key, used to insert a space character or activate UI elements.
+	
+	\item \textbf{NUM\_LOCK} \hfill \\
+	Represents the Num Lock key, which toggles the numeric keypad input mode.
+\end{itemize}
+
+\noindent Additional special button types may be added to this enumeration as needed to support more complex input scenarios.
+
+
 
 
 \section{Notes on Using The Sequencer}

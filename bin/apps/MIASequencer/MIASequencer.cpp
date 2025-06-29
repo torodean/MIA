@@ -179,6 +179,12 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
         std::string trimmedClickString = trim(value);
         action.click = VirtualKeyStrokes::stringToClickType(trimmedClickString);
     }
+    else if (key == "PRESS") 
+    {
+        action.actionType = SequenceActionType::PRESS;
+        std::string trimmedPressString = trim(value);
+        action.press = VirtualKeyStrokes::stringToSpecialButton(trimmedPressString);
+    }
     else
     {    
         action.actionType = SequenceActionType::UNKNOWN;
@@ -225,9 +231,10 @@ bool MIASequencer::SequenceAction::isValid()
             return true;  // No restriction on coords
 
         case SequenceActionType::CLICK:
-            return click == VirtualKeyStrokes::ClickType::LEFT_CLICK ||
-                   click == VirtualKeyStrokes::ClickType::RIGHT_CLICK ||
-                   click == VirtualKeyStrokes::ClickType::MIDDLE_CLICK;
+            return click != VirtualKeyStrokes::ClickType::UNKNOWN;
+
+        case SequenceActionType::PRESS:
+            return press != VirtualKeyStrokes::SpecialButton::UNKNOWN;
 
         default:
             return false;
@@ -272,18 +279,12 @@ std::optional<int> MIASequencer::SequenceAction::performAction(VirtualKeyStrokes
                 keys.moveMouseTo(coords.x, coords.y);
                 break;
             case SequenceActionType::CLICK:
-                switch(click)
-                {
-                    case VirtualKeyStrokes::ClickType::LEFT_CLICK:
-                        keys.mouseClick(click);
-                        break;
-                    case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
-                        keys.mouseClick(click);
-                        break;
-                    default:
-                        // Do nothing...
-                        break;
-                }
+                if (click != VirtualKeyStrokes::ClickType::UNKNOWN)
+                    keys.mouseClick(click);                    
+                break;
+            case SequenceActionType::PRESS:
+                if (press != VirtualKeyStrokes::SpecialButton::UNKNOWN)
+                    keys.pressSpecialButton(press);                    
                 break;
             case SequenceActionType::DELAY:
                 return timeValue;
@@ -343,6 +344,10 @@ void MIASequencer::SequenceAction::dump() const
             
         case SequenceActionType::CLICK:
             std::cout << "CLICK:" << VirtualKeyStrokes::clickTypeToString(click);
+            break;
+            
+        case SequenceActionType::PRESS:
+            std::cout << "PRESS:" << VirtualKeyStrokes::specialButtonToString(press);
             break;
             
         case SequenceActionType::DELAY:

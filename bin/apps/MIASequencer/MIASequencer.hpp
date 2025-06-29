@@ -51,6 +51,7 @@ public:
         DELAY,       ///< This is the time to wait between each action.
         MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
         CLICK,       ///< This will perform a click with the mouse.
+        PRESS,       ///< This will perform a special button press.
         LISTEN,      ///< This will listen for a key press and stop or restart the sequence.
     };
     
@@ -67,6 +68,7 @@ public:
         math::Coordinate coords{};        ///< Coordinates (for moving mouse).
         std::string strToType{};          ///< A string (for typing).
         virtual_keys::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
+        virtual_keys::VirtualKeyStrokes::SpecialButton press{}; ///< A special button for pressing. 
         unsigned int keyCode{};           ///< A generic key code.
         
         /// Returns true if this is a valid action.

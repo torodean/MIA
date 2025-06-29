@@ -19,6 +19,7 @@
 # MOVEMOUSE=xxx,yyy
 # CLICK=RIGHTCLICK
 # LISTEN=1
+# PRESS=SPACE
 #-----------------------------------------
 # Actions and program variables should be capitalized.
 # The sequence name must be defined at the start of a sequence.
@@ -37,6 +38,7 @@ TYPE=hijk
 TYPE=lmnop
 SLEEP=500
 TYPE=hijk
+PRESS=SPACE
 MOVEMOUSE=145,887
 CLICK=RIGHTCLICK
 ENDOFSEQUENCE

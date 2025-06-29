@@ -700,32 +700,6 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::buttonSpam(const std::string& button, int amount, int pause)
-    {
-        timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
-    
-        for (int i=0;i<amount;i++)
-        {
-            type(button);
-            timing::sleepMilliseconds(pause);
-        }
-    }
-    
-    
-    void VirtualKeyStrokes::buttonSpamTab(const std::string& button, int amount, int pause)
-    {
-        timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
-    
-        for (int i=0;i<amount;i++)
-        {
-            type(button);
-            defaultSleep();
-            tab();
-            timing::sleepMilliseconds(pause);
-        }
-    }
-    
-    
     void VirtualKeyStrokes::type(const std::string& word)
     {
         int size = word.size();

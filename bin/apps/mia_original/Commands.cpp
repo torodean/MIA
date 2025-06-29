@@ -426,9 +426,27 @@ void Commands::buttonSpamRunner(bool enableTab)
 	cout << endl;
 
 	if (enableTab)
-		key.buttonSpamTab(button, amount, pause);
+	{
+        timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
+    
+        for (int i=0;i<amount;i++)
+        {
+            key.type(button);
+            key.defaultSleep();
+            key.tab();
+            timing::sleepMilliseconds(pause);
+        }
+    }
 	else
-		key.buttonSpam(button, amount, pause);
+	{
+        timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
+    
+        for (int i=0;i<amount;i++)
+        {
+            key.type(button);
+            timing::sleepMilliseconds(pause);
+        }
+    }
 }
 
 /* TODO - Keep these around until the MinecraftUtils app is finished (if I make one).
