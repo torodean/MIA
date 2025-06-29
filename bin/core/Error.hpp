@@ -20,6 +20,9 @@ namespace error
      * error codes for consistency. The ones that are specific to MIA (or yet to be 
      * mapped) begin at 31415 (int(pi*10000)) and increment. When values are added to
      * this enum, a description should also be added to ErrorDescriptions.hpp.
+     *
+     * @note Typically, constants within an enum are all caps. This one is an exception
+     * so that acronyms and other specific information can be preserved.
      */
     enum ErrorCode
     {
