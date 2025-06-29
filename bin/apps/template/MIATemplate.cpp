@@ -22,9 +22,9 @@ MIATemplate::MIATemplate() :
     config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                 paths::getDefaultConfigDirToUse() + "/MIATemplate.MIA)",
-                                CommandOption::commandOptionType::stringOption),
+                                CommandOption::commandOptionType::STRING_OPTION),
     testOpt("-t", "--test", "A test command option.",
-                                CommandOption::commandOptionType::boolOption)                         
+                                CommandOption::commandOptionType::BOOL_OPTION)                         
 { };
 
 

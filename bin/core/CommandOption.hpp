@@ -32,12 +32,12 @@ public:
      */
     enum commandOptionType
     {
-        boolOption,         ///< bool
-        intOption,          ///< int
-        unsignedIntOption,  ///< unsigned int
-        doubleOption,       ///< double
-        stringOption,       ///< std::string
-        unknownOption       ///< unknown type
+        BOOL_OPTION,          ///< bool
+        INT_OPTION,           ///< int
+        UNSIGNED_INT_OPTION,  ///< unsigned int
+        DOUBLE_OPTION,        ///< double
+        STRING_OPTION,        ///< std::string
+        UNKNOWN_OPTION        ///< unknown type
     };
     
     /**
@@ -87,7 +87,7 @@ public:
     {
         if constexpr (std::is_same_v<Type, bool>)
         {
-            if (type != boolOption)
+            if (type != BOOL_OPTION)
             {
                 std::string err = std::string("Expected bool for option: ") + longArg;
                 throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
@@ -96,7 +96,7 @@ public:
         }
         else if constexpr (std::is_same_v<Type, int>)
         {
-            if (type != intOption)
+            if (type != INT_OPTION)
             {
                 std::string err = std::string("Expected int for option: ") + longArg;
                 throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
@@ -105,7 +105,7 @@ public:
         }
         else if constexpr (std::is_same_v<Type, unsigned int>)
         {
-            if (type != unsignedIntOption)
+            if (type != UNSIGNED_INT_OPTION)
             {
                 std::string err = std::string("Expected unsigned int for option: ") + longArg;
                 throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
@@ -114,7 +114,7 @@ public:
         }
         else if constexpr (std::is_same_v<Type, double>)
         {
-            if (type != doubleOption)
+            if (type != DOUBLE_OPTION)
             {
                 std::string err = std::string("Expected double for option: ") + longArg;
                 throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);
@@ -123,7 +123,7 @@ public:
         }
         else if constexpr (std::is_same_v<Type, std::string>)
         {
-            if (type != stringOption)
+            if (type != STRING_OPTION)
             {
                 std::string err = std::string("Expected string for option: ") + longArg;
                 throw error::MIAException(error::ErrorCode::Invalid_Type_Requested, err);

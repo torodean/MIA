@@ -33,7 +33,7 @@ WoWFishbot::WoWFishbot() :
     config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                     paths::getDefaultConfigDirToUse() + "/WoWConfig.MIA)",
-                                    CommandOption::commandOptionType::stringOption)
+                                    CommandOption::commandOptionType::STRING_OPTION)
                                     
 { };
 

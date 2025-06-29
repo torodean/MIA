@@ -590,19 +590,20 @@ The \texttt{CommandOption} class encapsulates metadata and behavior for individu
 \begin{itemize}\itemsep0em
 	\item \textbf{Supported Types:} These define the type of command option that is expected. Each command option should only have one expected type which is defined by the \texttt{commandOptionType} enum:
 	\begin{itemize}\itemsep0em
-		\item \texttt{boolOption}: A single command flag to store true when used (false otherwise).
-		\item \texttt{intOption}: A command flag followed by an integer.
-		\item \texttt{doubleOption}: A command flag option followed by a double.
-		\item \texttt{stringOption}: A command flag option followed by a string.
+		\item \texttt{BOOL\_OPTION}: A single command flag to store true when used (false otherwise).
+		\item \texttt{INT\_OPTION}: A command flag followed by an integer.
+		\item \texttt{UNSIGNED\_INT\_OPTION}: A command flag followed by an unsigned integer.
+		\item \texttt{DOUBLE\_OPTION}: A command flag option followed by a double.
+		\item \texttt{STRING\_OPTION}: A command flag option followed by a string.
 	\end{itemize}
 	
 	\item \textbf{Constructor:} Accepts short/long argument forms, a description, data type, and a \texttt{required} flag. This constructor should be called during construction for the application class. This constructor sets the command option flags, description, and the type; all of which are needed during initialization to enable command option output and parsing.
 	\begin{lstlisting}[style=cppstyle]
 MIATemplate::MIATemplate() : 
     configFileOpt("-c", "--config", "Specify a config file to use.",
-        CommandOption::commandOptionType::stringOption),
+        CommandOption::commandOptionType::STRING_OPTION),
     testOpt("-t", "--test", "A test command option.",
-        CommandOption::commandOptionType::boolOption)            
+        CommandOption::commandOptionType::BOOL_OPTION)            
 { };
 	\end{lstlisting}
 	

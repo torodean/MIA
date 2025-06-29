@@ -43,7 +43,7 @@ using error::ErrorCode;
  */
 TEST(CommandOptionTest, HelpStringFormatting) 
 {
-    CommandOption opt("-f", "--file", "Specifies the file name.", CommandOption::stringOption);
+    CommandOption opt("-f", "--file", "Specifies the file name.", CommandOption::STRING_OPTION);
     std::string help = opt.getHelp();
     EXPECT_NE(help.find("-f, --file"), std::string::npos);
     EXPECT_NE(help.find("Specifies the file name."), std::string::npos);
@@ -54,7 +54,7 @@ TEST(CommandOptionTest, HelpStringFormatting)
  */
 TEST(CommandOptionTest, GetBoolOptionSuccess) 
 {
-    CommandOption opt("-v", "--verbose", "Enable verbose mode.", CommandOption::boolOption);
+    CommandOption opt("-v", "--verbose", "Enable verbose mode.", CommandOption::BOOL_OPTION);
     bool value = false;
     char* argv[] = { (char*)"prog", (char*)"--verbose" };
     opt.getOptionVal(2, argv, value);
@@ -66,7 +66,7 @@ TEST(CommandOptionTest, GetBoolOptionSuccess)
  */
 TEST(CommandOptionTest, GetIntOptionSuccess) 
 {
-    CommandOption opt("-n", "--number", "Provide a number.", CommandOption::intOption);
+    CommandOption opt("-n", "--number", "Provide a number.", CommandOption::INT_OPTION);
     int value = 0;
     char* argv[] = { (char*)"prog", (char*)"--number", (char*)"42" };
     opt.getOptionVal(3, argv, value);
@@ -78,7 +78,7 @@ TEST(CommandOptionTest, GetIntOptionSuccess)
  */
 TEST(CommandOptionTest, GetDoubleOptionSuccess) 
 {
-    CommandOption opt("-d", "--double", "Provide a double.", CommandOption::doubleOption);
+    CommandOption opt("-d", "--double", "Provide a double.", CommandOption::DOUBLE_OPTION);
     double value = 0.0;
     char* argv[] = { (char*)"prog", (char*)"--double", (char*)"3.14" };
     opt.getOptionVal(3, argv, value);
@@ -90,7 +90,7 @@ TEST(CommandOptionTest, GetDoubleOptionSuccess)
  */
 TEST(CommandOptionTest, GetStringOptionSuccess) 
 {
-    CommandOption opt("-s", "--string", "Provide a string.", CommandOption::stringOption);
+    CommandOption opt("-s", "--string", "Provide a string.", CommandOption::STRING_OPTION);
     std::string value;
     char* argv[] = { (char*)"prog", (char*)"--string", (char*)"value" };
     opt.getOptionVal(3, argv, value);
@@ -102,7 +102,7 @@ TEST(CommandOptionTest, GetStringOptionSuccess)
  */
 TEST(CommandOptionTest, ThrowsOnTypeMismatch) 
 {
-    CommandOption opt("-x", "--wrong", "Wrong type used.", CommandOption::intOption);
+    CommandOption opt("-x", "--wrong", "Wrong type used.", CommandOption::INT_OPTION);
     try 
     {
         bool wrongType;
@@ -123,7 +123,7 @@ TEST(CommandOptionTest, ThrowsOnTypeMismatch)
  */
 TEST(CommandOptionTest, ThrowsOnUnsupportedTemplateType) 
 {
-    CommandOption opt("-u", "--unsupported", "Unsupported type test", CommandOption::unknownOption);
+    CommandOption opt("-u", "--unsupported", "Unsupported type test", CommandOption::UNKNOWN_OPTION);
     struct Dummy {};
     try 
     {

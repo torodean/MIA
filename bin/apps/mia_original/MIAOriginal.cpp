@@ -45,7 +45,7 @@ using std::to_string;
 
 MIAOriginal::MIAOriginal() :
     defaultCommandOpt("-c", "--command", "Run a default command when the app is ran.",
-                                         CommandOption::commandOptionType::stringOption)
+                                         CommandOption::commandOptionType::STRING_OPTION)
 { };
 
 

@@ -25,14 +25,14 @@
 
 MIAApplication::MIAApplication() :
     verboseOpt("-v", "--verbose", "Enable verbose output.",
-        CommandOption::commandOptionType::boolOption),
+        CommandOption::commandOptionType::BOOL_OPTION),
     debugOpt("-d", "--debug", "Enable debug output at a specified level.",
-        CommandOption::commandOptionType::unsignedIntOption),
+        CommandOption::commandOptionType::UNSIGNED_INT_OPTION),
     helpOpt("-h", "--help", "Show this help message",
-        CommandOption::commandOptionType::boolOption),
+        CommandOption::commandOptionType::BOOL_OPTION),
     logFileOpt("-l", "--logfile", "Set a custom logfile. Default = " +
         paths::getDefaultLogDirToUse() + "/" + logger::DEFAULT_LOG_FILE,
-        CommandOption::commandOptionType::stringOption)
+        CommandOption::commandOptionType::STRING_OPTION)
 { }
 
 

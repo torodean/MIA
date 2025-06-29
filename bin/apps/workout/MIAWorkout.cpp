@@ -33,14 +33,14 @@ MIAWorkout::MIAWorkout() :
     config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                 paths::getDefaultConfigDirToUse() + "/MIAWorkout.MIA)",
-                                CommandOption::commandOptionType::stringOption),
+                                CommandOption::commandOptionType::STRING_OPTION),
     outputFileOpt("-o", "--output", "Specify the output file path for workouts (defaults"
                                     " to config file value).",
-                                CommandOption::commandOptionType::stringOption),
+                                CommandOption::commandOptionType::STRING_OPTION),
     difficultyOpt("-d", "--difficulty", "Specify a difficulty to use (default = 1.0).",
-                                CommandOption::commandOptionType::doubleOption),
+                                CommandOption::commandOptionType::DOUBLE_OPTION),
     weeklyOpt("-w", "--weekly", "Generate workouts for an entire week.",
-                                CommandOption::commandOptionType::boolOption)
+                                CommandOption::commandOptionType::BOOL_OPTION)
                                     
 { };
 
