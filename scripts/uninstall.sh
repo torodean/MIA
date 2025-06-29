@@ -17,3 +17,4 @@ rm -rf ${PARENT_DIR}/build
 
 rm -vrf ${PARENT_DIR}/release
 rm -vrf ${PARENT_DIR}/Testing
+rm -vrf ${PARENT_DIR}/logs
