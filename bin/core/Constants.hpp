@@ -69,5 +69,6 @@ namespace constants
     {
         SUCCESS = 0,   ///< Indicates that the operation completed successfully.
         FAILURE = 1    ///< Indicates that the operation failed due to a general error.
+        OPTION_ERROR,  ///< Indicates that an issue with command options was detected.
     };
 } // namespace constants
