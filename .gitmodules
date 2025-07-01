@@ -1,0 +1,3 @@
+[submodule "scripts/CARA"]
+	path = scripts/CARA
+	url = git@github.com:torodean/CARA.git
