@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2025-07-01
+- Added an automated changelog system
 - Merge pull request #10 from torodean/windows
 
 
