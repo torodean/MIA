@@ -21,8 +21,10 @@ namespace credentials
 	 * - On Windows, uses _getch() for raw character input.
 	 * - On POSIX systems (Linux/macOS), disables terminal echo and canonical mode.
 	 *
+	 * @param info[const std::string&] - Extra info to add to the passwordf prompt. This is 
+	 *     typically used to inform the user what they are entering a password for.
 	 * @return std::string The password entered by the user.
 	 */
-	std::string password();
+	std::string password(const std::string& info = "");
 	
 } // namespace credentials

@@ -16,10 +16,10 @@
 
 namespace credentials
 {
-	std::string password() 
+	std::string password(const std::string& info) 
 	{
 		std::string pwd;
-		std::cout << "Enter password: " << std::flush;
+		std::cout << "Enter password" << (info.empty() ? "" : " (" + info + ")") << ": " << std::flush;
 
 		termios oldt, newt;
 		tcgetattr(STDIN_FILENO, &oldt);           // get current terminal settings
