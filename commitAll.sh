@@ -41,6 +41,10 @@ else
   git commit -m "$commit_message"
 fi
 
+# Updating changelog.
+python3 scripts/CARA/bin/cara.py -c scripts/CARA/bin/cara.conf
+git add CHANGELOG.md
+git commit -m "Updating changelog"
 
 echo "..."
 git status
