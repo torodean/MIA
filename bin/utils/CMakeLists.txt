@@ -8,3 +8,5 @@ add_subdirectory( files )
 add_subdirectory( encryption )
 add_subdirectory( audio )
 add_subdirectory( ml )
+add_subdirectory( security )
+
