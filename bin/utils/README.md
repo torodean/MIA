@@ -22,3 +22,6 @@ This folder contains reusable utility libraries that provide common functionalit
 
 - **ml/**  
   Contains utilities, models, and components related to machine learning, artificial intelligence, and neural networks. Intended to support the development and integration of intelligent behaviors and predictive systems within the application. "ml" is short for "machine-learning".
+  
+- **security/**  
+  This contains utilities related to security such as credential handling, authentication, etc.
