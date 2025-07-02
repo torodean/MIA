@@ -19,6 +19,9 @@ Reverses the actions of `install.sh` by removing installed files or dependencies
 ### `updateRelease.sh`
 Handles updating release-related files and artifacts.
 
+### `CARA`
+This is the CARA project used for changelog generation. This is included as a submodule so that the latest version of the file(s) can be used.
+
 ---
 
 These scripts streamline the development and deployment workflow, reducing manual effort and ensuring repeatability.
