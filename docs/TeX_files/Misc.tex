@@ -1,0 +1,30 @@
+\chapter{Miscellaneous} \label{ch:miscellaneous}
+\pagestyle{fancy}
+
+
+
+\section{Developer Tips}
+
+To find the dll's an exe uses in cygwin, you can use the following command:
+\begin{lstlisting}[style=terminalstyle]
+cygcheck program.exe
+\end{lstlisting}
+
+
+\section{OS-specific macros}
+This is a list of macros from an old file in the original MIA project. I'm unsure of the source but posting them here for reference.
+\begin{multicols}{2}
+\begin{itemize}
+\item \texttt{\_\_linux\_\_}:   Defined on Linux
+\item \texttt{\_\_sun}:         Defined on Solaris
+\item \texttt{\_\_FreeBSD\_\_}: Defined on FreeBSD
+\item \texttt{\_\_NetBSD\_\_ }: Defined on NetBSD
+\item \texttt{\_\_OpenBSD\_\_}: Defined on OpenBSD
+\item \texttt{\_\_APPLE\_\_}:   Defined on Mac OS X
+\item \texttt{\_\_hpux}:        Defined on HP-UX
+\item \texttt{\_\_osf\_\_}:     Defined on Tru64 UNIX (formerly DEC OSF1)
+\item \texttt{\_\_sgi}:         Defined on Irix
+\item \texttt{\_AIX}:           Defined on AIX
+\item \texttt{\_WIN32}:			Defined on Windows
+\end{itemize}
+\end{multicols}
