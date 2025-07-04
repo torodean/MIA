@@ -15,7 +15,9 @@
 #include <cppconn/statement.h>
 #include "mysql_connection.h"
 
+#include "RuntimeContext.hpp"
 #include "Credentials.hpp"
+#include "DatabaseCredentials.hpp"
 
 
 /**

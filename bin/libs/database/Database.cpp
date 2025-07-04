@@ -6,7 +6,7 @@
  */
 
 #include "Database.hpp"
-#include "Credentials.hpp"
+
 
 Database::~Database()
 {
@@ -42,7 +42,7 @@ int Database::connect()
 
 
 // CREATE TABLE tableName (elements[0], elements[1], ...);
-void Database::addTable(const string& tableName, const std::vector<string>& elements)
+void Database::addTable(const std::string& tableName, const std::vector<std::string>& elements)
 {
     try
     {
@@ -64,7 +64,9 @@ void Database::addTable(const string& tableName, const std::vector<string>& elem
 
 
 // INSERT INTO tableName (elements[0], elements[1], ...) VALUES (values[0], values[1], ...);
-void Database::addElementToTable(const string& tableName, const std::vector<string>& elements, std::vector<string> values)
+void Database::addElementToTable(const std::string& tableName, 
+                                 const std::vector<std::string>& elements, 
+                                 std::vector<std::string> values)
 {
     try
     {
@@ -92,7 +94,7 @@ void Database::addElementToTable(const string& tableName, const std::vector<stri
 
 
 // SELECT * FROM tableName
-void Database::viewTable(const string& tableName)
+void Database::viewTable(const std::string& tableName)
 {
     try
     {
@@ -119,7 +121,7 @@ void Database::viewTable(const string& tableName)
 }
 
 
-void Database::printExceptionInfo(sql::SQLException &e)
+void Database::printExceptionInfo(sql::SQLException& e)
 {
     if (e.getErrorCode() == 0)
         return;
@@ -133,7 +135,7 @@ void Database::printExceptionInfo(sql::SQLException &e)
 
 
 // DROP TABLE tableName;
-void Database::deleteTable(const string &tableName)
+void Database::deleteTable(const std::string& tableName)
 {
     try
     {
