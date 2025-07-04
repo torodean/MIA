@@ -15,14 +15,14 @@
 /**
  * This is a class for storing credentials for a user.
  */
-class Credentials
+class DatabaseCredentials
 {
 public:
     /// Main default constructor for a Credentials object.
-    Credentials() = default;
+    DatabaseCredentials() = default;
 	
 	/// Main default constructor for a Credentials object.
-    ~Credentials() = default;
+    ~DatabaseCredentials() = default;
 	
 	/**
      * Constructs a Credentials object with specified username, hostname, and port.
@@ -31,9 +31,9 @@ public:
      * @param host The hostname to set.
      * @param port The port value to set.
      */
-    Credentials(const std::string& user, 
-	            const std::string& host, 
-				const std::string& port) : 
+    DatabaseCredentials(const std::string& user, 
+	                    const std::string& host, 
+				        unsigned short port) : 
 		username(user), hostname(host), port(port)
     { };
 
@@ -84,7 +84,7 @@ public:
     };
 
 private:
+    std::string username{};     ///< The username of the credentials.
+    std::string hostname{};     ///< Hostname number for connection using these credentials.
     unsigned short port{0};     ///< Port number for connection using these credentials.
-    std::string hostname;       ///< Hostname number for connection using these credentials.
-    std::string username;       ///< The username of the credentials.
 };

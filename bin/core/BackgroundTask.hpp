@@ -15,8 +15,7 @@
 #include <atomic>
 #include <iostream>
 
-// Used for including a RuntimeContext.
-#include "MIAApplication.hpp"
+#include "RuntimeContext.hpp"
 
 namespace threading
 {

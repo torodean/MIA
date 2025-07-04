@@ -43,10 +43,10 @@ find_library(MYSQLCPPCONN_LIBRARY NAMES mysqlcppconn)
 
 if (MYSQLCPPCONN_INCLUDE_DIR AND MYSQLCPPCONN_LIBRARY)
     set(BUILD_DATABASE_FEATURES ON)
-    message(STATUS "Found MySQL Connector/C++")
+    message(STATUS "Found MySQL Connector/C++. BUILDING database components!")
 else()
     set(BUILD_DATABASE_FEATURES OFF)
-    message(STATUS "MySQL Connector/C++ not found")
+    message(STATUS "MySQL Connector/C++ not found. SKIPPING database components!")
 endif()
 
 # Create the log directories
