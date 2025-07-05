@@ -1,0 +1,7 @@
+if(NOT DEFINED ENV{DATABASE_TEST_SETUP_DONE})
+    message(WARNING "Please run libs/database/test/setup.sh in order to run database-related tests. Use 'source setup.sh' to run the script.")
+else()
+    add_executable( Database_T Database_T.cpp )
+    target_link_libraries( Database_T PRIVATE Database_LIB GTest::gtest_main )
+    add_test( NAME Database_T COMMAND Database_T )
+endif()

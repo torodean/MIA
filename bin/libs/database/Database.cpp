@@ -5,8 +5,10 @@
  * Description: This file contains the database connections source code.
  */
 
-#include "Database.hpp"
+#include <iostream>
+#include <sstream>
 
+#include "Database.hpp"
 
 Database::~Database()
 {
@@ -27,8 +29,12 @@ int Database::connect()
         if (context != nullptr && context->verboseMode)
             std::cout << "MySQL hostname value being set as: " << hostname << std::endl;
 
-        con = driver->connect(hostname, credentials.getUsername(), credentials::password("database connection"));
-		
+        // If credentials.getPassword is set, this is set for test mode.
+        if (credentials.getPassword().empty())
+            con = driver->connect(hostname, credentials.getUsername(), credentials::password("database connection"));
+		else
+            con = driver->connect(hostname, credentials.getUsername(), credentials.getPassword());
+		    
         /* Connect to the MySQL test database */
         con->setSchema(database);
     }
@@ -94,8 +100,9 @@ void Database::addElementToTable(const std::string& tableName,
 
 
 // SELECT * FROM tableName
-void Database::viewTable(const std::string& tableName)
+std::string Database::viewTable(const std::string& tableName)
 {
+    std::ostringstream output;
     try
     {
         stmt = con->createStatement();
@@ -107,17 +114,21 @@ void Database::viewTable(const std::string& tableName)
             // Access column data by numeric offset, 1 is the first column
             for(size_t i=1; i <= columns; i++)
             {
-                std::cout << res->getString((uint32_t)i);
+                output << res->getString((uint32_t)i);
                 if (i != columns)
-                    std::cout << ", ";
+                    output << ", ";
             }
-            std::cout << std::endl;
+            output << '\n';
         }
     }
     catch (sql::SQLException &e)
     {
         printExceptionInfo(e);
     }
+
+    std::string result = output.str();
+    std::cout << result;
+    return result;
 }
 
 

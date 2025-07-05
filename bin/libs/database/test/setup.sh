@@ -29,6 +29,10 @@ INSERT INTO users (username, email, age) VALUES
 ('alice', 'alice@example.com', 30),
 ('bob', 'bob@example.com', 25),
 ('charlie', 'charlie@example.com', 35);
+
+CREATE USER IF NOT EXISTS 'unit_test_user'@'localhost' IDENTIFIED BY 'unit_test_password';
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO 'unit_test_user'@'localhost';
+FLUSH PRIVILEGES;
 EOF
 
 echo "MySQL database '$DB_NAME' created with sample data."
@@ -36,3 +40,5 @@ echo "MySQL database '$DB_NAME' created with sample data."
 sudo mysql -e "SHOW DATABASES;"
 sudo mysql -D $DB_NAME -e "SHOW TABLES;"
 sudo mysql -D $DB_NAME -e "SELECT * FROM users;"
+
+export DATABASE_TEST_SETUP_DONE=1

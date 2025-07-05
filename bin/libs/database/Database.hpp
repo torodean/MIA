@@ -121,13 +121,13 @@ public:
 						   std::vector<std::string> values);
 
     /**
-     * This will display the elements of the table.
+     * This will display the elements of the table and also return the displayed
+     * results as a string.
      * SELECT * FROM tableName
-     * @param tableName
-     * @example
-     *      db2.viewTable("timeTable");
+     * @param tableName[const std::string&] - The name of the table to display.
+     * @return [std::string] - The elements of the table. 
      */
-    void viewTable(const std::string& tableName);
+    std::string viewTable(const std::string& tableName);
 
     /**
      * This will delete a table from the database.

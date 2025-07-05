@@ -36,6 +36,22 @@ public:
 				        unsigned short port) : 
 		username(user), hostname(host), port(port)
     { };
+	
+	/**
+     * Constructs a Credentials object with specified username, hostname, and port.
+     * This will also set a password stored as plain text. This constructor should only
+     * be used for testing.
+     *
+     * @param user The username to set.
+     * @param host The hostname to set.
+     * @param port The port value to set.
+     */
+    DatabaseCredentials(const std::string& user, 
+	                    const std::string& host, 
+				        unsigned short port,
+				        const std::string& pw) : 
+		username(user), hostname(host), port(port), password(pw)
+    { };
 
     /**
      * Set's the username of this object.
@@ -82,9 +98,14 @@ public:
         username.clear();
         port = 0;
     };
+    
+    /// Getter for the password. Should only be used for testing.
+    std::string getPassword()
+    { return password; }
 
 private:
-    std::string username{};     ///< The username of the credentials.
-    std::string hostname{};     ///< Hostname number for connection using these credentials.
-    unsigned short port{0};     ///< Port number for connection using these credentials.
+    std::string username{}; ///< The username of the credentials.
+    std::string hostname{}; ///< Hostname number for connection using these credentials.
+    unsigned short port{0}; ///< Port number for connection using these credentials.
+    std::string password{}; ///< This passowrd is used for testing purposes (stores the password as plain text).
 };
