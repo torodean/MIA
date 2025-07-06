@@ -7,3 +7,6 @@ This folder contains reusable libraries that provide common functionality to sup
   
 - **database/**  
   This is a library containing database features. This includes features for connecting to and interacting with databases.
+
+- **rpg/**  
+  This is a library containing a set of tools used for the development of an RPG. This entire folder is mostly just for fun/experimentation.

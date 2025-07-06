@@ -1,0 +1,185 @@
+# RPG design
+
+
+
+## Armor Slots
+- Shirt
+- Chest
+- Legs
+- Head
+- Back
+- Gloves
+- Boots
+- Forearms
+- Socks
+- Neck
+- Ring (1-4)
+- Trinket (2)
+- Waist
+- Shoulder
+- Glasses
+
+
+
+## Armor Types
+- Cloth
+- Leather & Hide
+- Chain Mail
+- Scale Mail
+- Plate
+- Bone & Chitin
+- Mechanical
+- Ethereal
+
+
+
+## Professions
+
+### Gathering
+- Herbalism
+- Mining
+- Prospecting
+- Excavating
+- Archaology
+- Fishing
+- Hunting & Trapping
+- Lumberjack
+- Skinning
+
+### Crafting
+- Tailoring
+- Leatherworking
+- Blacksmithing
+- Jewelcrafting
+- Alchemy
+- Engineering
+- Cooking
+- Woodworking
+- Fletching
+
+### Misc
+- Enchanting
+- Inscription
+- Medicine
+- Lockpicking
+
+
+
+## Races
+- Human
+- Dwarf
+- Elf
+- Gnome
+- Orc
+- Troll
+- Ogre
+- Goblin
+- Undead
+- Elemental
+- Construct
+- Lizardfolk
+
+
+
+## Classes
+- Warrior
+- Wizard
+- Warlock
+- Priest
+- Paladin
+- Hunter
+- Shaman
+- Bard
+- Rogue
+- Monk
+- Druid
+
+
+
+
+## Stats
+
+### Primary
+- Stamina
+- Constitution
+- Intelligence
+- Wisdom
+- Dexterity
+- Strength
+- Spirit
+
+### Secondary
+- Speed
+- Luck
+- Perception
+- Accuracy
+	- Ranged
+	- Melee
+	- Spell
+- Armor
+- Defense
+- Critical Chance
+	- Ranged
+	- Melee
+	- Spell
+Haste
+	- Ranged
+	- Melee
+	- Spell
+Power
+	- Ranged
+	- Melee
+	- Spell
+- Resistances
+- Weight
+- Penetration
+
+### Skills
+- Weapon skills
+	- Unarmed
+	- Swords
+	- Axe
+	- Polearm
+	- Bow
+	- Mace
+	- Crossbow 
+	
+	
+	
+## Reputation Levels
+- Hunted
+- Despised
+- Hated
+- Hostile
+- Unknown
+- Neutral
+- Friendly
+- Trusted
+- Honored
+- Revered
+- Exalted
+- Venerated
+
+
+
+## Currency
+- Copper
+- Silver
+- Gold
+- Platinum
+- Rubies
+- Diamonds
+- Faction-specific tokens
+
+
+
+## Item Rarity
+- Junk
+- Poor
+- Common
+- Uncommon
+- Rare
+- Epic
+- Mythic
+- Legendary
+- Divine
