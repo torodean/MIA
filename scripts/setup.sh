@@ -22,6 +22,7 @@ if [[ "$uname_out" == "Linux" ]]; then
 	sudo apt-get install -y libxdo-dev
 	sudo apt-get install -y libmysqlcppconn-dev
 	sudo apt-get install libx11-dev libxtst-dev
+	sudo apt install nlohmann-json3-dev
 
 	# Setup gtest for testing
 	echo "Installing gtest..."

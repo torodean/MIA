@@ -1,0 +1,39 @@
+{
+  "currencies": [
+    {
+      "name": "Copper Coin",
+      "description": "A basic copper coin, the smallest unit of standard currency.",
+      "type": "COIN",
+      "tradeable": true,
+      "icon": "copper_icon.png"
+    },
+    {
+      "name": "Silver Coin",
+      "description": "A silver coin, worth more than copper but less than gold.",
+      "type": "COIN",
+      "tradeable": true,
+      "icon": "silver_icon.png"
+    },
+    {
+      "name": "Gold Coin",
+      "description": "A valuable gold coin, widely accepted in trade.",
+      "type": "COIN",
+      "tradeable": true,
+      "icon": "gold_icon.png"
+    },
+    {
+      "name": "Platinum Coin",
+      "description": "A rare platinum coin, the highest denomination of standard currency.",
+      "type": "COIN",
+      "tradeable": true,
+      "icon": "platinum_icon.png"
+    },
+    {
+      "name": "Credits",
+      "description": "A digital currency used for premium transactions.",
+      "type": "FIAT",
+      "tradeable": false,
+      "icon": "credits_icon.png"
+    }
+  ]
+}
