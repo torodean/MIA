@@ -17,7 +17,7 @@
 #include "Constants.hpp"
 // Used for changing terminal colors.
 #include "TerminalColors.hpp"
-
+#include "Currencies.hpp"
 #include "DataLoader.hpp"
 
 RPGFiddler::RPGFiddler()                      
@@ -58,18 +58,15 @@ int RPGFiddler::run()
 {
     LOG_METHOD_CALL(); // Used for testing log file calls.
     
+    // test some currency changes.
     player.getWallet().dump(); std::cout << std::endl;
-    if (const auto* copper = currency::CurrencyRegistry::getInstance().getCurrencyByName("Copper Coin"))
-        player.getWallet().addCurrency(*copper, 42);    
+    player.getWallet().addCurrency(*currency::copperCoin, 42);    
     player.getWallet().dump(); std::cout << std::endl;
-    if (const auto* copper = currency::CurrencyRegistry::getInstance().getCurrencyByName("Copper Coin"))
-        player.getWallet().addCurrency(*copper, 7);    
+    player.getWallet().addCurrency(*currency::copperCoin, 7);    
     player.getWallet().dump(); std::cout << std::endl;
-    if (const auto* copper = currency::CurrencyRegistry::getInstance().getCurrencyByName("Gold Coin"))
-        player.getWallet().addCurrency(*copper, 3);    
+    player.getWallet().addCurrency(*currency::goldCoin, 3);    
     player.getWallet().dump(); std::cout << std::endl;
-    if (const auto* copper = currency::CurrencyRegistry::getInstance().getCurrencyByName("Copper Coin"))
-        player.getWallet().removeCurrency(*copper, 25);    
+    player.getWallet().removeCurrency(*currency::copperCoin, 25);    
     player.getWallet().dump(); std::cout << std::endl;
     
     return constants::SUCCESS;

@@ -8,7 +8,6 @@
 
 #include <string>
 #include <iostream>
-#include "CurrencyRegistry.hpp"
 
 namespace rpg
 {

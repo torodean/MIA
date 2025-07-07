@@ -7,6 +7,8 @@
 
 #include <stdexcept>
 #include "DataLoader.hpp"
+#include "CurrencyRegistry.hpp"
+#include "Currencies.hpp"
 
 namespace rpg
 {
@@ -25,7 +27,7 @@ namespace rpg
         {
             // Load CurrencyRegistry
             currency::CurrencyRegistry::getInstance().loadFromFile(configDir + "currencies/currencies.json");
-            std::cout << "Loaded CurrencyRegistry from " << configDir + "currencies/currencies.json" << std::endl;
+            currency::initializeCurrencies(); // Initialize predefined currencies
         } 
         catch (const std::exception& e) 
         {
