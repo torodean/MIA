@@ -1,0 +1,235 @@
+\chapter{Design}\label{ch:design}
+\pagestyle{fancy}
+
+This chapter will cover design ideas for the MIA RPG system. This chapter will be considered a living document which may change very often. Ideas, the purpose for the ideas, and different solutions or considerations for design will be discussed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Goals}
+
+The following goals define the core vision for the MIA RPG system, ensuring it is modular, scalable, and simple to extend for MMO development and game creation tools. Each goal includes its purpose and design considerations to guide implementation.
+
+\begin{enumerate}
+    \item \textbf{Fully Configurable Framework}
+        \begin{itemize}
+            \item \textbf{Purpose}: Enable dynamic addition or removal of game elements (e.g., vitals, currencies, items, abilities) via configuration files, minimizing code changes and supporting tools like a game editor similar to Warcraft 3’s.
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Use JSON/YAML files (e.g., \texttt{vitals.json}, \texttt{items.json}) to define all game elements, including properties like name, type, and behavior.
+                    \item Implement registries (e.g., \texttt{VitalsRegistry}, \texttt{CurrencyRegistry}) to load and manage configurations at runtime.
+                    \item Support runtime updates via an API or scripting (e.g., Lua) for editor-driven additions.
+                    \item Example: Add a ``stamina'' vital via the editor, updating \texttt{vitals.json} and reflecting in-game without recompiling.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Editor-Friendly Design}
+        \begin{itemize}
+            \item \textbf{Purpose}: Facilitate a game creation editor by exposing all configurable elements (vitals, items, loot tables) in a user-friendly format, enabling non-programmers to build levels, quests, or mechanics.
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Develop a GUI editor that reads/writes config files, with templates for common elements (e.g., health vital, gold currency).
+                    \item Provide scripting support (e.g., Lua) for custom behaviors, accessible via editor UI.
+                    \item Include validation tools to ensure config integrity (e.g., valid ranges for vital max/min).
+                    \item Example: Editor allows dragging a ``sword'' item into a creature’s loot table, updating \texttt{loot.json}.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Interconnected Gameplay Elements}
+        \begin{itemize}
+            \item \textbf{Purpose}: Create a rich, MMO-like experience where elements like vitals, items, and environments interact dynamically (e.g., temperature vital affected by climate zones, loot tables yielding currencies/items).
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Use an Entity-Component-System (ECS) to manage entities (players, NPCs, zones) with components like vitals, inventory, or stats.
+                    \item Define relationships in config files (e.g., \texttt{climate.json} links zones to temperature effects).
+                    \item Implement event-driven interactions (e.g., \texttt{onEnterZone} adjusts temperature vital).
+                    \item Example: A ``frozen tundra'' zone reduces the ``temperature'' vital, countered by equipping a ``fur cloak'' item.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Scalable MMO Infrastructure}
+        \begin{itemize}
+            \item \textbf{Purpose}: Support MMO-scale features like large player counts, persistent worlds, and networked data access for vitals, inventories, and quests.
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Design a server-client architecture with a database backend (e.g., SQLite) for persistent storage of player data.
+                    \item Use efficient data structures (e.g., \texttt{std::unordered\_map}) for fast access to vitals/currencies.
+                    \item Enable networked updates via events (e.g., \texttt{onVitalChanged} syncs health across clients).
+                    \item Example: Player’s ``gold'' currency updates in real-time across server and clients after looting.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Simplicity for Expansion}
+        \begin{itemize}
+            \item \textbf{Purpose}: Ensure new elements (e.g., vitals, items) can be added via configs or editor without code changes, maintaining simplicity for developers and modders.
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Centralize element management in registries with generic APIs (e.g., \texttt{addVital(name, config)}).
+                    \item Use data-binding to link configs to game systems (e.g., UI, combat) automatically.
+                    \item Support modding via external config files or scripts, validated at load time.
+                    \item Example: Adding a ``morale'' vital via editor updates UI and gameplay without altering codebase.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Comprehensive Core Mechanics}
+        \begin{itemize}
+            \item \textbf{Purpose}: Cover all essential RPG mechanics (combat, progression, crafting, exploration) with configurable parameters to support diverse MMO features.
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Define core systems (e.g., combat, inventory, questing) in config files with customizable rules (e.g., damage formulas, drop rates).
+                    \item Support loot tables linking items, currencies, and probabilities (e.g., \texttt{loot.json} for creature drops).
+                    \item Include environmental effects (e.g., climate impacting vitals like temperature or thirst).
+                    \item Example: A ``dragon'' loot table includes ``gold'' currency and ``dragon scale'' item, with configurable drop chances.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Robust and User-Friendly UI}
+        \begin{itemize}
+            \item \textbf{Purpose}: Provide a dynamic UI that reflects configurable elements and supports MMO-scale interactions (e.g., trading, party management).
+            \item \textbf{Considerations/Solutions}:
+                \begin{itemize}
+                    \item Use a UI config file (e.g., \texttt{ui\_layout.json}) to define displays for vitals, inventories, etc.
+                    \item Implement data-binding to update UI automatically when elements change (e.g., new vital added).
+                    \item Support customizable HUDs via editor for player-specific layouts.
+                    \item Example: A ``health'' progress bar auto-updates when a new vital is added via \texttt{vitals.json}.
+                \end{itemize}
+        \end{itemize}
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Configuration}
+
+This section details the configuration strategy for the MIA RPG system, focusing on simplicity for testing, scalability for MMO deployment, and support for a game creation editor. Configuration is designed to allow dynamic addition and removal of game elements (e.g., vitals, items, loot tables) via JSON files during development, with a compressed format for release and robust server-side validation to prevent tampering.
+
+\subsection{Vision}
+The configuration system uses JSON files in code folders to define example items, vitals, loot tables, and other objects for testing and development. These will be compressed into a single, MPQ-like format for game releases, with tools to view and edit the archive, supporting editor-driven game creation. Server-side database features will store character-specific data and save states, with consideration for including item definitions to prevent tampering. A file-based ``saveToFile'' and ``loadFromFile'' system will support player data storage during testing. These files can even be stored locally for the release game, and hased values can be checked against the server-side saves to detect tampering and restore changed or damaged files.
+
+\subsection{Configuration Design}
+The configuration system is structured to support the following objectives, ensuring simplicity, editor compatibility, and MMO-scale robustness.
+
+\begin{enumerate}
+    \item \textbf{JSON-Based Configuration for Testing}
+        \begin{itemize}
+            \item \textbf{Purpose}: Enable rapid iteration during development by using human-readable JSON files to define game elements, facilitating testing and editor integration.
+            \item \textbf{Design}:
+                \begin{itemize}
+                    \item Store JSON files in relevant folders (e.g., \texttt{data/vitals/vitals.json}, \texttt{data/items/items.json}, \texttt{data/loot/loot.json}).
+                    \item Example \texttt{vitals.json}:
+                    \begin{lstlisting}[style=htmlstyle]
+[
+  {"id": "health", "name": "Health", "current": 100, "max": 100, "min": 0},
+  {"id": "mana", "name": "Mana", "current": 50, "max": 100, "min": 0}
+]
+                    \end{lstlisting}
+                    \item Example \texttt{items.json}:
+                    \begin{lstlisting}[style=htmlstyle]
+[
+  {"id": "sword_001", "name": "Iron Sword", "type": "weapon", "damage": 10, "tradeable": true},
+  {"id": "potion_001", "name": "Health Potion", "type": "consumable", 
+   "effect": {"vital": "health", "value": 20}}
+]
+                    \end{lstlisting}
+                    \item Load files into registries (e.g., \texttt{VitalsRegistry}, \texttt{ItemRegistry}) using a JSON parser (e.g., nlohmann/json in C++).
+                    \item Include validation for required fields (e.g., \texttt{id}, \texttt{max}) and default values for optional fields (e.g., \texttt{min=0}).
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Compressed Format for Release}
+        \begin{itemize}
+            \item \textbf{Purpose}: Optimize game releases by bundling JSON configurations into a single, compressed archive (similar to WoW’s MPQ) to reduce file count and improve load times.
+            \item \textbf{Design}:
+                \begin{itemize}
+                    \item Use a compression library (e.g., libzip) to create an archive (e.g., \texttt{game\_data.mia}) containing all JSON files.
+                    \item Include a manifest file (e.g., \texttt{manifest.json}) listing contents for quick access:
+                    \begin{lstlisting}[style=htmlstyle]
+{
+  "files": ["vitals.json", "items.json", "loot.json"]
+}
+                    \end{lstlisting}
+                    \item Develop tools (e.g., C++ or Python-based editor) to extract, view, and edit the archive, supporting the game creation editor.
+                    \item Example: Editor extracts \texttt{items.json}, allows adding a new item, and recompresses into \texttt{game\_data.mia}.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Server-Side Database with Tamper Checks}
+        \begin{itemize}
+            \item \textbf{Purpose}: Store character-specific data and item definitions server-side to ensure persistence and prevent tampering in MMO environments.
+            \item \textbf{Design}:
+                \begin{itemize}
+                    \item Use a database (e.g., SQLite for testing, scalable DBMS for release) to store player data (e.g., vitals, inventory) and static item definitions.
+                    \item Example \texttt{items} table:
+                    \begin{lstlisting}[style=htmlstyle]
+CREATE TABLE items (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100),
+    type VARCHAR(50),
+    properties JSON
+);
+                    \end{lstlisting}
+                    \item Sync \texttt{items.json} with the \texttt{items} table during release to validate client actions (e.g., item usage) against server data.
+                    \item Example: Client sends \texttt{use\_item("potion\_001")}, server checks \texttt{properties} (e.g., heals 20 health) and applies the effect.
+                    \item Use checksums (e.g., SHA256) on the compressed archive to detect client-side tampering.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{File-Based Player Data Storage for Testing}
+        \begin{itemize}
+            \item \textbf{Purpose}: Provide a simple, file-based system to save and load player data during testing, mirroring future database functionality.
+            \item \textbf{Design}:
+                \begin{itemize}
+                    \item Store player state in \texttt{player.json}:
+                    \begin{lstlisting}[style=htmlstyle]
+{
+  "player_id": "player_001",
+  "name": "Hero",
+  "vitals": [
+    {"id": "health", "current": 80, "max": 100, "min": 0},
+    {"id": "mana", "current": 30, "max": 100, "min": 0}
+  ],
+  "inventory": [
+    {"item_id": "sword_001", "quantity": 1},
+    {"item_id": "potion_001", "quantity": 3}
+  ],
+  "currencies": [
+    {"currency_id": "gold", "amount": 500}
+  ],
+  "position": {"x": 100, "y": 200}
+}
+                    \end{lstlisting}
+                    \item Implement \texttt{saveToFile} and \texttt{loadFromFile} in a \texttt{Player} class using nlohmann/json.
+                    \item Example:
+                    \begin{lstlisting}[style=htmlstyle]
+void Player::saveToFile(const std::string& path) const;
+bool Player::loadFromFile(const std::string& path);
+                    \end{lstlisting}
+                    \item Handle errors with defaults (e.g., new player with 100 health) and log issues to a debug console.
+                    \item Design fields to match future database schema for seamless migration.
+                \end{itemize}
+        \end{itemize}
+\end{enumerate}
+
+
+
+
+
