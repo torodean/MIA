@@ -2,12 +2,14 @@
  * File: CharacterVitals.hpp
  * Author: Antonius Torode
  * Created on: 07/07/2025
- * Description: A class representing the vitals for a character.
+ * Description: A class representing configurable vitals for a character.
  */
 #pragma once
 
 #include <algorithm>
+#include <map>
 #include <string>
+#include <sstream>
 
 namespace rpg
 {
@@ -15,11 +17,7 @@ namespace rpg
      * Represents a character's vital resource with a current and maximum value.
      * Both current and max are integers to allow positive and negative states.
      * 
-     * Usage:
-     * - current: the current amount of the resource (e.g., health, hunger).
-     * - max: the maximum possible amount of the resource.
-     * 
-     * Ensures you can clamp current between 0 and max, and handle depletion or overflow.
+     * Ensures you can clamp current between min and max, and handle depletion or overflow.
      */
     struct Vital
     {
@@ -28,7 +26,6 @@ namespace rpg
         int min{0};       ///< Minimum amount of the vital.
     };
 
-
     class CharacterVitals
     {
     public:
@@ -36,58 +33,45 @@ namespace rpg
          * Default constructor.
          */
         CharacterVitals() = default;
-    
-        /// Getters for the various data mambers.
-        Vital getHealth() const { return health; }
-        Vital getMana() const { return mana; }
-        Vital getEnergy() const { return energy; }
-        Vital getRage() const { return rage; }
-        Vital getBreath() const { return breath; }
-        Vital getFocus() const { return focus; }
-        Vital getRadiation() const { return radiation; }
-        Vital getTemperature() const { return temperature; }
-        Vital getHunger() const { return hunger; }
-        Vital getThirst() const { return thirst; }
-        Vital getToxicity() const { return toxicity; }
-        Vital getSanity() const { return sanity; }
-        
+
         /**
-         * Sets a Vital member by clamping its current value within the specified min and max bounds,
-         * then updates the min and max values accordingly.
-         * 
-         * @tparam T The type of the Vital member (typically 'Vital').
-         * @param member Reference to the Vital member to update.
-         * @param vital The new Vital values to apply.
-         * 
-         * This function ensures the current value remains within [min, max].
+         * Gets the Vital associated with the given name.
+         * If the vital does not exist, returns a default Vital.
+         *
+         * @param name The name of the vital (e.g., "health", "mana").
+         * @return The Vital associated with the name.
          */
-        template<typename T>
-        void setVital(T& member, const Vital& vital) 
-        {
-            member.current = std::clamp(vital.current, vital.min, vital.max);
-            member.max = vital.max;
-            member.min = vital.min;
-        }
-        
-        /// Setters for the various data members.
-        void setHealth(const Vital& vital) { setVital(health, vital); }
-        void setMana(const Vital& vital) { setVital(mana, vital); }
-        void setEnergy(const Vital& vital) { setVital(energy, vital); }
-        void setRage(const Vital& vital) { setVital(rage, vital); }
-        void setBreath(const Vital& vital) { setVital(breath, vital); }
-        void setFocus(const Vital& vital) { setVital(focus, vital); }
-        void setRadiation(const Vital& vital) { setVital(radiation, vital); }
-        void setTemperature(const Vital& vital) { setVital(temperature, vital); }
-        void setHunger(const Vital& vital) { setVital(hunger, vital); }
-        void setThirst(const Vital& vital) { setVital(thirst, vital); }
-        void setToxicity(const Vital& vital) { setVital(toxicity, vital); }
-        void setSanity(const Vital& vital) { setVital(sanity, vital); }
-        
+        Vital getVital(const std::string& name) const;
+
+        /**
+         * Sets a Vital by name, clamping its current value within the specified min and max bounds.
+         *
+         * @param name The name of the vital to set (e.g., "health", "mana").
+         * @param vital The new Vital values to apply.
+         */
+        void setVital(const std::string& name, const Vital& vital);
+
+        /**
+         * Adds a new vital with the given name and default values.
+         *
+         * @param name The name of the new vital.
+         * @return True if the vital was added; false if it already exists.
+         */
+        bool addVital(const std::string& name);
+
+        /**
+         * Removes a vital by name.
+         *
+         * @param name The name of the vital to remove.
+         * @return True if the vital was removed; false if it didn't exist.
+         */
+        bool removeVital(const std::string& name);
+
         /**
          * Serializes the CharacterVitals to a compact string enclosed by unique markers
          * for reliable extraction within a larger data stream.
          *
-         * Format: [CV_BEGIN]current,max,min,...(for each Vital)[CV_END]
+         * Format: [CV_BEGIN]name:current,max,min;...[CV_END]
          *
          * @return A string representing the serialized state of the CharacterVitals.
          */
@@ -102,21 +86,8 @@ namespace rpg
          * @return True if deserialization succeeded; false otherwise.
          */
         bool deserialize(const std::string& data);
-        
-    private:
-    
-        Vital health;       ///< The character's current health.
-        Vital mana;         ///< The character's current mana used for spellcasting.
-        Vital energy;       ///< The character's energy used for physical actions.
-        Vital rage;         ///< The character's rage, typically builds up during combat.
-        Vital breath;       ///< The character's remaining breath for underwater or choking scenarios.
-        Vital focus;        ///< The character's mental focus or concentration level.
-        Vital radiation;    ///< The character's radiation exposure level.
-        Vital temperature;  ///< The character's current body temperature.
-        Vital hunger;       ///< The character's hunger level.
-        Vital thirst;       ///< The character's thirst level.
-        Vital toxicity;     ///< The character's level of poison or toxicity.
-        Vital sanity;       ///< The character's current mental stability or sanity.
 
+    private:
+        std::map<std::string, Vital> vitals; ///< Map of vital names to their Vital structures.
     }; // class CharacterVitals
 } // namespace rpg
