@@ -8,6 +8,7 @@
 
 #include <string>
 #include "CurrencyContainer.hpp"
+#include "CharacterVitals.hpp"
 
 namespace rpg
 {
@@ -43,5 +44,6 @@ namespace rpg
 
     private:
         currency::CurrencyContainer wallet; ///< The player's currency container.
+        rpg::CharacterVitals vitals;        ///< The player's vitals.
     };
 } // namespace rpg

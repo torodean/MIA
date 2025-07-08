@@ -19,8 +19,8 @@ namespace rpg
         {
             return false;
         }
-        file << wallet.serialize();
-        file << "\n";
+        file << vitals.serialize() << "\n";
+        file << wallet.serialize() << "\n";
         file.close();
         return true;
     }
@@ -40,6 +40,7 @@ namespace rpg
         std::string data = buffer.str();
         try 
         {
+            vitals.deserialize(data);
             wallet = currency::CurrencyContainer::deserialize(data);
         } 
         catch (const std::exception&) 
