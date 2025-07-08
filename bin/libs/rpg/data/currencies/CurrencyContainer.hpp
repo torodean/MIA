@@ -72,6 +72,28 @@ namespace currency
          * @param os The output stream to write to (defaults to std::cout).
          */
         void dump(std::ostream& os = std::cout) const;
+        
+        /**
+         * Serializes the contents of the CurrencyContainer to a compact string.
+         * The serialized format is enclosed between unique [CC_BEGIN] and [CC_END] markers
+         * for easy identification within a larger data stream.
+         *
+         * Format: [CC_BEGIN]id1:qty1;id2:qty2;...[CC_END]
+         *
+         * @return A string representing the serialized state of the container.
+         */
+        std::string serialize() const;
+        
+        /**
+         * Deserializes a CurrencyContainer from a string containing serialized data.
+         * The method searches for a block enclosed between [CC_BEGIN] and [CC_END],
+         * then reconstructs the container from the currency ID and quantity pairs.
+         *
+         * @param data A string containing the serialized container, possibly among other data.
+         * @return A reconstructed CurrencyContainer instance.
+         * @throws std::invalid_argument if no valid serialized block is found.
+         */
+        static CurrencyContainer deserialize(const std::string& data);
 
     private:
         std::unordered_map<uint32_t, CurrencyQuantity> currencies;  ///< Map of currency ID to currency instance.

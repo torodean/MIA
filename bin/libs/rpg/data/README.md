@@ -17,5 +17,5 @@ This folder contains the various data storage classes for the rpg elements.
 - **professions/**
   Contains the various professions.
 
-- **status/**
+- **stats/**
   Contains the various stat-related classes.

@@ -6,21 +6,48 @@
  */
 
 #include <fstream>
+#include <sstream>
 #include "Player.hpp"
 
 namespace rpg
 {
 
-    bool Player::writeStatsToFile(const std::string& filename) const
+    bool Player::saveToFile(const std::string& filename) const
     {
         std::ofstream file(filename);
-        if (!file.is_open()) {
+        if (!file.is_open()) 
+        {
             return false;
         }
-        file << "Player Inventory:\n";
-        wallet.dump(file);
+        file << wallet.serialize();
+        file << "\n";
         file.close();
         return true;
     }
 
+    bool Player::loadFromFile(const std::string& filename)
+    {
+        std::ifstream file(filename);
+        if (!file.is_open()) 
+        {
+            return false;
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        file.close();
+
+        std::string data = buffer.str();
+        try 
+        {
+            wallet = currency::CurrencyContainer::deserialize(data);
+        } 
+        catch (const std::exception&) 
+        {
+            return false;
+        }
+
+        return true;
+    }
+    
 } // namespace rpg

@@ -1,7 +1,7 @@
 
 add_subdirectory( currencies )
+add_subdirectory( stats )
 add_subdirectory( player )
-
 
 # Create the RPG_Data_LIB
 set(RPG_Data_SRC 
