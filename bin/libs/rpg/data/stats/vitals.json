@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Health",
+    "description": "Represents the character's life. Depletes when damaged.",
+    "type": "DEPLETIVE",
+    "current": 100,
+    "max": 100,
+    "min": 0
+  },
+  {
+    "id": 2,
+    "name": "Mana",
+    "description": "Used to cast spells and abilities. Depletes when used.",
+    "type": "DEPLETIVE",
+    "current": 75,
+    "max": 100,
+    "min": 0
+  },
+  {
+    "id": 3,
+    "name": "Energy",
+    "description": "Short-term resource used for quick actions. Depletes rapidly.",
+    "type": "DEPLETIVE",
+    "current": 50,
+    "max": 100,
+    "min": 0
+  },
+  {
+    "id": 4,
+    "name": "Rage",
+    "description": "Builds up as the character takes or deals damage.",
+    "type": "ACCUMULATIVE",
+    "current": 0,
+    "max": 100,
+    "min": 0
+  },
+  {
+    "id": 5,
+    "name": "Sanity",
+    "description": "Represents mental stability. Depletes when exposed to horrors.",
+    "type": "DEPLETIVE",
+    "current": 100,
+    "max": 100,
+    "min": 0
+  }
+]
