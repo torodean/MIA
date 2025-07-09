@@ -14,7 +14,7 @@ using namespace currency;
 /**
  * Test fixture for CurrencyContainer tests.
  */
-class CurrencyContainerTest : public ::testing::Test 
+class CurrencyContainer_T : public ::testing::Test 
 {
 protected:
     void SetUp() override
@@ -35,7 +35,7 @@ protected:
 /**
  * @test Verify currency is added and quantity is tracked correctly.
  */
-TEST_F(CurrencyContainerTest, AddCurrencyIncreasesQuantity) 
+TEST_F(CurrencyContainer_T, AddCurrencyIncreasesQuantity) 
 {
     container.addCurrency(coin, 100);
     EXPECT_EQ(container.getQuantity(coin), 100);
@@ -47,7 +47,7 @@ TEST_F(CurrencyContainerTest, AddCurrencyIncreasesQuantity)
 /**
  * @test Removing currency decreases quantity correctly.
  */
-TEST_F(CurrencyContainerTest, RemoveCurrencyDecreasesQuantity) 
+TEST_F(CurrencyContainer_T, RemoveCurrencyDecreasesQuantity) 
 {
     container.addCurrency(coin, 80);
     EXPECT_TRUE(container.removeCurrency(coin, 30));
@@ -57,7 +57,7 @@ TEST_F(CurrencyContainerTest, RemoveCurrencyDecreasesQuantity)
 /**
  * @test Cannot remove more currency than is present.
  */
-TEST_F(CurrencyContainerTest, RemoveFailsIfInsufficientQuantity) 
+TEST_F(CurrencyContainer_T, RemoveFailsIfInsufficientQuantity) 
 {
     container.addCurrency(gem, 10);
     EXPECT_FALSE(container.removeCurrency(gem, 20));
@@ -67,7 +67,7 @@ TEST_F(CurrencyContainerTest, RemoveFailsIfInsufficientQuantity)
 /**
  * @test Checking if container has enough currency.
  */
-TEST_F(CurrencyContainerTest, HasCurrencyCheckWorks) 
+TEST_F(CurrencyContainer_T, HasCurrencyCheckWorks) 
 {
     container.addCurrency(coin, 75);
     EXPECT_TRUE(container.hasCurrency(coin, 50));
@@ -77,7 +77,7 @@ TEST_F(CurrencyContainerTest, HasCurrencyCheckWorks)
 /**
  * @test Getting quantity of unknown currency returns zero.
  */
-TEST_F(CurrencyContainerTest, GetQuantityForUnknownCurrencyReturnsZero) 
+TEST_F(CurrencyContainer_T, GetQuantityForUnknownCurrencyReturnsZero) 
 {
     EXPECT_EQ(container.getQuantity(gem), 0);
 }
@@ -85,7 +85,7 @@ TEST_F(CurrencyContainerTest, GetQuantityForUnknownCurrencyReturnsZero)
 /**
  * @test Serializing and deserializing preserves data.
  */
-TEST_F(CurrencyContainerTest, SerializeAndDeserializeRoundTrip) 
+TEST_F(CurrencyContainer_T, SerializeAndDeserializeRoundTrip) 
 {    
     container.addCurrency(coin, 25);
     container.addCurrency(gem, 40);

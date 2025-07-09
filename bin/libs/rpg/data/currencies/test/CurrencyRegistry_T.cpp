@@ -11,7 +11,7 @@
 
 using namespace currency;
 
-class CurrencyRegistryTest : public ::testing::Test 
+class CurrencyRegistry_T : public ::testing::Test 
 {
 protected:
     void SetUp() override 
@@ -50,7 +50,7 @@ protected:
     CurrencyRegistry* registry;
 };
 
-TEST_F(CurrencyRegistryTest, LoadFromFileAndRetrieveById) 
+TEST_F(CurrencyRegistry_T, LoadFromFileAndRetrieveById) 
 {
     const Currency* gold = registry->getById(1);
     ASSERT_NE(gold, nullptr);
@@ -61,7 +61,7 @@ TEST_F(CurrencyRegistryTest, LoadFromFileAndRetrieveById)
     EXPECT_EQ(gold->getIconArt(), "gold.png");
 }
 
-TEST_F(CurrencyRegistryTest, RetrieveByName) 
+TEST_F(CurrencyRegistry_T, RetrieveByName) 
 {
     const Currency* gem = registry->getByName("Blue Amethyst");
     ASSERT_NE(gem, nullptr);
@@ -71,7 +71,7 @@ TEST_F(CurrencyRegistryTest, RetrieveByName)
     EXPECT_EQ(gem->getDescription(), "");
 }
 
-TEST_F(CurrencyRegistryTest, DumpOutputsCorrectString) 
+TEST_F(CurrencyRegistry_T, DumpOutputsCorrectString) 
 {
     std::ostringstream oss;
     registry->dump(oss);
