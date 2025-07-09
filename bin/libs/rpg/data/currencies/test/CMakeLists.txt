@@ -1,0 +1,3 @@
+add_executable(CurrencyRegistry_T CurrencyRegistry_T.cpp)
+target_link_libraries(CurrencyRegistry_T PRIVATE RPG_Currencies_LIB GTest::gtest_main)
+add_test(NAME CurrencyRegistry_T COMMAND CurrencyRegistry_T )

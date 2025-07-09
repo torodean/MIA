@@ -106,7 +106,7 @@ namespace currency
             uint32_t id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
             uint32_t qty = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
 
-            const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getCurrencyById(id);
+            const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getById(id);
             if (curr) {
                 container.addCurrency(*curr, qty);
             }

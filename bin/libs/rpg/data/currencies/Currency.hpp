@@ -8,13 +8,14 @@
 
 #include <stdint.h>
 #include <string>
+#include <algorithm>
 
 namespace currency
 {
     /**
      * This enum represents the type of currency.  
      */
-     enum class currencyType : uint8_t
+     enum class CurrencyType : uint8_t
      {
         UNKNOWN = 0,
         COIN,
@@ -25,18 +26,39 @@ namespace currency
      };
      
      /**
-     * Converts a string to a currencyType enum.
+     * Converts a string to a CurrencyType enum.
      * @param typeStr The string representation of the type.
-     * @return The corresponding currencyType, or UNKNOWN if invalid.
+     * @return The corresponding CurrencyType, or UNKNOWN if invalid.
      */
-    inline currencyType stringToCurrencyType(const std::string& typeStr)
+    inline CurrencyType stringToCurrencyType(const std::string& typeStr)
     {
-        if (typeStr == "COIN") return currencyType::COIN;
-        if (typeStr == "FIAT") return currencyType::FIAT;
-        if (typeStr == "TOKEN") return currencyType::TOKEN;
-        if (typeStr == "EVENT") return currencyType::EVENT;
-        if (typeStr == "GEM") return currencyType::GEM;
-        return currencyType::UNKNOWN;
+        std::string str = typeStr;
+        std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+    
+        if (str == "COIN") return CurrencyType::COIN;
+        if (str == "FIAT") return CurrencyType::FIAT;
+        if (str == "TOKEN") return CurrencyType::TOKEN;
+        if (str == "EVENT") return CurrencyType::EVENT;
+        if (str == "GEM") return CurrencyType::GEM;
+        return CurrencyType::UNKNOWN;
+    }
+    
+     /**
+     * Converts a CurrencyType to an std::string.
+     * @param typeStr The string representation of the type.
+     * @return The corresponding CurrencyType, or UNKNOWN if invalid.
+     */
+    inline std::string currencyTypeToString(const CurrencyType& type)
+    {
+        switch(type)
+        {
+            case CurrencyType::COIN:  return "COIN";
+            case CurrencyType::FIAT:  return "FIAT";
+            case CurrencyType::TOKEN: return "TOKEN";
+            case CurrencyType::EVENT: return "EVENT";
+            case CurrencyType::GEM:   return "GEM";
+            default:                  return "UNKNOWN";
+        }
     }
     
     /**
@@ -46,39 +68,40 @@ namespace currency
     class Currency
     {
     public:
+    
+        Currency() = default;
+        
         /**
          * The main constructor for a Currency object.
          * @param name[const std::string&] - The name of the currency.
          * @param desc[const std::string&] - The desciption of the currency.
-         * @param type[currencyType] - The type for this currency.
+         * @param type[CurrencyType] - The type for this currency.
          * @param trade[bool] - Whether or not this currency is tradeable.
          * @param icon[const std::string&] - The icon art for this currency.
          */
-        Currency(const std::string& name, 
-                     const std::string& desc,
-                     currencyType type,
-                     bool trade = true,
-                     const std::string& icon = "") : 
-            name(name), description(desc), type(type),  tradeable(trade), iconArt(icon)
-        { 
-            static uint32_t idCounter = 0;
-            id = idCounter++; // Simple ID generation            
-        }
+        Currency(uint32_t id,
+                 const std::string& name, 
+                 const std::string& desc,
+                 CurrencyType type,
+                 bool trade = true,
+                 const std::string& icon = "") : 
+            id(id), name(name), description(desc), type(type),  tradeable(trade), iconArt(icon)
+        { }
     
         /// Getters for the various data mambers.
+        uint32_t getID() const  { return id; }
         std::string getName() const  { return name; }
         std::string getDescription() const  { return description; }
         std::string getIconArt() const  { return iconArt; }
         bool isTradeable() const { return tradeable; }
-        currencyType getCurrencyType() const  { return type; }
-        uint32_t getID() const  { return id; }
+        CurrencyType getCurrencyType() const  { return type; }
         
     protected:
         
         uint32_t id;              ///< A unique identifier for this item.
         std::string name;         ///< The name of this currency.
         std::string description;  ///< A description for this currency.
-        currencyType type;        ///< The type of currency.
+        CurrencyType type;        ///< The type of currency.
         bool tradeable{true};     ///< Whether this currency is tradeable to other players.
         std::string iconArt{};    ///< The path to the icon art for this currency.
         

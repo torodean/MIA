@@ -16,9 +16,17 @@ namespace rpg
 {
     /**
      * Templated base class for registries managing game objects (e.g., Currency, Vital).
+     * Uses the Curiously Recurring Template Pattern (CRTP) where:
+     * - Derived is the concrete registry subclass inheriting from this base.
+     * - T is the type of object stored in the registry.
+     *
+     * This pattern enables the base class to provide functionality (like a singleton instance)
+     * for the derived class, while allowing derived classes to implement type-specific behavior.
+     *
+     * @tparam Derived The concrete registry class inheriting from this base.
      * @tparam T The type of object stored in the registry.
      */
-    template<typename T>
+    template<typename Derived, typename T>
     class Registry
     {
     public:
@@ -27,12 +35,15 @@ namespace rpg
         Registry& operator=(const Registry&) = delete;
 
         /**
-         * Gets the singleton instance of the registry.
-         * @return Reference to the singleton instance.
+         * Gets the singleton instance of the derived registry class.
+         * This method ensures only one instance of the registry exists during runtime.
+         * It uses the Curiously Recurring Template Pattern (CRTP) to instantiate the concrete derived class.
+         * 
+         * @return Reference to the unique singleton instance of the derived registry.
          */
-        static Registry<T>& getInstance()
+        static Derived& getInstance()
         {
-            static Registry<T> instance;
+            static Derived instance;
             return instance;
         }
 

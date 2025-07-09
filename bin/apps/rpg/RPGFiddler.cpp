@@ -17,7 +17,7 @@
 #include "Constants.hpp"
 // Used for changing terminal colors.
 #include "TerminalColors.hpp"
-#include "Currencies.hpp"
+#include "CurrencyRegistry.hpp"
 #include "DataLoader.hpp"
 
 RPGFiddler::RPGFiddler()                      
@@ -58,15 +58,17 @@ int RPGFiddler::run()
 {
     LOG_METHOD_CALL(); // Used for testing log file calls.
     
+    currency::CurrencyRegistry& registry = currency::CurrencyRegistry::getInstance();
+    
     // test some currency changes.
     player.getWallet().dump(); std::cout << std::endl;
-    player.getWallet().addCurrency(*currency::copperCoin, 42);    
+    player.getWallet().addCurrency(*registry.getByName("Copper Coin"), 42);    
     player.getWallet().dump(); std::cout << std::endl;
-    player.getWallet().addCurrency(*currency::copperCoin, 7);    
+    player.getWallet().addCurrency(*registry.getByName("Copper Coin"), 7);    
     player.getWallet().dump(); std::cout << std::endl;
-    player.getWallet().addCurrency(*currency::goldCoin, 3);    
+    player.getWallet().addCurrency(*registry.getByName("Gold Coin"), 3);    
     player.getWallet().dump(); std::cout << std::endl;
-    player.getWallet().removeCurrency(*currency::copperCoin, 25);    
+    player.getWallet().removeCurrency(*registry.getByName("Copper Coin"), 25);    
     player.getWallet().dump(); std::cout << std::endl;
     
     return constants::SUCCESS;

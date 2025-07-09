@@ -27,7 +27,7 @@ namespace rpg
         {
             // Load CurrencyRegistry
             currency::CurrencyRegistry::getInstance().loadFromFile(configDir + "currencies/currencies.json");
-            currency::initializeCurrencies(); // Initialize predefined currencies
+            //currency::initializeCurrencies(); // Initialize predefined currencies
         } 
         catch (const std::exception& e) 
         {
