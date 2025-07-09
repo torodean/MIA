@@ -7,8 +7,8 @@
 #pragma once
 
 #include <string>
-#include "CurrencyContainer.hpp"
-#include "CharacterVitals.hpp"
+#include "Wallet.hpp"
+#include "Vitals.hpp"
 
 namespace rpg
 {
@@ -24,7 +24,7 @@ namespace rpg
          * Gets the player's currency container.
          * @return Reference to the currency container.
          */
-        currency::CurrencyContainer& getWallet() { return wallet; }
+        currency::Wallet& getWallet() { return wallet; }
 
         /**
          * Writes the contents of the player's data to a file.
@@ -43,7 +43,7 @@ namespace rpg
         bool loadFromFile(const std::string& filename);
 
     private:
-        currency::CurrencyContainer wallet; ///< The player's currency container.
-        rpg::CharacterVitals vitals;        ///< The player's vitals.
+        currency::Wallet wallet; ///< The player's currency container.
+        rpg::Vitals vitals;        ///< The player's vitals.
     };
 } // namespace rpg

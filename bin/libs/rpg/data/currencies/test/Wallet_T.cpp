@@ -1,20 +1,20 @@
 /**
- * File: CurrencyContainer_T.cpp
+ * File: Wallet_T.cpp
  * Author: Antonius Torode
  * Created on: 07/09/2025
- * Description: Google Test suite for the CurrencyContainer class.
+ * Description: Google Test suite for the Wallet class.
  */
 
 #include <gtest/gtest.h>
-#include "CurrencyContainer.hpp"
+#include "Wallet.hpp"
 #include "CurrencyRegistry.hpp"
 
 using namespace currency;
 
 /**
- * Test fixture for CurrencyContainer tests.
+ * Test fixture for Wallet tests.
  */
-class CurrencyContainer_T : public ::testing::Test 
+class Wallet_T : public ::testing::Test 
 {
 protected:
     void SetUp() override
@@ -26,7 +26,7 @@ protected:
         currency::CurrencyRegistry::getInstance().loadFromString(jsonData);
     }
     
-    CurrencyContainer container;
+    Wallet container;
 
     Currency coin {1, "Coin", "Standard in-game coin", CurrencyType::COIN};
     Currency gem  {2, "Gem", "Premium currency", CurrencyType::GEM};
@@ -35,7 +35,7 @@ protected:
 /**
  * @test Verify currency is added and quantity is tracked correctly.
  */
-TEST_F(CurrencyContainer_T, AddCurrencyIncreasesQuantity) 
+TEST_F(Wallet_T, AddCurrencyIncreasesQuantity) 
 {
     container.addCurrency(coin, 100);
     EXPECT_EQ(container.getQuantity(coin), 100);
@@ -47,7 +47,7 @@ TEST_F(CurrencyContainer_T, AddCurrencyIncreasesQuantity)
 /**
  * @test Removing currency decreases quantity correctly.
  */
-TEST_F(CurrencyContainer_T, RemoveCurrencyDecreasesQuantity) 
+TEST_F(Wallet_T, RemoveCurrencyDecreasesQuantity) 
 {
     container.addCurrency(coin, 80);
     EXPECT_TRUE(container.removeCurrency(coin, 30));
@@ -57,7 +57,7 @@ TEST_F(CurrencyContainer_T, RemoveCurrencyDecreasesQuantity)
 /**
  * @test Cannot remove more currency than is present.
  */
-TEST_F(CurrencyContainer_T, RemoveFailsIfInsufficientQuantity) 
+TEST_F(Wallet_T, RemoveFailsIfInsufficientQuantity) 
 {
     container.addCurrency(gem, 10);
     EXPECT_FALSE(container.removeCurrency(gem, 20));
@@ -67,7 +67,7 @@ TEST_F(CurrencyContainer_T, RemoveFailsIfInsufficientQuantity)
 /**
  * @test Checking if container has enough currency.
  */
-TEST_F(CurrencyContainer_T, HasCurrencyCheckWorks) 
+TEST_F(Wallet_T, HasCurrencyCheckWorks) 
 {
     container.addCurrency(coin, 75);
     EXPECT_TRUE(container.hasCurrency(coin, 50));
@@ -77,7 +77,7 @@ TEST_F(CurrencyContainer_T, HasCurrencyCheckWorks)
 /**
  * @test Getting quantity of unknown currency returns zero.
  */
-TEST_F(CurrencyContainer_T, GetQuantityForUnknownCurrencyReturnsZero) 
+TEST_F(Wallet_T, GetQuantityForUnknownCurrencyReturnsZero) 
 {
     EXPECT_EQ(container.getQuantity(gem), 0);
 }
@@ -85,13 +85,13 @@ TEST_F(CurrencyContainer_T, GetQuantityForUnknownCurrencyReturnsZero)
 /**
  * @test Serializing and deserializing preserves data.
  */
-TEST_F(CurrencyContainer_T, SerializeAndDeserializeRoundTrip) 
+TEST_F(Wallet_T, SerializeAndDeserializeRoundTrip) 
 {    
     container.addCurrency(coin, 25);
     container.addCurrency(gem, 40);
 
     std::string data = container.serialize();
-    CurrencyContainer restored = CurrencyContainer::deserialize(data);
+    Wallet restored = Wallet::deserialize(data);
 
     // Must re-add same Currency objects since deserialization uses IDs
     restored.addCurrency(coin, 0); // ID match
@@ -104,9 +104,9 @@ TEST_F(CurrencyContainer_T, SerializeAndDeserializeRoundTrip)
 /**
  * @test Deserialization fails on malformed input.
  */
-TEST(CurrencyContainerStandaloneTest, DeserializeInvalidFormatThrows) 
+TEST(WalletStandaloneTest, DeserializeInvalidFormatThrows) 
 {
     std::string invalid = "BAD_FORMAT[CC_END]";
-    EXPECT_THROW(CurrencyContainer::deserialize(invalid), std::invalid_argument);
+    EXPECT_THROW(Wallet::deserialize(invalid), std::invalid_argument);
 }
 

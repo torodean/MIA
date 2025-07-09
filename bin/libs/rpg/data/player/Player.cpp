@@ -41,7 +41,7 @@ namespace rpg
         try 
         {
             vitals.deserialize(data);
-            wallet = currency::CurrencyContainer::deserialize(data);
+            wallet = currency::Wallet::deserialize(data);
         } 
         catch (const std::exception&) 
         {

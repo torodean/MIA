@@ -1,5 +1,5 @@
 /**
- * File: CurrencyContainer.hpp
+ * File: Wallet.hpp
  * Author: Antonius Torode
  * Created on: 07/06/2025
  * Description: A container class for managing multiple currencies and their quantities.
@@ -28,44 +28,68 @@ namespace currency
     /**
      * A container class to manage a set of currencies and their quantities.
      */
-    class CurrencyContainer
+    class Wallet
     {
     public:
         /**
          * Default constructor.
          */
-        CurrencyContainer() = default;
+        Wallet() = default;
 
         /**
          * Adds a specified quantity of a currency to the container.
+         * Overloads allow adding by Currency object, currency ID, or currency name.
          * If the currency already exists, the quantity is incremented.
-         * @param currency The currency to add.
-         * @param quantity The amount to add.
+         *
+         * @param currency[const Currency&] - The currency (Currency object)
+         *        currencyId[uint32_t] - The ID (uint32_t)
+         *        name[const std::string&] - The name (std::string)
+         * @param quantity[uint32_t] - The amount to add.
          */
         void addCurrency(const Currency& currency, uint32_t quantity);
+        void addCurrency(uint32_t currencyId, uint32_t quantity);
+        void addCurrency(const std::string& name, uint32_t quantity);
 
         /**
          * Removes a specified quantity of a currency from the container.
-         * @param currency The currency to remove.
-         * @param quantity The amount to remove.
-         * @return True if successful, false if insufficient quantity or currency not found.
+         * Overloads allow removing by Currency object, currency ID, or currency name.
+         *
+         * @param currency[const Currency&] - The currency (Currency object)
+         *        currencyId[uint32_t] - The ID (uint32_t)
+         *        name[const std::string&] - The name (std::string)
+         * @param quantity[uint32_t] - The amount to remove.
+         * @return True if successful; false if insufficient quantity or currency not found.
          */
         bool removeCurrency(const Currency& currency, uint32_t quantity);
+        bool removeCurrency(uint32_t currencyId, uint32_t quantity);
+        bool removeCurrency(const std::string& name, uint32_t quantity);
 
         /**
          * Gets the quantity of a specific currency in the container.
-         * @param currency The currency to query.
+         * Overloads allow querying by Currency object, currency ID, or currency name.
+         *
+         * @param currency[const Currency&] - The currency (Currency object)
+         *        currencyId[uint32_t] - The ID (uint32_t)
+         *        name[const std::string&] - The name (std::string)
          * @return The quantity, or 0 if the currency is not found.
          */
         uint32_t getQuantity(const Currency& currency) const;
+        uint32_t getQuantity(uint32_t currencyId) const;
+        uint32_t getQuantity(const std::string& name) const;
 
         /**
          * Checks if the container has at least the specified quantity of a currency.
-         * @param currency The currency to check.
-         * @param quantity The required amount.
-         * @return True if the container has enough, false otherwise.
+         * Overloads allow checking by Currency object, currency ID, or currency name.
+         *
+         * @param currency[const Currency&] - The currency (Currency object)
+         *        currencyId[uint32_t] - The ID (uint32_t)
+         *        name[const std::string&] - The name (std::string)
+         * @param quantity[uint32_t] - The required amount.
+         * @return True if the container has enough; false otherwise.
          */
         bool hasCurrency(const Currency& currency, uint32_t quantity) const;
+        bool hasCurrency(uint32_t currencyId, uint32_t quantity) const;
+        bool hasCurrency(const std::string& name, uint32_t quantity) const;
 
         /**
          * Dumps the container's contents to the provided output stream.
@@ -74,7 +98,7 @@ namespace currency
         void dump(std::ostream& os = std::cout) const;
         
         /**
-         * Serializes the contents of the CurrencyContainer to a compact string.
+         * Serializes the contents of the Wallet to a compact string.
          * The serialized format is enclosed between unique [CC_BEGIN] and [CC_END] markers
          * for easy identification within a larger data stream.
          *
@@ -85,18 +109,19 @@ namespace currency
         std::string serialize() const;
         
         /**
-         * Deserializes a CurrencyContainer from a string containing serialized data.
+         * Deserializes a Wallet from a string containing serialized data.
          * The method searches for a block enclosed between [CC_BEGIN] and [CC_END],
          * then reconstructs the container from the currency ID and quantity pairs.
          *
          * @param data A string containing the serialized container, possibly among other data.
-         * @return A reconstructed CurrencyContainer instance.
+         * @return A reconstructed Wallet instance.
          * @throws std::invalid_argument if no valid serialized block is found.
          */
-        static CurrencyContainer deserialize(const std::string& data);
+        static Wallet deserialize(const std::string& data);
 
     private:
         std::unordered_map<uint32_t, CurrencyQuantity> currencies;  ///< Map of currency ID to currency instance.
-    }; // class CurrencyContainer
+        std::unordered_map<std::string, uint32_t> nameToId; ///< Map of name to ID.
+    }; // class Wallet
     
 } // namespace currency

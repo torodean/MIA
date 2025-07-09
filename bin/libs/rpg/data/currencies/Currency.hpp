@@ -69,7 +69,7 @@ namespace currency
     class Currency
     {
     public:
-    
+        /// Default constructor.
         Currency() = default;
         
         /**
@@ -86,7 +86,12 @@ namespace currency
                  CurrencyType type,
                  bool trade = true,
                  const std::string& icon = "") : 
-            id(id), name(name), description(desc), type(type),  tradeable(trade), iconArt(icon)
+            id(id), 
+            name(name), 
+            description(desc), 
+            type(type),  
+            tradeable(trade), 
+            iconArt(icon)
         { }
     
         /// Getters for the various data mambers.

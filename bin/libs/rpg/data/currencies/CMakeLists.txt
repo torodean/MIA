@@ -1,10 +1,10 @@
 
 # Create the RPG_Currencies_LIB
 set(RPG_Currencies_SRC 
-    CurrencyContainer.cpp )
+    Wallet.cpp )
 set(RPG_Currencies_INC 
     Currency.hpp
-    CurrencyContainer.hpp
+    Wallet.hpp
     CurrencyRegistry.hpp )
 add_library(RPG_Currencies_LIB ${RPG_Currencies_SRC} ${RPG_Currencies_INC})
 target_link_libraries(RPG_Currencies_LIB PUBLIC System_UTIL RPG_Tools_LIB )
