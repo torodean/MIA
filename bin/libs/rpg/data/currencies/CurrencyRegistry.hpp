@@ -12,8 +12,9 @@
 namespace currency
 {
     class CurrencyRegistry : public rpg::Registry<CurrencyRegistry, Currency>
-    {
+    {        
     protected:
+    
         /**
          * Parses a JSON object into a Currency instance.
          * Uses the Currency constructor to set all fields, preserving encapsulation.
@@ -47,5 +48,6 @@ namespace currency
                    ", Description: " + currency.getDescription() +
                    ", Icon: " + currency.getIconArt();
         }
+        
     };
 } // namespace currency

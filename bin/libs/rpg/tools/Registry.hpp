@@ -70,6 +70,27 @@ namespace rpg
                 nameToId[item["name"]] = id;
             }
         }
+        
+        /**
+         * Loads objects from a JSON string.
+         * Useful for testing or dynamic configuration without file I/O.
+         *
+         * @param jsonStr A JSON-formatted string.
+         * @throws std::runtime_error if parsing fails.
+         */
+        virtual void loadFromString(const std::string& jsonStr)
+        {
+            nlohmann::json data = nlohmann::json::parse(jsonStr);
+            objects.clear();
+            nameToId.clear();
+            for (const auto& item : data)
+            {
+                T obj = parseJson(item);
+                uint32_t id = item["id"];
+                objects[id] = std::move(obj);
+                nameToId[item["name"]] = id;
+            }
+        }
 
         /**
          * Gets an object by its ID.
@@ -103,7 +124,7 @@ namespace rpg
             {
                 os << "ID: " << id << ", " << toString(obj) << "\n";
             }
-        }
+        }        
 
     protected:
         Registry() = default;

@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <string>
 #include <algorithm>
+#include <nlohmann/json.hpp>
 
 namespace currency
 {
@@ -95,6 +96,24 @@ namespace currency
         std::string getIconArt() const  { return iconArt; }
         bool isTradeable() const { return tradeable; }
         CurrencyType getCurrencyType() const  { return type; }
+        
+        /**
+         * Serializes the Currency object into a JSON representation.
+         *
+         * @return A nlohmann::json object containing the currency's ID, name,
+         *         description, type (as a string), and tradeable flag.
+         */
+        nlohmann::json toJson()
+        {
+            return 
+            {
+                {"id", id},
+                {"name", name},
+                {"description", description},
+                {"type", currency::currencyTypeToString(type)},
+                {"tradeable", tradeable}
+            };
+        }
         
     protected:
         
