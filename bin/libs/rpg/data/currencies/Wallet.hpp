@@ -121,7 +121,6 @@ namespace currency
 
     private:
         std::unordered_map<uint32_t, CurrencyQuantity> currencies;  ///< Map of currency ID to currency instance.
-        std::unordered_map<std::string, uint32_t> nameToId; ///< Map of name to ID.
     }; // class Wallet
     
 } // namespace currency
