@@ -16,7 +16,12 @@ namespace rpg_sim
     currency::CurrencyRegistry& currencyRegistry = currency::CurrencyRegistry::getInstance();
     stats::VitalRegistry& vitalRegistry = stats::VitalRegistry::getInstance();
 
-    void runSimulator(rpg::Player& player)
+    void setupSimulator(rpg::Player& player, std::string&  saveFile)
+    {
+        // TODO
+    }
+
+    void runSimulator(rpg::Player& player, std::string& saveFile)
     {
         while (true)
         {
@@ -43,16 +48,16 @@ namespace rpg_sim
             switch (choice)
             {
                 case 1:
-                    fightMob(player);
+                    fightMob(player, saveFile);
                     break;
                 case 2:
-                    lootTreasure(player);
+                    lootTreasure(player, saveFile);
                     break;
                 case 3:
-                    rest(player);
+                    rest(player, saveFile);
                     break;
                 case 4:
-                    spendCurrency(player);
+                    spendCurrency(player, saveFile);
                     break;
                 case 99:
                     std::cout << "Exiting simulator.\n";
@@ -63,25 +68,25 @@ namespace rpg_sim
         }
     }
 
-    void fightMob(rpg::Player& player)
+    void fightMob(rpg::Player& player, std::string& saveFile)
     {
         // TODO: Implement mob fighting logic affecting vitals
         std::cout << "Player engages a random mob, affecting vitals.\n";
     }
 
-    void lootTreasure(rpg::Player& player)
+    void lootTreasure(rpg::Player& player, std::string& saveFile)
     {
         // TODO: Implement treasure looting logic adding currency
         std::cout << "Player loots a treasure chest, gaining currency.\n";
     }
 
-    void rest(rpg::Player& player)
+    void rest(rpg::Player& player, std::string& saveFile)
     {
         // TODO: Implement rest logic recovering vitals
         std::cout << "Player rests to recover vitals.\n";
     }
 
-    void spendCurrency(rpg::Player& player)
+    void spendCurrency(rpg::Player& player, std::string& saveFile)
     {
         // TODO: Implement currency spending logic
         std::cout << "Player spends currency at a vendor.\n";

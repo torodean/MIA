@@ -51,6 +51,12 @@ protected:
 
 private:
 
+    std::string defaultSaveFile{"playerSave.MIA"};
+    std::string fullSaveFilePath{};
+
+    // Command options for this app.
+    CommandOption saveFileOpt;
+
     rpg::Player player;
 
 }; // class RPGFiddler
