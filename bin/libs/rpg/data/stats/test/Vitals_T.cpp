@@ -194,13 +194,14 @@ TEST_F(Vitals_T, SerializeDeserialize)
                             VitalDataModifierTarget::CURRENT_MIN);
 
     std::string serialized = vitals.serialize();
-    Vitals newVitals;
-    EXPECT_TRUE(newVitals.deserialize(serialized));
+    Vitals newVitals = Vitals::deserialize(serialized);
 
     EXPECT_EQ(newVitals.getVitalData("Health").current, 80);
     EXPECT_EQ(newVitals.getVitalEffectiveMax("Health"), 120);
     EXPECT_EQ(newVitals.getVitalEffectiveMin("Health"), 5);
     EXPECT_EQ(newVitals.getVitalData("Mana").currentMax, 200);
 
-    EXPECT_FALSE(newVitals.deserialize("invalid data"));
+    EXPECT_THROW({
+        Vitals::deserialize("invalid data");
+    }, std::invalid_argument);
 }

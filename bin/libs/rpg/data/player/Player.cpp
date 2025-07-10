@@ -40,7 +40,7 @@ namespace rpg
         std::string data = buffer.str();
         try 
         {
-            vitals.deserialize(data);
+            vitals = stats::Vitals::deserialize(data);
             wallet = currency::Wallet::deserialize(data);
         } 
         catch (const std::exception&) 
