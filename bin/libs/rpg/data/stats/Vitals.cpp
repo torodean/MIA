@@ -491,70 +491,69 @@ namespace stats
     }
     
 
-    bool Vitals::deserialize(const std::string& data)
+    Vitals Vitals::deserialize(const std::string& data)
     {
-        // Find the [CV_BEGIN] and [CV_END] markers to extract the serialized payload.
         size_t start = data.find("[CV_BEGIN]");
         size_t end = data.find("[CV_END]");
         if (start == std::string::npos || end == std::string::npos || end <= start + 10)
-            return false;
+            throw std::invalid_argument("Invalid serialized data: missing or malformed [CV_BEGIN]/[CV_END]");
 
-        // Extract the content between the markers.
         std::string content = data.substr(start + 10, end - start - 10);
+        Vitals vitals;
         if (content.empty())
         {
-            vitals.clear(); // No data to process — clear and return success.
-            return true;
+            vitals.clear();
+            return vitals;
         }
 
-        vitals.clear(); // Prepare to repopulate from serialized data.
         std::stringstream ss(content);
         std::string vitalEntry;
 
-        // Parse each vital entry separated by '|'
         while (std::getline(ss, vitalEntry, '|'))
         {
             std::stringstream entryStream(vitalEntry);
             std::string baseInfo;
-            std::getline(entryStream, baseInfo, ';'); // First segment is base vital info.
+            if (!std::getline(entryStream, baseInfo, ';'))
+                throw std::invalid_argument("Malformed vital entry: missing base info");
 
-            // Expect format: <id>:<current>,<min>,<max>
             size_t colon = baseInfo.find(':');
             if (colon == std::string::npos)
-                return false;
+                throw std::invalid_argument("Malformed base info: missing ':' separator");
 
             uint32_t id;
-            int current, min, max;
-            char comma;
-
-            // Extract id and numeric values from baseInfo
-            std::stringstream baseStream(baseInfo.substr(colon + 1));
-            if (!(std::stringstream(baseInfo.substr(0, colon)) >> id) ||
-                !(baseStream >> current >> comma >> min >> comma >> max) ||
-                comma != ',')
+            try
             {
-                return false;
+                id = std::stoul(baseInfo.substr(0, colon));
+            }
+            catch (...)
+            {
+                throw std::invalid_argument("Invalid vital id");
             }
 
-            // Validate vital and insert it into the data store.
-            const Vital* vital = helper_methods::getVitalFromRegistry(id);
-            if (!vital || !addVitalData(id, current, min, max))
-                return false;
+            std::stringstream baseStream(baseInfo.substr(colon + 1));
+            int current, min, max;
+            char comma1, comma2;
+            if (!(baseStream >> current >> comma1 >> min >> comma2 >> max) || comma1 != ',' || comma2 != ',')
+                throw std::invalid_argument("Invalid vital values format");
 
-            // Parse and apply each modifier (delimited by ';')
+            const Vital* vital = helper_methods::getVitalFromRegistry(id);
+            if (!vital)
+                throw std::invalid_argument("Vital ID not found in registry");
+
+            if (!vitals.addVitalData(id, current, min, max))
+                throw std::runtime_error("Failed to add vital data");
+
             std::string modStr;
             while (std::getline(entryStream, modStr, ';'))
             {
                 std::vector<std::string> parts;
                 std::stringstream modStream(modStr);
                 std::string token;
-
-                // Split by comma: <sourceId>,<sourceType>,<value>,<target>
                 while (std::getline(modStream, token, ','))
                     parts.push_back(token);
 
                 if (parts.size() != 4)
-                    return false;
+                    throw std::invalid_argument("Invalid modifier format");
 
                 uint32_t sourceId = std::stoul(parts[0]);
                 rpg::ModifierSourceType sourceType = rpg::stringToModifierSourceType(parts[1]);
@@ -562,14 +561,14 @@ namespace stats
                 VitalDataModifierTarget target = stringToVitalDataModifierTarget(parts[3]);
 
                 if (target != VitalDataModifierTarget::CURRENT_MIN && target != VitalDataModifierTarget::CURRENT_MAX)
-                    return false;
+                    throw std::invalid_argument("Invalid modifier target");
 
-                if (!addVitalModifier(id, sourceId, sourceType, value, target))
-                    return false;
+                if (!vitals.addVitalModifier(id, sourceId, sourceType, value, target))
+                    throw std::runtime_error("Failed to add vital modifier");
             }
         }
 
-        return true; // Successfully parsed all entries and modifiers.
+        return vitals;
     }
 
 } // namespace stats

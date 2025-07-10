@@ -43,7 +43,7 @@ namespace rpg
         bool loadFromFile(const std::string& filename);
 
     private:
-        currency::Wallet wallet; ///< The player's currency container.
-        stats::Vitals vitals;        ///< The player's vitals.
+        currency::Wallet wallet;  ///< The player's currency container.
+        stats::Vitals vitals;     ///< The player's vitals.
     };
 } // namespace rpg
