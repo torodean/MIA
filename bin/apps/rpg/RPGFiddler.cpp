@@ -54,7 +54,7 @@ void RPGFiddler::initialize(int argc, char* argv[])
         if (files::fileExists(fullSaveFilePath))
             player.loadFromFile(fullSaveFilePath);
         else
-            rpg_sim::setupSimulator(player, fullSaveFilePath);
+            rpg_sim::setupSimulator(player);
     }
     catch (const error::MIAException& ex)
     {

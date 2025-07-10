@@ -19,7 +19,7 @@ namespace rpg_sim
      * @param player[rpg::Player&] - The player data.
      * @param saveFile[std::string&  ] - The file to save the data to.
      */
-    void setupSimulator(rpg::Player& player, std::string&   saveFile);
+    void setupSimulator(rpg::Player& player);
     
     /**
      * Displays the menu of possible actions and processes user input.
@@ -27,35 +27,38 @@ namespace rpg_sim
      * @param player[rpg::Player&] - The player data.
      * @param saveFile[std::string&  ] - The file to save the data to.
      */
-    void runSimulator(rpg::Player& player, std::string&   saveFile);
+    void runSimulator(rpg::Player& player, std::string saveFile = "");
 
     /**
      * Simulates fighting a random mob, affecting vitals.
      * @param player[rpg::Player&] - The player data.
-     * @param saveFile[std::string&  ] - The file to save the data to.
      */
-    void fightMob(rpg::Player& player, std::string&   saveFile);
+    void fightMob(rpg::Player& player);
 
     /**
      * Simulates looting a treasure chest, gaining currency.
      * @param player[rpg::Player&] - The player data.
-     * @param saveFile[std::string&  ] - The file to save the data to.
      */
-    void lootTreasure(rpg::Player& player, std::string&   saveFile);
+    void lootTreasure(rpg::Player& player);
 
     /**
      * Simulates resting to recover vitals.
      * @param player[rpg::Player&] - The player data.
-     * @param saveFile[std::string&  ] - The file to save the data to.
      */
-    void rest(rpg::Player& player, std::string&   saveFile);
+    void rest(rpg::Player& player);
 
     /**
      * Simulates spending currency at a vendor.
      * @param player[rpg::Player&] - The player data.
-     * @param saveFile[std::string&  ] - The file to save the data to.
      */
-    void spendCurrency(rpg::Player& player, std::string&   saveFile);
+    void spendCurrency(rpg::Player& player);
+
+    /**
+     * Saves the game state and player data to a file..
+     * @param player[rpg::Player&] - The player data.
+     * @param saveFile[std::string&] - The file to save the data to.
+     */
+    void savePlayerData(rpg::Player& player, std::string& saveFile);
 
     extern currency::CurrencyRegistry& currencyRegistry;
     extern stats::VitalRegistry& vitalRegistry;
