@@ -25,6 +25,12 @@ namespace rpg
          * @return Reference to the currency container.
          */
         currency::Wallet& getWallet() { return wallet; }
+        
+        /**
+         * Gets the player's vitasl.
+         * @return Reference to the Vitals.
+         */
+        stats::Vitals& getVitals() { return vitals; }
 
         /**
          * Writes the contents of the player's data to a file.
