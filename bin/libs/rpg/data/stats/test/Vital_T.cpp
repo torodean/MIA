@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include "Vital.hpp"
 
-using namespace rpg;
+using namespace stats;
 
 /**
  * Test suite for stringToVitalType and vitalTypeToString conversions.
@@ -38,9 +38,8 @@ TEST(Vital_T, DefaultConstruction)
     EXPECT_EQ(v.getName(), "");
     EXPECT_EQ(v.getDescription(), "");
     EXPECT_EQ(v.getVitalType(), VitalType::UNKNOWN);
-    EXPECT_EQ(v.getCurrent(), 0);
-    EXPECT_EQ(v.getMax(), 100);
-    EXPECT_EQ(v.getMin(), 0);
+    EXPECT_EQ(v.getBaseMax(), 100);
+    EXPECT_EQ(v.getBaseMin(), 0);
 }
 
 TEST(Vital_T, ParameterizedConstructionDepletive)
@@ -50,29 +49,8 @@ TEST(Vital_T, ParameterizedConstructionDepletive)
     EXPECT_EQ(v.getName(), "Health");
     EXPECT_EQ(v.getDescription(), "Health bar");
     EXPECT_EQ(v.getVitalType(), VitalType::DEPLETIVE);
-    EXPECT_EQ(v.getCurrent(), 100);  // Starts at max
-    EXPECT_EQ(v.getMax(), 100);
-    EXPECT_EQ(v.getMin(), 0);
-}
-
-TEST(Vital_T, ParameterizedConstructionAccumulative)
-{
-    Vital v(2, "Rage", "Rage meter", VitalType::ACCUMULATIVE);
-    EXPECT_EQ(v.getCurrent(), 0); // Starts at 0
-}
-
-/**
- * Test suite for modifying vital values.
- */
-TEST(Vital_T, Setters)
-{
-    Vital v;
-    v.setCurrent(50);
-    v.setMax(200);
-    v.setMin(10);
-    EXPECT_EQ(v.getCurrent(), 50);
-    EXPECT_EQ(v.getMax(), 200);
-    EXPECT_EQ(v.getMin(), 10);
+    EXPECT_EQ(v.getBaseMax(), 100);
+    EXPECT_EQ(v.getBaseMin(), 0);
 }
 
 /**
@@ -80,15 +58,14 @@ TEST(Vital_T, Setters)
  */
 TEST(Vital_T, SerializationToJson)
 {
-    Vital v(3, "Stamina", "Energy reserve", VitalType::DEPLETIVE, 75, 150, 25);
+    Vital v(3, "Stamina", "Energy reserve", VitalType::DEPLETIVE, 25, 150);
     auto json = v.toJson();
 
     EXPECT_EQ(json["id"], 3u);
     EXPECT_EQ(json["name"], "Stamina");
     EXPECT_EQ(json["description"], "Energy reserve");
     EXPECT_EQ(json["type"], "DEPLETIVE");
-    EXPECT_EQ(json["current"], 75);
-    EXPECT_EQ(json["max"], 150);
-    EXPECT_EQ(json["min"], 25);
+    EXPECT_EQ(json["baseMax"], 150);
+    EXPECT_EQ(json["baseMin"], 25);
 }
 

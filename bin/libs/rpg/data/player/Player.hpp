@@ -44,6 +44,6 @@ namespace rpg
 
     private:
         currency::Wallet wallet; ///< The player's currency container.
-        rpg::Vitals vitals;        ///< The player's vitals.
+        stats::Vitals vitals;        ///< The player's vitals.
     };
 } // namespace rpg

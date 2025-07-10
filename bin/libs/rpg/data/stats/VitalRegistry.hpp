@@ -9,9 +9,9 @@
 #include "Registry.hpp"
 #include "Vital.hpp"
 
-namespace rpg
+namespace stats
 {
-    class VitalRegistry : public rpg::Registry<VitalRegistry, Currency>
+    class VitalRegistry : public rpg::Registry<VitalRegistry, Vital>
     {        
     protected:
     
@@ -27,11 +27,10 @@ namespace rpg
             auto name = json.at("name").get<std::string>();
             auto description = json.value("description", "");
             auto type = stringToVitalType(json.value("type", "UNKNOWN"));
-            auto current = json.value("current", 0);
             auto min = json.value("min", 0);
-            auto max = json.value("max", 0);
+            auto max = json.value("max", 100);
 
-            Vital vital(id, name, description, type, current, max, min);
+            Vital vital(id, name, description, type, min, max);
             return vital;
         }
         
@@ -45,10 +44,9 @@ namespace rpg
         {
             return "Name: " + vital.getName() +
                    ", Type: " + vitalTypeToString(vital.getVitalType()) +
-                   ", Current: " + vital.getCurrent() +
-                   ", Max: " + vital.getMax() +
-                   ", Min: " + vital.getMin() +
+                   ", BaseMin: " + std::to_string(vital.getBaseMin()) +
+                   ", BaseMax: " + std::to_string(vital.getBaseMax()) +
                    ", Description: " + vital.getDescription();
         }        
     };
-} // namespace rpg
+} // namespace stats

@@ -2,6 +2,7 @@
 
 This folder contains the various data storage classes for the rpg elements.
   
+## Structure
 - **armor/**
   Contains the various armor types.
   
@@ -19,3 +20,9 @@ This folder contains the various data storage classes for the rpg elements.
 
 - **stats/**
   Contains the various stat-related classes.
+  
+  
+## DataLoader
+
+The `DataLoader.hpp` and `DataLoader.cpp` files contain a singleton class to manage loading of all game data registries from configuration files, ensuring centralized and consistent initialization of RPG data.
+

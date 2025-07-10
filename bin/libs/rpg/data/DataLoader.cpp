@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include "DataLoader.hpp"
 #include "CurrencyRegistry.hpp"
+#include "VitalRegistry.hpp"
 
 namespace rpg
 {
@@ -24,24 +25,15 @@ namespace rpg
         bool success = true;
         try 
         {
-            // Load CurrencyRegistry
+            // Load Registries
             currency::CurrencyRegistry::getInstance().loadFromFile(configDir + "currencies/currencies.json");
+            stats::VitalRegistry::getInstance().loadFromFile(configDir + "stats/stats.json");
         } 
         catch (const std::exception& e) 
         {
-            std::cerr << "Error loading CurrencyRegistry: " << e.what() << std::endl;
+            std::cerr << "Error loading Data Registries: " << e.what() << std::endl;
             success = false;
         }
-
-        // Add other registries here (e.g., ItemRegistry, QuestRegistry)
-        // Example:
-        // try {
-        //     ItemRegistry::getInstance().loadFromFile(configDir + "items/items.json");
-        //     std::cout << "Loaded ItemRegistry from " << configDir + "items/items.json" << std::endl;
-        // } catch (const std::exception& e) {
-        //     std::cerr << "Error loading ItemRegistry: " << e.what() << std::endl;
-        //     success = false;
-        // }
 
         return success;
     }
@@ -50,9 +42,13 @@ namespace rpg
     void DataLoader::dump(std::ostream& os) const
     {
         os << "=== DataLoader Contents ===\n";
+        
         os << "CurrencyRegistry:\n";
         currency::CurrencyRegistry::getInstance().dump(os);
-        // Add other registries here
+        
+        os << "VitalRegistry:\n";
+        stats::VitalRegistry::getInstance().dump(os);
+        
         os << "==========================\n";
     }
 

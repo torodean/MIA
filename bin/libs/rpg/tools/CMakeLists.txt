@@ -2,7 +2,8 @@
 # Create the RPG_Tools_LIB
 set(RPG_Tools_SRC )
 set(RPG_Tools_INC 
-    Registry.hpp )
+    Registry.hpp
+    Modifier.hpp )
 add_library(RPG_Tools_LIB INTERFACE)
 target_sources(RPG_Tools_LIB INTERFACE ${RPG_Tools_INC})
 target_link_libraries(RPG_Tools_LIB INTERFACE RPG_Currencies_LIB)

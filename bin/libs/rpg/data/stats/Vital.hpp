@@ -11,7 +11,7 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 
-namespace rpg
+namespace stats
 {
     /**
      * Enum class representing different vital behavior types.
@@ -83,7 +83,6 @@ namespace rpg
          * @param name Human-readable name of the Vital.
          * @param description A brief description of the Vital.
          * @param type The VitalType defining behavior (DEPLETIVE or ACCUMULATIVE).
-         * @param current The initial current value of the Vital.
          * @param max The maximum possible value of the Vital.
          * @param min The minimum possible value of the Vital.
          */
@@ -91,35 +90,23 @@ namespace rpg
               const std::string& name,
               const std::string& description,
               VitalType type,
-              int current = 0,
-              int max = 100,
-              int min = 0) :
+              int min = 0,
+              int max = 100) :
             id(id),
             name(name),
             description(description),
             type(type),
-            current(current),
-            max(max),
-            min(min)
-        {
-            // Adjust starting current value based on type
-            if (type == VitalType::DEPLETIVE && current == 0)
-                this->current = max;  // start full if consumable and no explicit current
-        }
+            baseMin(min),
+            baseMax(max)
+        { }
 
         /// Getters for the various data mambers.
         uint32_t getID() const { return id; }
         std::string getName() const { return name; }
         std::string getDescription() const { return description; }
         VitalType getVitalType() const { return type; }
-        int getCurrent() const { return current; }
-        int getMax() const { return max; }
-        int getMin() const { return min; }
-        
-        /// Setters for the changeable data members.
-        void setCurrent(int val) { current = val; }
-        void setMax(int val) { max = val; }
-        void setMin(int val) { min = val; }
+        int getBaseMin() const { return baseMin; }
+        int getBaseMax() const { return baseMax; }
 
         /**
          * Serializes the Vital object to JSON.
@@ -134,9 +121,8 @@ namespace rpg
                 {"name", name},
                 {"description", description},
                 {"type", vitalTypeToString(type)},
-                {"current", current},
-                {"max", max},
-                {"min", min}
+                {"baseMin", baseMin},
+                {"baseMax", baseMax}
             };
         }
 
@@ -146,9 +132,8 @@ namespace rpg
         std::string name;                   ///< Name of the Vital.
         std::string description;            ///< Description of the Vital.
         VitalType type{VitalType::UNKNOWN}; ///< Behavior type of the Vital.
-        int current{0};                     ///< Current value of the Vital.
-        int max{100};                       ///< Maximum value of the Vital.
-        int min{0};                         ///< Minimum value of the Vital.
+        int baseMin{0};                     ///< Minimum value of the Vital.
+        int baseMax{100};                   ///< Maximum value of the Vital.
     };
-} // namespace rpg
+} // namespace stats
 
