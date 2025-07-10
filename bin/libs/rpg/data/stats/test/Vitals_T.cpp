@@ -194,7 +194,8 @@ TEST_F(Vitals_T, SerializeDeserialize)
                             VitalDataModifierTarget::CURRENT_MIN);
 
     std::string serialized = vitals.serialize();
-    Vitals newVitals = stats::Vitals::deserialize(serialized);
+    Vitals newVitals;
+    EXPECT_TRUE(newVitals.deserialize(serialized));
 
     EXPECT_EQ(newVitals.getVitalData("Health").current, 80);
     EXPECT_EQ(newVitals.getVitalEffectiveMax("Health"), 120);

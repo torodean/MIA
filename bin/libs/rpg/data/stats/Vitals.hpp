@@ -252,9 +252,9 @@ namespace stats
          * then parses and reconstructs the vitals.
          *
          * @param data A string containing the serialized Vitals.
-         * @return A reconstructed Vitals instance.
+         * @return True if deserialization succeeded; false otherwise.
          */
-        static Vitals deserialize(const std::string& data);
+        bool deserialize(const std::string& data);
 
     private:
         std::unordered_map<uint32_t, VitalData> vitals; ///< Map of vital ID to their Vital instance.
