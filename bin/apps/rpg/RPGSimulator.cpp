@@ -104,7 +104,7 @@ namespace rpg_sim
             return;
         }
         
-        // TODO: Implement savinog logic
+        player.saveToFile(saveFile);
         std::cout << "Saved game state.\n";
     }
 } // namespace rpg_sim
