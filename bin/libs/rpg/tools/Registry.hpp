@@ -60,15 +60,7 @@ namespace rpg
 
             nlohmann::json data;
             file >> data;
-            objects.clear();
-            nameToId.clear();
-            for (const auto& item : data)
-            {
-                T obj = parseJson(item);
-                uint32_t id = item["id"];
-                objects[id] = std::move(obj);
-                nameToId[item["name"]] = id;
-            }
+            loadFromJson(data);
         }
         
         /**
@@ -80,16 +72,16 @@ namespace rpg
          */
         virtual void loadFromString(const std::string& jsonStr)
         {
-            nlohmann::json data = nlohmann::json::parse(jsonStr);
-            objects.clear();
-            nameToId.clear();
-            for (const auto& item : data)
+            nlohmann::json data;
+            try
             {
-                T obj = parseJson(item);
-                uint32_t id = item["id"];
-                objects[id] = std::move(obj);
-                nameToId[item["name"]] = id;
+                data = nlohmann::json::parse(jsonStr);
             }
+            catch (const nlohmann::json::parse_error& e)
+            {
+                throw std::runtime_error("Failed to parse JSON string: " + std::string(e.what()));
+            }
+            loadFromJson(data);
         }
 
         /**
@@ -128,6 +120,13 @@ namespace rpg
 
     protected:
         Registry() = default;
+        
+        /**
+         * Returns the JSON key for the derived class's data array.
+         * Must be implemented by derived classes.
+         * @return The JSON key (e.g., "currency", "vitals").
+         */
+        virtual std::string getJsonKey() const = 0;
 
         /**
          * Parses a JSON object into type T. Must be implemented by derived classes.
@@ -142,6 +141,30 @@ namespace rpg
          * @return String representation of the object.
          */
         virtual std::string toString(const T& obj) const = 0;
+        
+        /**
+         * Loads objects from a JSON object by extracting the array for the derived class's key.
+         * @param data The JSON object containing the array.
+         * @throws std::runtime_error if the key is missing or not an array.
+         */
+        void loadFromJson(const nlohmann::json& data)
+        {
+            std::string key = getJsonKey();
+            if (!data.contains(key))
+                throw std::runtime_error("JSON does not contain key: " + key);
+            if (!data[key].is_array())
+                throw std::runtime_error("JSON key '" + key + "' is not an array");
+
+            objects.clear();
+            nameToId.clear();
+            for (const auto& item : data[key])
+            {
+                T obj = parseJson(item);
+                uint32_t id = item["id"].get<uint32_t>();
+                objects[id] = std::move(obj);
+                nameToId[item["name"].get<std::string>()] = id;
+            }
+        }
 
         std::unordered_map<uint32_t, T> objects; ///< Map of ID to object.
         std::unordered_map<std::string, uint32_t> nameToId; ///< Map of name to ID.

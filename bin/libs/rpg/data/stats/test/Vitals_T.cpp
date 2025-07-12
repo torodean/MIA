@@ -20,8 +20,10 @@ class Vitals_T : public ::testing::Test
 protected:
     void SetUp() override
     {
-        nlohmann::json jsonArray = { health.toJson(), mana.toJson(), rage.toJson() };
-        std::string jsonData = jsonArray.dump();
+        // Create a JSON object with the "vitals" key containing the array of vitals
+        nlohmann::json jsonObject;
+        jsonObject["vital"] = { health.toJson(), mana.toJson(), rage.toJson() };
+        std::string jsonData = jsonObject.dump();
         
         // Load currencies into registry
         VitalRegistry::getInstance().loadFromString(jsonData);

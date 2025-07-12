@@ -28,6 +28,8 @@ namespace rpg
         }
 
     protected:
+        std::string getJsonKey() const override { return "dummy"; }
+        
         DummyObject parseJson(const json& j) override 
         {
             return DummyObject{ j.at("id").get<uint32_t>(), j.at("name").get<std::string>() };
@@ -47,10 +49,10 @@ protected:
     void SetUp() override 
     {
         std::ofstream file("test.json");
-        file << R"([
+        file << R"({ "dummy": [
             {"id": 1, "name": "Foo"},
             {"id": 2, "name": "Bar"}
-        ])";
+        ]})";
         file.close();
 
         rpg::DummyRegistry::getInstance().loadFromFile("test.json");

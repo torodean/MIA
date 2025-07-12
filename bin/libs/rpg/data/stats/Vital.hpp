@@ -75,10 +75,6 @@ namespace stats
         /**
          * Constructs a Vital with specified properties.
          *
-         * If the current value is not explicitly set:
-         * - For DEPLETIVE vitals, current defaults to max (starts full).
-         * - For ACCUMULATIVE vitals, current defaults to 0 (starts empty).
-         *
          * @param id Unique identifier for the Vital.
          * @param name Human-readable name of the Vital.
          * @param description A brief description of the Vital.

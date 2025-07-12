@@ -19,8 +19,11 @@ class Wallet_T : public ::testing::Test
 protected:
     void SetUp() override
     {
-        nlohmann::json jsonArray = { coin.toJson(), gem.toJson() };
-        std::string jsonData = jsonArray.dump();
+    
+        // Create a JSON object with the "currency" key containing the array of currencies
+        nlohmann::json jsonObject;
+        jsonObject["currency"] = { coin.toJson(), gem.toJson() };
+        std::string jsonData = jsonObject.dump();
         
         // Load currencies into registry
         currency::CurrencyRegistry::getInstance().loadFromString(jsonData);

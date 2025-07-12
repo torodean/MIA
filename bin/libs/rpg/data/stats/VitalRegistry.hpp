@@ -15,6 +15,9 @@ namespace stats
     {        
     protected:
     
+        /// Returns the JSON key for the class's data array.
+        std::string getJsonKey() const override { return "vital"; }
+    
         /**
          * Parses a JSON object into a Vital instance.
          * Uses the Vital constructor to set all fields, preserving encapsulation.

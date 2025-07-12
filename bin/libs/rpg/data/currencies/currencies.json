@@ -1,44 +1,45 @@
 {
-  "currencies": [
-    {
-      "id": 1,
-      "name": "Copper Coin",
-      "description": "A basic copper coin, the smallest unit of standard currency.",
-      "type": "COIN",
-      "tradeable": true,
-      "icon": "copper_icon.png"
-    },
-    {
-      "id": 2,
-      "name": "Silver Coin",
-      "description": "A silver coin, worth more than copper but less than gold.",
-      "type": "COIN",
-      "tradeable": true,
-      "icon": "silver_icon.png"
-    },
-    {
-      "id": 3,
-      "name": "Gold Coin",
-      "description": "A valuable gold coin, widely accepted in trade.",
-      "type": "COIN",
-      "tradeable": true,
-      "icon": "gold_icon.png"
-    },
-    {
-      "id": 4,
-      "name": "Platinum Coin",
-      "description": "A rare platinum coin, the highest denomination of standard currency.",
-      "type": "COIN",
-      "tradeable": true,
-      "icon": "platinum_icon.png"
-    },
-    {
-      "id": 5,
-      "name": "Credits",
-      "description": "A digital currency used for premium transactions.",
-      "type": "FIAT",
-      "tradeable": true,
-      "icon": "credits_icon.png"
-    }
-  ]
+    "currency": 
+    [
+        {
+            "id": 1,
+            "name": "Copper Coin",
+            "description": "A basic copper coin, the smallest unit of standard currency.",
+            "type": "COIN",
+            "tradeable": true,
+            "icon": "copper_icon.png"
+        },
+        {
+            "id": 2,
+            "name": "Silver Coin",
+            "description": "A silver coin, worth more than copper but less than gold.",
+            "type": "COIN",
+            "tradeable": true,
+            "icon": "silver_icon.png"
+        },
+        {
+            "id": 3,
+            "name": "Gold Coin",
+            "description": "A valuable gold coin, widely accepted in trade.",
+            "type": "COIN",
+            "tradeable": true,
+            "icon": "gold_icon.png"
+        },
+        {
+            "id": 4,
+            "name": "Platinum Coin",
+            "description": "A rare platinum coin, the highest denomination of standard currency.",
+            "type": "COIN",
+            "tradeable": true,
+            "icon": "platinum_icon.png"
+        },
+        {
+            "id": 5,
+            "name": "Credits",
+            "description": "A digital currency used for premium transactions.",
+            "type": "FIAT",
+            "tradeable": true,
+            "icon": "credits_icon.png"
+        }
+    ]
 }

@@ -16,7 +16,7 @@ class CurrencyRegistry_T : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        jsonData = R"([
+        jsonData = R"({ "currency" : [
             {
                 "id": 1,
                 "name": "Gold",
@@ -31,7 +31,7 @@ protected:
                 "type": "gem",
                 "tradeable": false
             }
-        ])"_json;
+        ]})"_json;
 
         std::ofstream file("test_currency.json");
         file << jsonData.dump(4);
