@@ -2,7 +2,7 @@
  * File: Modifier.hpp
  * Author: Antonius Torode
  * Created on: 07/10/2025
- * Description: Data for representing modifiers to vital values in the RPG system.
+ * Description: Data for representing modifiers to object values in the RPG system.
  */
 #pragma once
 
@@ -64,7 +64,7 @@ namespace rpg
     }
     
     /**
-     * A templated struct to represent a modifier to a vital's value.
+     * A templated struct to represent a modifier to an object's value.
      */
     template<typename T>
     struct Modifier
