@@ -9,6 +9,7 @@
 #include "DataLoader.hpp"
 #include "CurrencyRegistry.hpp"
 #include "VitalRegistry.hpp"
+#include "AttributeRegistry.hpp"
 
 namespace rpg
 {
@@ -28,6 +29,7 @@ namespace rpg
             // Load Registries
             currency::CurrencyRegistry::getInstance().loadFromFile(configDir + "currencies/currencies.json");
             stats::VitalRegistry::getInstance().loadFromFile(configDir + "stats/stats.json");
+            stats::AttributeRegistry::getInstance().loadFromFile(configDir + "stats/stats.json");
         } 
         catch (const std::exception& e) 
         {
@@ -48,6 +50,9 @@ namespace rpg
         
         os << "VitalRegistry:\n";
         stats::VitalRegistry::getInstance().dump(os);
+        
+        os << "AttributeRegistry:\n";
+        stats::AttributeRegistry::getInstance().dump(os);
         
         os << "==========================\n";
     }

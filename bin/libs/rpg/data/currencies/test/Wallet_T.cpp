@@ -22,7 +22,7 @@ protected:
     
         // Create a JSON object with the "currency" key containing the array of currencies
         nlohmann::json jsonObject;
-        jsonObject["currency"] = { coin.toJson(), gem.toJson() };
+        jsonObject["CURRENCY"] = { coin.toJson(), gem.toJson() };
         std::string jsonData = jsonObject.dump();
         
         // Load currencies into registry

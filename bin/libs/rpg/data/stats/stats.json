@@ -1,5 +1,5 @@
 {
-    "vital": 
+    "VITAL": 
     [
         {
             "id": 1,
@@ -42,7 +42,7 @@
             "baseMin": 0
         }
     ],
-    "attribute": 
+    "ATTRIBUTE": 
     [
         {
             "id": 1,
@@ -69,7 +69,7 @@
             "baseValue": 1,
             "modifies" : 
             {
-                "targetType" : "vital",
+                "targetType" : "VITAL",
                 "targetName" : "Health",
                 "ModifyType" : "ADD",
                 "ModifyValuePer" : 5

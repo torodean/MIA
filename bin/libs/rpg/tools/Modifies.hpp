@@ -9,7 +9,8 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include "Modifier.hpp"
+
+#include "DataType.hpp"
 
 namespace rpg
 {
@@ -67,6 +68,7 @@ namespace rpg
      */
     struct Modifies
     {
+        rpg::DataType targetType;  ///< The type of the target object (e.g., "VITAL"). 
         std::string targetName;    ///< Name of the target object (e.g., "Health").
         ModifyType modifyType;     ///< Type of modification (e.g., ADD, MULTIPLY, SET).
         double modifyValuePer;     ///< Value applied per unit (e.g., 5 per point of attribute).
@@ -78,8 +80,14 @@ namespace rpg
          * @param type The type of modification.
          * @param valuePer The value to apply per unit of the source.
          */
-        Modifies(const std::string& target, ModifyType type, double valuePer)
-            : targetName(target), modifyType(type), modifyValuePer(valuePer) {}
+        Modifies(rpg::DataType targetType, 
+                 const std::string& target, 
+                 ModifyType type, 
+                 double valuePer) :
+            targetType(targetType),
+            targetName(target), 
+            modifyType(type), 
+            modifyValuePer(valuePer) {}
 
         /**
          * Equality operator for Modifies.
@@ -92,25 +100,29 @@ namespace rpg
          */
         bool operator==(const Modifies& other) const
         {
-            return targetName == other.targetName && modifyType == other.modifyType;
+            return targetType == other.targetType && 
+                   targetName == other.targetName && 
+                   modifyType == other.modifyType &&
+                   modifyValuePer == other.modifyValuePer;
         }
 
         /**
-         * Serializes the Modifies to a string.
-         *
-         * Format: "targetName:modifyType:modifyValuePer"
+         * Serializes the Modifies to a string.         *
+         * Format: "targetType:targetName:modifyType:modifyValuePer"
          *
          * @return A string representing the serialized Modifies.
          */
         std::string serialize() const
         {
-            return targetName + ":" + modifyTypeToString(modifyType) + ":" + std::to_string(modifyValuePer);
+            return rpg::dataTypeToString(targetType) + ":" + 
+                   targetName + ":" + 
+                   modifyTypeToString(modifyType) + ":" + 
+                   std::to_string(modifyValuePer);
         }
 
         /**
-         * Deserializes a Modifies instance from a string.
-         *
-         * Expects format: "targetName:modifyType:modifyValuePer"
+         * Deserializes a Modifies instance from a string.         *
+         * Expects format: "targetType:targetName:modifyType:modifyValuePer"
          *
          * @param data The serialized string data.
          * @return A reconstructed Modifies instance.
@@ -121,17 +133,17 @@ namespace rpg
             std::vector<std::string> tokens;
             std::string token;
             std::istringstream tokenStream(data);
+            
             while (std::getline(tokenStream, token, ':'))
-            {
                 tokens.push_back(token);
-            }
 
-            if (tokens.size() != 3)
-            {
+            if (tokens.size() != 4)
                 throw std::invalid_argument("Invalid Modifies data format");
-            }
 
-            return Modifies(tokens[0], stringToModifyType(tokens[1]), std::stod(tokens[2]));
+            return Modifies(rpg::stringToDataType(tokens[0]), 
+                            tokens[1], 
+                            stringToModifyType(tokens[2]), 
+                            std::stod(tokens[3]));
         }
     };
 

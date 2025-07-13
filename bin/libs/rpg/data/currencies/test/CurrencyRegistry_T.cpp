@@ -16,7 +16,7 @@ class CurrencyRegistry_T : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        jsonData = R"({ "currency" : [
+        jsonData = R"({ "CURRENCY" : [
             {
                 "id": 1,
                 "name": "Gold",

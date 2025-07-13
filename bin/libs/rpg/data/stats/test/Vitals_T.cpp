@@ -23,7 +23,7 @@ protected:
     {
         // Create a JSON object with the "vitals" key containing the array of vitals
         nlohmann::json jsonObject;
-        jsonObject["vital"] = { health.toJson(), mana.toJson(), rage.toJson() };
+        jsonObject["VITAL"] = { health.toJson(), mana.toJson(), rage.toJson() };
         std::string jsonData = jsonObject.dump();
         
         // Load currencies into registry
