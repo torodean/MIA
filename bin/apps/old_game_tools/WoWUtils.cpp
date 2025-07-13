@@ -1,7 +1,7 @@
 /**
- * File: WoWUtils.cpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file WoWUtils.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This file is the implementation of various old WoW features from the original 
  *     MIA code. It originally lived in the VirtualKeyCodes file(s) but has since been decoupled. 
  */

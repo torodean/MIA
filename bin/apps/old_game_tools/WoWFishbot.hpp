@@ -1,7 +1,7 @@
 /**
- * File: WoWFishbot.hpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file WoWFishbot.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This file contains an old WoW fishbot from the original MIA code. It originally
  *     lived in the VirtualKeyCodes file(s) but has since been decoupled. 
  */

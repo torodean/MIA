@@ -1,7 +1,7 @@
 /**
- * File: MIAOriginal.hpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file MIAOriginal.hpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: An app which implements many of the features from the
  *     original MIA application (before moving to an app structure).
  */

@@ -1,7 +1,7 @@
 /**
- * File: WoWFishbot.cpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file WoWFishbot.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This is the implementation of the fishbot functionality and features.This file contains 
  *     an old WoW fishbot from the original MIA code. It originally lived in the VirtualKeyCodes file(s) 
  *     but has since been decoupled. 

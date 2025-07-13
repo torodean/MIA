@@ -1,7 +1,7 @@
 /**
- * File: RPGFiddler.cpp
- * Author: Antonius Torode
- * Date: 05/24/2025
+ * @file RPGFiddler.cpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: Implementation of the RPGFiddler app.
  */
 

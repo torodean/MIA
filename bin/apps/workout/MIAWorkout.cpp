@@ -1,7 +1,7 @@
 /**
- * File: MIAWorkout.cpp
- * Author: Antonius Torode
- * Date: 03/07/2021
+ * @file MIAWorkout.cpp
+ * @author Antonius Torode
+ * @date 03/07/2021
  * Description:
  */
 

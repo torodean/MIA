@@ -1,7 +1,7 @@
 /**
- * File: Commands.cpp
- * Author: Antonius Torode
- * Creation Date: 03/01/2021
+ * @file Commands.hpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: This file contains the Commands class, which defines the 
  *     available terminal commands and their runner commands. This file
  *     was copied from the original MIA code with minimal changes. A few
@@ -10,6 +10,7 @@
  *
  *     Do NOT use this code as an example of what to-do, as it is quite old.
  */
+#pragma once
 
 #include <string>
 

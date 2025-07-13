@@ -1,7 +1,7 @@
 /**
- * File: MIATemplate.cpp
- * Author: Antonius Torode
- * Date: 05/24/2025
+ * @file MIATemplate.cpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: Implementation of the MIATemplate app.
  */
 

@@ -1,7 +1,7 @@
 /**
- * File: MIASequencer_main.cpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file MIASequencer_main.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This is the main executable file for the MIASequencer.
  */
 

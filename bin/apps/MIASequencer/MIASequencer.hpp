@@ -1,7 +1,7 @@
 /**
- * File: MIASequencer.hpp
- * Author: Antonius Torode
- * Created on: 12/26/2019
+ * @file MIASequencer.hpp
+ * @author Antonius Torode
+ * @date 12/26/2019
  * Description: A sequencer for processing and executing MIASequences from file.
  *              This component supports loading, parsing, and triggering predefined
  *              input sequences including coordinates and actions.

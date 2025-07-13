@@ -1,7 +1,7 @@
 /**
- * File: RPGFiddler.hpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file RPGFiddler.hpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: A fiddler app to mess with and test rpg library elements.
  */
 #pragma once

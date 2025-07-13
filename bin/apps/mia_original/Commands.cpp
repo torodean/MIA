@@ -1,7 +1,7 @@
 /**
- * File: Commands.cpp
- * Author: Antonius Torode
- * Creation Date: 03/01/2021
+ * @file Commands.cpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description:
  */
 

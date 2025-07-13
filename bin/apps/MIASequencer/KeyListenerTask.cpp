@@ -1,7 +1,7 @@
 /**
- * @file: KeyListenerTask.cpp
- * @author: Antonius Torode
- * @date: 06/25/2025
+ * @file KeyListenerTask.cpp
+ * @author Antonius Torode
+ * @date 06/25/2025
  * Description:
  *     TODO
  */

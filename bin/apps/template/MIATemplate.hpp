@@ -1,7 +1,7 @@
 /**
- * File: MIATemplate.hpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file MIATemplate.hpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: A template program for MIA development. This app doubles as a tool to test
  *     new development and interface features as well.
  */

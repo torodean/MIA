@@ -1,7 +1,7 @@
 /**
- * File: MIAWorkout.hpp
- * Author: Antonius Torode
- * Created on: 03/07/2021
+ * @file MIAWorkout.hpp
+ * @author Antonius Torode
+ * @date 03/07/2021
  * Description: A program used to generate workouts.
  */
 #pragma once

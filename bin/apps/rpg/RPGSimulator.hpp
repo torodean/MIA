@@ -1,7 +1,7 @@
 /**
- * File: RPGSimulator.hpp
- * Author: Antonius Torode
- * Created on: 07/10/2025
+ * @file RPGSimulator.hpp
+ * @author Antonius Torode
+ * @date 07/10/2025
  * Description: Helper for a terminal-based RPG simulator that lists and executes player actions.
  *     This file is used for testing random features of the RPG system.
  */
