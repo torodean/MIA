@@ -1,7 +1,7 @@
 /**
- * File: MIAConfig.hpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file MIAConfig.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This file controls finding and loading in the configuration file(s). This file replaced
  *     the Configurator from the old MIA project.
  */

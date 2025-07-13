@@ -1,7 +1,7 @@
 /**
- * File: VitalData.hpp
- * Author: Antonius Torode
- * Created on: 07/12/2025
+ * @file VitalData.hpp
+ * @author Antonius Torode
+ * @date 07/12/2025
  * Description: A class representing configurable vital Data for storing an active vital.
  */
 #pragma once

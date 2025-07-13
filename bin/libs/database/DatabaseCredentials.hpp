@@ -1,7 +1,7 @@
 /**
- * File: DatabaseCredentials.hpp
- * Author: Antonius Torode
- * Date: 12/23/2021
+ * @file DatabaseCredentials.hpp
+ * @author Antonius Torode
+ * @date 12/23/2021
  * Description: This is a file for storing and dealing with credentials for a user.
  */
 #pragma once

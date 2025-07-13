@@ -1,7 +1,7 @@
 /**
- * File: KeyValueData.hpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file KeyValueData.hpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: Private header defining the KeyValueData class for MIAConfig.
  *              This class implements the ConfigData interface to store configuration
  *              data as key-value pairs, supporting key-based access and conversion.

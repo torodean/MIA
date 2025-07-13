@@ -1,7 +1,7 @@
 /**
- * File: MathUtils_T.cpp
- * Author: Antonius Torode
- * Created on: 05/20/2025
+ * @file MathUtils_T.cpp
+ * @author Antonius Torode
+ * @date 05/20/2025
  * Description: Unit tests for MathUtils.hpp using Google Test framework. 
  *     Tests cover the methods in MathUtils.
  */ 

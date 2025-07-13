@@ -1,7 +1,7 @@
 /**
- * @file: MIAConfig_T.cpp
- * @author: Antonius Torode
- * Created on: 6/15/25
+ * @file MIAConfig_T.cpp
+ * @author Antonius Torode
+ * @date 6/15/25
  * Description: Unit tests for MIAConfig class using Google Test.
  */
 

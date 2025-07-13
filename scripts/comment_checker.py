@@ -49,6 +49,14 @@ def check_file_header(file_path, lines):
                 elif re.search(r"File:", h_line, re.IGNORECASE):
                     issues.append(f"{file_path}:{header_start_idx + j + 1}: Incorrect file name in '@file' (expected '@file {file_name}')")
             
+            # Normalize @file:, @author:, @date: → remove colon (with or without space)
+            for j, h_line in enumerate(header_lines):
+                updated_line = re.sub(r"(@file|@date|@author)\s*:", r"\1", h_line)
+                if updated_line != h_line:
+                    header_lines[j] = updated_line
+                    modified_lines[header_start_idx + j] = updated_line + "\n"
+                    modified = True
+        
             # Check and replace 'Author:' with '@author'
             for j, h_line in enumerate(header_lines):
                 if re.search(r"Author:\s*[\w\s]+", h_line, re.IGNORECASE):
@@ -60,6 +68,8 @@ def check_file_header(file_path, lines):
             date_regex = re.compile(r"(" + "|".join(date_patterns) + r")\s*(.+)", re.IGNORECASE)
 
             for j, h_line in enumerate(header_lines):
+                if "@date" in h_line:
+                    continue  # skip any line that already uses @date
                 match = date_regex.search(h_line)
                 if match:
                     # Replace the matched prefix with '@date' and keep the rest of the line

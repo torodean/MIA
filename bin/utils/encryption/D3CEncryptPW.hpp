@@ -1,16 +1,15 @@
-//============================================================================
-// Name        : D3CEncryptPW.h
-// Author      : Antonius Torode
-// Copyright   : This file can be used under the conditions of Antonius' 
-//				 General Purpose License (AGPL).
-// Created on  : October, 2014
-// Description : The header file for use with D3CEncryptPW.cpp
-//               This file is very old. Many of the comments don't make much 
-//               sense or are non-existant. I have kept it mostly in its
-//               original form with only a few minor improvements since then.
-//               Most of the improvements involve moving utility methods outside of
-//               this class, refactoring, and adding comments.
-//============================================================================
+/**
+ * @file D3CEncryptPW.hpp
+ * @author Antonius Torode
+ * @copyright This file can be used under the conditions of Antonius' General Purpose License (AGPL).
+ * @date October, 2014
+ * @brief The header file for use with D3CEncryptPW.cpp
+ * 
+ * This file is very old. Many of the comments don't make much sense or are non-existent.
+ * I have kept it mostly in its original form with only a few minor improvements since then.
+ * Most of the improvements involve moving utility methods outside of this class, refactoring,
+ * and adding comments.
+ */
 #pragma once
 
 #include <string>

@@ -1,7 +1,7 @@
 /**
- * File: TerminalColors.hpp
- * Author: Antonius Torode
- * Creation Date: 06/18/2025
+ * @file TerminalColors.hpp
+ * @author Antonius Torode
+ * @date 06/18/2025
  * Description: A lightweight C++ header-only utility for printing colored text to the 
  *     terminal using ANSI escape codes. Supports foreground and background colors, as 
  *     well as resetting formatting. Compatible with Unix-like systems and Windows 10+.

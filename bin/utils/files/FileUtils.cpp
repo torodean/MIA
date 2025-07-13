@@ -1,7 +1,7 @@
 /**
- * File: FileUtils.cpp
- * Author: Antonius Torode
- * Date: 03/07/2021
+ * @file FileUtils.cpp
+ * @author Antonius Torode
+ * @date 03/07/2021
  * Description: Implementation for the FuleUtil methods.
  */
 

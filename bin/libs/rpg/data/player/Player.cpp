@@ -1,7 +1,7 @@
 /**
- * File: Player.cpp
- * Author: Antonius Torode
- * Created on: 07/06/2025
+ * @file Player.cpp
+ * @author Antonius Torode
+ * @date 07/06/2025
  * Description: A class representing a player with containers and stats.
  */
 

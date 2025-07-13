@@ -1,7 +1,7 @@
 /**
- * File: RawLinesData.cpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file RawLinesData.cpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: 
  */
 

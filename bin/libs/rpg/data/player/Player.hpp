@@ -1,7 +1,7 @@
 /**
- * File: Player.hpp
- * Author: Antonius Torode
- * Created on: 07/06/2025
+ * @file Player.hpp
+ * @author Antonius Torode
+ * @date 07/06/2025
  * Description: A class representing a player with containers and stats.
  */
 #pragma once

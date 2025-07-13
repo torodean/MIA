@@ -1,7 +1,7 @@
 /**
- * File: AppFramework.hpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file AppFramework.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: 
  *   Provides a simple templated application framework to enforce
  *   a common app lifecycle: initialize, loadConfig, and run.

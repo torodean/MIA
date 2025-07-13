@@ -1,7 +1,7 @@
 /**
- * File: FileUtils.hpp
- * Author: Antonius Torode
- * Created on: 03/07/2021
+ * @file FileUtils.hpp
+ * @author Antonius Torode
+ * @date 03/07/2021
  * Description: Provides utility functions for reading, writing, and processing files.
  */
 #pragma once

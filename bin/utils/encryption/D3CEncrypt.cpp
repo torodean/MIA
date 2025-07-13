@@ -1,11 +1,10 @@
-//============================================================================
-// Name        : D3CEncrypt.cpp
-// Author      : Antonius Torode
-// Copyright   : This file can be used under the conditions of Antonius' 
-//				 General Purpose License (AGPL).
-// Created on  : September 24, 2014
-// Description : A old encryption program (d0s1) re-adapted for use with MIA.
-//============================================================================
+/**
+ * @file D3CEncrypt.cpp
+ * @author Antonius Torode
+ * @copyright This file can be used under the conditions of Antonius' General Purpose License (AGPL).
+ * @date September 24, 2014
+ * @brief An old encryption program (d0s1) re-adapted for use with MIA.
+ */
 
 #include <iostream> //for troubleshooting.
 #include <utility>

@@ -1,7 +1,7 @@
 /**
- * File: Wallet_T.cpp
- * Author: Antonius Torode
- * Created on: 07/09/2025
+ * @file Wallet_T.cpp
+ * @author Antonius Torode
+ * @date 07/09/2025
  * Description: Google Test suite for the Wallet class.
  */
 

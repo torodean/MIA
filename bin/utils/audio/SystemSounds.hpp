@@ -1,7 +1,7 @@
 /**
- * File: SystemSounds.hpp
- * Author: Antonius Torode
- * Created on: 03/09/2021
+ * @file SystemSounds.hpp
+ * @author Antonius Torode
+ * @date 03/09/2021
  * Description:
  *     This file provides static methods for emitting basic system-level audio cues 
  *     such as beeps or alerts. This interface serves as a lightweight abstraction 

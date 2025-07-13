@@ -1,7 +1,7 @@
 /**
- * File: ConfigData.hpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file ConfigData.hpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: Private header defining the abstract ConfigData class for MIAConfig.
  *              This file is included only by implementation files, not by clients.
  */

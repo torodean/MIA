@@ -1,7 +1,7 @@
 /**
- * File: CurrencyRegistry_T.cpp
- * Author: Antonius Torode
- * Created on: 07/08/2025
+ * @file CurrencyRegistry_T.cpp
+ * @author Antonius Torode
+ * @date 07/08/2025
  * Description: Unit tests for the CurrencyRegistry class.
  */
 #include <gtest/gtest.h>

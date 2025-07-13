@@ -1,7 +1,7 @@
 /**
- * File: Database.cpp
- * Author: Antonius Torode
- * Date: 03/11/2021
+ * @file Database.cpp
+ * @author Antonius Torode
+ * @date 03/11/2021
  * Description: This file contains the database connections source code.
  */
 

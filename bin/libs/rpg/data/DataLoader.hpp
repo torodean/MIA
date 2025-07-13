@@ -1,7 +1,7 @@
 /**
- * File: DataLoader.hpp
- * Author: Antonius Torode
- * Created on: 07/06/2025
+ * @file DataLoader.hpp
+ * @author Antonius Torode
+ * @date 07/06/2025
  * Description: A singleton class to manage loading of all game data registries from config files.
  */
 #pragma once

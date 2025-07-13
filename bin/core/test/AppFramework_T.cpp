@@ -1,7 +1,7 @@
 /**
- * File: AppFramework_T.cpp
- * Author: Antonius Torode
- * Created on: 06/15/2025
+ * @file AppFramework_T.cpp
+ * @author Antonius Torode
+ * @date 06/15/2025
  * Description: Tests for AppFramework.hpp to verify AppInterface concept and runApp template behavior.
  */
 

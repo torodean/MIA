@@ -1,7 +1,7 @@
 /**
- * File: Database.hpp
- * Author: Antonius Torode
- * Date: 03/11/2021
+ * @file Database.hpp
+ * @author Antonius Torode
+ * @date 03/11/2021
  * Description: This is the file designed for connection and use with databases.
  *              The MIA database uses SQL.
  */

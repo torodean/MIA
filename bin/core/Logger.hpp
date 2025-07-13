@@ -1,7 +1,7 @@
 /**
- * File: Logger.hpp
- * Author: Antonius Torode
- * Creation Date: 05/26/2025
+ * @file Logger.hpp
+ * @author Antonius Torode
+ * @date 05/26/2025
  * Description: This file contains the main logging features for MIA apps and code.
  */
 #pragma once

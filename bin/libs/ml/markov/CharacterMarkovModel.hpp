@@ -1,7 +1,7 @@
-/*
- * File: CharacterMarkovModel.hpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file CharacterMarkovModel.hpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description:
  *     This header defines an implementation of the AbstractMarkovModel designed
  *     to take sequences of characters (input as words) as each set. A set of

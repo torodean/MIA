@@ -1,3 +1,11 @@
+/**
+ * @file Credentials_T.cpp
+ * @author Antonius Torode
+ * @brief A standalone test program to manually verify the password() feature of Credentials.hpp.
+ *
+ * This test allows manual verification of the password input behavior, including
+ * the display of '*' characters in the terminal output.
+ */
 #include <iostream>
 #include "Credentials.hpp"
 

@@ -1,7 +1,7 @@
 /**
- * File: Wallet.hpp
- * Author: Antonius Torode
- * Created on: 07/06/2025
+ * @file Wallet.hpp
+ * @author Antonius Torode
+ * @date 07/06/2025
  * Description: A container class for managing multiple currencies and their quantities.
  */
 #pragma once

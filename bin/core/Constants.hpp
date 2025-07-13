@@ -1,7 +1,7 @@
 /**
- * File: Constants.hpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file Constants.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Declares project-wide Constants used across the application. These Constants 
  *     provide centralized access to certain variables such as the MIA version and other values
  *     set in the CMake.

@@ -1,7 +1,7 @@
-/*
- * File: MarkovModels.hpp
- * Author: Antonius Torode
- * Created on: 06/03/2025
+/**
+ * @file MarkovModels.hpp
+ * @author Antonius Torode
+ * @date 06/03/2025
  * Description: 
  *     This header defines generic functions for generating first-order
  *     and higher-order Markov models based on input sequences.

@@ -1,7 +1,7 @@
 /**
- * @file: BackgroundTask_T.cpp
- * @author: Antonius Torode
- * @date: 06/25/2025
+ * @file BackgroundTask_T.cpp
+ * @author Antonius Torode
+ * @date 06/25/2025
  * Description:
  *     Tests the BackgroundTask features.
  */

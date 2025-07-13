@@ -1,7 +1,7 @@
 /**
- * File: Registry.hpp
- * Author: Antonius Torode
- * Created on: 07/08/2025
+ * @file Registry.hpp
+ * @author Antonius Torode
+ * @date 07/08/2025
  * Description: A templated base class for managing registries of game objects in the MIA RPG system.
  */
 #pragma once

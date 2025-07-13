@@ -1,7 +1,7 @@
-/*
- * File: AbstractMarkovModel.cpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file AbstractMarkovModel.cpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description:
  *     This file provides the implementation of shared functionality for the
  *     AbstractMarkovModel class template, as defined in AbstractMarkovModel.hpp.

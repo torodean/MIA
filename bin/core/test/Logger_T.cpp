@@ -1,7 +1,7 @@
 /**
  * @file Logger_T.cpp
  * @author Antonius Torode
- * Creation Date: 06/15/2025
+ * @date 06/15/2025
  * Description: Google tests for logger::Logger and free functions in Logger.hpp.
  */
 

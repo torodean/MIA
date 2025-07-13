@@ -1,7 +1,7 @@
-/*
- * File: VectorUtils_T.cpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file VectorUtils_T.cpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description:
  *     Unit tests for the VectorUtils library. This file contains tests
  *     to verify the correctness of vector utility functions.

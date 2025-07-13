@@ -1,7 +1,7 @@
 /**
- * File: VirtualKeyStrokes.hpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file VirtualKeyStrokes.hpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: Declares the VirtualKeyStrokes class, a cross-platform utility for simulating
  *     keyboard and mouse input. Supports character and string input emulation, 
  *     basic automation tasks, and platform-specific input functions for Windows and Linux.

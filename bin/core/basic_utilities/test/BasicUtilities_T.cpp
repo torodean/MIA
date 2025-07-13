@@ -2,8 +2,8 @@
  * @file BasicUtilities_T.cpp
  * @brief Unit tests for BasicUtilities namespace functions using Google Test.
  * 
- * Author: Antonius Torode
- * Created on: 06/15/2025
+ * @author Antonius Torode
+ * @date 06/15/2025
  */
 
 #include "BasicUtilities.hpp"

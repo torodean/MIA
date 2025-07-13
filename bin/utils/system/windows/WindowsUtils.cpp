@@ -1,7 +1,7 @@
 /**
- * File: WindowsUtils.cpp
- * Author: Antonius Torode
- * Date: 03/07/2021
+ * @file WindowsUtils.cpp
+ * @author Antonius Torode
+ * @date 03/07/2021
  * Description:
  */
 

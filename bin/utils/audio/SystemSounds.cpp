@@ -1,7 +1,7 @@
 /**
- * File: SystemSounds.cpp
- * Author: Antonius Torode
- * Date: 03/09/2021
+ * @file SystemSounds.cpp
+ * @author Antonius Torode
+ * @date 03/09/2021
  * Description:
  */
 

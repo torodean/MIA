@@ -1,7 +1,7 @@
 /**
- * File: StringUtils_T.cpp
- * Author: Antonius Torode
- * Created on: 05/20/2025
+ * @file StringUtils_T.cpp
+ * @author Antonius Torode
+ * @date 05/20/2025
  * Description:
  *     This file contains unit tests for the StringUtils module using Google Test.
  *     It verifies the correctness of string manipulation functions such as case

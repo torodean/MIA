@@ -1,7 +1,7 @@
-/*
- * File: CharacterMarkovModel.cpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file CharacterMarkovModel.cpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description:
  *     This file implementats the CharacterMarkovModel.
  */

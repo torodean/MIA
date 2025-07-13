@@ -1,7 +1,7 @@
 /**
- * File: FileUtils_T.cpp
- * Author: Antonius Torode
- * Date: 05/21/2025
+ * @file FileUtils_T.cpp
+ * @author Antonius Torode
+ * @date 05/21/2025
  * Description: Unit tests for FileUtils methods using Google Test.
  */
 

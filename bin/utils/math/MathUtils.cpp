@@ -1,7 +1,7 @@
 /**
- * File: MathUtils.cpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file MathUtils.cpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: Implementation of general-purpose mathematical utility functions declared in MathUtils.hpp.
  *   This file contains definitions for a variety of math-related helper functions, including 
  *   random number generation, dice rolling mechanics, and other common mathematical operations 

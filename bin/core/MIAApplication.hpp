@@ -1,7 +1,7 @@
 /**
- * File: MIAApplication.hpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file MIAApplication.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Defines a base class for applications with virtual
  *              app methods. Handles verbose mode flag parsing.
  */

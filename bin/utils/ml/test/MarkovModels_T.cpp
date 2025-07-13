@@ -1,7 +1,7 @@
-/*
- * File: MarkovModels_T.cpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file MarkovModels_T.cpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description: 
  *     This file is for testing the moethods in the MarkovModels file(s).
  */

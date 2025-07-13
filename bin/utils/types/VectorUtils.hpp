@@ -1,7 +1,7 @@
 /**
- * File: VectorUtils.hpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file VectorUtils.hpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: 
  *     This file provides a collection of utility functions for vector parsing,
  *     processing, and formatting. It provides helper functions for dealing with

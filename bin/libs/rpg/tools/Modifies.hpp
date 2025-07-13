@@ -1,7 +1,7 @@
 /**
- * File: Modifies.hpp
- * Author: Antonius Torode
- * Created on: 07/12/2025
+ * @file Modifies.hpp
+ * @author Antonius Torode
+ * @date 07/12/2025
  * Description: A class for storing and managing modifications to other objects in the RPG system.
  */
 #pragma once

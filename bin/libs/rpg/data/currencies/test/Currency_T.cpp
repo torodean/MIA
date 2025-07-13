@@ -1,7 +1,7 @@
 /**
- * File: Currency_T.cpp
- * Author: Antonius Torode
- * Created on: 07/09/2025
+ * @file Currency_T.cpp
+ * @author Antonius Torode
+ * @date 07/09/2025
  * Description: Google Test suite for the currency::Currency class and related functions.
  */
 

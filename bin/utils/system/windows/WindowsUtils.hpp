@@ -1,10 +1,10 @@
 /**
- * File: WindowsUtils.hpp
- * Author: Antonius Torode
- * Date: 03/07/2021
+ * @file WindowsUtils.hpp
+ * @author Antonius Torode
+ * @date 03/07/2021
  * Description:
  */
-
+#pragma once
 
 /**
  * This namespace is for utility features related to Windows.

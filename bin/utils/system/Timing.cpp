@@ -1,7 +1,7 @@
 /**
- * File: SystemUtils.cpp
- * Author: Antonius Torode
- * Created on: 03/09/2021
+ * @file Timing.cpp
+ * @author Antonius Torode
+ * @date 03/09/2021
  * Description: Implements system-level timing utilities for causing the current
  *     thread to sleep for specified durations in milliseconds, seconds (integral 
  *     and fractional), and minutes. Uses C++ standard library facilities to ensure 

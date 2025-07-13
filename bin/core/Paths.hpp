@@ -1,7 +1,7 @@
 /**
- * File: Paths.hpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file Paths.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Declares project-wide directory paths used
  *     across the application. These paths provide centralized access to default
  *     resource locations such as configuration files, logs, and user data directories.

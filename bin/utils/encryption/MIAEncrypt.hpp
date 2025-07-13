@@ -1,7 +1,7 @@
 /**
- * File: MIAEncrypt.hpp
- * Author: Antonius Torode
- * Date: 03/11/2021
+ * @file MIAEncrypt.hpp
+ * @author Antonius Torode
+ * @date 03/11/2021
  * Description: This file contains the code pertaining to MIA Encryption.
  */
 #pragma once

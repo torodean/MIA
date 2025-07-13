@@ -1,7 +1,7 @@
 /**
- * File: D3CMath_T.cpp
- * Author: Antonius Torode
- * Created on: 05/20/2025
+ * @file D3CMath_T.cpp
+ * @author Antonius Torode
+ * @date 05/20/2025
  * Description:
  *     Google Test suite template for the D3CMath class and related functions.
  *     This file provides an entry point to add unit tests for the legacy math utilities 

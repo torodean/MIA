@@ -1,7 +1,7 @@
-/*
- * File: AbstractMarkovModel.hpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file AbstractMarkovModel.hpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description:
  *     This header defines an abstract base class template for Markov models.
  *     It provides a common interface for derived classes to implement first-order

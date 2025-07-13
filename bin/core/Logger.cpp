@@ -1,7 +1,7 @@
 /**
- * File: Logger.cpp
- * Author: Antonius Torode
- * Creation Date: 05/26/2025
+ * @file Logger.cpp
+ * @author Antonius Torode
+ * @date 05/26/2025
  * Description: This file implements the main logging features for MIA apps and code.
  */
  

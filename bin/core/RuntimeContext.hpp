@@ -1,7 +1,7 @@
 /**
- * File: RuntimeContext.hpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file RuntimeContext.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Defines a class for storing application runtime context information. This
  *     is used for accessing information core to all applications (verbose, debug, etc).
  */

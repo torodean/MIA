@@ -1,7 +1,7 @@
 /**
- * File: KeyValueData.cpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file KeyValueData.cpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: 
  */
 

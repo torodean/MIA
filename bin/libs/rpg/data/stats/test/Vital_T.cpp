@@ -1,7 +1,7 @@
 /**
- * File: Vital_T.cpp
- * Author: Antonius Torode
- * Created on: 07/09/2025
+ * @file Vital_T.cpp
+ * @author Antonius Torode
+ * @date 07/09/2025
  * Description: Unit tests for the rpg::Vital class and VitalType utilities.
  */
 

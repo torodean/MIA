@@ -1,7 +1,7 @@
 /**
- * File: Error.cpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file Error.cpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: Defines the behavior of error reporting and lookup utilities,
  *     including support for descriptive messages associated with ErrorCode values.
  */

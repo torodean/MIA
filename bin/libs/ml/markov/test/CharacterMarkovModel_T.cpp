@@ -1,7 +1,7 @@
-/*
- * File: CharacterMarkovModel_T.cpp
- * Author: Antonius Torode
- * Created on: 06/05/2025
+/**
+ * @file CharacterMarkovModel_T.cpp
+ * @author Antonius Torode
+ * @date 06/05/2025
  * Description:
  *     This file tests the CharacterMarkovModel implementation of the AbstractMarkovModel.
  */

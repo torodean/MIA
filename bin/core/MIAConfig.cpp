@@ -1,7 +1,7 @@
 /**
- * File: MIAConfig.cpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file MIAConfig.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Implementation of the MIAConfig class that manages loading and parsing
  *              of configuration files into flexible key-value storage.
  */

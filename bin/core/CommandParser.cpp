@@ -1,7 +1,7 @@
 /**
- * File: CommandParser.cpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file CommandParser.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This file implements the utilities for parsing command options.
  */
  

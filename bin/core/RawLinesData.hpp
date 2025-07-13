@@ -1,7 +1,7 @@
 /**
- * File: RawLinesData.hpp
- * Author: Antonius Torode
- * Created on: 05/24/2025
+ * @file RawLinesData.hpp
+ * @author Antonius Torode
+ * @date 05/24/2025
  * Description: Private header defining the RawLinesData class for MIAConfig.
  *              This class implements the ConfigData interface to store configuration
  *              data as a vector of raw file lines, supporting raw line access but not

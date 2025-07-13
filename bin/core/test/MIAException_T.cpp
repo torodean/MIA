@@ -2,7 +2,7 @@
  * @file MIAException_T.cpp
  * @author Antonius Torode
  * @brief Unit tests for the MIAException class using Google Test.
- * Creation date: 2025-06-15
+ * @date 2025-06-15
  *
  * This test suite validates the behavior of the MIAException class, including:
  * - Construction with error codes and detail strings

@@ -1,7 +1,7 @@
 /**
- * File: Vitals.cpp
- * Author: Antonius Torode
- * Created on: 07/07/2025
+ * @file Vitals.cpp
+ * @author Antonius Torode
+ * @date 07/07/2025
  * Description: A class representing the vitals for a character.
  */
 

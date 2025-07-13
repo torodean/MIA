@@ -1,7 +1,7 @@
 /**
- * File: MathUtils.hpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file MathUtils.hpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: This file provides a collection of general-purpose mathematical utility functions 
  *     for various common operations such as random number generation, dice rolling, and other 
  *     math-related tasks. It serves as a centralized place for reusable math helpers 

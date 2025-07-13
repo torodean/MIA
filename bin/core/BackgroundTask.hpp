@@ -1,7 +1,7 @@
 /**
- * @file: BackgroundTask.hpp
- * @author: Antonius Torode
- * @date: 06/25/2025
+ * @file BackgroundTask.hpp
+ * @author Antonius Torode
+ * @date 06/25/2025
  * Description:
  *     Defines the BackgroundTask abstract base class, which provides a reusable interface
  *     for running background tasks in a separate thread. It manages thread lifecycle, 

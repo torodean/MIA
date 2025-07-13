@@ -1,7 +1,7 @@
 /**
- * File: D3CMath.cpp
- * Author: Antonius Torode
- * Created on: October 5, 2014
+ * @file D3CMath.cpp
+ * @author Antonius Torode
+ * @date October 5, 2014
  * Description:
  *     This file contains a collection of legacy math functions originally developed
  *     for the D3C program, now adapted for integration within the MIA project.

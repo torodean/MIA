@@ -1,7 +1,7 @@
 /**
- * File: BasicUtilities.cpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file BasicUtilities.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Implements basic utility functions declared in BasicUtilities.hpp.
  */
 

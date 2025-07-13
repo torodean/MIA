@@ -1,7 +1,7 @@
 /**
- * File: MIAEncrypt.cpp
- * Author: Antonius Torode
- * Date: 03/11/2021
+ * @file MIAEncrypt.cpp
+ * @author Antonius Torode
+ * @date 03/11/2021
  * Description: The code for the MIAEncrypt class.
  */
 

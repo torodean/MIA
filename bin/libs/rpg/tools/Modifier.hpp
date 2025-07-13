@@ -1,7 +1,7 @@
 /**
- * File: Modifier.hpp
- * Author: Antonius Torode
- * Created on: 07/10/2025
+ * @file Modifier.hpp
+ * @author Antonius Torode
+ * @date 07/10/2025
  * Description: Data for representing modifiers to object values in the RPG system.
  */
 #pragma once

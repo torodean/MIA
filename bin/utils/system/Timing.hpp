@@ -1,7 +1,7 @@
 /**
- * File: Timing.hpp
- * Author: Antonius Torode
- * Creation Date: 03/09/2021
+ * @file Timing.hpp
+ * @author Antonius Torode
+ * @date 03/09/2021
  * Description: Declares system-level timing utilities intended to provide a unified 
  *    interface for time-based operations such as delays, timing measurements, and 
  *    duration conversions. This header is part of the system utilities module and 

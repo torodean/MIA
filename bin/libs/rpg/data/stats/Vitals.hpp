@@ -1,7 +1,7 @@
 /**
- * File: Vitals.hpp
- * Author: Antonius Torode
- * Created on: 07/07/2025
+ * @file Vitals.hpp
+ * @author Antonius Torode
+ * @date 07/07/2025
  * Description: A class representing configurable vitals for a character.
  */
 #pragma once

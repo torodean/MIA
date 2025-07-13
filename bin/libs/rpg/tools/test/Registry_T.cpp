@@ -1,7 +1,7 @@
 /**
- * File: Registry_T.cpp
- * Author: Antonius Torode
- * Created on: 07/09/2025
+ * @file Registry_T.cpp
+ * @author Antonius Torode
+ * @date 07/09/2025
  * Description: Unit tests for the templated Registry base class in the MIA RPG system using Google Test.
  */
 

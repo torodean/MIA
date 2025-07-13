@@ -1,7 +1,7 @@
 /**
- * File: BasicUtilities.hpp
- * Author: Antonius Torode
- * Created on: 05/22/2025
+ * @file BasicUtilities.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Declares basic utility functions that provide
  *              lightweight, dependency-free string and other helpers
  *              for use across the core codebase.

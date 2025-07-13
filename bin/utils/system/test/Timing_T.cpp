@@ -1,7 +1,7 @@
 /**
- * File: Timing_T.cpp
- * Author: Antonius Torode
- * Creation Date: 05/20/2025
+ * @file Timing_T.cpp
+ * @author Antonius Torode
+ * @date 05/20/2025
  * Description: Unit tests for the Timing class, verifying sleep functionality across 
  *    various time units (milliseconds, seconds, minutes) using Google Test. The test
  *    values tested here always allow a small time 'leeway' around what should actually

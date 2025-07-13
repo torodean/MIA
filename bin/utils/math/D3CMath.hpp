@@ -1,7 +1,7 @@
 /**
- * File: D3CMath.hpp
- * Author: Antonius Torode
- * Created on: 10/05/2014
+ * @file D3CMath.hpp
+ * @author Antonius Torode
+ * @date 10/05/2014
  * Description:
  *     Header file for D3CMath.cpp containing declarations for mathematical
  *     functions and utilities. Designed to support various numerical operations

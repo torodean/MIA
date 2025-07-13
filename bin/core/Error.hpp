@@ -1,7 +1,7 @@
 /**
- * File: Error.hpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file Error.hpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: Contains the MIAException class and Error information structures
  *              for handling error codes and exceptions across MIA applications.
  */

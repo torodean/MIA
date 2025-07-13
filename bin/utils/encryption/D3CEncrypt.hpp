@@ -1,16 +1,16 @@
-//============================================================================
-// Name        : D3CEncrypt.hpp
-// Author      : Antonius Torode
-// Copyright   : This file can be used under the conditions of Antonius' 
-//				 General Purpose License (AGPL).
-// Created on  : September 24, 2014
-// Description : Header file for the D3CEncrypt.cpp file.
-//               This file is very old. Many of the comments don't make much 
-//               sense or are non-existant. I have kept it mostly in its
-//               original form with only a few minor improvements since then.
-//               Most of the improvements involve moving utility methods outside of
-//               this class, refactoring, and adding comments.
-//============================================================================
+/**
+ * @file D3CEncrypt.hpp
+ * @author Antonius Torode
+ * @copyright This file can be used under the conditions of Antonius' General Purpose License (AGPL).
+ * @date September 24, 2014
+ * @brief Header file for the D3CEncrypt.cpp file.
+ * 
+ * This file is very old. Many of the comments don't make much sense or are non-existent.
+ * I have kept it mostly in its original form with only a few minor improvements since then.
+ * Most of the improvements involve moving utility methods outside of this class, refactoring,
+ * and adding comments.
+ */
+
 #pragma once
 
 #include <vector>

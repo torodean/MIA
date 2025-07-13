@@ -1,7 +1,7 @@
 /**
- * File: BasicApplication.cpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file MIAApplication.cpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: Implements the BasicApplication base class methods.
  *              Handles common initialization such as parsing command line
  *              arguments for verbose mode.

@@ -1,7 +1,7 @@
 /**
- * File: StringUtils.cpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file StringUtils.cpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description:
  *     Utility implementations for common string operations such as parsing, transformation,
  *     formatting, and analysis. These functions support general-purpose tasks including

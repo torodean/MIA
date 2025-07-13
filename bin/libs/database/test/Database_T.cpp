@@ -1,7 +1,7 @@
 /**
- * File: Database_T.cpp
- * Author: Antonius Torode
- * Creation Date: 07/05/2025
+ * @file Database_T.cpp
+ * @author Antonius Torode
+ * @date 07/05/2025
  * Description: Unit tests for the Database class.
  */
 

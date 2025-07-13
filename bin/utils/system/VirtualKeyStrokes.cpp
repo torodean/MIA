@@ -1,7 +1,7 @@
 /**
- * File: VirtualKeyStrokes.cpp
- * Author: Antonius Torode
- * Created on: 03/01/2021
+ * @file VirtualKeyStrokes.cpp
+ * @author Antonius Torode
+ * @date 03/01/2021
  * Description: Implements the VirtualKeyStrokes class for simulating virtual keyboard and 
  *     mouse input across platforms. Includes support for common key presses, 
  *     string typing, mouse actions, and platform-specific automation routines.

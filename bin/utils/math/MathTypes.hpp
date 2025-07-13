@@ -1,7 +1,7 @@
 /**
- * File: MathTypes.hpp
- * Author: Antonius Torode
- * Created on: 06/18/2025
+ * @file MathTypes.hpp
+ * @author Antonius Torode
+ * @date 06/18/2025
  * Description: This file provides a collection of general types used for various
  *     mathematical purposes.
  */

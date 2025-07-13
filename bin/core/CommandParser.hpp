@@ -1,7 +1,7 @@
 /**
- * File: CommandParser.hpp
- * Author: Antonius Torode
- * Creation Date: 05/22/2025
+ * @file CommandParser.hpp
+ * @author Antonius Torode
+ * @date 05/22/2025
  * Description: This file contains various utilities for parsing command options.
  */
 #pragma once
