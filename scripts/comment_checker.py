@@ -1,5 +1,24 @@
 #!/bin/python3
+"""
+@file    comment_cheecker.py
+@author  Antonius Torode
+@date    2025-07-13
 
+A script to verify and correct file headers and method docstrings in C++ source/header files.
+
+Features:
+- Ensures headers use @file, @author, @date tags
+- Converts legacy 'File:', 'Author:', and date formats to standard tags
+- Checks method declarations for proper docstrings including @param and @return tags
+- Supports .cpp and .hpp files
+- Prints modifications in colored output for easy identification
+
+Usage:
+    python3 comment_cheecker.py [options] <directory>
+
+Options:
+    --help      Show this help message and exit
+"""
 import os
 import re
 import termcolor
