@@ -69,6 +69,7 @@
             "baseValue": 1,
             "modifies" : 
             {
+                "targetType" : "vital",
                 "targetName" : "Health",
                 "ModifyType" : "ADD",
                 "ModifyValuePer" : 5

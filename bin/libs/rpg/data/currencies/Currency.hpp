@@ -28,7 +28,7 @@ namespace currency
      
      /**
      * Converts a string to a CurrencyType enum.
-     * @param typeStr The string representation of the type.
+     * @param typeStr[const std::string&] - The string representation of the type.
      * @return The corresponding CurrencyType, or UNKNOWN if invalid.
      */
     inline CurrencyType stringToCurrencyType(const std::string& typeStr)
@@ -46,7 +46,7 @@ namespace currency
     
      /**
      * Converts a CurrencyType to an std::string.
-     * @param typeStr The string representation of the type.
+     * @param type[const CurrencyType&] - The string representation of the type.
      * @return The corresponding CurrencyType, or UNKNOWN if invalid.
      */
     inline std::string currencyTypeToString(const CurrencyType& type)

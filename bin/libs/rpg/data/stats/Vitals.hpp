@@ -139,7 +139,7 @@ namespace stats
          * Searches for the block enclosed by [CV_BEGIN] and [CV_END] markers,
          * then parses and reconstructs the vitals.
          *
-         * @param data A string containing the serialized Vitals.
+         * @param data[const std::string&] - A string containing the serialized Vitals.
          * @return A reconstructed Vitals instance.
          */
         static Vitals deserialize(const std::string& data);
