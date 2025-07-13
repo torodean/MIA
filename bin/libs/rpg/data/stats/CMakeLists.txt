@@ -1,10 +1,12 @@
 
 # Create the RPG_Vitals_LIB
 set(RPG_Vitals_SRC 
-    Vitals.cpp )
+    Vitals.cpp
+    VitalData.cpp )
 set(RPG_Vitals_INC 
     Vital.hpp
-    Vitals.hpp )
+    Vitals.hpp
+    VitalData.hpp )
 add_library(RPG_Vitals_LIB ${RPG_Vitals_SRC} ${RPG_Vitals_INC})
 target_link_libraries( RPG_Vitals_LIB PUBLIC Framework_CORE RPG_Tools_LIB )
 
