@@ -36,3 +36,7 @@ Additional directories may be added as the project evolves to support new tools,
 MIA is a personal hobby project built primarily for experimentation, learning, and utility (primarily utilities which I need for whatever other projects I am working on at the time). It’s not intended for production use, and therefore, parts of the codebase may be inconsistent or incomplete. This is due to some elements being very old, outdated, or other various reasons. Despite this, I’ve made an effort to keep things reasonably organized and well-documented. This is ultimately a sandbox project. The goal isn’t perfection, but exploration. MIA also doubles as a portfolio piece, offering a brief view into how I think about code, tools, documentation, designs and systems in a more relaxed, informal setting.
 
 **Note**: This entire project was developed exclusively using text editors, without the use of any Integrated Development Environments (IDEs). All code, configuration, and debugging were done manually to maintain full control over the development process and to ensure that I'm improving my own skills rather than relying on IDE features.
+
+## Windows vs Linux
+
+MIA is primarily developed on a Linux machine. For this reason, a stable Windows build may not always be the current state and some features on Windows may lag behind in compatability.
