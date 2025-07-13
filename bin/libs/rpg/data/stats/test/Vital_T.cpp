@@ -37,7 +37,7 @@ TEST(Vital_T, DefaultConstruction)
     EXPECT_EQ(v.getID(), 0u);
     EXPECT_EQ(v.getName(), "");
     EXPECT_EQ(v.getDescription(), "");
-    EXPECT_EQ(v.getVitalType(), VitalType::UNKNOWN);
+    EXPECT_EQ(v.getType(), VitalType::UNKNOWN);
     EXPECT_EQ(v.getBaseMax(), 100);
     EXPECT_EQ(v.getBaseMin(), 0);
 }
@@ -48,7 +48,7 @@ TEST(Vital_T, ParameterizedConstructionDepletive)
     EXPECT_EQ(v.getID(), 1u);
     EXPECT_EQ(v.getName(), "Health");
     EXPECT_EQ(v.getDescription(), "Health bar");
-    EXPECT_EQ(v.getVitalType(), VitalType::DEPLETIVE);
+    EXPECT_EQ(v.getType(), VitalType::DEPLETIVE);
     EXPECT_EQ(v.getBaseMax(), 100);
     EXPECT_EQ(v.getBaseMin(), 0);
 }

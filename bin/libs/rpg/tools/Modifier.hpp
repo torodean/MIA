@@ -75,6 +75,21 @@ namespace rpg
 
         Modifier(uint32_t id, ModifierSourceType src, T val)
             : sourceId(id), source(src), value(val) {}
+            
+        /**
+         * Equality operator for Modifier.
+         *
+         * Compares two Modifier objects for equality based on their sourceId and source fields.
+         * The value field is intentionally excluded from the comparison.
+         *
+         * @param other The Modifier object to compare with.
+         * @return true if both sourceId and source are equal; false otherwise.
+         */
+        bool operator==(const Modifier<T>& other) const
+        {
+            return sourceId == other.sourceId && source == other.source;
+        }
+
     };
             
     /**

@@ -100,7 +100,7 @@ namespace stats
         uint32_t getID() const { return id; }
         std::string getName() const { return name; }
         std::string getDescription() const { return description; }
-        VitalType getVitalType() const { return type; }
+        VitalType getType() const { return type; }
         int getBaseMin() const { return baseMin; }
         int getBaseMax() const { return baseMax; }
 

@@ -40,6 +40,9 @@ namespace error
         { Missing_Argument, "The app/command argument was not found." },
         { Failed_To_Open_File, "Failed to open file." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
+        { Undefined_RPG_Value, "A referenced value for the RPG system wasn't defined." },
+        { Duplicate_RPG_Value, "A duplicate RPG entry was added." },
+        { Invalid_RPG_Data, "An invalid combination/set of RPG data was used." }, 
         { Catastrophic_Failure, "A catastrophic failure occurred." }
     };
 

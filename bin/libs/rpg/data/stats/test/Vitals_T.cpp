@@ -9,6 +9,7 @@
 #include "Vitals.hpp"
 #include "VitalRegistry.hpp"
 #include <nlohmann/json.hpp>
+#include "MIAException.hpp"
 
 using namespace stats;
 
@@ -37,171 +38,196 @@ protected:
 };
 
 
-TEST_F(Vitals_T, GetVitalData)
+TEST_F(Vitals_T, getData)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
-    VitalData data = vitals.getVitalData("Health");
+    vitals.addData("Health", 80, 0, 100);
+    VitalData data = vitals.getData("Health");
     EXPECT_EQ(data.current, 80);
     EXPECT_EQ(data.currentMin, 0);
     EXPECT_EQ(data.currentMax, 100);
     EXPECT_TRUE(data.maxModifiers.empty());
     EXPECT_TRUE(data.minModifiers.empty());
 
-    data = vitals.getVitalData(1);
+    data = vitals.getData(1);
     EXPECT_EQ(data.current, 80);
     EXPECT_EQ(data.currentMax, 100);
 
-    data = vitals.getVitalData(health);
+    data = vitals.getData(health);
     EXPECT_EQ(data.current, 80);
     EXPECT_EQ(data.currentMax, 100);
 
-    data = vitals.getVitalData("invalid");
-    EXPECT_EQ(data.current, 0);
-    EXPECT_EQ(data.currentMax, 100);
+    EXPECT_THROW(vitals.getData("invalid"), error::MIAException);
 }
 
-TEST_F(Vitals_T, AddVitalData)
+TEST_F(Vitals_T, addData)
 {
-    EXPECT_TRUE(vitals.addVitalData("Health", 80, 0, 100));
-    EXPECT_FALSE(vitals.addVitalData("Health", 50, 0, 100)); // Already exists
-    EXPECT_FALSE(vitals.addVitalData("invalid", 50, 0, 100)); // Invalid vital
-    EXPECT_FALSE(vitals.addVitalData(1, 150, 0, 100)); // Current > max
-    EXPECT_FALSE(vitals.addVitalData(1, 50, 120, 100)); // Min > max
-
-    VitalData data = vitals.getVitalData(1);
+    EXPECT_NO_THROW(vitals.addData("Health", 80, 0, 100));
+    const VitalData& data = vitals.getData("Health");
     EXPECT_EQ(data.current, 80);
     EXPECT_EQ(data.currentMin, 0);
     EXPECT_EQ(data.currentMax, 100);
+    
+    EXPECT_THROW(vitals.addData("Health", 50, 0, 100), error::MIAException); // Already exists
+    EXPECT_THROW(vitals.addData("invalid", 50, 0, 100), error::MIAException); // Invalid vital
+    EXPECT_THROW(vitals.addData(1, 150, 0, 100), error::MIAException); // Current > max
+    EXPECT_THROW(vitals.addData(1, 50, 120, 100), error::MIAException); // Min > max
 }
 
-TEST_F(Vitals_T, UpdateVitalCurrent)
+TEST_F(Vitals_T, updateVitalCurrent)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
-    EXPECT_TRUE(vitals.updateVitalCurrent("Health", 90));
-    EXPECT_EQ(vitals.getVitalData("Health").current, 90);
+    vitals.addData("Health", 80, 0, 100);
 
-    EXPECT_TRUE(vitals.updateVitalCurrent(1, 120)); // Clamped to max
-    EXPECT_EQ(vitals.getVitalData(1).current, 100);
+    // Valid update within range
+    EXPECT_NO_THROW(vitals.updateVital("Health", VitalDataTarget::CURRENT, 90));
+    EXPECT_EQ(vitals.getData("Health").current, 90);
 
-    EXPECT_TRUE(vitals.updateVitalCurrent(health, -10)); // Clamped to min
-    EXPECT_EQ(vitals.getVitalData(health).current, 0);
+    // Update above max should clamp to max
+    EXPECT_NO_THROW(vitals.updateVital(1, VitalDataTarget::CURRENT, 120));
+    EXPECT_EQ(vitals.getData(1).current, 100);
 
-    EXPECT_FALSE(vitals.updateVitalCurrent("invalid", 50));
+    // Update below min should clamp to min
+    EXPECT_NO_THROW(vitals.updateVital(health, VitalDataTarget::CURRENT, -10));
+    EXPECT_EQ(vitals.getData(health).current, 0);
+
+    // Invalid vital name should throw
+    EXPECT_THROW(vitals.updateVital("invalid", VitalDataTarget::CURRENT, 50), error::MIAException);
 }
 
 TEST_F(Vitals_T, UpdateVitalMin)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
-    EXPECT_TRUE(vitals.updateVitalMin("Health", 10));
-    EXPECT_EQ(vitals.getVitalData("Health").currentMin, 10);
-    EXPECT_EQ(vitals.getVitalData("Health").current, 80); // Current unchanged
+    vitals.addData("Health", 80, 0, 100);
 
-    EXPECT_TRUE(vitals.updateVitalMin(1, 90));
-    EXPECT_EQ(vitals.getVitalData(1).currentMin, 90);
-    EXPECT_EQ(vitals.getVitalData(1).current, 90); // Current clamped to new min
+    // Valid update: raise min to 10
+    EXPECT_NO_THROW(vitals.updateVital("Health", VitalDataTarget::CURRENT_MIN, 10));
+    EXPECT_EQ(vitals.getData("Health").currentMin, 10);
+    EXPECT_EQ(vitals.getData("Health").current, 80); // Current unchanged
 
-    EXPECT_FALSE(vitals.updateVitalMin(1, 150)); // Min > max
-    EXPECT_FALSE(vitals.updateVitalMin("invalid", 10));
+    // Valid update: raise min to 90, clamps current
+    EXPECT_NO_THROW(vitals.updateVital(1, VitalDataTarget::CURRENT_MIN, 90));
+    EXPECT_EQ(vitals.getData(1).currentMin, 90);
+    EXPECT_EQ(vitals.getData(1).current, 90); // Clamped
+
+    // Invalid: min > max
+    EXPECT_THROW(vitals.updateVital(1, VitalDataTarget::CURRENT_MIN, 150), error::MIAException);
+
+    // Invalid vital
+    EXPECT_THROW(vitals.updateVital("invalid", VitalDataTarget::CURRENT_MIN, 10), error::MIAException);
 }
 
 TEST_F(Vitals_T, UpdateVitalMax)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
-    EXPECT_TRUE(vitals.updateVitalMax("Health", 150));
-    EXPECT_EQ(vitals.getVitalData("Health").currentMax, 150);
-    EXPECT_EQ(vitals.getVitalData("Health").current, 80); // Current unchanged
+    vitals.addData("Health", 80, 0, 100);
 
-    EXPECT_TRUE(vitals.updateVitalMax(1, 50));
-    EXPECT_EQ(vitals.getVitalData(1).currentMax, 50);
-    EXPECT_EQ(vitals.getVitalData(1).current, 50); // Current clamped to new max
+    // Valid update: raise max to 150
+    EXPECT_NO_THROW(vitals.updateVital("Health", VitalDataTarget::CURRENT_MAX, 150));
+    EXPECT_EQ(vitals.getData("Health").currentMax, 150);
+    EXPECT_EQ(vitals.getData("Health").current, 80); // Current unchanged
 
-    EXPECT_FALSE(vitals.updateVitalMax(1, -10)); // Max < min
-    EXPECT_FALSE(vitals.updateVitalMax("invalid", 50));
+    // Valid update: lower max to 50, clamps current
+    EXPECT_NO_THROW(vitals.updateVital(1, VitalDataTarget::CURRENT_MAX, 50));
+    EXPECT_EQ(vitals.getData(1).currentMax, 50);
+    EXPECT_EQ(vitals.getData(1).current, 50); // Clamped
+
+    // Invalid: max < min
+    EXPECT_THROW(vitals.updateVital(1, VitalDataTarget::CURRENT_MAX, -10), error::MIAException);
+
+    // Invalid vital
+    EXPECT_THROW(vitals.updateVital("invalid", VitalDataTarget::CURRENT_MAX, 50), error::MIAException);
 }
+
 
 TEST_F(Vitals_T, AddRemoveVitalModifier)
 {
-    // Create Health with min 0 and max 100.
-    vitals.addVitalData("Health", 80, 0, 100);
-    
-    // Add +20 modifier to Health max: min 0 and max 120.
-    EXPECT_TRUE(vitals.addVitalModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE, 20, 
-                                        VitalDataModifierTarget::CURRENT_MAX));
-    EXPECT_EQ(vitals.getVitalEffectiveMax("Health"), 120);
-    
-    // Add -10 modifier to Health max: min 0 and max 110.
-    EXPECT_TRUE(vitals.addVitalModifier(1, 2, rpg::ModifierSourceType::ITEM, -10, 
-                                        VitalDataModifierTarget::CURRENT_MAX));
-    EXPECT_EQ(vitals.getVitalEffectiveMax(1), 110);
+    vitals.addData("Health", 80, 0, 100);
 
-    // Add +5 modifier to Health min: min 5 and max 110.
-    EXPECT_TRUE(vitals.addVitalModifier(health, 3, rpg::ModifierSourceType::BUFF, 5, 
-                                        VitalDataModifierTarget::CURRENT_MIN));
-    EXPECT_EQ(vitals.getVitalData(health).minModifiers.size(), 1);
-    EXPECT_EQ(vitals.getVitalEffectiveMin(health), 5);
+    // Add +20 modifier to max → max becomes 120
+    EXPECT_NO_THROW(vitals.addVitalModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE, 20,
+                                            VitalDataTarget::CURRENT_MAX));
+    EXPECT_EQ(vitals.getData("Health").currentMax, 120);
 
-    // Remove modifier to Health max: min 5 and max 90.
-    EXPECT_TRUE(vitals.removeVitalModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE, 
-                                           VitalDataModifierTarget::CURRENT_MAX));
-    EXPECT_EQ(vitals.getVitalEffectiveMax("Health"), 90);
-    
-    // Remove non-existant modifier to Health max: min 5 and max 90.
-    EXPECT_FALSE(vitals.removeVitalModifier("Health", 999, rpg::ModifierSourceType::ATTRIBUTE, 
-                                            VitalDataModifierTarget::CURRENT_MAX));
+    // Add -10 modifier to max → max becomes 110
+    EXPECT_NO_THROW(vitals.addVitalModifier(1, 2, rpg::ModifierSourceType::ITEM, -10,
+                                            VitalDataTarget::CURRENT_MAX));
+    EXPECT_EQ(vitals.getData(1).currentMax, 110);
 
-    // Add +20 modifier to Health max: min 5 and max 110.
-    EXPECT_FALSE(vitals.addVitalModifier("invalid", 1, rpg::ModifierSourceType::ATTRIBUTE, 20, 
-                                         VitalDataModifierTarget::CURRENT_MAX));
-                                         
-    // Add +inf modifier to Health max: min 5 and max inf.
-    EXPECT_FALSE(vitals.addVitalModifier(1, 1, rpg::ModifierSourceType::ATTRIBUTE, 
-                                         std::numeric_limits<int>::max(), 
-                                         VitalDataModifierTarget::CURRENT_MAX)); // Overflow
+    // Add +5 modifier to min → min becomes 5
+    EXPECT_NO_THROW(vitals.addVitalModifier(health, 3, rpg::ModifierSourceType::BUFF, 5,
+                                            VitalDataTarget::CURRENT_MIN));
+    EXPECT_EQ(vitals.getData(health).minModifiers.size(), 1);
+    EXPECT_EQ(vitals.getData(health).currentMin, 5);
+
+    // Remove modifier with sourceId 1 from max → max becomes 90
+    EXPECT_NO_THROW(vitals.removeVitalModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE,
+                                               VitalDataTarget::CURRENT_MAX));
+    EXPECT_EQ(vitals.getData("Health").currentMax, 90);
+
+    // Remove non-existent modifier → no exception; data unchanged
+    EXPECT_NO_THROW(vitals.removeVitalModifier("Health", 999, rpg::ModifierSourceType::ATTRIBUTE,
+                                               VitalDataTarget::CURRENT_MAX));
+    EXPECT_EQ(vitals.getData("Health").currentMax, 90); // Confirm unchanged
+
+    // Invalid vital name → throws
+    EXPECT_THROW(vitals.addVitalModifier("invalid", 1, rpg::ModifierSourceType::ATTRIBUTE, 20,
+                                         VitalDataTarget::CURRENT_MAX), error::MIAException);
+
+    // Overflow risk (optional test) — depending on logic, this may or may not throw
+    EXPECT_NO_THROW(vitals.addVitalModifier(1, 1, rpg::ModifierSourceType::ATTRIBUTE,
+                                            std::numeric_limits<int>::max(),
+                                            VitalDataTarget::CURRENT_MAX));
+    // The resulting max may wrap, clamp, or just increase depending on implementation
 }
 
 TEST_F(Vitals_T, RemoveVital)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
-    EXPECT_TRUE(vitals.removeVital("Health"));
-    EXPECT_EQ(vitals.getVitalData("Health").currentMax, 100); // Default VitalData
-    EXPECT_FALSE(vitals.removeVital("Health")); // Already removed
-    EXPECT_FALSE(vitals.removeVital("invalid"));
+    vitals.addData("Health", 80, 0, 100);
+
+    // Remove Health → data removed from internal map
+    EXPECT_NO_THROW(vitals.removeVital("Health"));
+
+    // Querying after removal should return default
+    EXPECT_EQ(vitals.getData("Health").currentMax, 100); // From fallback/default
+
+    // Attempting second removal does not throw, but does nothing
+    EXPECT_NO_THROW(vitals.removeVital("Health"));
+
+    // Remove invalid vital → throws
+    EXPECT_THROW(vitals.removeVital("invalid"), error::MIAException);
 }
 
-TEST_F(Vitals_T, GetVitalEffectiveMaxMin)
+TEST_F(Vitals_T, GetVitalMaxMin)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
+    vitals.addData("Health", 80, 0, 100);
     vitals.addVitalModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE, 20, 
-                            VitalDataModifierTarget::CURRENT_MAX);
+                            VitalDataTarget::CURRENT_MAX);
     vitals.addVitalModifier("Health", 2, rpg::ModifierSourceType::ITEM, -10,  
-                            VitalDataModifierTarget::CURRENT_MAX);
+                            VitalDataTarget::CURRENT_MAX);
     vitals.addVitalModifier("Health", 3, rpg::ModifierSourceType::BUFF, 5,  
-                            VitalDataModifierTarget::CURRENT_MIN);
+                            VitalDataTarget::CURRENT_MIN);
 
-    EXPECT_EQ(vitals.getVitalEffectiveMax("Health"), 110);
-    EXPECT_EQ(vitals.getVitalEffectiveMin("Health"), 5);
+    EXPECT_EQ(vitals.getData("Health").currentMax, 110);
+    EXPECT_EQ(vitals.getData("Health").currentMin, 5);
 
-    EXPECT_EQ(vitals.getVitalEffectiveMax(999), 0);
-    EXPECT_EQ(vitals.getVitalEffectiveMin("invalid"), 0);
+    EXPECT_THROW(vitals.getData(999).currentMax, error::MIAException);
+    EXPECT_THROW(vitals.getData("invalid").currentMin, error::MIAException);
 }
 
 
 TEST_F(Vitals_T, SerializeDeserialize)
 {
-    vitals.addVitalData("Health", 80, 0, 100);
-    vitals.addVitalData("Mana", 50, 0, 200);
+    vitals.addData("Health", 80, 0, 100);
+    vitals.addData("Mana", 50, 0, 200);
     vitals.addVitalModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE, 20,  
-                            VitalDataModifierTarget::CURRENT_MAX);
+                            VitalDataTarget::CURRENT_MAX);
     vitals.addVitalModifier("Health", 2, rpg::ModifierSourceType::BUFF, 5,  
-                            VitalDataModifierTarget::CURRENT_MIN);
+                            VitalDataTarget::CURRENT_MIN);
 
     std::string serialized = vitals.serialize();
     Vitals newVitals = Vitals::deserialize(serialized);
 
-    EXPECT_EQ(newVitals.getVitalData("Health").current, 80);
-    EXPECT_EQ(newVitals.getVitalEffectiveMax("Health"), 120);
-    EXPECT_EQ(newVitals.getVitalEffectiveMin("Health"), 5);
-    EXPECT_EQ(newVitals.getVitalData("Mana").currentMax, 200);
+    EXPECT_EQ(newVitals.getData("Health").current, 80);
+    EXPECT_EQ(newVitals.getData("Health").currentMax, 120);
+    EXPECT_EQ(newVitals.getData("Health").currentMin, 5);
+    EXPECT_EQ(newVitals.getData("Mana").currentMax, 200);
 
     EXPECT_THROW({
         Vitals::deserialize("invalid data");

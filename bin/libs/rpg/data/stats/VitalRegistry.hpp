@@ -30,10 +30,10 @@ namespace stats
             auto name = json.at("name").get<std::string>();
             auto description = json.value("description", "");
             auto type = stringToVitalType(json.value("type", "UNKNOWN"));
-            auto min = json.value("min", 0);
-            auto max = json.value("max", 100);
+            auto BaseMin = json.value("BaseMin", 0);
+            auto BaseMax = json.value("BaseMax", 100);
 
-            Vital vital(id, name, description, type, min, max);
+            Vital vital(id, name, description, type, BaseMin, BaseMax);
             return vital;
         }
         
@@ -46,7 +46,7 @@ namespace stats
         std::string toString(const Vital& vital) const override
         {
             return "Name: " + vital.getName() +
-                   ", Type: " + vitalTypeToString(vital.getVitalType()) +
+                   ", Type: " + vitalTypeToString(vital.getType()) +
                    ", BaseMin: " + std::to_string(vital.getBaseMin()) +
                    ", BaseMax: " + std::to_string(vital.getBaseMax()) +
                    ", Description: " + vital.getDescription();
