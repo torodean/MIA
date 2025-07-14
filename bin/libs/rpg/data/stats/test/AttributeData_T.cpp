@@ -44,7 +44,7 @@ namespace stats
         EXPECT_EQ(attr.getCurrent(), 15) << "Constructor with modifiers should set current to 15";
         ASSERT_EQ(attr.getModifiers().size(), 1) << "Constructor with modifiers should set one modifier";
         EXPECT_EQ(attr.getModifiers()[0].value, sampleModifier.value) << "Modifier value should match";
-        EXPECT_EQ(attr.getModifiers()[0].sourceId, sampleModifier.sourceId) << "Modifier sourceId should match";
+        EXPECT_EQ(attr.getModifiers()[0].sourceID, sampleModifier.sourceID) << "Modifier sourceID should match";
         EXPECT_EQ(attr.getModifiers()[0].source, sampleModifier.source) << "Modifier source should match";
     }
 

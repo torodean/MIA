@@ -36,7 +36,7 @@ namespace stats
         auto it = std::find_if(modifiers.begin(), modifiers.end(),
             [&mod](const rpg::Modifier<int>& m)
             {
-                return m.sourceId == mod.sourceId && m.source == mod.source;
+                return m.sourceID == mod.sourceID && m.source == mod.source;
             });
         if (it != modifiers.end())
         {

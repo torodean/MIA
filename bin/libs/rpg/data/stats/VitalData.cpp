@@ -87,7 +87,7 @@ namespace stats
     void VitalData::removeModifier(const rpg::Modifier<int>& mod, VitalDataTarget target)
     {
         auto match = [&](const rpg::Modifier<int>& m) {
-            return m.sourceId == mod.sourceId && m.source == mod.source;
+            return m.sourceID == mod.sourceID && m.source == mod.source;
         };
 
         if (target == VitalDataTarget::CURRENT_MAX)

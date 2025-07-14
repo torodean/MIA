@@ -67,16 +67,22 @@ namespace stats
          * @param name[const std::string&] The name of the Attribute.
          *        id[uint32_t] The ID of the Attribute.
          *        Attribute[const Attribute&] The Attribute object.
-         * @param sourceId[uint32_t] ID of the source (e.g., attribute or item ID).
+         * @param sourceID[uint32_t] ID of the source (e.g., attribute or item ID).
          * @param sourceType[ModifierSourceType] Type of source (e.g., ATTRIBUTE).
          * @param value[int32_t] The modifier value.
          */
-        void addAttributeModifier(const std::string& name, uint32_t sourceId, 
-                                  rpg::ModifierSourceType sourceType, int32_t value);
-        void addAttributeModifier(uint32_t id, uint32_t sourceId, 
-                                  rpg::ModifierSourceType sourceType, int32_t value);
-        void addAttributeModifier(const Attribute& Attribute, uint32_t sourceId, 
-                                  rpg::ModifierSourceType sourceType, int32_t value);
+        void addAttributeModifier(const std::string& name, 
+                                  uint32_t sourceID, 
+                                  rpg::ModifierSourceType sourceType, 
+                                  int32_t value);
+        void addAttributeModifier(uint32_t id, 
+                                  uint32_t sourceID, 
+                                  rpg::ModifierSourceType sourceType, 
+                                  int32_t value);
+        void addAttributeModifier(const Attribute& Attribute, 
+                                  uint32_t sourceID, 
+                                  rpg::ModifierSourceType sourceType, 
+                                  int32_t value);
 
         /**
          * Removes a min or max modifier by source ID and type. 
@@ -84,14 +90,17 @@ namespace stats
          * @param name[const std::string&] The name of the Attribute.
          *        id[uint32_t] The ID of the Attribute.
          *        Attribute[const Attribute&] The Attribute object.
-         * @param sourceId[uint32_t] ID of the source.
+         * @param sourceID[uint32_t] ID of the source.
          * @param sourceType[ModifierSourceType] Type of source.
          */
-        void removeAttributeModifier(const std::string& name, uint32_t sourceId, 
+        void removeAttributeModifier(const std::string& name, 
+                                     uint32_t sourceID, 
                                      rpg::ModifierSourceType sourceType);
-        void removeAttributeModifier(uint32_t id, uint32_t sourceId, 
+        void removeAttributeModifier(uint32_t id, 
+                                     uint32_t sourceID, 
                                      rpg::ModifierSourceType sourceType);
-        void removeAttributeModifier(const Attribute& Attribute, uint32_t sourceId, 
+        void removeAttributeModifier(const Attribute& Attribute, 
+                                     uint32_t sourceID, 
                                      rpg::ModifierSourceType sourceType);
 
         /**

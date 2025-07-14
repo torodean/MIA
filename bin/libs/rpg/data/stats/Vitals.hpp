@@ -72,19 +72,25 @@ namespace stats
          * @param name[const std::string&] The name of the vital.
          *        id[uint32_t] The ID of the vital.
          *        vital[const Vital&] The Vital object.
-         * @param sourceId[uint32_t] ID of the source (e.g., attribute or item ID).
+         * @param sourceID[uint32_t] ID of the source (e.g., attribute or item ID).
          * @param sourceType[ModifierSourceType] Type of source (e.g., ATTRIBUTE).
          * @param value[int32_t] The modifier value.
          * @param target[pVitalDataTarget] - The target modifier type to modify.
          */
-        void addVitalModifier(const std::string& name, uint32_t sourceId, 
-                              rpg::ModifierSourceType sourceType, int32_t value,
+        void addVitalModifier(const std::string& name, 
+                              uint32_t sourceID, 
+                              rpg::ModifierSourceType sourceType, 
+                              int32_t value,
                               VitalDataTarget target);
-        void addVitalModifier(uint32_t id, uint32_t sourceId, 
-                              rpg::ModifierSourceType sourceType, int32_t value,
+        void addVitalModifier(uint32_t id, 
+                              uint32_t sourceID, 
+                              rpg::ModifierSourceType sourceType, 
+                              int32_t value,
                               VitalDataTarget target);
-        void addVitalModifier(const Vital& vital, uint32_t sourceId, 
-                              rpg::ModifierSourceType sourceType, int32_t value,
+        void addVitalModifier(const Vital& vital, 
+                              uint32_t sourceID, 
+                              rpg::ModifierSourceType sourceType, 
+                              int32_t value,
                               VitalDataTarget target);
 
         /**
@@ -94,17 +100,20 @@ namespace stats
          * @param name[const std::string&] The name of the vital.
          *        id[uint32_t] The ID of the vital.
          *        vital[const Vital&] The Vital object.
-         * @param sourceId[uint32_t] ID of the source.
+         * @param sourceID[uint32_t] ID of the source.
          * @param sourceType[ModifierSourceType] Type of source.
          * @param target[pVitalDataTarget] - The target modifier type to modify.
          */
-        void removeVitalModifier(const std::string& name, uint32_t sourceId, 
+        void removeVitalModifier(const std::string& name, 
+                                 uint32_t sourceID, 
                                  rpg::ModifierSourceType sourceType,
                                  VitalDataTarget target);
-        void removeVitalModifier(uint32_t id, uint32_t sourceId, 
+        void removeVitalModifier(uint32_t id, 
+                                 uint32_t sourceID, 
                                  rpg::ModifierSourceType sourceType,
                                  VitalDataTarget target);
-        void removeVitalModifier(const Vital& vital, uint32_t sourceId, 
+        void removeVitalModifier(const Vital& vital, 
+                                 uint32_t sourceID, 
                                  rpg::ModifierSourceType sourceType,
                                  VitalDataTarget target);
 
@@ -123,7 +132,7 @@ namespace stats
          * Serializes the Vitals to a compact string enclosed by unique markers
          * for reliable extraction within a larger data stream.
          *
-         * Format: [VITALS_BEGIN]id:current,max,min;mod1SourceId,mod1SourceType,mod1Value;...[VITALS_END]
+         * Format: [VITALS_BEGIN]id:current,max,min;mod1sourceID,mod1SourceType,mod1Value;...[VITALS_END]
          *
          * @return A string representing the serialized state of the Vitals.
          */
