@@ -116,7 +116,8 @@ namespace currency
                 {"name", name},
                 {"description", description},
                 {"type", currency::currencyTypeToString(type)},
-                {"tradeable", tradeable}
+                {"tradeable", tradeable},
+                {"icon", iconArt}
             };
         }
         

@@ -72,7 +72,8 @@ TEST_F(Currency_T, ToJsonProducesCorrectJson)
         {"name", "Gold"},
         {"description", "Standard gold currency"},
         {"type", "COIN"},
-        {"tradeable", true}
+        {"tradeable", true},
+        {"icon", "gold_icon.png"}
     };
     EXPECT_EQ(testCurrency.toJson(), expected);
 }
