@@ -65,17 +65,21 @@ namespace stats
           minModifiers(minMods) {}
         
 
-    void VitalData::addModifier(const rpg::Modifier<int>& mod, VitalDataTarget target)
+    void VitalData::addModifier(const rpg::Modifier<int>& mod, VitalDataTarget target, bool recalc)
     {
         if (target == VitalDataTarget::CURRENT_MAX)
         {
             maxModifiers.push_back(mod);
-            recalculate(mod, target);
+            
+            if (recalc)
+                recalculate(mod, target);
         }
         else if (target == VitalDataTarget::CURRENT_MIN)
         {
             minModifiers.push_back(mod);
-            recalculate(mod, target);
+            
+            if (recalc)
+                recalculate(mod, target);
         }
     }
 

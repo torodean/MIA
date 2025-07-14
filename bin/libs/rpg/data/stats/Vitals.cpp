@@ -161,31 +161,31 @@ namespace stats
         
         if (target == VitalDataTarget::CURRENT)
         {
-            it->second.current = std::clamp(value, it->second.currentMin, it->second.currentMax);
+            it->second.setCurrent(value);
         }
         else if (target == VitalDataTarget::CURRENT_MIN)
         {
-            if (value > it->second.currentMax)
+            if (value > it->second.getCurrentMax())
             {
                 std::string err = "Inconsistent value set:  min(" 
                                 + std::to_string(value) + ") > max(" 
-                                + std::to_string(it->second.currentMax) + ")\n";
+                                + std::to_string(it->second.getCurrentMax()) + ")\n";
                 MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
             }
-            it->second.currentMin = value;
-            it->second.current = std::clamp(it->second.current, value, it->second.currentMax);
+            it->second.setCurrentMin(value);
+            it->second.setCurrent(it->second.getCurrent()); // If correction is needed.
         }
         else if (target == VitalDataTarget::CURRENT_MAX)
         {
-            if (value < it->second.currentMin)
+            if (value < it->second.getCurrentMin())
             {
                 std::string err = "Inconsistent value set:  min(" 
-                                + std::to_string(it->second.currentMin) + ") > max(" 
+                                + std::to_string(it->second.getCurrentMin()) + ") > max(" 
                                 + std::to_string(value) + ")\n";
                 MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
             }
-            it->second.currentMax = value;
-            it->second.current = std::clamp(it->second.current, it->second.currentMin, value);
+            it->second.setCurrentMax(value);
+            it->second.setCurrent(it->second.getCurrent()); // If correction is needed.
         }
     }
     
@@ -315,10 +315,10 @@ namespace stats
             first = false;
 
             // Write the base vital data: <id>:<current>,<currentMin>,<currentMax>
-            ss << id << ":" << data.current << "," << data.currentMin << "," << data.currentMax;
+            ss << id << ":" << data.getCurrent() << "," << data.getCurrentMin() << "," << data.getCurrentMax();
 
             // Serialize all min modifiers for this vital
-            for (const auto& mod : data.minModifiers)
+            for (const auto& mod : data.getModifiers(VitalDataTarget::CURRENT_MIN))
             {
                 ss << ";" << mod.sourceId << "," 
                    << rpg::modifierSourceTypeToString(mod.source) << "," 
@@ -327,7 +327,7 @@ namespace stats
             }
 
             // Serialize all max modifiers for this vital
-            for (const auto& mod : data.maxModifiers)
+            for (const auto& mod : data.getModifiers(VitalDataTarget::CURRENT_MAX))
             {
                 ss << ";" << mod.sourceId << "," 
                    << rpg::modifierSourceTypeToString(mod.source) << "," 
@@ -415,16 +415,8 @@ namespace stats
                 // The vitals are already calculated so this block bypasses the recaclulate() 
                 // call in addVitalModifier().
                 auto& vitalData = vitals.vitals.at(id);
-                rpg::Modifier<int> mod(sourceId, sourceType, value);
-                if (target == VitalDataTarget::CURRENT_MAX)
-                    vitalData.maxModifiers.push_back(mod);
-                else if (target == VitalDataTarget::CURRENT_MIN)
-                    vitalData.minModifiers.push_back(mod);
-                else
-                {
-                    std::string err = "Invalid VitalDataTarget when deserializing modifiers.";
-                    MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
-                }
+                rpg::Modifier<int> mod(sourceId, sourceType, value);                
+                vitalData.addModifier(mod, target, false);
             }
         }
 

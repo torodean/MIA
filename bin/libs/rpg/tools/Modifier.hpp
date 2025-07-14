@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <string>
 #include <cstdint>
+#include <iostream>
 
 namespace rpg
 {
