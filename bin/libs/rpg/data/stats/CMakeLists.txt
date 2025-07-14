@@ -21,6 +21,7 @@ set(RPG_Attributes_SRC
     Attributes.cpp )
 set(RPG_Attributes_INC 
     Attribute.hpp
+    Attributes.hpp
     AttributeData.hpp
     AttributeRegistry.hpp )
 add_library(RPG_Attributes_LIB ${RPG_Attributes_SRC} ${RPG_Attributes_INC})

@@ -99,7 +99,7 @@ namespace currency
         
         /**
          * Serializes the contents of the Wallet to a compact string.
-         * The serialized format is enclosed between unique [CC_BEGIN] and [CC_END] markers
+         * The serialized format is enclosed between unique [WALLET_BEGIN] and [WALLET_END] markers
          * for easy identification within a larger data stream.
          *
          * Format: [CC_BEGIN]id1:qty1;id2:qty2;...[CC_END]
@@ -110,7 +110,7 @@ namespace currency
         
         /**
          * Deserializes a Wallet from a string containing serialized data.
-         * The method searches for a block enclosed between [CC_BEGIN] and [CC_END],
+         * The method searches for a block enclosed between [WALLET_BEGIN] and [WALLET_END],
          * then reconstructs the container from the currency ID and quantity pairs.
          *
          * @param data A string containing the serialized container, possibly among other data.

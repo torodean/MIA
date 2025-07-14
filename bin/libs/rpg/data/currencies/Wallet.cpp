@@ -153,26 +153,26 @@ namespace currency
     std::string Wallet::serialize() const 
     {
         std::ostringstream oss;
-        oss << "[CC_BEGIN]";
+        oss << "[WALLET_BEGIN]";
         for (const auto& [id, cq] : currencies) {
             oss << id << ':' << cq.quantity << ';';
         }
-        oss << "[CC_END]";
+        oss << "[WALLET_END]";
         return oss.str();
     }
     
     
     Wallet Wallet::deserialize(const std::string& data) 
     {
-        size_t start = data.find("[CC_BEGIN]");
-        size_t end = data.find("[CC_END]", start);
+        size_t start = data.find("[WALLET_BEGIN]");
+        size_t end = data.find("[WALLET_END]", start);
 
         if (start == std::string::npos || end == std::string::npos) 
         {
             throw std::invalid_argument("Wallet block not found.");
         }
 
-        start += std::string("[CC_BEGIN]").length();
+        start += std::string("[WALLET_BEGIN]").length();
         std::string payload = data.substr(start, end - start);
 
         Wallet container;

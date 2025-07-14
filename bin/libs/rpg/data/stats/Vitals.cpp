@@ -304,7 +304,7 @@ namespace stats
     std::string Vitals::serialize() const
     {
         std::stringstream ss;
-        ss << "[CV_BEGIN]"; // Start of serialized content
+        ss << "[VITALS_BEGIN]"; // Start of serialized content
         bool first = true;
 
         // Loop through all stored vitals
@@ -336,19 +336,20 @@ namespace stats
             }
         }
 
-        ss << "[CV_END]"; // End of serialized content
+        ss << "[VITALS_END]"; // End of serialized content
         return ss.str();
     }
     
 
     Vitals Vitals::deserialize(const std::string& data)
     {
-        size_t start = data.find("[CV_BEGIN]");
-        size_t end = data.find("[CV_END]");
-        if (start == std::string::npos || end == std::string::npos || end <= start + 10)
-            throw std::invalid_argument("Invalid serialized data: missing or malformed [CV_BEGIN]/[CV_END]");
+        std::string beginString = "[VITALS_BEGIN]";
+        size_t start = data.find(beginString);
+        size_t end = data.find("[VITALS_END]");
+        if (start == std::string::npos || end == std::string::npos || end <= start + beginString.size())
+            throw std::invalid_argument("Invalid serialized data: missing or malformed [VITALS_BEGIN]/[VITALS_END]");
 
-        std::string content = data.substr(start + 10, end - start - 10);
+        std::string content = data.substr(start + beginString.size(), end - start - beginString.size());
         Vitals vitals;
         if (content.empty())
         {
