@@ -15,7 +15,7 @@ namespace stats
      * A struct to hold an attribute's dynamic values.
      */
     struct AttributeData
-    {
+    {        
         /**
          * Constructs an AttributeData object with an initial current value.
          *
@@ -32,7 +32,8 @@ namespace stats
         AttributeData(int curr, const std::vector<rpg::Modifier<int>>& mods);
 
         /**
-         * Adds a modifier to the current value and updates the current value.
+         * Adds a modifier to the current value and updates the current value. If the
+         * modifier already exists, it will skip it.
          *
          * @param mod[const rpg::Modifier<int>&] - The modifier to add.
          */
@@ -51,6 +52,13 @@ namespace stats
          * @return [int] - The current value of the attribute, including modifier effects.
          */
         int getCurrent();
+        
+        /**
+         * Returns the modifiers for the specified target.
+         *
+         * @return [const std::vector<rpg::Modifier<int>>&] - The modifier vector for the specified target.
+         */
+        const std::vector<rpg::Modifier<int>>& getModifiers() const;
 
     private:
     

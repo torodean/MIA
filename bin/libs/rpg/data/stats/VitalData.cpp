@@ -123,6 +123,20 @@ namespace stats
         }
     }
     
+    
+    const std::vector<rpg::Modifier<int>>& VitalData::getModifiers(VitalDataTarget target) const
+    {
+        switch (target)
+        {
+            case VitalDataTarget::CURRENT_MIN:
+                return minModifiers;
+            case VitalDataTarget::CURRENT_MAX:
+                return maxModifiers;
+            default:
+                throw std::invalid_argument("Invalid target for getModifiers: " + VitalDataTargetToString(target));
+        }
+    }
+    
 
     void VitalData::recalculate(const rpg::Modifier<int>& mod, VitalDataTarget target)
     {

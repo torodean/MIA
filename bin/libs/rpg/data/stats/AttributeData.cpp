@@ -22,6 +22,10 @@ namespace stats
 
     void AttributeData::addModifier(const rpg::Modifier<int>& mod)
     {
+        auto it = std::find(modifiers.begin(), modifiers.end(), mod);
+        if (it != modifiers.end())
+            return; // Modifier already exists
+
         modifiers.push_back(mod);
         recalculateAdd(mod);
     }
@@ -51,6 +55,12 @@ namespace stats
     void AttributeData::recalculateAdd(const rpg::Modifier<int>& mod)
     {
         current += mod.value;
+    }
+    
+    
+    const std::vector<rpg::Modifier<int>>& AttributeData::getModifiers() const
+    { 
+        return modifiers;
     }
     
 

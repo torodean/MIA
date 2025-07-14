@@ -152,18 +152,7 @@ namespace stats
          * @return [const std::vector<rpg::Modifier<int>>&] - The modifier vector for the specified target.
          * @throws [std::invalid_argument] If the target is UNKNOWN or CURRENT.
          */
-        const std::vector<rpg::Modifier<int>>& getModifiers(VitalDataTarget target) const
-        {
-            switch (target)
-            {
-                case VitalDataTarget::CURRENT_MIN:
-                    return minModifiers;
-                case VitalDataTarget::CURRENT_MAX:
-                    return maxModifiers;
-                default:
-                    throw std::invalid_argument("Invalid target for getModifiers: " + VitalDataTargetToString(target));
-            }
-        }
+        const std::vector<rpg::Modifier<int>>& getModifiers(VitalDataTarget target) const;
         
     private:
     
