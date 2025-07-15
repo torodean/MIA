@@ -46,11 +46,17 @@ namespace stats
     }
     
 
-    int AttributeData::getCurrent()
+    int AttributeData::getCurrent() const
     { 
         return current; 
     }
 
+
+    void AttributeData::setCurrent(int value)
+    {
+        current = value;
+    }
+    
 
     void AttributeData::recalculateAdd(const rpg::Modifier<int>& mod)
     {

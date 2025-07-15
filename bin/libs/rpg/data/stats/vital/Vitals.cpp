@@ -43,14 +43,12 @@ namespace stats
     // getData(..) methods.
     const VitalData& Vitals::getData(const std::string& name)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
-            
+        const Vital* vital = helper_methods::getVitalFromRegistry(name);            
         return getData(*vital);
     }
     const VitalData& Vitals::getData(uint32_t id)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
-            
+        const Vital* vital = helper_methods::getVitalFromRegistry(id);            
         return getData(*vital);
     }
     const VitalData& Vitals::getData(const Vital& vital)
@@ -72,14 +70,12 @@ namespace stats
     // addData(..) methods.
     void Vitals::addData(const std::string& name, int current, int min, int max)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
-            
+        const Vital* vital = helper_methods::getVitalFromRegistry(name);            
         addData(*vital, current, min, max);
     }
     void Vitals::addData(uint32_t id, int current, int min, int max)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
-            
+        const Vital* vital = helper_methods::getVitalFromRegistry(id);            
         addData(*vital, current, min, max);
     }
     void Vitals::addData(const Vital& vital, int current, int min, int max)
@@ -104,13 +100,11 @@ namespace stats
     void Vitals::updateVital(const std::string& name, VitalDataTarget target, int value)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-
         updateVital(*vital, target, value);
     }
     void Vitals::updateVital(uint32_t id, VitalDataTarget target, int value)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-
         updateVital(*vital, target, value);
     }
     void Vitals::updateVital(const Vital& vital, VitalDataTarget target, int value)
@@ -160,7 +154,6 @@ namespace stats
                                   VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-
         addVitalModifier(*vital, sourceID, sourceType, value, target);
     }
     void Vitals::addVitalModifier(uint32_t id, uint32_t sourceID, 
@@ -168,7 +161,6 @@ namespace stats
                                   VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-
         addVitalModifier(*vital, sourceID, sourceType, value, target);
     }
     void Vitals::addVitalModifier(const Vital& vital, uint32_t sourceID, 
@@ -195,7 +187,6 @@ namespace stats
                                      VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-
         removeVitalModifier(*vital, sourceID, sourceType, target);
     }
     void Vitals::removeVitalModifier(uint32_t id, uint32_t sourceID, 
@@ -203,7 +194,6 @@ namespace stats
                                      VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-
         removeVitalModifier(*vital, sourceID, sourceType, target);
     }
     void Vitals::removeVitalModifier(const Vital& vital, uint32_t sourceID, 
@@ -228,13 +218,11 @@ namespace stats
     void Vitals::removeVital(const std::string& name)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-
         removeVital(*vital);
     }
     void Vitals::removeVital(uint32_t id)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-
         removeVital(*vital);
     }
     void Vitals::removeVital(const Vital& vital)

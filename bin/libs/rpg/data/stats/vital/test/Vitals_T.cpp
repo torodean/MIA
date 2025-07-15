@@ -6,9 +6,10 @@
  */
 
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
+
 #include "Vitals.hpp"
 #include "VitalRegistry.hpp"
-#include <nlohmann/json.hpp>
 #include "MIAException.hpp"
 
 using namespace stats;

@@ -33,7 +33,7 @@ namespace stats
          */
         const AttributeData& getData(const std::string& name);
         const AttributeData& getData(uint32_t id);
-        const AttributeData& getData(const Attribute& Attribute);
+        const AttributeData& getData(const Attribute& attribute);
         
         /**
          * Adds a new Attribute with specified values.
@@ -47,7 +47,7 @@ namespace stats
          */
         void addData(const std::string& name, int current);
         void addData(uint32_t id, int current);
-        void addData(const Attribute& Attribute, int current);
+        void addData(const Attribute& attribute, int current);
         
         /**
          * Updates the current value of a Attribute Data object. 
@@ -59,7 +59,7 @@ namespace stats
          */
         void updateAttribute(const std::string& name, int value);
         void updateAttribute(uint32_t id, int value);
-        void updateAttribute(const Attribute& Attribute, int value);
+        void updateAttribute(const Attribute& attribute, int value);
         
         /**
          * Adds a modifier to a Attribute's current value.
@@ -79,7 +79,7 @@ namespace stats
                                   uint32_t sourceID, 
                                   rpg::ModifierSourceType sourceType, 
                                   int32_t value);
-        void addAttributeModifier(const Attribute& Attribute, 
+        void addAttributeModifier(const Attribute& attribute, 
                                   uint32_t sourceID, 
                                   rpg::ModifierSourceType sourceType, 
                                   int32_t value);
@@ -99,7 +99,7 @@ namespace stats
         void removeAttributeModifier(uint32_t id, 
                                      uint32_t sourceID, 
                                      rpg::ModifierSourceType sourceType);
-        void removeAttributeModifier(const Attribute& Attribute, 
+        void removeAttributeModifier(const Attribute& attribute, 
                                      uint32_t sourceID, 
                                      rpg::ModifierSourceType sourceType);
 
@@ -113,7 +113,7 @@ namespace stats
          */
         void removeAttribute(const std::string& name);
         void removeAttribute(uint32_t id);
-        void removeAttribute(const Attribute& Attribute);
+        void removeAttribute(const Attribute& attribute);
     
         /**
          * Serializes the Attributes to a compact string enclosed by unique markers

@@ -43,7 +43,8 @@ namespace stats
         std::string toString(const stats::Attribute& obj) const override
         {
             std::ostringstream oss;
-            oss << "Name: " << obj.getName() 
+            oss 
+                << "Name: " << obj.getName() 
                 << ", Description: " << obj.getDescription()
                 << ", BaseValue: " << obj.getBaseValue();
             

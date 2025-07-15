@@ -51,7 +51,14 @@ namespace stats
          *
          * @return [int] - The current value of the attribute, including modifier effects.
          */
-        int getCurrent();
+        int getCurrent() const;
+        
+        /**
+         * Sets the current value of the attribute.
+         *
+         * @param value[int] - The value to set current to.
+         */
+        void setCurrent(int value);
         
         /**
          * Returns the modifiers for the specified target.
