@@ -1,8 +1,9 @@
 
 # Create the RPG_Attributes_LIB
 set(RPG_Attributes_SRC 
-    AttributeData.cpp
-    Attributes.cpp )
+    Attribute.cpp
+    Attributes.cpp
+    AttributeData.cpp )
 set(RPG_Attributes_INC 
     Attribute.hpp
     Attributes.hpp
