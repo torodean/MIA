@@ -39,55 +39,40 @@ namespace rpg::helper_methods
                         TargetRegistry& targetRegistry,
                         SourceStorageType& sourceStorage, 
                         TargetStorageType& targetStorage)
-{
-    for (auto& sourceData : sourceStorage.getMap())
     {
-        std::cout << "[DEBUG] Processing source ID: " << sourceData.first << "\n";
-
-        const auto& source = sourceRegistry.getInstance().getByID(sourceData.first);
-        if (!source)
+        for (auto& sourceData : sourceStorage.getMap())
         {
-            std::string err = "Source object not found.";
-            MIA_THROW(error::ErrorCode::Undefined_RPG_Value, err);
-        }
-
-        int sourceDataValue = sourceData.second.getCurrent();
-        std::cout << "[DEBUG] Source current value: " << sourceDataValue << "\n";
-
-        if (!source->getModifies().empty())
-        {
-            std::cout << "[DEBUG] Found " << source->getModifies().size() << " modifies entries.\n";
-            for (const auto& modifies : source->getModifies())
+            const auto& source = sourceRegistry.getInstance().getByID(sourceData.first);
+            if (!source)
             {
-                ModifyType modifyType = modifies.modifyType;
-                double modifiesValue = modifies.modifyValuePer;
+                std::string err = "Source object not found.";
+                MIA_THROW(error::ErrorCode::Undefined_RPG_Value, err);
+            }
 
-                std::cout << "[DEBUG] Modifies target: " << modifies.targetName
-                          << ", type: " << static_cast<int>(modifyType)
-                          << ", value per: " << modifiesValue << "\n";
+            int sourceDataValue = sourceData.second.getCurrent();
 
-                if (modifyType == ModifyType::ADD_MAX)
+            if (!source->getModifies().empty())
+            {
+                for (const auto& modifies : source->getModifies())
                 {
-                    int modifyValue = static_cast<int>(modifiesValue * sourceDataValue);
-                    std::cout << "[DEBUG] Calculated modify value: " << modifyValue << "\n";
+                    ModifyType modifyType = modifies.modifyType;
+                    double modifiesValue = modifies.modifyValuePer;
 
-                    Modifier mod(
-                        source->getID(),
-                        stringToModifierSourceType(sourceRegistry.getInstance().getJsonKey()),
-                        modifyValue
-                    );
 
-                    std::cout << "[DEBUG] Adding modifier to target: " << modifies.targetName << "\n";
-                    targetStorage.addModifier(modifies.targetName, mod);
+                    if (modifyType == ModifyType::ADD_MAX)
+                    {
+                        int modifyValue = static_cast<int>(modifiesValue * sourceDataValue);
+
+                        Modifier mod(
+                            source->getID(),
+                            stringToModifierSourceType(sourceRegistry.getInstance().getJsonKey()),
+                            modifyValue
+                        );
+
+                        targetStorage.addModifier(modifies.targetName, mod);
+                    }
                 }
             }
         }
-        else
-        {
-            std::cout << "[DEBUG] No modifies entries found for source ID: " << sourceData.first << "\n";
-        }
     }
-
-    std::cout << "[DEBUG] Exiting applyModifiers.\n";
-}
 } // namespace rpg::helper_methods
