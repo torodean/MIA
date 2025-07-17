@@ -4,7 +4,6 @@
  * @date 07/06/2025
  * Description: This is the base currency class for all currencies.
  */
-#pragma once
 
 #include "Currency.hpp"
 

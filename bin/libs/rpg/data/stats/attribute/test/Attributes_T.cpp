@@ -1,5 +1,5 @@
 /**
- * @file AttributesTest.cpp
+ * @file Attributes_T.cpp
  * @author Antonius Torode
  * @date 07/14/2025
  * Description: Google Test suite for the Attributes class.
