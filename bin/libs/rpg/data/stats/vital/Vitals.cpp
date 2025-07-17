@@ -41,25 +41,25 @@ namespace stats
     } // namespace helper_methods
 
     // get(..) methods.
-    const VitalData& Vitals::get(const std::string& name)
+    VitalData& Vitals::get(const std::string& name)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);            
         return get(*vital);
     }
-    const VitalData& Vitals::get(uint32_t id)
+    VitalData& Vitals::get(uint32_t id)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);            
         return get(*vital);
     }
-    const VitalData& Vitals::get(const Vital& vital)
+    VitalData& Vitals::get(const Vital& vital)
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
-            it = vitals.find(vital.getID());
+            it = dataStore.find(vital.getID());
             return it->second;
         }
         else 
@@ -89,10 +89,10 @@ namespace stats
             MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
         }
         auto id = vital.getID();
-        if (vitals.find(id) != vitals.end())            
+        if (dataStore.find(id) != dataStore.end())            
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);
             
-        vitals.emplace(id, VitalData(current, min, max));
+        dataStore.emplace(id, VitalData(current, min, max));
     }
 
 
@@ -109,8 +109,8 @@ namespace stats
     }
     void Vitals::update(const Vital& vital, VitalDataTarget target, int value)
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
@@ -173,8 +173,8 @@ namespace stats
                              int value,
                              VitalDataTarget target)
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
@@ -203,8 +203,8 @@ namespace stats
                              rpg::Modifier<int>& mod,
                              VitalDataTarget target)
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
@@ -237,8 +237,8 @@ namespace stats
                                 rpg::ModifierSourceType sourceType,
                                 VitalDataTarget target)
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so no need to remove anything.
             return;
@@ -264,11 +264,11 @@ namespace stats
     }
     void Vitals::remove(const Vital& vital)
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
             return;
 
-        vitals.erase(it);
+        dataStore.erase(it);
     }
     
     bool Vitals::has(const std::string& name, int value) const    
@@ -283,14 +283,19 @@ namespace stats
     }
     bool Vitals::has(const Vital& vital, int value) const
     {
-        auto it = vitals.find(vital.getID());
-        if (it == vitals.end())
+        auto it = dataStore.find(vital.getID());
+        if (it == dataStore.end())
             return false;
             
         if (it->second.getCurrent() >= value)
             return true;
             
         return false;
+    }
+
+    void Vitals::dump(std::ostream& os) const
+    {
+        // TODO
     }
     
     
@@ -300,8 +305,8 @@ namespace stats
         ss << "[VITALS_BEGIN]"; // Start of serialized content
         bool first = true;
 
-        // Loop through all stored vitals
-        for (const auto& [id, data] : vitals)
+        // Loop through all stored dataStore
+        for (const auto& [id, data] : dataStore)
         {
             if (!first)
                 ss << "|"; // Separate entries with '|'
@@ -408,7 +413,7 @@ namespace stats
 
                 // The vitals are already calculated so this block bypasses the recaclulate() 
                 // call in addModifier().
-                auto& vitalData = vitals.vitals.at(id);
+                auto& vitalData = vitals.dataStore.at(id);
                 rpg::Modifier<int> mod(sourceID, sourceType, value);                
                 vitalData.addModifier(mod, target, false);
             }

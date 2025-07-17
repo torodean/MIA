@@ -9,15 +9,13 @@
 #include <string>
 #include "Attribute.hpp"
 #include "AttributeData.hpp"
+#include "BaseDataObjectStorage.hpp"
 
 namespace stats
 {
-    class Attributes
+    class Attributes : public data::BaseDataObjectStorage<Attribute, AttributeData>
     {
     public:
-        /// Define a storage map for attribute ID to attribute data storage.
-        using AttributeMap = std::unordered_map<uint32_t, AttributeData>;
-    
         /**
          * Default constructor.
          */
@@ -33,9 +31,9 @@ namespace stats
          *        Attribute[const Attribute&] - The Attribute object (returns the matching stored Attribute or default if not found).
          * @return The Attribute associated with the identifier, or a default Attribute if not found.
          */
-        const AttributeData& get(const std::string& name);
-        const AttributeData& get(uint32_t id);
-        const AttributeData& get(const Attribute& attribute);
+        AttributeData& get(const std::string& name) override;
+        AttributeData& get(uint32_t id) override;
+        AttributeData& get(const Attribute& attribute) override;
         
         /**
          * Adds a new Attribute with specified values.
@@ -116,6 +114,12 @@ namespace stats
         void remove(const std::string& name);
         void remove(uint32_t id);
         void remove(const Attribute& attribute);
+
+        /**
+         * Dumps the container contents to a stream, primarily for debugging.
+         * @param os[std::ostream&] - The output stream to write to (defaults to std::cout).
+         */
+        void dump(std::ostream& os) const override;
     
         /**
          * Serializes the Attributes to a compact string enclosed by unique markers
@@ -125,7 +129,7 @@ namespace stats
          *
          * @return A string representing the serialized state of the Attributes.
          */
-        std::string serialize() const;
+        std::string serialize() const override;
 
         /**
          * Deserializes a Attributes instance from a string containing serialized data.
@@ -136,17 +140,6 @@ namespace stats
          * @return A reconstructed Attributes instance.
          */
         static Attributes deserialize(const std::string& data);
-        
-        /**
-         * This will return a reference to the complete AttributeMap, which stores the
-         * complete set of attribute data.
-         */
-        AttributeMap& getMap();
-        
-    private:
-    
-        /// Map of attribute ID to their attribute data instance.
-        AttributeMap attributes;
         
     }; // class Attributes
 } // namespace stats

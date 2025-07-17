@@ -20,7 +20,8 @@ target_include_directories(RPG_DataLoader_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 set(RPG_Data_SRC )
 set(RPG_Data_INC 
     DataType.hpp
-    BaseDataObject.hpp )
+    BaseDataObject.hpp
+    BaseDataObjectStorage.hpp )
 add_library(RPG_Data_LIB INTERFACE)
 target_sources(RPG_Data_LIB INTERFACE ${RPG_Data_INC})
 

@@ -12,13 +12,14 @@
 
 #include "Currency.hpp"
 #include "CurrencyQuantity.hpp"
+#include "BaseDataObjectStorage.hpp"
 
 namespace currency
 {
     /**
      * A container class to manage a set of currencies and their quantities.
      */
-    class Wallet
+    class Wallet : public data::BaseDataObjectStorage<Currency, CurrencyQuantity>
     {
     public:
         /**
@@ -36,9 +37,9 @@ namespace currency
          *        currency[const Currency&] - The Currency object.
          * @return The Currency associated with the identifier, or a default Currency if not found.
          */
-        CurrencyQuantity& get(const std::string& name);
-        CurrencyQuantity& get(uint32_t id);
-        CurrencyQuantity& get(const Currency& currency);
+        CurrencyQuantity& get(const std::string& name) override;
+        CurrencyQuantity& get(uint32_t id) override;
+        CurrencyQuantity& get(const Currency& currency) override;
         
         /**
          * Adds a specified currency to the container.
@@ -97,7 +98,7 @@ namespace currency
          * Dumps the container's contents to the provided output stream.
          * @param os The output stream to write to (defaults to std::cout).
          */
-        void dump(std::ostream& os = std::cout) const;
+        void dump(std::ostream& os = std::cout) const override;
         
         /**
          * Serializes the contents of the Wallet to a compact string.
@@ -108,7 +109,7 @@ namespace currency
          *
          * @return A string representing the serialized state of the container.
          */
-        std::string serialize() const;
+        std::string serialize() const override;
         
         /**
          * Deserializes a Wallet from a string containing serialized data.
@@ -121,8 +122,6 @@ namespace currency
          */
         static Wallet deserialize(const std::string& data);
 
-    private:
-        std::unordered_map<uint32_t, CurrencyQuantity> currencies;  ///< Map of currency ID to currency instance.
     }; // class Wallet
     
 } // namespace currency

@@ -51,12 +51,12 @@ namespace currency
     }
     CurrencyQuantity& Wallet::get(const Currency& currency)
     {
-        auto it = currencies.find(currency.getID());
-        if (it == currencies.end())
+        auto it = dataStore.find(currency.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then return the current.
             add(currency, 0);
-            it = currencies.find(currency.getID());
+            it = dataStore.find(currency.getID());
             return it->second;
         }
         else 
@@ -76,10 +76,10 @@ namespace currency
     }
     void Wallet::add(const Currency& currency, uint32_t quantity)
     {
-        auto it = currencies.find(currency.getID());
-        if (it == currencies.end()) 
+        auto it = dataStore.find(currency.getID());
+        if (it == dataStore.end()) 
         {
-            currencies.emplace(currency.getID(), CurrencyQuantity(quantity));
+            dataStore.emplace(currency.getID(), CurrencyQuantity(quantity));
         }
         else
         {
@@ -106,13 +106,13 @@ namespace currency
     }
     void Wallet::remove(const Currency& currency)
     {
-        auto it = currencies.find(currency.getID());
-        if (it == currencies.end()) 
+        auto it = dataStore.find(currency.getID());
+        if (it == dataStore.end()) 
         {
             // It doesn't exist so no need to remove.
             return;
         }
-        currencies.erase(it);
+        dataStore.erase(it);
     }
     
     
@@ -129,12 +129,12 @@ namespace currency
     }
     void Wallet::update(const Currency& currency, unsigned int amount)
     {
-        auto it = currencies.find(currency.getID());
-        if (it == currencies.end())
+        auto it = dataStore.find(currency.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then return the current.
             add(currency, 0);
-            it = currencies.find(currency.getID());
+            it = dataStore.find(currency.getID());
         }
         it->second.set(amount);
     }
@@ -153,8 +153,8 @@ namespace currency
     }
     bool Wallet::has(const Currency& currency, unsigned int quantity) const
     {
-        auto it = currencies.find(currency.getID());
-        if (it == currencies.end())
+        auto it = dataStore.find(currency.getID());
+        if (it == dataStore.end())
         {
             // The data does not exist, so this is false.
             return false;
@@ -167,7 +167,7 @@ namespace currency
 
     void Wallet::dump(std::ostream& os) const
     {
-        for (const auto& [id, currencyContainer] : currencies) 
+        for (const auto& [id, currencyContainer] : dataStore) 
         {
             auto currency = CurrencyRegistry::getInstance().getByID(id);
             os << "Currency: " << currency->getName()
@@ -183,7 +183,7 @@ namespace currency
     {
         std::ostringstream oss;
         oss << "[WALLET_BEGIN]";
-        for (const auto& [id, cq] : currencies) {
+        for (const auto& [id, cq] : dataStore) {
             oss << id << ':' << cq.getQuantity() << ';';
         }
         oss << "[WALLET_END]";

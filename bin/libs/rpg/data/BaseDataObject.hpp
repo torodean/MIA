@@ -74,9 +74,9 @@ namespace rpg
 
     private:
     
-        uint32_t id{};            ///< Unique identifier for this BaseDataObject.
-        std::string name;         ///< Name of the BaseDataObject.
-        std::string description;  ///< Description of the BaseDataObject.
+        uint32_t id{};             ///< Unique identifier for this BaseDataObject.
+        std::string name{};        ///< Name of the BaseDataObject.
+        std::string description{}; ///< Description of the BaseDataObject.
     };
 } // namespace rpg
 

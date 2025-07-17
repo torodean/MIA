@@ -38,24 +38,24 @@ namespace stats
     } // namespace helper_methods
     
     // get() methods...
-    const AttributeData& Attributes::get(const std::string& name)
+    AttributeData& Attributes::get(const std::string& name)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
         return get(*attribute);
     }
-    const AttributeData& Attributes::get(uint32_t id)
+    AttributeData& Attributes::get(uint32_t id)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
         return get(*attribute);
     }
-    const AttributeData& Attributes::get(const Attribute& attribute)
+    AttributeData& Attributes::get(const Attribute& attribute)
     {
-        auto it = attributes.find(attribute.getID());
-        if (it == attributes.end())
+        auto it = dataStore.find(attribute.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then update the current.
             add(attribute, attribute.getBaseValue());
-            it = attributes.find(attribute.getID());
+            it = dataStore.find(attribute.getID());
             return it->second;
         }
         else 
@@ -77,10 +77,10 @@ namespace stats
     void Attributes::add(const Attribute& attribute, int current)
     {
         auto id = attribute.getID();
-        if (attributes.find(id) != attributes.end())            
+        if (dataStore.find(id) != dataStore.end())            
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);
             
-        attributes.emplace(id, AttributeData(current));
+        dataStore.emplace(id, AttributeData(current));
     }
     
     
@@ -97,8 +97,8 @@ namespace stats
     }
     void Attributes::update(const Attribute& attribute, int value)
     {
-        auto it = attributes.find(attribute.getID());
-        if (it == attributes.end())
+        auto it = dataStore.find(attribute.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add it.
             add(attribute, value);
@@ -132,8 +132,8 @@ namespace stats
                                  rpg::ModifierSourceType sourceType, 
                                  int32_t value)
     {
-        auto it = attributes.find(attribute.getID());
-        if (it == attributes.end())
+        auto it = dataStore.find(attribute.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so add a default one, then update the current.
             add(attribute, attribute.getBaseValue());
@@ -164,8 +164,8 @@ namespace stats
                                     uint32_t sourceID, 
                                     rpg::ModifierSourceType sourceType)
     {
-        auto it = attributes.find(attribute.getID());
-        if (it == attributes.end())
+        auto it = dataStore.find(attribute.getID());
+        if (it == dataStore.end())
         {
             // The data is not found so no need to remove anything.
             return;
@@ -191,13 +191,17 @@ namespace stats
     }
     void Attributes::remove(const Attribute& attribute)
     {
-        auto it = attributes.find(attribute.getID());
-        if (it == attributes.end())
+        auto it = dataStore.find(attribute.getID());
+        if (it == dataStore.end())
             return;
 
-        attributes.erase(it);
+        dataStore.erase(it);
     }
 
+    void Attributes::dump(std::ostream& os) const
+    {
+        // TODO
+    }
 
     std::string Attributes::serialize() const
     {
@@ -205,7 +209,7 @@ namespace stats
         ss << "[ATTRIBUTES_BEGIN]";
 
         bool firstAttribute = true;
-        for (const auto& [id, attrData] : attributes)
+        for (const auto& [id, attrData] : dataStore)
         {
             if (!firstAttribute)
                 ss << ";";
@@ -321,15 +325,10 @@ namespace stats
             }
 
             // Create and add AttributeData to the map
-            result.attributes.emplace(id, AttributeData(current, modifiers));
+            result.dataStore.emplace(id, AttributeData(current, modifiers));
         }
 
         return result;
-    }
-    
-    Attributes::AttributeMap& Attributes::getMap()
-    { 
-        return attributes; 
     }
 } // namespace stats
 

@@ -12,15 +12,13 @@
 #include <Modifier.hpp>
 #include "Vital.hpp"
 #include "VitalData.hpp"
+#include "BaseDataObjectStorage.hpp"
 
 namespace stats
 {
-    class Vitals
+    class Vitals : public data::BaseDataObjectStorage<Vital, VitalData>
     {
-    public:
-        /// Define a storage map for vital ID to vital data storage.
-        using VitalMap = std::unordered_map<uint32_t, VitalData>;
-    
+    public:    
         /**
          * Default constructor.
          */
@@ -36,9 +34,9 @@ namespace stats
          *        vital[const Vital&] - The Vital object (returns the matching stored Vital or default if not found).
          * @return The Vital associated with the identifier, or a default Vital if not found.
          */
-        const VitalData& get(const std::string& name);
-        const VitalData& get(uint32_t id);
-        const VitalData& get(const Vital& vital);
+        VitalData& get(const std::string& name) override;
+        VitalData& get(uint32_t id) override;
+        VitalData& get(const Vital& vital) override;
         
         /**
          * Adds a new vital with specified values.
@@ -166,6 +164,12 @@ namespace stats
         bool has(const Vital& vital, int value) const;
 
         /**
+         * Dumps the container contents to a stream, primarily for debugging.
+         * @param os[std::ostream&] - The output stream to write to (defaults to std::cout).
+         */
+        void dump(std::ostream& os) const override;
+
+        /**
          * Serializes the Vitals to a compact string enclosed by unique markers
          * for reliable extraction within a larger data stream.
          *
@@ -173,7 +177,7 @@ namespace stats
          *
          * @return A string representing the serialized state of the Vitals.
          */
-        std::string serialize() const;
+        std::string serialize() const override;
 
         /**
          * Deserializes a Vitals instance from a string containing serialized data.
@@ -184,17 +188,6 @@ namespace stats
          * @return A reconstructed Vitals instance.
          */
         static Vitals deserialize(const std::string& data);
-        
-        /**
-         * This will return a reference to the complete VitalMap, which stores the
-         * complete set of attribute data.
-         */
-        VitalMap& getMap();
-
-    private:
-    
-        /// Map of vital ID to their Vital data instance.
-        VitalMap vitals;
         
     }; // class Vitals
 } // namespace stats
