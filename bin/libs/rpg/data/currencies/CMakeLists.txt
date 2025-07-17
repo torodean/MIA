@@ -6,6 +6,7 @@ set(RPG_Currencies_SRC
 set(RPG_Currencies_INC 
     Currency.hpp
     CurrencyType.hpp
+    CurrencyQuantity.hpp
     Wallet.hpp
     CurrencyRegistry.hpp )
 add_library(RPG_Currencies_LIB ${RPG_Currencies_SRC} ${RPG_Currencies_INC})
