@@ -31,9 +31,9 @@ namespace stats
          *        Attribute[const Attribute&] - The Attribute object (returns the matching stored Attribute or default if not found).
          * @return The Attribute associated with the identifier, or a default Attribute if not found.
          */
-        const AttributeData& getData(const std::string& name);
-        const AttributeData& getData(uint32_t id);
-        const AttributeData& getData(const Attribute& attribute);
+        const AttributeData& get(const std::string& name);
+        const AttributeData& get(uint32_t id);
+        const AttributeData& get(const Attribute& attribute);
         
         /**
          * Adds a new Attribute with specified values.
@@ -45,9 +45,9 @@ namespace stats
          * @param min[int] The minimum value.
          * @param max[int] The base maximum value.
          */
-        void addData(const std::string& name, int current);
-        void addData(uint32_t id, int current);
-        void addData(const Attribute& attribute, int current);
+        void add(const std::string& name, int current);
+        void add(uint32_t id, int current);
+        void add(const Attribute& attribute, int current);
         
         /**
          * Updates the current value of a Attribute Data object. 
@@ -57,9 +57,9 @@ namespace stats
          *        Attribute[const Attribute&] The Attribute object.
          * @param value[int] The new current value.
          */
-        void updateAttribute(const std::string& name, int value);
-        void updateAttribute(uint32_t id, int value);
-        void updateAttribute(const Attribute& attribute, int value);
+        void update(const std::string& name, int value);
+        void update(uint32_t id, int value);
+        void update(const Attribute& attribute, int value);
         
         /**
          * Adds a modifier to a Attribute's current value.
@@ -71,18 +71,18 @@ namespace stats
          * @param sourceType[ModifierSourceType] Type of source (e.g., ATTRIBUTE).
          * @param value[int32_t] The modifier value.
          */
-        void addAttributeModifier(const std::string& name, 
-                                  uint32_t sourceID, 
-                                  rpg::ModifierSourceType sourceType, 
-                                  int32_t value);
-        void addAttributeModifier(uint32_t id, 
-                                  uint32_t sourceID, 
-                                  rpg::ModifierSourceType sourceType, 
-                                  int32_t value);
-        void addAttributeModifier(const Attribute& attribute, 
-                                  uint32_t sourceID, 
-                                  rpg::ModifierSourceType sourceType, 
-                                  int32_t value);
+        void addModifier(const std::string& name, 
+                         uint32_t sourceID, 
+                         rpg::ModifierSourceType sourceType, 
+                         int32_t value);
+        void addModifier(uint32_t id, 
+                         uint32_t sourceID, 
+                         rpg::ModifierSourceType sourceType, 
+                         int32_t value);
+        void addModifier(const Attribute& attribute, 
+                         uint32_t sourceID, 
+                         rpg::ModifierSourceType sourceType, 
+                         int32_t value);
 
         /**
          * Removes a min or max modifier by source ID and type. 
@@ -93,15 +93,15 @@ namespace stats
          * @param sourceID[uint32_t] ID of the source.
          * @param sourceType[ModifierSourceType] Type of source.
          */
-        void removeAttributeModifier(const std::string& name, 
-                                     uint32_t sourceID, 
-                                     rpg::ModifierSourceType sourceType);
-        void removeAttributeModifier(uint32_t id, 
-                                     uint32_t sourceID, 
-                                     rpg::ModifierSourceType sourceType);
-        void removeAttributeModifier(const Attribute& attribute, 
-                                     uint32_t sourceID, 
-                                     rpg::ModifierSourceType sourceType);
+        void removeModifier(const std::string& name, 
+                            uint32_t sourceID, 
+                            rpg::ModifierSourceType sourceType);
+        void removeModifier(uint32_t id, 
+                            uint32_t sourceID, 
+                            rpg::ModifierSourceType sourceType);
+        void removeModifier(const Attribute& attribute, 
+                            uint32_t sourceID, 
+                            rpg::ModifierSourceType sourceType);
 
         /**
          * Removes a Attribute by identifier or Attribute object.
@@ -111,9 +111,9 @@ namespace stats
          *        Attribute[const Attribute&] The Attribute object.
          * @return True if the Attribute was removed; false if it does not exist.
          */
-        void removeAttribute(const std::string& name);
-        void removeAttribute(uint32_t id);
-        void removeAttribute(const Attribute& attribute);
+        void remove(const std::string& name);
+        void remove(uint32_t id);
+        void remove(const Attribute& attribute);
     
         /**
          * Serializes the Attributes to a compact string enclosed by unique markers

@@ -37,24 +37,24 @@ namespace stats
 
     } // namespace helper_methods
     
-    // getData() methods...
-    const AttributeData& Attributes::getData(const std::string& name)
+    // get() methods...
+    const AttributeData& Attributes::get(const std::string& name)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        return getData(*attribute);
+        return get(*attribute);
     }
-    const AttributeData& Attributes::getData(uint32_t id)
+    const AttributeData& Attributes::get(uint32_t id)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        return getData(*attribute);
+        return get(*attribute);
     }
-    const AttributeData& Attributes::getData(const Attribute& attribute)
+    const AttributeData& Attributes::get(const Attribute& attribute)
     {
         auto it = attributes.find(attribute.getID());
         if (it == attributes.end())
         {
             // The data is not found so add a default one, then update the current.
-            addData(attribute, attribute.getBaseValue());
+            add(attribute, attribute.getBaseValue());
             it = attributes.find(attribute.getID());
             return it->second;
         }
@@ -63,18 +63,18 @@ namespace stats
     }
     
     
-    // addData() methods...
-    void Attributes::addData(const std::string& name, int current)
+    // add() methods...
+    void Attributes::add(const std::string& name, int current)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        addData(*attribute, current);
+        add(*attribute, current);
     }
-    void Attributes::addData(uint32_t id, int current)
+    void Attributes::add(uint32_t id, int current)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        addData(*attribute, current);
+        add(*attribute, current);
     }
-    void Attributes::addData(const Attribute& attribute, int current)
+    void Attributes::add(const Attribute& attribute, int current)
     {
         auto id = attribute.getID();
         if (attributes.find(id) != attributes.end())            
@@ -84,24 +84,24 @@ namespace stats
     }
     
     
-    // updateAttribute() methods...
-    void Attributes::updateAttribute(const std::string& name, int value)
+    // update() methods...
+    void Attributes::update(const std::string& name, int value)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        updateAttribute(*attribute, value);
+        update(*attribute, value);
     }
-    void Attributes::updateAttribute(uint32_t id, int value)
+    void Attributes::update(uint32_t id, int value)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        updateAttribute(*attribute, value);
+        update(*attribute, value);
     }
-    void Attributes::updateAttribute(const Attribute& attribute, int value)
+    void Attributes::update(const Attribute& attribute, int value)
     {
         auto it = attributes.find(attribute.getID());
         if (it == attributes.end())
         {
             // The data is not found so add it.
-            addData(attribute, value);
+            add(attribute, value);
         }
         else
         {
@@ -110,33 +110,33 @@ namespace stats
     }
     
     
-    // addAttributeModifier() methods...
-    void Attributes::addAttributeModifier(const std::string& name, 
-                                          uint32_t sourceID, 
-                                          rpg::ModifierSourceType sourceType, 
-                                          int32_t value)
+    // addModifier() methods...
+    void Attributes::addModifier(const std::string& name, 
+                                 uint32_t sourceID, 
+                                 rpg::ModifierSourceType sourceType, 
+                                 int32_t value)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        addAttributeModifier(*attribute, sourceID, sourceType, value);
+        addModifier(*attribute, sourceID, sourceType, value);
     }
-    void Attributes::addAttributeModifier(uint32_t id, 
-                                          uint32_t sourceID, 
-                                          rpg::ModifierSourceType sourceType, 
-                                          int32_t value)
+    void Attributes::addModifier(uint32_t id, 
+                                 uint32_t sourceID, 
+                                 rpg::ModifierSourceType sourceType, 
+                                 int32_t value)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        addAttributeModifier(*attribute, sourceID, sourceType, value);
+        addModifier(*attribute, sourceID, sourceType, value);
     }
-    void Attributes::addAttributeModifier(const Attribute& attribute, 
-                                          uint32_t sourceID, 
-                                          rpg::ModifierSourceType sourceType, 
-                                          int32_t value)
+    void Attributes::addModifier(const Attribute& attribute, 
+                                 uint32_t sourceID, 
+                                 rpg::ModifierSourceType sourceType, 
+                                 int32_t value)
     {
         auto it = attributes.find(attribute.getID());
         if (it == attributes.end())
         {
             // The data is not found so add a default one, then update the current.
-            addData(attribute, attribute.getBaseValue());
+            add(attribute, attribute.getBaseValue());
         }
         
         rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, value);
@@ -145,24 +145,24 @@ namespace stats
     }
 
     
-    // removeAttributeModifier() methods...
-    void Attributes::removeAttributeModifier(const std::string& name, 
-                                             uint32_t sourceID, 
-                                             rpg::ModifierSourceType sourceType)
+    // removeModifier() methods...
+    void Attributes::removeModifier(const std::string& name, 
+                                    uint32_t sourceID, 
+                                    rpg::ModifierSourceType sourceType)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        removeAttributeModifier(*attribute, sourceID, sourceType);
+        removeModifier(*attribute, sourceID, sourceType);
     }
-    void Attributes::removeAttributeModifier(uint32_t id, 
-                                             uint32_t sourceID, 
-                                             rpg::ModifierSourceType sourceType)
+    void Attributes::removeModifier(uint32_t id, 
+                                    uint32_t sourceID, 
+                                    rpg::ModifierSourceType sourceType)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        removeAttributeModifier(*attribute, sourceID, sourceType);
+        removeModifier(*attribute, sourceID, sourceType);
     }
-    void Attributes::removeAttributeModifier(const Attribute& attribute, 
-                                             uint32_t sourceID, 
-                                             rpg::ModifierSourceType sourceType)
+    void Attributes::removeModifier(const Attribute& attribute, 
+                                    uint32_t sourceID, 
+                                    rpg::ModifierSourceType sourceType)
     {
         auto it = attributes.find(attribute.getID());
         if (it == attributes.end())
@@ -178,18 +178,18 @@ namespace stats
     }
 
     
-    // removeAttribute() methods...
-    void Attributes::removeAttribute(const std::string& name)
+    // remove() methods...
+    void Attributes::remove(const std::string& name)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        removeAttribute(*attribute);
+        remove(*attribute);
     }
-    void Attributes::removeAttribute(uint32_t id)
+    void Attributes::remove(uint32_t id)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        removeAttribute(*attribute);
+        remove(*attribute);
     }
-    void Attributes::removeAttribute(const Attribute& attribute)
+    void Attributes::remove(const Attribute& attribute)
     {
         auto it = attributes.find(attribute.getID());
         if (it == attributes.end())

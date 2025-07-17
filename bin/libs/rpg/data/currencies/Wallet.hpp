@@ -46,9 +46,9 @@ namespace currency
          *        name[const std::string&] - The name (std::string)
          * @param quantity[uint32_t] - The amount to add.
          */
-        void addCurrency(const Currency& currency, uint32_t quantity);
-        void addCurrency(uint32_t currencyId, uint32_t quantity);
-        void addCurrency(const std::string& name, uint32_t quantity);
+        void add(const Currency& currency, uint32_t quantity);
+        void add(uint32_t currencyId, uint32_t quantity);
+        void add(const std::string& name, uint32_t quantity);
 
         /**
          * Removes a specified quantity of a currency from the container.
@@ -60,9 +60,9 @@ namespace currency
          * @param quantity[uint32_t] - The amount to remove.
          * @return True if successful; false if insufficient quantity or currency not found.
          */
-        bool removeCurrency(const Currency& currency, uint32_t quantity);
-        bool removeCurrency(uint32_t currencyId, uint32_t quantity);
-        bool removeCurrency(const std::string& name, uint32_t quantity);
+        bool remove(const Currency& currency, uint32_t quantity);
+        bool remove(uint32_t currencyId, uint32_t quantity);
+        bool remove(const std::string& name, uint32_t quantity);
 
         /**
          * Gets the quantity of a specific currency in the container.
@@ -73,9 +73,9 @@ namespace currency
          *        name[const std::string&] - The name (std::string)
          * @return The quantity, or 0 if the currency is not found.
          */
-        uint32_t getQuantity(const Currency& currency) const;
-        uint32_t getQuantity(uint32_t currencyId) const;
-        uint32_t getQuantity(const std::string& name) const;
+        uint32_t get(const Currency& currency) const;
+        uint32_t get(uint32_t currencyId) const;
+        uint32_t get(const std::string& name) const;
 
         /**
          * Checks if the container has at least the specified quantity of a currency.
@@ -87,9 +87,9 @@ namespace currency
          * @param quantity[uint32_t] - The required amount.
          * @return True if the container has enough; false otherwise.
          */
-        bool hasCurrency(const Currency& currency, uint32_t quantity) const;
-        bool hasCurrency(uint32_t currencyId, uint32_t quantity) const;
-        bool hasCurrency(const std::string& name, uint32_t quantity) const;
+        bool has(const Currency& currency, uint32_t quantity) const;
+        bool has(uint32_t currencyId, uint32_t quantity) const;
+        bool has(const std::string& name, uint32_t quantity) const;
 
         /**
          * Dumps the container's contents to the provided output stream.

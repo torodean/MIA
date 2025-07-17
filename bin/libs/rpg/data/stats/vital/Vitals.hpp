@@ -33,9 +33,9 @@ namespace stats
          *        vital[const Vital&] - The Vital object (returns the matching stored Vital or default if not found).
          * @return The Vital associated with the identifier, or a default Vital if not found.
          */
-        const VitalData& getData(const std::string& name);
-        const VitalData& getData(uint32_t id);
-        const VitalData& getData(const Vital& vital);
+        const VitalData& get(const std::string& name);
+        const VitalData& get(uint32_t id);
+        const VitalData& get(const Vital& vital);
         
         /**
          * Adds a new vital with specified values.
@@ -47,9 +47,9 @@ namespace stats
          * @param min[int] The minimum value.
          * @param max[int] The base maximum value.
          */
-        void addData(const std::string& name, int current, int min, int max);
-        void addData(uint32_t id, int current, int min, int max);
-        void addData(const Vital& vital, int current, int min, int max);
+        void add(const std::string& name, int current, int min, int max);
+        void add(uint32_t id, int current, int min, int max);
+        void add(const Vital& vital, int current, int min, int max);
 
         /**
          * Updates a value of a Vital Data object. This uses the target to determine which 
@@ -61,9 +61,9 @@ namespace stats
          * @param target[VitalDataTarget] - The target value to modify.
          * @param value[int] The new current value.
          */
-        void updateVital(const std::string& name, VitalDataTarget target, int value);
-        void updateVital(uint32_t id, VitalDataTarget target, int value);
-        void updateVital(const Vital& vital, VitalDataTarget target, int value);
+        void update(const std::string& name, VitalDataTarget target, int value);
+        void update(uint32_t id, VitalDataTarget target, int value);
+        void update(const Vital& vital, VitalDataTarget target, int value);
         
         /**
          * Adds a modifier to a vital's max or min value. This uses the target to determine 
@@ -77,21 +77,21 @@ namespace stats
          * @param value[int32_t] The modifier value.
          * @param target[pVitalDataTarget] - The target modifier type to modify.
          */
-        void addVitalModifier(const std::string& name, 
-                              uint32_t sourceID, 
-                              rpg::ModifierSourceType sourceType, 
-                              int32_t value,
-                              VitalDataTarget target);
-        void addVitalModifier(uint32_t id, 
-                              uint32_t sourceID, 
-                              rpg::ModifierSourceType sourceType, 
-                              int32_t value,
-                              VitalDataTarget target);
-        void addVitalModifier(const Vital& vital, 
-                              uint32_t sourceID, 
-                              rpg::ModifierSourceType sourceType, 
-                              int32_t value,
-                              VitalDataTarget target);
+        void addModifier(const std::string& name, 
+                         uint32_t sourceID, 
+                         rpg::ModifierSourceType sourceType, 
+                         int32_t value,
+                         VitalDataTarget target);
+        void addModifier(uint32_t id, 
+                         uint32_t sourceID, 
+                         rpg::ModifierSourceType sourceType, 
+                         int32_t value,
+                         VitalDataTarget target);
+        void addModifier(const Vital& vital, 
+                         uint32_t sourceID, 
+                         rpg::ModifierSourceType sourceType, 
+                         int32_t value,
+                         VitalDataTarget target);
 
         /**
          * Removes a min or max modifier by source ID and type. This uses the target to 
@@ -104,18 +104,18 @@ namespace stats
          * @param sourceType[ModifierSourceType] Type of source.
          * @param target[pVitalDataTarget] - The target modifier type to modify.
          */
-        void removeVitalModifier(const std::string& name, 
-                                 uint32_t sourceID, 
-                                 rpg::ModifierSourceType sourceType,
-                                 VitalDataTarget target);
-        void removeVitalModifier(uint32_t id, 
-                                 uint32_t sourceID, 
-                                 rpg::ModifierSourceType sourceType,
-                                 VitalDataTarget target);
-        void removeVitalModifier(const Vital& vital, 
-                                 uint32_t sourceID, 
-                                 rpg::ModifierSourceType sourceType,
-                                 VitalDataTarget target);
+        void removeModifier(const std::string& name, 
+                            uint32_t sourceID, 
+                            rpg::ModifierSourceType sourceType,
+                            VitalDataTarget target);
+        void removeModifier(uint32_t id, 
+                            uint32_t sourceID, 
+                            rpg::ModifierSourceType sourceType,
+                            VitalDataTarget target);
+        void removeModifier(const Vital& vital, 
+                            uint32_t sourceID, 
+                            rpg::ModifierSourceType sourceType,
+                            VitalDataTarget target);
 
         /**
          * Removes a vital by identifier or Vital object.
@@ -124,9 +124,23 @@ namespace stats
          *        id[uint32_t] The ID of the vital.
          *        vital[const Vital&] The Vital object.
          */
-        void removeVital(const std::string& name);
-        void removeVital(uint32_t id);
-        void removeVital(const Vital& vital);
+        void remove(const std::string& name);
+        void remove(uint32_t id);
+        void remove(const Vital& vital);        
+        
+        /**
+         * Checks if the current value has at least the specified quantity.
+         * Overloads allow checking by Vital object, Vital ID, or Vital name.
+         *
+         * @param name[const std::string&] - The name (std::string)
+         *        id[uint32_t] - The ID (uint32_t)
+         *        vital[const Vital&] - The vital (Vital object)
+         * @param value[uint32_t] - The required amount.
+         * @return True if the current vital has enough; false otherwise.
+         */
+        bool has(const std::string& name, int value) const;
+        bool has(uint32_t id, int value) const;
+        bool has(const Vital& vital, int value) const;
 
         /**
          * Serializes the Vitals to a compact string enclosed by unique markers

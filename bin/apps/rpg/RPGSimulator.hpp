@@ -10,6 +10,7 @@
 #include "Player.hpp"
 #include "CurrencyRegistry.hpp"
 #include "VitalRegistry.hpp"
+#include "AttributeRegistry.hpp"
 
 namespace rpg_sim
 {
@@ -62,4 +63,5 @@ namespace rpg_sim
 
     extern currency::CurrencyRegistry& currencyRegistry;
     extern stats::VitalRegistry& vitalRegistry;
+    extern stats::AttributeRegistry& attributeRegistry;
 } // namespace rpg_sim

@@ -40,25 +40,25 @@ namespace stats
 
     } // namespace helper_methods
 
-    // getData(..) methods.
-    const VitalData& Vitals::getData(const std::string& name)
+    // get(..) methods.
+    const VitalData& Vitals::get(const std::string& name)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);            
-        return getData(*vital);
+        return get(*vital);
     }
-    const VitalData& Vitals::getData(uint32_t id)
+    const VitalData& Vitals::get(uint32_t id)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);            
-        return getData(*vital);
+        return get(*vital);
     }
-    const VitalData& Vitals::getData(const Vital& vital)
+    const VitalData& Vitals::get(const Vital& vital)
     {
         auto it = vitals.find(vital.getID());
         if (it == vitals.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
-            addData(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+            add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
             it = vitals.find(vital.getID());
             return it->second;
         }
@@ -67,18 +67,18 @@ namespace stats
     }
     
     
-    // addData(..) methods.
-    void Vitals::addData(const std::string& name, int current, int min, int max)
+    // add(..) methods.
+    void Vitals::add(const std::string& name, int current, int min, int max)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);            
-        addData(*vital, current, min, max);
+        add(*vital, current, min, max);
     }
-    void Vitals::addData(uint32_t id, int current, int min, int max)
+    void Vitals::add(uint32_t id, int current, int min, int max)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);            
-        addData(*vital, current, min, max);
+        add(*vital, current, min, max);
     }
-    void Vitals::addData(const Vital& vital, int current, int min, int max)
+    void Vitals::add(const Vital& vital, int current, int min, int max)
     {
         if (current < min || current > max || min > max)
         {
@@ -96,25 +96,25 @@ namespace stats
     }
 
 
-    // updateVital(..) methods.
-    void Vitals::updateVital(const std::string& name, VitalDataTarget target, int value)
+    // update(..) methods.
+    void Vitals::update(const std::string& name, VitalDataTarget target, int value)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-        updateVital(*vital, target, value);
+        update(*vital, target, value);
     }
-    void Vitals::updateVital(uint32_t id, VitalDataTarget target, int value)
+    void Vitals::update(uint32_t id, VitalDataTarget target, int value)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-        updateVital(*vital, target, value);
+        update(*vital, target, value);
     }
-    void Vitals::updateVital(const Vital& vital, VitalDataTarget target, int value)
+    void Vitals::update(const Vital& vital, VitalDataTarget target, int value)
     {
         auto it = vitals.find(vital.getID());
         if (it == vitals.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
-            addData(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+            add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
         }
         
         if (target == VitalDataTarget::CURRENT)
@@ -148,31 +148,37 @@ namespace stats
     }
     
     
-    // addVitalModifier(..) methods.
-    void Vitals::addVitalModifier(const std::string& name, uint32_t sourceID, 
-                                  rpg::ModifierSourceType sourceType, int value,
-                                  VitalDataTarget target)
+    // addModifier(..) methods.
+    void Vitals::addModifier(const std::string& name, 
+                             uint32_t sourceID, 
+                             rpg::ModifierSourceType sourceType, 
+                             int value,
+                             VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-        addVitalModifier(*vital, sourceID, sourceType, value, target);
+        addModifier(*vital, sourceID, sourceType, value, target);
     }
-    void Vitals::addVitalModifier(uint32_t id, uint32_t sourceID, 
-                                  rpg::ModifierSourceType sourceType, int value,
-                                  VitalDataTarget target)
+    void Vitals::addModifier(uint32_t id, 
+                             uint32_t sourceID, 
+                             rpg::ModifierSourceType sourceType, 
+                             int value,
+                             VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-        addVitalModifier(*vital, sourceID, sourceType, value, target);
+        addModifier(*vital, sourceID, sourceType, value, target);
     }
-    void Vitals::addVitalModifier(const Vital& vital, uint32_t sourceID, 
-                                  rpg::ModifierSourceType sourceType, int value,
-                                  VitalDataTarget target)
+    void Vitals::addModifier(const Vital& vital, 
+                             uint32_t sourceID, 
+                             rpg::ModifierSourceType sourceType, 
+                             int value,
+                             VitalDataTarget target)
     {
         auto it = vitals.find(vital.getID());
         if (it == vitals.end())
         {
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
-            addData(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+            add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
         }
         
         rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, value);
@@ -181,24 +187,27 @@ namespace stats
     }
 
 
-    // removeVitalModifier(..) methods.
-    void Vitals::removeVitalModifier(const std::string& name, uint32_t sourceID, 
-                                     rpg::ModifierSourceType sourceType,
-                                     VitalDataTarget target)
+    // removeModifier(..) methods.
+    void Vitals::removeModifier(const std::string& name, 
+                                uint32_t sourceID, 
+                                rpg::ModifierSourceType sourceType,
+                                VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-        removeVitalModifier(*vital, sourceID, sourceType, target);
+        removeModifier(*vital, sourceID, sourceType, target);
     }
-    void Vitals::removeVitalModifier(uint32_t id, uint32_t sourceID, 
-                                     rpg::ModifierSourceType sourceType,
-                                     VitalDataTarget target)
+    void Vitals::removeModifier(uint32_t id, 
+                                uint32_t sourceID, 
+                                rpg::ModifierSourceType sourceType,
+                                VitalDataTarget target)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-        removeVitalModifier(*vital, sourceID, sourceType, target);
+        removeModifier(*vital, sourceID, sourceType, target);
     }
-    void Vitals::removeVitalModifier(const Vital& vital, uint32_t sourceID, 
-                                     rpg::ModifierSourceType sourceType,
-                                     VitalDataTarget target)
+    void Vitals::removeModifier(const Vital& vital, 
+                                uint32_t sourceID, 
+                                rpg::ModifierSourceType sourceType,
+                                VitalDataTarget target)
     {
         auto it = vitals.find(vital.getID());
         if (it == vitals.end())
@@ -214,24 +223,46 @@ namespace stats
     }
 
 
-    // removeVital(..) methods.
-    void Vitals::removeVital(const std::string& name)
+    // remove(..) methods.
+    void Vitals::remove(const std::string& name)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(name);
-        removeVital(*vital);
+        remove(*vital);
     }
-    void Vitals::removeVital(uint32_t id)
+    void Vitals::remove(uint32_t id)
     {
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
-        removeVital(*vital);
+        remove(*vital);
     }
-    void Vitals::removeVital(const Vital& vital)
+    void Vitals::remove(const Vital& vital)
     {
         auto it = vitals.find(vital.getID());
         if (it == vitals.end())
             return;
 
         vitals.erase(it);
+    }
+    
+    bool Vitals::has(const std::string& name, int value) const    
+    {
+        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        return has(*vital, value);
+    }
+    bool Vitals::has(uint32_t id, int value) const
+    {
+        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        return has(*vital, value);
+    }
+    bool Vitals::has(const Vital& vital, int value) const
+    {
+        auto it = vitals.find(vital.getID());
+        if (it == vitals.end())
+            return false;
+            
+        if (it->second.getCurrent() >= value)
+            return true;
+            
+        return false;
     }
     
     
@@ -325,7 +356,7 @@ namespace stats
             if (!vital)
                 MIA_THROW(error::ErrorCode::Undefined_RPG_Value);
 
-            vitals.addData(id, current, min, max);
+            vitals.add(id, current, min, max);
 
             std::string modStr;
             while (std::getline(entryStream, modStr, ';'))
@@ -348,7 +379,7 @@ namespace stats
                     throw std::invalid_argument("Invalid modifier target");
 
                 // The vitals are already calculated so this block bypasses the recaclulate() 
-                // call in addVitalModifier().
+                // call in addModifier().
                 auto& vitalData = vitals.vitals.at(id);
                 rpg::Modifier<int> mod(sourceID, sourceType, value);                
                 vitalData.addModifier(mod, target, false);

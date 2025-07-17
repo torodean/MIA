@@ -5,16 +5,18 @@
  * Description: Implementation of a terminal-based RPG simulator that lists and executes player actions.
  */
 
+#include <iostream>
+#include <limits>
+
 #include "RPGSimulator.hpp"
 #include "Vitals.hpp"
 #include "Wallet.hpp"
-#include <iostream>
-#include <limits>
 
 namespace rpg_sim
 {
     currency::CurrencyRegistry& currencyRegistry = currency::CurrencyRegistry::getInstance();
     stats::VitalRegistry& vitalRegistry = stats::VitalRegistry::getInstance();
+    stats::AttributeRegistry& attributeRegistry = stats::AttributeRegistry::getInstance();
 
     void setupSimulator(rpg::Player& player)
     {
@@ -74,6 +76,7 @@ namespace rpg_sim
 
     void fightMob(rpg::Player& player)
     {
+        //int playerHealth = player.vitals.get("Health").getCurrent();
         // TODO: Implement mob fighting logic affecting vitals
         std::cout << "Player engages a random mob, affecting vitals.\n";
     }

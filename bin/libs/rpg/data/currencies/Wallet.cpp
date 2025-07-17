@@ -13,7 +13,7 @@
 namespace currency
 {
 
-    void Wallet::addCurrency(const Currency& currency, uint32_t quantity)
+    void Wallet::add(const Currency& currency, uint32_t quantity)
     {
         auto id = currency.getID();
         auto it = currencies.find(id);
@@ -30,13 +30,13 @@ namespace currency
         }
     }    
     
-    void Wallet::addCurrency(const std::string& name, uint32_t quantity)
+    void Wallet::add(const std::string& name, uint32_t quantity)
     {
         const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getByName(name);
-        addCurrency(*curr, quantity);
+        add(*curr, quantity);
     }
     
-    void Wallet::addCurrency(uint32_t id, uint32_t quantity)
+    void Wallet::add(uint32_t id, uint32_t quantity)
     {
         auto it = currencies.find(id);
         if (it != currencies.end()) 
@@ -50,12 +50,12 @@ namespace currency
             {
                 throw std::invalid_argument("Currency ID " + std::to_string(id) + " not found in registry.");
             }
-            addCurrency(*curr, quantity);
+            add(*curr, quantity);
         }
     }
 
 
-    bool Wallet::removeCurrency(const Currency& currency, uint32_t quantity)
+    bool Wallet::remove(const Currency& currency, uint32_t quantity)
     {
         auto id = currency.getID();
         auto it = currencies.find(id);
@@ -71,17 +71,17 @@ namespace currency
         return true;
     }
 
-    bool Wallet::removeCurrency(const std::string& name, uint32_t quantity)
+    bool Wallet::remove(const std::string& name, uint32_t quantity)
     {
         const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getByName(name);
         if (!curr) 
         {
             throw std::invalid_argument("Currency name " + name + " not found in registry.");
         }
-        return removeCurrency(*curr, quantity);
+        return remove(*curr, quantity);
     }
     
-    bool Wallet::removeCurrency(uint32_t id, uint32_t quantity)
+    bool Wallet::remove(uint32_t id, uint32_t quantity)
     {
         auto it = currencies.find(id);
         if (it == currencies.end() || it->second.quantity < quantity)
@@ -92,48 +92,48 @@ namespace currency
     }
 
 
-    uint32_t Wallet::getQuantity(const Currency& currency) const
+    uint32_t Wallet::get(const Currency& currency) const
     {
         auto it = currencies.find(currency.getID());
         return it != currencies.end() ? it->second.quantity : 0;
     }
     
-    uint32_t Wallet::getQuantity(uint32_t id) const
+    uint32_t Wallet::get(uint32_t id) const
     {
         auto it = currencies.find(id);
         return it != currencies.end() ? it->second.quantity : 0;
     }
 
-    uint32_t Wallet::getQuantity(const std::string& name) const
+    uint32_t Wallet::get(const std::string& name) const
     {
         const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getByName(name);
         if (!curr) 
         {
             throw std::invalid_argument("Currency name " + name + " not found in registry.");
         }
-        return getQuantity(*curr);
+        return get(*curr);
     }
       
 
-    bool Wallet::hasCurrency(const Currency& currency, uint32_t quantity) const
+    bool Wallet::has(const Currency& currency, uint32_t quantity) const
     {
-        return getQuantity(currency) >= quantity;
+        return get(currency) >= quantity;
     }
     
-    bool Wallet::hasCurrency(uint32_t id, uint32_t quantity) const
+    bool Wallet::has(uint32_t id, uint32_t quantity) const
     {
         auto it = currencies.find(id);
         return it != currencies.end() && it->second.quantity >= quantity;
     }
 
-    bool Wallet::hasCurrency(const std::string& name, uint32_t quantity) const
+    bool Wallet::has(const std::string& name, uint32_t quantity) const
     {
         const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getByName(name);
         if (!curr) 
         {
             throw std::invalid_argument("Currency name " + name + " not found in registry.");
         }
-        return hasCurrency(*curr, quantity);
+        return has(*curr, quantity);
     }
 
 
@@ -191,7 +191,7 @@ namespace currency
             const currency::Currency* curr = currency::CurrencyRegistry::getInstance().getById(id);
             if (curr) 
             {
-                container.addCurrency(*curr, qty);
+                container.add(*curr, qty);
             }
         }
 

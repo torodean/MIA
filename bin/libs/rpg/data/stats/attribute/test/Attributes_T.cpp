@@ -33,9 +33,9 @@ namespace stats
             AttributeRegistry::getInstance().loadFromString(jsonData);
             
             // Initialize attributes object with test data
-            attributes.addData(wisdom, 100);
-            attributes.addData(dexterity, 50);
-            attributes.addData(strength, 75);
+            attributes.add(wisdom, 100);
+            attributes.add(dexterity, 50);
+            attributes.add(strength, 75);
         }
 
         Attributes attributes;
@@ -53,102 +53,102 @@ namespace stats
             << "Default constructor should create an empty Attributes object.";
     }
 
-    // Test getData with string name
-    TEST_F(Attributes_T, GetDataByName)
+    // Test get with string name
+    TEST_F(Attributes_T, getByName)
     {
-        const AttributeData& data = attributes.getData("Wisdom");
-        EXPECT_EQ(data.getCurrent(), 100) << "getData('Wisdom') should return AttributeData with current=100.";
+        const AttributeData& data = attributes.get("Wisdom");
+        EXPECT_EQ(data.getCurrent(), 100) << "get('Wisdom') should return AttributeData with current=100.";
 
-        EXPECT_THROW(attributes.getData("NonExistent"), error::MIAException);
+        EXPECT_THROW(attributes.get("NonExistent"), error::MIAException);
     }
 
-    // Test getData with uint32_t ID
-    TEST_F(Attributes_T, GetDataById)
+    // Test get with uint32_t ID
+    TEST_F(Attributes_T, getById)
     {
-        const AttributeData& data = attributes.getData(1);
-        EXPECT_EQ(data.getCurrent(), 100) << "getData(1) should return AttributeData with current=100.";
+        const AttributeData& data = attributes.get(1);
+        EXPECT_EQ(data.getCurrent(), 100) << "get(1) should return AttributeData with current=100.";
 
-        EXPECT_THROW(attributes.getData(999), error::MIAException);
+        EXPECT_THROW(attributes.get(999), error::MIAException);
     }
 
-    // Test getData with Attribute object
-    TEST_F(Attributes_T, GetDataByAttribute)
+    // Test get with Attribute object
+    TEST_F(Attributes_T, getByAttribute)
     {
-        const AttributeData& data = attributes.getData(wisdom);
+        const AttributeData& data = attributes.get(wisdom);
         EXPECT_EQ(data.getCurrent(), 100)
-            << "getData(wisdom) should return AttributeData with current=100.";
+            << "get(wisdom) should return AttributeData with current=100.";
 
         Attribute nonExistentAttr(999, "NonExistent", "Non-existent attribute");
-        const AttributeData& defaultData = attributes.getData(nonExistentAttr);
+        const AttributeData& defaultData = attributes.get(nonExistentAttr);
         EXPECT_EQ(defaultData.getCurrent(), 0)
-            << "getData for non-existent Attribute should return default AttributeData.";
+            << "get for non-existent Attribute should return default AttributeData.";
     }
 
-    // Test addData with string name
-    TEST_F(Attributes_T, AddDataByName)
+    // Test add with string name
+    TEST_F(Attributes_T, addByName)
     {
         Attributes attr;
-        attr.addData("Wisdom", 150);
-        const AttributeData& data = attr.getData("Wisdom");
-        EXPECT_EQ(data.getCurrent(), 150) << "addData('Wisdom', 150) should set current value to 150.";
+        attr.add("Wisdom", 150);
+        const AttributeData& data = attr.get("Wisdom");
+        EXPECT_EQ(data.getCurrent(), 150) << "add('Wisdom', 150) should set current value to 150.";
 
-        EXPECT_THROW(attr.addData("NonExistent", 25), error::MIAException);
+        EXPECT_THROW(attr.add("NonExistent", 25), error::MIAException);
     }
 
-    // Test addData with uint32_t ID
-    TEST_F(Attributes_T, AddDataById)
+    // Test add with uint32_t ID
+    TEST_F(Attributes_T, addById)
     {
         Attributes attr;
-        attr.addData(3, 25);
-        const AttributeData& data = attr.getData(3);
-        EXPECT_EQ(data.getCurrent(), 25) << "addData(3, 25) should set current value to 25.";
+        attr.add(3, 25);
+        const AttributeData& data = attr.get(3);
+        EXPECT_EQ(data.getCurrent(), 25) << "add(3, 25) should set current value to 25.";
     }
 
-    // Test addData with Attribute object
-    TEST_F(Attributes_T, AddDataByAttribute)
+    // Test add with Attribute object
+    TEST_F(Attributes_T, addByAttribute)
     {
         Attributes attr;
-        attr.addData(strength, 30);
-        const AttributeData& data = attr.getData(strength);
+        attr.add(strength, 30);
+        const AttributeData& data = attr.get(strength);
         EXPECT_EQ(data.getCurrent(), 30)
-            << "addData(strength, 30) should set current value to 30.";
+            << "add(strength, 30) should set current value to 30.";
     }
 
-    // Test updateAttribute with string name
-    TEST_F(Attributes_T, UpdateAttributeByName)
+    // Test update with string name
+    TEST_F(Attributes_T, updateByName)
     {
-        attributes.updateAttribute("Wisdom", 200);
-        EXPECT_EQ(attributes.getData("Wisdom").getCurrent(), 200)
-            << "updateAttribute('Wisdom', 200) should update current value to 200.";
+        attributes.update("Wisdom", 200);
+        EXPECT_EQ(attributes.get("Wisdom").getCurrent(), 200)
+            << "update('Wisdom', 200) should update current value to 200.";
 
-        EXPECT_THROW(attributes.updateAttribute("NonExistent", 300), error::MIAException);
+        EXPECT_THROW(attributes.update("NonExistent", 300), error::MIAException);
     }
 
-    // Test updateAttribute with uint32_t ID
-    TEST_F(Attributes_T, UpdateAttributeById)
+    // Test update with uint32_t ID
+    TEST_F(Attributes_T, updateById)
     {
-        attributes.updateAttribute(1, 200);
-        EXPECT_EQ(attributes.getData(1).getCurrent(), 200)
-            << "updateAttribute(1, 200) should update current value to 200.";
+        attributes.update(1, 200);
+        EXPECT_EQ(attributes.get(1).getCurrent(), 200)
+            << "update(1, 200) should update current value to 200.";
 
-        EXPECT_THROW(attributes.updateAttribute(999, 300), error::MIAException);
+        EXPECT_THROW(attributes.update(999, 300), error::MIAException);
     }
 
-    // Test updateAttribute with Attribute object
-    TEST_F(Attributes_T, UpdateAttributeByAttribute)
+    // Test update with Attribute object
+    TEST_F(Attributes_T, updateByAttribute)
     {
-        attributes.updateAttribute(dexterity, 150);
-        EXPECT_EQ(attributes.getData(dexterity).getCurrent(), 150)
-            << "updateAttribute(dexterity, 150) should update current value to 150.";
+        attributes.update(dexterity, 150);
+        EXPECT_EQ(attributes.get(dexterity).getCurrent(), 150)
+            << "update(dexterity, 150) should update current value to 150.";
     }
 
-    // Test addAttributeModifier with string name
-    TEST_F(Attributes_T, AddAttributeModifierByName)
+    // Test addModifier with string name
+    TEST_F(Attributes_T, addModifierByName)
     {
-        attributes.addAttributeModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
-        const AttributeData& data = attributes.getData("Wisdom");
+        attributes.addModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
+        const AttributeData& data = attributes.get("Wisdom");
         EXPECT_EQ(data.getCurrent(), 110) // Assuming modifiers are applied in AttributeData::getCurrent
-            << "addAttributeModifier('Wisdom', ...) should increase current value by 10.";
+            << "addModifier('Wisdom', ...) should increase current value by 10.";
 
         const auto& modifiers = data.getModifiers();
         ASSERT_EQ(modifiers.size(), 1) << "One modifier should be added.";
@@ -156,17 +156,17 @@ namespace stats
         EXPECT_EQ(modifiers[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
         EXPECT_EQ(modifiers[0].value, 10) << "Modifier value should be 10.";
 
-        EXPECT_THROW(attributes.addAttributeModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF, 5), 
+        EXPECT_THROW(attributes.addModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF, 5), 
                      error::MIAException);
     }
 
-    // Test addAttributeModifier with uint32_t ID
-    TEST_F(Attributes_T, AddAttributeModifierById)
+    // Test addModifier with uint32_t ID
+    TEST_F(Attributes_T, addModifierById)
     {
-        attributes.addAttributeModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
-        const AttributeData& data = attributes.getData(1);
+        attributes.addModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
+        const AttributeData& data = attributes.get(1);
         EXPECT_EQ(data.getCurrent(), 110) // Assuming modifiers are applied in AttributeData::getCurrent
-            << "addAttributeModifier(1, ...) should increase current value by 10.";
+            << "addModifier(1, ...) should increase current value by 10.";
 
         const auto& modifiers = data.getModifiers();
         ASSERT_EQ(modifiers.size(), 1) << "One modifier should be added.";
@@ -174,17 +174,17 @@ namespace stats
         EXPECT_EQ(modifiers[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
         EXPECT_EQ(modifiers[0].value, 10) << "Modifier value should be 10.";
 
-        EXPECT_THROW(attributes.addAttributeModifier(999, 3, rpg::ModifierSourceType::BUFF, 5), 
+        EXPECT_THROW(attributes.addModifier(999, 3, rpg::ModifierSourceType::BUFF, 5), 
                      error::MIAException);
     }
 
-    // Test addAttributeModifier with Attribute object
-    TEST_F(Attributes_T, AddAttributeModifierByAttribute)
+    // Test addModifier with Attribute object
+    TEST_F(Attributes_T, addModifierByAttribute)
     {
-        attributes.addAttributeModifier(strength, 2, rpg::ModifierSourceType::BUFF, 15);
-        const AttributeData& data = attributes.getData(strength);
+        attributes.addModifier(strength, 2, rpg::ModifierSourceType::BUFF, 15);
+        const AttributeData& data = attributes.get(strength);
         EXPECT_EQ(data.getCurrent(), 90) // Assuming modifiers are applied in AttributeData::getCurrent
-            << "addAttributeModifier(strength, ...) should increase current value by 15.";
+            << "addModifier(strength, ...) should increase current value by 15.";
 
         const auto& modifiers = data.getModifiers();
         ASSERT_EQ(modifiers.size(), 1) << "One modifier should be added.";
@@ -193,84 +193,84 @@ namespace stats
         EXPECT_EQ(modifiers[0].value, 15) << "Modifier value should be 15.";
     }
 
-    // Test removeAttributeModifier with string name
-    TEST_F(Attributes_T, RemoveAttributeModifierByName)
+    // Test removeModifier with string name
+    TEST_F(Attributes_T, removeModifierByName)
     {
-        attributes.addAttributeModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
-        attributes.removeAttributeModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF);
-        const AttributeData& data = attributes.getData("Wisdom");
+        attributes.addModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
+        attributes.removeModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF);
+        const AttributeData& data = attributes.get("Wisdom");
         int current = data.getCurrent();
         EXPECT_EQ(data.getCurrent(), current) // Assuming modifier removal reverses effect
-            << "removeAttributeModifier('Wisdom', ...) should revert current value to current.";
+            << "removeModifier('Wisdom', ...) should revert current value to current.";
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
 
-        EXPECT_THROW(attributes.removeAttributeModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF), 
+        EXPECT_THROW(attributes.removeModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF), 
                      error::MIAException);
     }
 
-    // Test removeAttributeModifier with uint32_t ID
-    TEST_F(Attributes_T, RemoveAttributeModifierById)
+    // Test removeModifier with uint32_t ID
+    TEST_F(Attributes_T, removeModifierById)
     {
-        attributes.addAttributeModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
-        const AttributeData& data = attributes.getData(1);
+        attributes.addModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
+        const AttributeData& data = attributes.get(1);
         int current = data.getCurrent();
-        attributes.removeAttributeModifier(1, 2, rpg::ModifierSourceType::BUFF);
+        attributes.removeModifier(1, 2, rpg::ModifierSourceType::BUFF);
         EXPECT_EQ(data.getCurrent(), current) // Assuming modifier removal reverses effect
-            << "removeAttributeModifier(1, ...) should revert current value to current.";
+            << "removeModifier(1, ...) should revert current value to current.";
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
 
-        EXPECT_THROW(attributes.removeAttributeModifier(999, 3, rpg::ModifierSourceType::BUFF), 
+        EXPECT_THROW(attributes.removeModifier(999, 3, rpg::ModifierSourceType::BUFF), 
                      error::MIAException);
     }
 
-    // Test removeAttributeModifier with Attribute object
-    TEST_F(Attributes_T, RemoveAttributeModifierByAttribute)
+    // Test removeModifier with Attribute object
+    TEST_F(Attributes_T, removeModifierByAttribute)
     {
-        attributes.addAttributeModifier(dexterity, 2, rpg::ModifierSourceType::BUFF, 10);
-        attributes.removeAttributeModifier(dexterity, 2, rpg::ModifierSourceType::BUFF);
-        const AttributeData& data = attributes.getData(dexterity);
+        attributes.addModifier(dexterity, 2, rpg::ModifierSourceType::BUFF, 10);
+        attributes.removeModifier(dexterity, 2, rpg::ModifierSourceType::BUFF);
+        const AttributeData& data = attributes.get(dexterity);
         int current = data.getCurrent();
         EXPECT_EQ(data.getCurrent(), current) // Assuming modifier removal reverses effect
-            << "removeAttributeModifier(dexterity, ...) should revert current value to current.";
+            << "removeModifier(dexterity, ...) should revert current value to current.";
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
     }
 
-    // Test removeAttribute with string name
-    TEST_F(Attributes_T, RemoveAttributeByName)
+    // Test remove with string name
+    TEST_F(Attributes_T, removeByName)
     {
-        attributes.removeAttribute("Wisdom");
-        EXPECT_EQ(attributes.getData("Wisdom").getCurrent(), 100)
-            << "removeAttribute('Wisdom') should remove the attribute, returning default AttributeData.";
+        attributes.remove("Wisdom");
+        EXPECT_EQ(attributes.get("Wisdom").getCurrent(), 100)
+            << "remove('Wisdom') should remove the attribute, returning default AttributeData.";
     }
 
-    // Test removeAttribute with uint32_t ID
-    TEST_F(Attributes_T, RemoveAttributeById)
+    // Test remove with uint32_t ID
+    TEST_F(Attributes_T, removeById)
     {
-        attributes.removeAttribute(1);
-        EXPECT_EQ(attributes.getData(1).getCurrent(), 100)
-            << "removeAttribute(1) should remove the attribute, returning default AttributeData.";
+        attributes.remove(1);
+        EXPECT_EQ(attributes.get(1).getCurrent(), 100)
+            << "remove(1) should remove the attribute, returning default AttributeData.";
     }
 
-    // Test removeAttribute with Attribute object
-    TEST_F(Attributes_T, RemoveAttributeByAttribute)
+    // Test remove with Attribute object
+    TEST_F(Attributes_T, removeByAttribute)
     {
-        attributes.removeAttribute(strength);
-        EXPECT_EQ(attributes.getData(strength).getCurrent(), 75)
-            << "removeAttribute(strength) should remove the attribute, returning default AttributeData.";
+        attributes.remove(strength);
+        EXPECT_EQ(attributes.get(strength).getCurrent(), 75)
+            << "remove(strength) should remove the attribute, returning default AttributeData.";
     }
 
     TEST_F(Attributes_T, SerializeDeserialize)
     {
         Attributes attr;
-        attr.addData(wisdom, 100);
-        attr.addAttributeModifier(wisdom, 2, rpg::ModifierSourceType::BUFF, 10);
-        attr.addData(dexterity, 50);
-        attr.addData(strength, 75);
+        attr.add(wisdom, 100);
+        attr.addModifier(wisdom, 2, rpg::ModifierSourceType::BUFF, 10);
+        attr.add(dexterity, 50);
+        attr.add(strength, 75);
 
         std::string serialized = attr.serialize();
         Attributes deserialized = Attributes::deserialize(serialized);
 
-        const AttributeData& data1 = deserialized.getData(1);
+        const AttributeData& data1 = deserialized.get(1);
         EXPECT_EQ(data1.getCurrent(), 110) << "Deserialized attribute 1 should have current=110.";
         const auto& mods1 = data1.getModifiers();
         ASSERT_EQ(mods1.size(), 1) << "Attribute 1 should have one modifier.";
@@ -278,11 +278,11 @@ namespace stats
         EXPECT_EQ(mods1[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
         EXPECT_EQ(mods1[0].value, 10) << "Modifier value should be 10.";
 
-        const AttributeData& data2 = deserialized.getData(2);
+        const AttributeData& data2 = deserialized.get(2);
         EXPECT_EQ(data2.getCurrent(), 50) << "Deserialized attribute 2 should have current=50.";
         EXPECT_TRUE(data2.getModifiers().empty()) << "Attribute 2 should have no modifiers.";
 
-        const AttributeData& data3 = deserialized.getData(3);
+        const AttributeData& data3 = deserialized.get(3);
         EXPECT_EQ(data3.getCurrent(), 75) << "Deserialized attribute 3 should have current=75.";
         EXPECT_TRUE(data3.getModifiers().empty()) << "Attribute 3 should have no modifiers.";
     }

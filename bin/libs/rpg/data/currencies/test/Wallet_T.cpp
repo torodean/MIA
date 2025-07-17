@@ -38,23 +38,23 @@ protected:
 /**
  * @test Verify currency is added and quantity is tracked correctly.
  */
-TEST_F(Wallet_T, AddCurrencyIncreasesQuantity) 
+TEST_F(Wallet_T, addIncreasesQuantity) 
 {
-    container.addCurrency(coin, 100);
-    EXPECT_EQ(container.getQuantity(coin), 100);
+    container.add(coin, 100);
+    EXPECT_EQ(container.get(coin), 100);
 
-    container.addCurrency(coin, 50);
-    EXPECT_EQ(container.getQuantity(coin), 150);
+    container.add(coin, 50);
+    EXPECT_EQ(container.get(coin), 150);
 }
 
 /**
  * @test Removing currency decreases quantity correctly.
  */
-TEST_F(Wallet_T, RemoveCurrencyDecreasesQuantity) 
+TEST_F(Wallet_T, removeDecreasesQuantity) 
 {
-    container.addCurrency(coin, 80);
-    EXPECT_TRUE(container.removeCurrency(coin, 30));
-    EXPECT_EQ(container.getQuantity(coin), 50);
+    container.add(coin, 80);
+    EXPECT_TRUE(container.remove(coin, 30));
+    EXPECT_EQ(container.get(coin), 50);
 }
 
 /**
@@ -62,27 +62,27 @@ TEST_F(Wallet_T, RemoveCurrencyDecreasesQuantity)
  */
 TEST_F(Wallet_T, RemoveFailsIfInsufficientQuantity) 
 {
-    container.addCurrency(gem, 10);
-    EXPECT_FALSE(container.removeCurrency(gem, 20));
-    EXPECT_EQ(container.getQuantity(gem), 10);
+    container.add(gem, 10);
+    EXPECT_FALSE(container.remove(gem, 20));
+    EXPECT_EQ(container.get(gem), 10);
 }
 
 /**
  * @test Checking if container has enough currency.
  */
-TEST_F(Wallet_T, HasCurrencyCheckWorks) 
+TEST_F(Wallet_T, hasCheckWorks) 
 {
-    container.addCurrency(coin, 75);
-    EXPECT_TRUE(container.hasCurrency(coin, 50));
-    EXPECT_FALSE(container.hasCurrency(coin, 100));
+    container.add(coin, 75);
+    EXPECT_TRUE(container.has(coin, 50));
+    EXPECT_FALSE(container.has(coin, 100));
 }
 
 /**
  * @test Getting quantity of unknown currency returns zero.
  */
-TEST_F(Wallet_T, GetQuantityForUnknownCurrencyReturnsZero) 
+TEST_F(Wallet_T, getForUnknownCurrencyReturnsZero) 
 {
-    EXPECT_EQ(container.getQuantity(gem), 0);
+    EXPECT_EQ(container.get(gem), 0);
 }
 
 /**
@@ -90,18 +90,18 @@ TEST_F(Wallet_T, GetQuantityForUnknownCurrencyReturnsZero)
  */
 TEST_F(Wallet_T, SerializeAndDeserializeRoundTrip) 
 {    
-    container.addCurrency(coin, 25);
-    container.addCurrency(gem, 40);
+    container.add(coin, 25);
+    container.add(gem, 40);
 
     std::string data = container.serialize();
     Wallet restored = Wallet::deserialize(data);
 
     // Must re-add same Currency objects since deserialization uses IDs
-    restored.addCurrency(coin, 0); // ID match
-    restored.addCurrency(gem, 0);
+    restored.add(coin, 0); // ID match
+    restored.add(gem, 0);
 
-    EXPECT_EQ(restored.getQuantity(coin), 25);
-    EXPECT_EQ(restored.getQuantity(gem), 40);
+    EXPECT_EQ(restored.get(coin), 25);
+    EXPECT_EQ(restored.get(gem), 40);
 }
 
 /**
