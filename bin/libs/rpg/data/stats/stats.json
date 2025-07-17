@@ -68,12 +68,14 @@
             "description": "Endurance and resilience, boosts health and stamina.",
             "baseValue": 1,
             "modifies" : 
-            {
-                "targetType" : "VITAL",
-                "targetName" : "Health",
-                "ModifyType" : "ADD",
-                "ModifyValuePer" : 5
-            }
+            [
+                {
+                    "targetType" : "VITAL",
+                    "targetName" : "Health",
+                    "ModifyType" : "ADD",
+                    "ModifyValuePer" : 5
+                }
+            ]
         },
         {
             "id": 5,

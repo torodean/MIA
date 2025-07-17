@@ -64,4 +64,5 @@ namespace rpg_sim
     extern currency::CurrencyRegistry& currencyRegistry;
     extern stats::VitalRegistry& vitalRegistry;
     extern stats::AttributeRegistry& attributeRegistry;
+
 } // namespace rpg_sim

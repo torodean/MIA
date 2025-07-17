@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <limits>
+#include <cstdlib> // for rand()
+#include <ctime>   // for time()
 
 #include "RPGSimulator.hpp"
 #include "Vitals.hpp"
@@ -17,10 +19,31 @@ namespace rpg_sim
     currency::CurrencyRegistry& currencyRegistry = currency::CurrencyRegistry::getInstance();
     stats::VitalRegistry& vitalRegistry = stats::VitalRegistry::getInstance();
     stats::AttributeRegistry& attributeRegistry = stats::AttributeRegistry::getInstance();
+    const std::string healthName = "Health";
+    const std::string manaName = "Mana";
+    const std::string copper = "Copper Coin";
+    const std::string silver = "Silver Coin";
 
     void setupSimulator(rpg::Player& player)
     {
-        // TODO
+        // Initialize vitals
+        int initialHealth = vitalRegistry.getByName(healthName)->getBaseMax();
+        int minHealth = vitalRegistry.getByName(healthName)->getBaseMin();
+        int maxHealth = initialHealth;
+        int initialMana = vitalRegistry.getByName(manaName)->getBaseMax();
+        int minMana = vitalRegistry.getByName(manaName)->getBaseMin();
+        int maxMana = initialMana;
+
+        player.getVitals().add(healthName, initialHealth, minHealth, maxHealth);
+        player.getVitals().add(manaName, initialMana, minMana, maxMana);
+
+        std::cout << "Vitals initialized: " << initialHealth << " Health, " << initialMana << " Mana.\n";
+
+        // Initialize wallet
+        player.getWallet().add(copper, 100);
+        player.getWallet().add(silver, 10);
+
+        std::cout << "Wallet initialized: 100 Copper Coins, 10 Silver Coins.\n";
     }
 
     void runSimulator(rpg::Player& player, std::string saveFile)
@@ -28,7 +51,12 @@ namespace rpg_sim
         while (true)
         {
             // Display player status
-            std::cout << "\nPlayer Status: TODO\n" << std::endl;
+            std::cout << "\nPlayer Status:" << std::endl
+                      << "\t Health: " << player.getVitals().get(healthName).getCurrent() << std::endl
+                      << "\t Mana: " << player.getVitals().get(manaName).getCurrent() << std::endl
+                      << "\t Silver: " << player.getWallet().get(silver).getQuantity() << std::endl
+                      << "\t Copper: " << player.getWallet().get(copper).getQuantity() << std::endl;
+            
 
             // Display menu
             std::cout << "\nAvailable Actions:\n"
@@ -76,27 +104,169 @@ namespace rpg_sim
 
     void fightMob(rpg::Player& player)
     {
-        //int playerHealth = player.vitals.get("Health").getCurrent();
-        // TODO: Implement mob fighting logic affecting vitals
-        std::cout << "Player engages a random mob, affecting vitals.\n";
+        static bool seeded = false;
+        if (!seeded) {
+            std::srand(std::time(0));
+            seeded = true;
+        }
+
+        int currentHealth = player.getVitals().get(healthName).getCurrent();
+        int currentMana = player.getVitals().get(manaName).getCurrent();
+
+        std::cout << "Player encounters a hostile mob...\n";
+
+        // Number of attack rounds (1–3)
+        int rounds = 1 + (std::rand() % 3);
+        for (int i = 1; i <= rounds; ++i)
+        {
+            std::cout << "\n-- Round " << i << " --\n";
+
+            int mobDamage = 5 + (std::rand() % 16); // 5–20
+            std::cout << "Mob attacks! Player takes " << mobDamage << " damage.\n";
+
+            if (player.getVitals().has(healthName, mobDamage)) 
+            {
+                currentHealth -= mobDamage;
+                player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentHealth);
+                std::cout << "Player survives with " << currentHealth << " health.\n";
+            } 
+            else 
+            {
+                player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, 0);
+                std::cout << "Player takes lethal damage and dies.\n";
+                return;
+            }
+
+            // 50% chance to cast a spell
+            if ((std::rand() % 2) == 0) 
+            {
+                int spellCost = 10 + (std::rand() % 16); // 10–25
+                std::cout << "Player attempts to cast a spell (cost " << spellCost << " mana).\n";
+
+                if (player.getVitals().has(manaName, spellCost)) 
+                {
+                    currentMana -= spellCost;
+                    player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, currentMana);
+                    std::cout << "Spell cast successfully. Remaining mana: " << currentMana << ".\n";
+
+                    std::cout << "The spell hits! Mob is damaged severely.\n";
+                    if ((std::rand() % 2) == 0)
+                    {
+                        std::cout << "Mob is defeated!\n";
+                        break;
+                    }
+                    else
+                    {
+                        std::cout << "Mob is still standing!\n";
+                    }
+                } 
+                else 
+                {
+                    std::cout << "Not enough mana to cast the spell.\n";
+                }
+            } 
+            else 
+            {
+                std::cout << "Player chooses not to cast a spell.\n";
+            }
+
+            // Random chance mob flees after any round
+            if ((std::rand() % 4) == 0)
+            {
+                std::cout << "The mob suddenly flees!\n";
+                break;
+            }
+        }
+
+        std::cout << "\nFight ends.\n";
     }
 
     void lootTreasure(rpg::Player& player)
     {
-        // TODO: Implement treasure looting logic adding currency
-        std::cout << "Player loots a treasure chest, gaining currency.\n";
+        std::cout << "Player loots a treasure chest...\n";
+
+        // Random coin amounts
+        int copperAmount = 10 + std::rand() % 91; // 10–100
+        int silverAmount = 1 + std::rand() % 10;  // 1–10
+
+        player.getWallet().add(copper, copperAmount);
+        player.getWallet().add(silver, silverAmount);
+
+        std::cout << "Player gains " << copperAmount << " Copper Coin" << (copperAmount > 1 ? "s" : "") << " and "
+                  << silverAmount << " Silver Coin" << (silverAmount > 1 ? "s" : "") << ".\n";
     }
 
     void rest(rpg::Player& player)
     {
-        // TODO: Implement rest logic recovering vitals
-        std::cout << "Player rests to recover vitals.\n";
+        std::cout << "Player rests to recover vitals...\n";
+
+        int currentHealth = player.getVitals().get(healthName).getCurrent();
+        int currentMana   = player.getVitals().get(manaName).getCurrent();
+        int maxHealth     = player.getVitals().get(healthName).getCurrentMax();
+        int maxMana       = player.getVitals().get(manaName).getCurrentMax();
+
+        int healthDelta = maxHealth - currentHealth;
+        int manaDelta = maxMana - currentMana;
+
+        int healthRestore = (healthDelta > 0) ? (5 + std::rand() % healthDelta) : 0;
+        int manaRestore   = (manaDelta > 0)   ? (5 + std::rand() % manaDelta)   : 0;
+
+        currentHealth += healthRestore;
+        currentMana += manaRestore;
+
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        if (currentMana > maxMana) currentMana = maxMana;
+
+        player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentHealth);
+        player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, currentMana);
+
+        std::cout << "Recovered " << healthRestore << " health (now at " << currentHealth << ").\n";
+        std::cout << "Recovered " << manaRestore << " mana (now at " << currentMana << ").\n";
     }
 
     void spendCurrency(rpg::Player& player)
     {
-        // TODO: Implement currency spending logic
-        std::cout << "Player spends currency at a vendor.\n";
+        std::cout << "Player spends currency at a vendor...\n";
+
+        uint32_t copperOwned = player.getWallet().get(copper).getQuantity();
+        uint32_t silverOwned = player.getWallet().get(silver).getQuantity();
+
+        // Random spend amounts: Copper (5–50), Silver (1–5)
+        uint32_t copperSpend = 5 + (std::rand() % 46);
+        uint32_t silverSpend = 1 + (std::rand() % 5);
+
+        bool spentAnything = false;
+
+        if (copperOwned >= copperSpend)
+        {
+            player.getWallet().update(copper, copperOwned - copperSpend);
+            std::cout << "Spent " << copperSpend << " Copper Coin" << (copperSpend > 1 ? "s" : "") << ".\n";
+            spentAnything = true;
+        }
+        else if (copperOwned > 0)
+        {
+            player.getWallet().update(copper, copperOwned - copperOwned);
+            std::cout << "Only had " << copperOwned << " Copper Coin" << (copperOwned > 1 ? "s" : "") << ", all spent.\n";
+            spentAnything = true;
+        }
+
+        if (silverOwned >= silverSpend)
+        {
+            player.getWallet().update(silver, silverOwned - silverSpend);
+            std::cout << "Spent " << silverSpend << " Silver Coin" << (silverSpend > 1 ? "s" : "") << ".\n";
+            spentAnything = true;
+        }
+        else if (silverOwned > 0)
+        {
+            player.getWallet().update(silver, silverOwned - silverOwned);
+            std::cout << "Only had " << silverOwned << " Silver Coin" << (silverOwned > 1 ? "s" : "") << ", all spent.\n";
+            spentAnything = true;
+        }
+
+        if (!spentAnything)
+        {
+            std::cout << "Player has no currency to spend.\n";
+        }
     }
 
     void savePlayerData(rpg::Player& player, std::string& saveFile)

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+
 #include "Currency.hpp"
 
 namespace currency
@@ -18,11 +19,31 @@ namespace currency
      */
     struct CurrencyQuantity
     {
-        Currency currency;  ///< The currency object.
-        uint32_t quantity;  ///< The quantity of this currency.
-
-        CurrencyQuantity(const Currency& curr, uint32_t qty = 0)
-            : currency(curr), quantity(qty) {}
+        /// Default constructor.
+        CurrencyQuantity() = default;
+        
+        /// The main constructor.
+        CurrencyQuantity(uint32_t qty) : quantity(qty) {}
+        
+        /// Getter for the quantity value.
+        unsigned int getQuantity() const { return quantity; }
+        
+        /// Adjusters for the quantity.
+        void set(unsigned int value) { quantity = value; }
+        void add(unsigned int value) { quantity += value; }
+        void remove(unsigned int value)
+        {
+            if (value > quantity)
+            {
+                // TODO - throw exception here, this isn't allowed.
+                quantity = 0;
+            }
+            else
+                quantity -= value;
+        }
+            
+    private:        
+        unsigned int quantity{0};  ///< The quantity of this currency.
     };
 
     /**
@@ -35,61 +56,73 @@ namespace currency
          * Default constructor.
          */
         Wallet() = default;
-
+        
         /**
-         * Adds a specified quantity of a currency to the container.
-         * Overloads allow adding by Currency object, currency ID, or currency name.
-         * If the currency already exists, the quantity is incremented.
+         * Gets the CurrencyQuantity associated with the given identifier. If the data object is not found
+         * in the objects map, a default constructed data object will be returned.
+         * Overloads allow querying by currency name, currency ID, or Currency object (by reference).
          *
-         * @param currency[const Currency&] - The currency (Currency object)
-         *        currencyId[uint32_t] - The ID (uint32_t)
-         *        name[const std::string&] - The name (std::string)
+         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
+         *        id[uint32_t] - The ID of the currency.
+         *        currency[const Currency&] - The Currency object.
+         * @return The Currency associated with the identifier, or a default Currency if not found.
+         */
+        CurrencyQuantity& get(const std::string& name);
+        CurrencyQuantity& get(uint32_t id);
+        CurrencyQuantity& get(const Currency& currency);
+        
+        /**
+         * Adds a specified currency to the container.
+         * Overloads allow adding by Currency object, currency ID, or currency name.
+         * If the currency is already added, this will increment the value.
+         *
+         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
+         *        id[uint32_t] - The ID of the currency.
+         *        currency[const Currency&] - The Currency object.
          * @param quantity[uint32_t] - The amount to add.
          */
-        void add(const Currency& currency, uint32_t quantity);
-        void add(uint32_t currencyId, uint32_t quantity);
         void add(const std::string& name, uint32_t quantity);
+        void add(uint32_t id, uint32_t quantity);
+        void add(const Currency& currency, uint32_t quantity);
 
         /**
-         * Removes a specified quantity of a currency from the container.
+         * Removes a specified currency from the container.
          * Overloads allow removing by Currency object, currency ID, or currency name.
          *
-         * @param currency[const Currency&] - The currency (Currency object)
-         *        currencyId[uint32_t] - The ID (uint32_t)
-         *        name[const std::string&] - The name (std::string)
-         * @param quantity[uint32_t] - The amount to remove.
-         * @return True if successful; false if insufficient quantity or currency not found.
+         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
+         *        id[uint32_t] - The ID of the currency.
+         *        currency[const Currency&] - The Currency object.
          */
-        bool remove(const Currency& currency, uint32_t quantity);
-        bool remove(uint32_t currencyId, uint32_t quantity);
-        bool remove(const std::string& name, uint32_t quantity);
-
+        void remove(const std::string& name);
+        void remove(uint32_t id);
+        void remove(const Currency& currency);
+        
         /**
-         * Gets the quantity of a specific currency in the container.
-         * Overloads allow querying by Currency object, currency ID, or currency name.
+         * Updates a specified quantity of a currency.
+         * Overloads allow updating by Currency object, currency ID, or currency name.
          *
-         * @param currency[const Currency&] - The currency (Currency object)
-         *        currencyId[uint32_t] - The ID (uint32_t)
-         *        name[const std::string&] - The name (std::string)
-         * @return The quantity, or 0 if the currency is not found.
+         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
+         *        id[uint32_t] - The ID of the currency.
+         *        currency[const Currency&] - The Currency object.
+         * @param amount[int] - The signed amount to update (positive = add, negative = remove).
          */
-        uint32_t get(const Currency& currency) const;
-        uint32_t get(uint32_t currencyId) const;
-        uint32_t get(const std::string& name) const;
+        void update(const std::string& name, unsigned int amount);
+        void update(uint32_t id, unsigned int amount);
+        void update(const Currency& currency, unsigned int amount);
 
         /**
          * Checks if the container has at least the specified quantity of a currency.
          * Overloads allow checking by Currency object, currency ID, or currency name.
          *
-         * @param currency[const Currency&] - The currency (Currency object)
-         *        currencyId[uint32_t] - The ID (uint32_t)
-         *        name[const std::string&] - The name (std::string)
+         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
+         *        id[uint32_t] - The ID of the currency.
+         *        currency[const Currency&] - The Currency object.
          * @param quantity[uint32_t] - The required amount.
          * @return True if the container has enough; false otherwise.
          */
-        bool has(const Currency& currency, uint32_t quantity) const;
-        bool has(uint32_t currencyId, uint32_t quantity) const;
-        bool has(const std::string& name, uint32_t quantity) const;
+        bool has(const std::string& name, unsigned int quantity) const;
+        bool has(uint32_t id, unsigned int quantity) const;
+        bool has(const Currency& currency, unsigned int quantity) const;
 
         /**
          * Dumps the container's contents to the provided output stream.
@@ -102,7 +135,7 @@ namespace currency
          * The serialized format is enclosed between unique [WALLET_BEGIN] and [WALLET_END] markers
          * for easy identification within a larger data stream.
          *
-         * Format: [CC_BEGIN]id1:qty1;id2:qty2;...[CC_END]
+         * Format: [WALLET_BEGIN]id1:qty1;id2:qty2;...[WALLET_END]
          *
          * @return A string representing the serialized state of the container.
          */
