@@ -84,7 +84,16 @@ namespace stats
                   int cMax,
                   const std::vector<rpg::Modifier<int>>& maxMods,
                   const std::vector<rpg::Modifier<int>>& minMods);
-            
+           
+           /**
+         * Adds a modifier to either the maximum value and updates the corresponding value.
+         *
+         * @param mod[const rpg::Modifier<int>&] - The modifier to add.
+         * @param recalc[bool] - true if a recalculation is requested. Should typically only be false
+         *     for deserialization.
+         */
+        void addMaxModifier(const rpg::Modifier<int>& mod, bool recalc = true);
+         
         /**
          * Adds a modifier to either the minimum or maximum value and updates the corresponding value.
          *

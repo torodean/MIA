@@ -34,7 +34,7 @@ namespace stats
                             {
                                 "targetType": "VITAL",
                                 "targetName": "Health",
-                                "ModifyType": "ADD",
+                                "ModifyType": "ADD_MAX",
                                 "ModifyValuePer": 5.0
                             }
                         ]
@@ -77,7 +77,7 @@ namespace stats
         const auto& mod = constitution->getModifies()[0];
         EXPECT_EQ(mod.targetType, rpg::DataType::VITAL) << "Modify targetType should be VITAL";
         EXPECT_EQ(mod.targetName, "Health") << "Modify targetName should be Health";
-        EXPECT_EQ(mod.modifyType, rpg::ModifyType::ADD) << "Modify type should be ADD";
+        EXPECT_EQ(mod.modifyType, rpg::ModifyType::ADD_MAX) << "Modify type should be ADD_MAX";
         EXPECT_DOUBLE_EQ(mod.modifyValuePer, 5.0) << "Modify valuePer should be 5.0";
     }
 
@@ -107,7 +107,7 @@ namespace stats
 
         EXPECT_TRUE(output.find("Name: Strength, Description: Physical power., BaseValue: 10") != std::string::npos)
             << "Dump should contain Strength attribute details";
-        EXPECT_TRUE(output.find("Name: Constitution, Description: Endurance and resilience., BaseValue: 15, Modifies: [Modifies{targetType=VITAL, targetName=Health, modifyType=ADD, modifyValuePer=5}") != std::string::npos)
+        EXPECT_TRUE(output.find("Name: Constitution, Description: Endurance and resilience., BaseValue: 15, Modifies: [Modifies{targetType=VITAL, targetName=Health, modifyType=ADD_MAX, modifyValuePer=5}") != std::string::npos)
             << "Dump should contain Constitution attribute details with modifies";
     }
 

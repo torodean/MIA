@@ -12,10 +12,11 @@
 #include <nlohmann/json.hpp>
 
 #include "Modifies.hpp"
+#include "BaseDataObject.hpp"
 
 namespace stats
 {
-    class Attribute
+    class Attribute : public rpg::BaseDataObject
     {
     public:
         /// Default constructor.
@@ -37,9 +38,6 @@ namespace stats
                   const std::vector<rpg::Modifies>& modifies = {});
 
         /// Getters for the various data mambers.
-        uint32_t getID() const;
-        std::string getName() const;
-        std::string getDescription() const;
         int getBaseValue() const;
         const std::vector<rpg::Modifies>& getModifies() const;
 
@@ -67,9 +65,6 @@ namespace stats
 
     private:
     
-        uint32_t id{};                  ///< Unique identifier for this Attribute.
-        std::string name{};             ///< Name of the Attribute.
-        std::string description{};      ///< Description of the Attribute.
         int baseValue{0};               ///< Base value of the Attribute.
         std::vector<rpg::Modifies> modifies; ///< This stores which other rpg objects this attribute modifies.
     };

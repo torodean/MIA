@@ -26,14 +26,14 @@ namespace stats
                     {
                         "targetType": "VITAL",
                         "targetName": "Health",
-                        "ModifyType": "ADD",
+                        "ModifyType": "ADD_MAX",
                         "ModifyValuePer": 5.0
                     }
                 ]
             })";
 
             // Sample Modifies object for testing
-            sampleModify = rpg::Modifies(rpg::DataType::VITAL, "Health", rpg::ModifyType::ADD, 5.0);
+            sampleModify = rpg::Modifies(rpg::DataType::VITAL, "Health", rpg::ModifyType::ADD_MAX, 5.0);
         }
 
         std::string jsonData; ///< JSON string used for testing serialization/deserialization.
@@ -113,7 +113,7 @@ namespace stats
         ASSERT_EQ(j["modifies"].size(), 1) << "Modifies array should contain one element";
         EXPECT_EQ(j["modifies"][0]["targetType"], "VITAL") << "Modify targetType should be VITAL";
         EXPECT_EQ(j["modifies"][0]["targetName"], "Health") << "Modify targetName should be Health";
-        EXPECT_EQ(j["modifies"][0]["ModifyType"], "ADD") << "Modify type should be ADD";
+        EXPECT_EQ(j["modifies"][0]["ModifyType"], "ADD_MAX") << "Modify type should be ADD_MAX";
         EXPECT_DOUBLE_EQ(j["modifies"][0]["ModifyValuePer"], 5.0) << "Modify valuePer should be 5.0";
 
         // Test without modifies

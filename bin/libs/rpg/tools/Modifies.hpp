@@ -19,7 +19,7 @@ namespace rpg
      */
     enum class ModifyType
     {
-        ADD,       ///< Adds a value to the target.
+        ADD_MAX,   ///< Adds a value to the target maximum.
         MULTIPLY,  ///< Multiplies the target by a value.
         SET,       ///< Sets the target to a specific value.
         UNKNOWN    ///< Unknown or unspecified modification type.
@@ -36,7 +36,7 @@ namespace rpg
     {
         switch (type)
         {
-            case ModifyType::ADD:      return "ADD";
+            case ModifyType::ADD_MAX:  return "ADD_MAX";
             case ModifyType::MULTIPLY: return "MULTIPLY";
             case ModifyType::SET:      return "SET";
             default:                   return "UNKNOWN";
@@ -57,7 +57,7 @@ namespace rpg
         std::string str = typeStr;
         std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 
-        if (str == "ADD")      return ModifyType::ADD;
+        if (str == "ADD_MAX")  return ModifyType::ADD_MAX;
         if (str == "MULTIPLY") return ModifyType::MULTIPLY;
         if (str == "SET")      return ModifyType::SET;
         return ModifyType::UNKNOWN;
@@ -70,7 +70,7 @@ namespace rpg
     {
         rpg::DataType targetType;  ///< The type of the target object (e.g., "VITAL"). 
         std::string targetName;    ///< Name of the target object (e.g., "Health").
-        ModifyType modifyType;     ///< Type of modification (e.g., ADD, MULTIPLY, SET).
+        ModifyType modifyType;     ///< Type of modification (e.g., ADD_MAX, MULTIPLY, SET).
         double modifyValuePer;     ///< Value applied per unit (e.g., 5 per point of attribute).
         
         /// Default constructor.

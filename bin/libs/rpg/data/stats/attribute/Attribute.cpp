@@ -19,17 +19,12 @@ namespace stats
               const std::string& description,
               int baseValue,
               const std::vector<rpg::Modifies>& modifies) :
-        id(id),
-        name(name),
-        description(description),
+        BaseDataObject(id, name, description),
         baseValue(baseValue),
         modifies(modifies)
     { }
 
     // Getters for the various data mambers.
-    uint32_t Attribute::getID() const { return id; }
-    std::string Attribute::getName() const { return name; }
-    std::string Attribute::getDescription() const { return description; }
     int Attribute::getBaseValue() const { return baseValue; }
     const std::vector<rpg::Modifies>& Attribute::getModifies() const { return modifies; }
 
@@ -42,12 +37,8 @@ namespace stats
 
     nlohmann::json Attribute::toJson() const
     {
-        nlohmann::json j = {
-            {"id", id},
-            {"name", name},
-            {"description", description},
-            {"baseValue", baseValue}
-        };
+        nlohmann::json json = BaseDataObject::toJson();
+        json["baseValue"] = baseValue;
 
         if (!modifies.empty())
         {
@@ -61,24 +52,22 @@ namespace stats
                     {"ModifyValuePer", modify.modifyValuePer}
                 });
             }
-            j["modifies"] = modifiesJson;
+            json["modifies"] = modifiesJson;
         }
 
-        return j;
+        return json;
     }
     
 
-    Attribute Attribute::fromJson(const nlohmann::json& j)
+    Attribute Attribute::fromJson(const nlohmann::json& json)
     {
-        uint32_t id = j.at("id").get<uint32_t>();
-        std::string name = j.at("name").get<std::string>();
-        std::string description = j.at("description").get<std::string>();
-        int baseValue = j.at("baseValue").get<int>();
+        BaseDataObject base = BaseDataObject::fromJson(json);
+        int baseValue = json.at("baseValue").get<int>();
         std::vector<rpg::Modifies> modifies;
 
-        if (j.contains("modifies"))
+        if (json.contains("modifies"))
         {
-            for (const auto& modJson : j.at("modifies"))
+            for (const auto& modJson : json.at("modifies"))
             {
                 rpg::Modifies mod(
                     rpg::stringToDataType(modJson.at("targetType").get<std::string>()),
@@ -90,7 +79,9 @@ namespace stats
             }
         }
 
-        return Attribute(id, name, description, baseValue, modifies);
+        Attribute attribute(base.getID(), base.getName(), base.getDescription(), 
+                            baseValue, modifies);
+        return attribute;
     }
 
 } // namespace stats
