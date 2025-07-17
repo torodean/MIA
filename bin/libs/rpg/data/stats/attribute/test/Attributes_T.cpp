@@ -63,7 +63,7 @@ namespace stats
     }
 
     // Test get with uint32_t ID
-    TEST_F(Attributes_T, getById)
+    TEST_F(Attributes_T, getByID)
     {
         const AttributeData& data = attributes.get(1);
         EXPECT_EQ(data.getCurrent(), 100) << "get(1) should return AttributeData with current=100.";

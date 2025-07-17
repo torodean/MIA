@@ -185,6 +185,34 @@ namespace stats
 
         it->second.addModifier(mod, target);
     }
+    void Vitals::addModifier(const std::string& name, 
+                             rpg::Modifier<int>& mod,
+                             VitalDataTarget target)
+    {
+        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        addModifier(*vital, mod, target);
+    }
+    void Vitals::addModifier(uint32_t id, 
+                             rpg::Modifier<int>& mod,
+                             VitalDataTarget target)
+    {
+        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        addModifier(*vital, mod, target);
+    }
+    void Vitals::addModifier(const Vital& vital, 
+                             rpg::Modifier<int>& mod,
+                             VitalDataTarget target)
+    {
+        auto it = vitals.find(vital.getID());
+        if (it == vitals.end())
+        {
+            // The data is not found so add a default one, then update the current.
+            // TODO - setting the current here to baseMax... This may not always be best/desired.
+            add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+        }
+
+        it->second.addModifier(mod, target);
+    }
 
 
     // removeModifier(..) methods.

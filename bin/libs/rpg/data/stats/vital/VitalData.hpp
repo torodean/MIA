@@ -85,7 +85,7 @@ namespace stats
                   const std::vector<rpg::Modifier<int>>& maxMods,
                   const std::vector<rpg::Modifier<int>>& minMods);
            
-           /**
+        /**
          * Adds a modifier to either the maximum value and updates the corresponding value.
          *
          * @param mod[const rpg::Modifier<int>&] - The modifier to add.

@@ -15,6 +15,8 @@ namespace stats
     class Attributes
     {
     public:
+        /// Define a storage map for attribute ID to attribute data storage.
+        using AttributeMap = std::unordered_map<uint32_t, AttributeData>;
     
         /**
          * Default constructor.
@@ -135,10 +137,16 @@ namespace stats
          */
         static Attributes deserialize(const std::string& data);
         
+        /**
+         * This will return a reference to the complete AttributeMap, which stores the
+         * complete set of attribute data.
+         */
+        AttributeMap& getMap();
+        
     private:
     
         /// Map of attribute ID to their attribute data instance.
-        std::unordered_map<uint32_t, AttributeData> attributes;
+        AttributeMap attributes;
         
     }; // class Attributes
 } // namespace stats

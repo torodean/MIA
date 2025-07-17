@@ -326,5 +326,10 @@ namespace stats
 
         return result;
     }
+    
+    Attributes::AttributeMap& Attributes::getMap()
+    { 
+        return attributes; 
+    }
 } // namespace stats
 

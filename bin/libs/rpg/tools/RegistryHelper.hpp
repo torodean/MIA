@@ -36,11 +36,11 @@ namespace rpg
             }
             else if constexpr (std::is_same_v<SearchType, uint32_t>)
             {
-                object = RegistryType::getInstance().getById(identifier);
+                object = RegistryType::getInstance().getByID(identifier);
             }
             else if constexpr (std::is_same_v<SearchType, ObjType>)
             {
-                object = RegistryType::getInstance().getById(identifier.getID());
+                object = RegistryType::getInstance().getByID(identifier.getID());
             }
             if (!object)
             {

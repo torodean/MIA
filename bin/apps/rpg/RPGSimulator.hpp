@@ -55,6 +55,13 @@ namespace rpg_sim
     void spendCurrency(rpg::Player& player);
 
     /**
+     * Levels up the player by randomly increasing Intelligence and Constitution attributes.
+     * Updates the player's current attribute values and outputs the increases to the console.
+     * @param player[rpg::Player&] - The player whose attributes are increased.
+     */
+    void levelUp(rpg::Player& player);
+    
+    /**
      * Saves the game state and player data to a file..
      * @param player[rpg::Player&] - The player data.
      * @param saveFile[std::string&] - The file to save the data to.

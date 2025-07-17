@@ -4,7 +4,8 @@ set(RPG_Tools_SRC )
 set(RPG_Tools_INC 
     Registry.hpp
     Modifier.hpp
-    RegistryHelper.hpp )
+    RegistryHelper.hpp
+    ModifierApplicator.hpp )
 add_library(RPG_Tools_LIB INTERFACE)
 target_sources(RPG_Tools_LIB INTERFACE ${RPG_Tools_INC})
 target_link_libraries(RPG_Tools_LIB INTERFACE Framework_CORE RPG_Currencies_LIB RPG_Data_LIB )

@@ -72,16 +72,16 @@ namespace stats
     }
 
     // Tests retrieving vitals by ID, including handling of non-existent IDs.
-    TEST_F(VitalRegistry_T, GetById)
+    TEST_F(VitalRegistry_T, getByID)
     {
         VitalRegistry& registry = VitalRegistry::getInstance();
         registry.loadFromString(jsonData);
 
-        const Vital* vital = registry.getById(1);
+        const Vital* vital = registry.getByID(1);
         ASSERT_NE(vital, nullptr) << "Vital with ID 1 should be found";
         EXPECT_EQ(vital->getName(), "Health") << "Vital with ID 1 should be Health";
 
-        vital = registry.getById(999);
+        vital = registry.getByID(999);
         EXPECT_EQ(vital, nullptr) << "Non-existent ID should return nullptr";
     }
 

@@ -15,7 +15,7 @@ namespace stats
 {
     class AttributeRegistry : public rpg::Registry<AttributeRegistry, stats::Attribute>
     {
-    protected:
+    public:
         /**
          * Returns the JSON key for Attribute data array.
          * @return The string "ATTRIBUTE".
@@ -24,6 +24,8 @@ namespace stats
         {
             return "ATTRIBUTE";
         }
+        
+    protected:
 
         /**
          * Parses a JSON object into an Attribute.

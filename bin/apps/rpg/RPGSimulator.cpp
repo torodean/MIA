@@ -13,20 +13,35 @@
 #include "RPGSimulator.hpp"
 #include "Vitals.hpp"
 #include "Wallet.hpp"
+#include "Attributes.hpp"
+#include "ModifierApplicator.hpp"
 
 namespace rpg_sim
 {
     currency::CurrencyRegistry& currencyRegistry = currency::CurrencyRegistry::getInstance();
     stats::VitalRegistry& vitalRegistry = stats::VitalRegistry::getInstance();
     stats::AttributeRegistry& attributeRegistry = stats::AttributeRegistry::getInstance();
+    
+    namespace helper_methods
+    {
+        void updateModifiers(rpg::Player& player)
+        {
+            rpg::helper_methods::applyModifiers
+                <stats::AttributeRegistry, stats::VitalRegistry, 
+                 stats::Attributes, stats::Vitals>
+                 (attributeRegistry, vitalRegistry, player.getAttributes(), player.getVitals());
+        }
+    } // namespace helper_methods
+    
     const std::string healthName = "Health";
     const std::string manaName = "Mana";
     const std::string copper = "Copper Coin";
     const std::string silver = "Silver Coin";
+    const std::string constitutionName = "Constitution";
+    const std::string intelligenceName = "Intelligence";
 
     void setupSimulator(rpg::Player& player)
     {
-        // Initialize vitals
         int initialHealth = vitalRegistry.getByName(healthName)->getBaseMax();
         int minHealth = vitalRegistry.getByName(healthName)->getBaseMin();
         int maxHealth = initialHealth;
@@ -34,16 +49,23 @@ namespace rpg_sim
         int minMana = vitalRegistry.getByName(manaName)->getBaseMin();
         int maxMana = initialMana;
 
+        // Initialize vitals.
         player.getVitals().add(healthName, initialHealth, minHealth, maxHealth);
         player.getVitals().add(manaName, initialMana, minMana, maxMana);
-
         std::cout << "Vitals initialized: " << initialHealth << " Health, " << initialMana << " Mana.\n";
 
-        // Initialize wallet
+        // Initialize wallet.
         player.getWallet().add(copper, 100);
         player.getWallet().add(silver, 10);
-
         std::cout << "Wallet initialized: 100 Copper Coins, 10 Silver Coins.\n";
+        
+        // Initialize attributes.
+        player.getAttributes().add(constitutionName, 2);
+        player.getAttributes().add(intelligenceName, 2);
+        std::cout << "Attributes initialized: 2 constitution, 2 intelligence.\n";
+        
+        // Apply stat cross-modifiers.
+        helper_methods::updateModifiers(player);
     }
 
     void runSimulator(rpg::Player& player, std::string saveFile)
@@ -52,11 +74,15 @@ namespace rpg_sim
         {
             // Display player status
             std::cout << "\nPlayer Status:" << std::endl
-                      << "\t Health: " << player.getVitals().get(healthName).getCurrent() << std::endl
-                      << "\t Mana: " << player.getVitals().get(manaName).getCurrent() << std::endl
+                      << "\t Health: " << player.getVitals().get(healthName).getCurrent() << "/"
+                                       << player.getVitals().get(healthName).getCurrentMax() << std::endl
+                      << "\t Mana: " << player.getVitals().get(manaName).getCurrent() << "/"
+                                       << player.getVitals().get(manaName).getCurrentMax()<< std::endl
                       << "\t Silver: " << player.getWallet().get(silver).getQuantity() << std::endl
-                      << "\t Copper: " << player.getWallet().get(copper).getQuantity() << std::endl;
-            
+                      << "\t Copper: " << player.getWallet().get(copper).getQuantity() << std::endl
+                      << "\t Constitution: " << player.getAttributes().get(constitutionName).getCurrent() << std::endl
+                      << "\t Intelligence: " << player.getAttributes().get(intelligenceName).getCurrent() << std::endl;
+
 
             // Display menu
             std::cout << "\nAvailable Actions:\n"
@@ -64,7 +90,8 @@ namespace rpg_sim
                       << "2. Loot Treasure\n"
                       << "3. Rest\n"
                       << "4. Spend Currency\n"
-                      << "5. Save Game State\n"
+                      << "5. Level up\n"
+                      << "98. Save Game State\n"
                       << "99. Exit\n"
                       << "Enter integer choice: ";
 
@@ -91,6 +118,9 @@ namespace rpg_sim
                     spendCurrency(player);
                     break;
                 case 5:
+                    levelUp(player);
+                    break;
+                case 98:
                     savePlayerData(player, saveFile);
                     break;
                 case 99:
@@ -267,6 +297,24 @@ namespace rpg_sim
         {
             std::cout << "Player has no currency to spend.\n";
         }
+    }
+    
+    void levelUp(rpg::Player& player)
+    {
+        int intIncrease = 1 + (std::rand() % 3);         // +1-3
+        int conIncrease = 1 + (std::rand() % 3);         // +1-3
+
+        int currentInt = player.getAttributes().get(intelligenceName).getCurrent();
+        int currentCon = player.getAttributes().get(constitutionName).getCurrent();
+
+        player.getAttributes().update(intelligenceName, currentInt + intIncrease);
+        player.getAttributes().update(constitutionName, currentCon + conIncrease);
+
+        std::cout << "Leveled up! Intelligence increased by " << intIncrease
+                  << ", Constitution increased by " << conIncrease << ".\n";
+          
+        // Update cross-modifiers.
+        helper_methods::updateModifiers(player);
     }
 
     void savePlayerData(rpg::Player& player, std::string& saveFile)

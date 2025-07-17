@@ -169,7 +169,7 @@ namespace currency
     {
         for (const auto& [id, currencyContainer] : currencies) 
         {
-            auto currency = CurrencyRegistry::getInstance().getById(id);
+            auto currency = CurrencyRegistry::getInstance().getByID(id);
             os << "Currency: " << currency->getName()
                << ", Type: " << static_cast<int>(currency->getCurrencyType())
                << ", Quantity: " << currencyContainer.getQuantity()
@@ -217,7 +217,7 @@ namespace currency
             uint32_t id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
             uint32_t qty = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
 
-            const Currency* curr = CurrencyRegistry::getInstance().getById(id);
+            const Currency* curr = CurrencyRegistry::getInstance().getByID(id);
             if (curr) 
             {
                 container.add(*curr, qty);

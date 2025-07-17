@@ -82,16 +82,16 @@ namespace stats
     }
 
     // Tests retrieving attributes by ID, including handling of non-existent IDs.
-    TEST_F(AttributeRegistry_T, GetById)
+    TEST_F(AttributeRegistry_T, getByID)
     {
         AttributeRegistry& registry = AttributeRegistry::getInstance();
         registry.loadFromString(jsonData);
 
-        const Attribute* attribute = registry.getById(1);
+        const Attribute* attribute = registry.getByID(1);
         ASSERT_NE(attribute, nullptr) << "Attribute with ID 1 should be found";
         EXPECT_EQ(attribute->getName(), "Strength") << "Attribute with ID 1 should be Strength";
 
-        attribute = registry.getById(999);
+        attribute = registry.getByID(999);
         EXPECT_EQ(attribute, nullptr) << "Non-existent ID should return nullptr";
     }
 

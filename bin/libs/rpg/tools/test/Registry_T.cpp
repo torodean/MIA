@@ -59,9 +59,9 @@ protected:
     }
 };
 
-TEST_F(RegistryTest, GetById_ReturnsCorrectObject) 
+TEST_F(RegistryTest, getByID_ReturnsCorrectObject) 
 {
-    const auto* obj = rpg::DummyRegistry::getInstance().getById(1);
+    const auto* obj = rpg::DummyRegistry::getInstance().getByID(1);
     ASSERT_NE(obj, nullptr);
     EXPECT_EQ(obj->name, "Foo");
 }
@@ -73,9 +73,9 @@ TEST_F(RegistryTest, GetByName_ReturnsCorrectObject)
     EXPECT_EQ(obj->id, 2);
 }
 
-TEST_F(RegistryTest, GetById_InvalidIdReturnsNullptr) 
+TEST_F(RegistryTest, getByID_InvalidIdReturnsNullptr) 
 {
-    const auto* obj = rpg::DummyRegistry::getInstance().getById(999);
+    const auto* obj = rpg::DummyRegistry::getInstance().getByID(999);
     EXPECT_EQ(obj, nullptr);
 }
 

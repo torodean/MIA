@@ -18,6 +18,9 @@ namespace stats
     class Vitals
     {
     public:
+        /// Define a storage map for vital ID to vital data storage.
+        using VitalMap = std::unordered_map<uint32_t, VitalData>;
+    
         /**
          * Default constructor.
          */
@@ -81,17 +84,37 @@ namespace stats
                          uint32_t sourceID, 
                          rpg::ModifierSourceType sourceType, 
                          int32_t value,
-                         VitalDataTarget target);
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
         void addModifier(uint32_t id, 
                          uint32_t sourceID, 
                          rpg::ModifierSourceType sourceType, 
                          int32_t value,
-                         VitalDataTarget target);
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
         void addModifier(const Vital& vital, 
                          uint32_t sourceID, 
                          rpg::ModifierSourceType sourceType, 
                          int32_t value,
-                         VitalDataTarget target);
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
+                         
+        /**
+         * Adds a modifier to a vital's max or min value. This uses the target to determine 
+         * which value to modify.
+         *
+         * @param name[const std::string&] The name of the vital.
+         *        id[uint32_t] The ID of the vital.
+         *        vital[const Vital&] The Vital object.
+         * @param mod[const rpg::Modifier&] - The modifier to apply.
+         * @param target[pVitalDataTarget] - The target modifier type to modify.
+         */
+        void addModifier(const std::string& name, 
+                         rpg::Modifier<int>& mod,
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
+        void addModifier(uint32_t id, 
+                         rpg::Modifier<int>& mod,
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
+        void addModifier(const Vital& vital, 
+                         rpg::Modifier<int>& mod,
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
 
         /**
          * Removes a min or max modifier by source ID and type. This uses the target to 
@@ -161,11 +184,17 @@ namespace stats
          * @return A reconstructed Vitals instance.
          */
         static Vitals deserialize(const std::string& data);
+        
+        /**
+         * This will return a reference to the complete VitalMap, which stores the
+         * complete set of attribute data.
+         */
+        VitalMap& getMap();
 
     private:
     
         /// Map of vital ID to their Vital data instance.
-        std::unordered_map<uint32_t, VitalData> vitals;
+        VitalMap vitals;
         
     }; // class Vitals
 } // namespace stats

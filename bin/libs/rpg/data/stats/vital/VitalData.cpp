@@ -73,58 +73,53 @@ namespace stats
 
     void VitalData::addModifier(const rpg::Modifier<int>& mod, VitalDataTarget target, bool recalc)
     {
+        std::vector<rpg::Modifier<int>>* modifiers = nullptr;
+
         if (target == VitalDataTarget::CURRENT_MAX)
-        {
-            maxModifiers.push_back(mod);
-            
-            if (recalc)
-                recalculate(mod, target);
-        }
+            modifiers = &maxModifiers;
         else if (target == VitalDataTarget::CURRENT_MIN)
-        {
-            minModifiers.push_back(mod);
-            
-            if (recalc)
-                recalculate(mod, target);
-        }
+            modifiers = &minModifiers;
+        else
+            return;
+
+        auto it = std::find(modifiers->begin(), modifiers->end(), mod);
+        if (it != modifiers->end())
+            removeModifier(mod, target); // Replace existing
+
+        modifiers->push_back(mod);
+
+        if (recalc)
+            recalculate(mod, target);
     }
 
 
     void VitalData::removeModifier(const rpg::Modifier<int>& mod, VitalDataTarget target)
     {
+        std::vector<rpg::Modifier<int>>* modifiers = nullptr;
+
+        if (target == VitalDataTarget::CURRENT_MAX)
+            modifiers = &maxModifiers;
+        else if (target == VitalDataTarget::CURRENT_MIN)
+            modifiers = &minModifiers;
+        else
+            return;
+
         auto match = [&](const rpg::Modifier<int>& m) {
             return m.sourceID == mod.sourceID && m.source == mod.source;
         };
 
-        if (target == VitalDataTarget::CURRENT_MAX)
+        for (auto it = modifiers->begin(); it != modifiers->end(); )
         {
-            for (auto it = maxModifiers.begin(); it != maxModifiers.end(); )
+            if (match(*it))
             {
-                if (match(*it))
-                {
-                    rpg::Modifier<int> modOut = mod;
-                    modOut.value = 0 - it->value; // Negative because removing it.
-                    it = maxModifiers.erase(it);
-                    recalculate(modOut, target);
-                }
-                else
-                    ++it;
+                rpg::Modifier<int> modOut = mod;
+                modOut.value = -it->value;
+                it = modifiers->erase(it);
+                recalculate(modOut, target);
             }
-            recalculate(mod, target);
-        }
-        else if (target == VitalDataTarget::CURRENT_MIN)
-        {
-            for (auto it = minModifiers.begin(); it != minModifiers.end(); )
+            else
             {
-                if (match(*it))
-                {
-                    rpg::Modifier<int> modOut = mod;
-                    modOut.value = 0 - it->value; // Negative because removing it.
-                    it = minModifiers.erase(it);
-                    recalculate(modOut, target);
-                }
-                else
-                    ++it;
+                ++it;
             }
         }
     }
