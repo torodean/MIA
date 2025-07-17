@@ -60,7 +60,16 @@
             "id": 3,
             "name": "Intelligence",
             "description": "Mental acuity, enhances spellcasting and problem-solving.",
-            "baseValue": 1
+            "baseValue": 1,
+            "modifies" : 
+            [
+                {
+                    "targetType" : "VITAL",
+                    "targetName" : "Mana",
+                    "ModifyType" : "ADD",
+                    "ModifyValuePer" : 5
+                }
+            ]
         },
         {
             "id": 4,
