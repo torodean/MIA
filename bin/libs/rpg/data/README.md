@@ -3,23 +3,19 @@
 This folder contains the various data storage classes for the rpg elements.
   
 ## Structure
-- **armor/**
-  Contains the various armor types.
+- **armor/**: Contains the various armor types.
   
-- **classes/**
-  Contains the various classes.
+- **classes/**: Contains the various classes.
   
-- **currencies/**
-  Contains the various currency related classes.
+- **currencies/**: Contains the various currency related classes.
 
-- **items/**
-  Contains item classes.
+- **items/**: Contains item classes.
 
-- **professions/**
-  Contains the various professions.
+- **professions/**: Contains the various professions.
 
-- **stats/**
-  Contains the various stat-related classes.
+- **progression/**: Contains the various values to keep track of progression trackers.
+
+- **stats/**: Contains the various stat-related classes. 
   
   
 ## DataLoader

@@ -1,6 +1,7 @@
 
 add_subdirectory( currencies )
 add_subdirectory( stats )
+add_subdirectory( progression )
 add_subdirectory( player )
 
 # Create the RPG_Data_LIB
