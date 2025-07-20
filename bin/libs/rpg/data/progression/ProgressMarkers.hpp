@@ -47,11 +47,11 @@ namespace progress
          * @param name[const std::string&] - The name of the progress marker (e.g., "gold", "silver").
          *        id[uint32_t] - The ID of the progress marker.
          *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
-         * @param value[uint32_t] - The value to add.
+         * @param value[unsigned int] - The value to add.
          */
-        void add(const std::string& name, uint32_t value);
-        void add(uint32_t id, uint32_t value);
-        void add(const ProgressMarker& progressMarker, uint32_t value);
+        void add(const std::string& name, unsigned int value);
+        void add(uint32_t id, unsigned int value);
+        void add(const ProgressMarker& progressMarker, unsigned int value);
 
         /**
          * Removes a specified progress marker from the container.
@@ -85,7 +85,7 @@ namespace progress
          * @param name[const std::string&] - The name of the progress marker (e.g., "gold", "silver").
          *        id[uint32_t] - The ID of the progress marker.
          *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
-         * @param value[uint32_t] - The required value.
+         * @param value[unsigned int] - The required value.
          * @return True if the container has enough; false otherwise.
          */
         bool has(const std::string& name, unsigned int value) const;
@@ -100,10 +100,10 @@ namespace progress
         
         /**
          * Serializes the contents of the ProgressMarkers to a compact string.
-         * The serialized format is enclosed between unique [WALLET_BEGIN] and [WALLET_END] markers
+         * The serialized format is enclosed between unique [PROGRESS_BEGIN] and [PROGRESS_END] markers
          * for easy identification within a larger data stream.
          *
-         * Format: [WALLET_BEGIN]id1:qty1;id2:qty2;...[WALLET_END]
+         * Format: [PROGRESS_BEGIN]id1:qty1;id2:qty2;...[PROGRESS_END]
          *
          * @return A string representing the serialized state of the container.
          */
@@ -111,7 +111,7 @@ namespace progress
         
         /**
          * Deserializes a ProgressMarkers from a string containing serialized data.
-         * The method searches for a block enclosed between [WALLET_BEGIN] and [WALLET_END],
+         * The method searches for a block enclosed between [PROGRESS_BEGIN] and [PROGRESS_END],
          * then reconstructs the container from the progress marker ID and value pairs.
          *
          * @param data A string containing the serialized container, possibly among other data.

@@ -200,7 +200,13 @@ namespace stats
 
     void Attributes::dump(std::ostream& os) const
     {
-        // TODO
+        for (const auto& [id, attributeData] : dataStore) 
+        {
+            auto attribute = AttributeRegistry::getInstance().getByID(id);
+            os << "Attribute: " << attribute->getName()
+               << ", getCurrent: " << attributeData.getCurrent()
+               << "\n";
+        }
     }
 
     std::string Attributes::serialize() const

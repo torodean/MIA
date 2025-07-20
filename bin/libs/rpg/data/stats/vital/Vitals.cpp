@@ -295,7 +295,15 @@ namespace stats
 
     void Vitals::dump(std::ostream& os) const
     {
-        // TODO
+        for (const auto& [id, vitalData] : dataStore) 
+        {
+            auto vital = VitalRegistry::getInstance().getByID(id);
+            os << "Vital: " << vital->getName()
+               << ", Min: " << vitalData.getCurrentMin()
+               << ", Max: " << vitalData.getCurrentMax()
+               << ", Current: " << vitalData.getCurrent()
+               << "\n";
+        }
     }
     
     

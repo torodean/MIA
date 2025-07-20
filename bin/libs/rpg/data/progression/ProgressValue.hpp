@@ -19,10 +19,10 @@ namespace progress
         ProgressValue() = default;
         
         /// The main constructor.
-        ProgressValue(uint32_t qty) : value(qty) {}
+        ProgressValue(unsigned int qty) : value(qty) {}
         
         /// Getter for the value.
-        unsigned int getValue() const { return value; }
+        unsigned int get() const { return value; }
         
         /// Adjusters for the value.
         void set(unsigned int val) { value = val; }

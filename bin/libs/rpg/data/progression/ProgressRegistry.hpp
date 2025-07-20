@@ -16,7 +16,7 @@ namespace progress
     protected:
     
         /// Returns the JSON key for the class's data array.
-        std::string getJsonKey() const override { return "CURRENCY"; }
+        std::string getJsonKey() const override { return "PROGRESS"; }
     
         /**
          * Parses a JSON object into a ProgressMarker instance.
