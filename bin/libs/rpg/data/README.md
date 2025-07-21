@@ -1,4 +1,4 @@
-# RPG - data folder
+# RPG -> Data
 
 This folder contains the various data storage classes for the rpg elements.
   
