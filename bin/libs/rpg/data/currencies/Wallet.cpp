@@ -183,8 +183,8 @@ namespace currency
     {
         std::ostringstream oss;
         oss << "[WALLET_BEGIN]";
-        for (const auto& [id, cq] : dataStore) {
-            oss << id << ':' << cq.getQuantity() << ';';
+        for (const auto& [id, currencyContainer] : dataStore) {
+            oss << id << ':' << currencyContainer.getQuantity() << ';';
         }
         oss << "[WALLET_END]";
         return oss.str();

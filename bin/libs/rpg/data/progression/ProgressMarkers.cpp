@@ -171,13 +171,50 @@ namespace progress
 
     std::string ProgressMarkers::serialize() const
     {
-        return "";
+        std::ostringstream oss;
+        oss << "[PROGRESS_BEGIN]";
+        for (const auto& [id, progressValue] : dataStore) {
+            oss << id << ':' << progressValue.get() << ';';
+        }
+        oss << "[PROGRESS_END]";
+        return oss.str();
     }
     
 
     ProgressMarkers ProgressMarkers::deserialize(const std::string& data)
     {
-        return ProgressMarkers();
+        size_t start = data.find("[PROGRESS_BEGIN]");
+        size_t end = data.find("[PROGRESS_END]", start);
+
+        if (start == std::string::npos || end == std::string::npos) 
+        {
+            throw std::invalid_argument("ProgressMarkers block not found.");
+        }
+
+        start += std::string("[PROGRESS_BEGIN]").length();
+        std::string payload = data.substr(start, end - start);
+
+        ProgressMarkers progressMarkers;
+        std::istringstream iss(payload);
+        std::string token;
+
+        while (std::getline(iss, token, ';')) 
+        {
+            if (token.empty()) continue;
+            size_t sep = token.find(':');
+            if (sep == std::string::npos) continue;
+
+            uint32_t id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
+            uint32_t val = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
+
+            const ProgressMarker* progressMarker = ProgressRegistry::getInstance().getByID(id);
+            if (progressMarker) 
+            {
+                progressMarkers.add(*progressMarker, val);
+            }
+        }
+
+        return progressMarkers;
     }
     
 } // namespace progress
