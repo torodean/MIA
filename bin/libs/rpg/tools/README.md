@@ -15,6 +15,18 @@ Contains data for representing modifiers to vital values in the RPG system.
 
 ---
 
+## Modifies
+
+Defines data structures and utilities for representing and applying modifications to other RPG objects.
+
+- Declares the `ModifyType` enum class to represent types of modifications (e.g., `ADD_MAX`, `MULTIPLY`, `SET`).
+- Provides string conversion functions for `ModifyType`.
+- Implements the Modifies struct to represent a modification with fields for target type, name, modification type, and per-unit value.
+- Supports serialization and deserialization of Modifies instances to and from string representations.
+- Overloads the stream insertion operator for readable output formatting.
+
+---
+
 ## Registry
 
 A templated base class for managing registries of game objects in the MIA RPG system.
@@ -24,3 +36,24 @@ A templated base class for managing registries of game objects in the MIA RPG sy
 - Provides retrieval of objects by ID or name.
 - Requires derived classes to implement JSON parsing and object-to-string conversion.
 - Maintains internal maps of objects indexed by ID and name.
+
+---
+
+## RegistryHelper
+
+Contains reusable helper methods for interacting with registry-managed RPG objects.
+
+- Provides the templated `getFromRegistry` function, which validates and retrieves objects from a registry using an identifier (ID, name, or object instance).
+- Throws an exception with `Undefined_RPG_Value` if the object is not found.
+- Centralizes and simplifies common registry access logic across the RPG system.
+
+---
+
+## ModifierApplicator
+
+Templated utility for applying modifiers from source objects (e.g., attributes) to target objects (e.g., vitals) based on declared Modifies data.
+
+- Iterates through source storage data, retrieves associated modification rules, and computes their effect.
+- Applies `ADD_MAX` type modifiers using the Modifier struct and adds them to the appropriate target.
+- Designed for general use with registry-backed source/target pairs and their runtime storage types.
+- Throws `MIAException` if referenced source or target objects are missing.

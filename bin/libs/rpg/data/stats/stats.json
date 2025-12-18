@@ -1,5 +1,5 @@
 {
-    "vital": 
+    "VITAL": 
     [
         {
             "id": 1,
@@ -42,7 +42,7 @@
             "baseMin": 0
         }
     ],
-    "attribute": 
+    "ATTRIBUTE": 
     [
         {
             "id": 1,
@@ -60,7 +60,16 @@
             "id": 3,
             "name": "Intelligence",
             "description": "Mental acuity, enhances spellcasting and problem-solving.",
-            "baseValue": 1
+            "baseValue": 1,
+            "modifies" : 
+            [
+                {
+                    "targetType" : "VITAL",
+                    "targetName" : "Mana",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 5
+                }
+            ]
         },
         {
             "id": 4,
@@ -68,12 +77,14 @@
             "description": "Endurance and resilience, boosts health and stamina.",
             "baseValue": 1,
             "modifies" : 
-            {
-                "targetType" : "vital",
-                "targetName" : "Health",
-                "ModifyType" : "ADD",
-                "ModifyValuePer" : 5
-            }
+            [
+                {
+                    "targetType" : "VITAL",
+                    "targetName" : "Health",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 5
+                }
+            ]
         },
         {
             "id": 5,

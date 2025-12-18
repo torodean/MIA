@@ -1,0 +1,15 @@
+{
+    "PROGRESS": 
+    [
+        {
+            "id": 1,
+            "name": "Experience",
+            "description": "A core leveling metric."
+        },
+        {
+            "id": 2,
+            "name": "Defense Skill",
+            "description": "A tracker for the players skill in general defense tactics."
+        }
+    ]
+}

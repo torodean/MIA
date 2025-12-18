@@ -89,7 +89,7 @@ namespace rpg
          * @param id The unique ID.
          * @return Pointer to the object, or nullptr if not found.
          */
-        const T* getById(uint32_t id) const
+        const T* getByID(uint32_t id) const
         {
             auto it = objects.find(id);
             return it != objects.end() ? &it->second : nullptr;
@@ -103,7 +103,7 @@ namespace rpg
         const T* getByName(const std::string& name) const
         {
             auto it = nameToId.find(name);
-            return it != nameToId.end() ? getById(it->second) : nullptr;
+            return it != nameToId.end() ? getByID(it->second) : nullptr;
         }
 
         /**

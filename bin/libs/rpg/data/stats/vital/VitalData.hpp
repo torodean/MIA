@@ -52,20 +52,14 @@ namespace stats
      */
     struct VitalData
     {
-        int current{0};   ///< Current value.
-        int currentMin;   ///< Current minimum value (usually 0).
-        int currentMax;   ///< Current maximum value.
-        std::vector<rpg::Modifier<int>> maxModifiers; ///< Modifiers affecting max value.
-        std::vector<rpg::Modifier<int>> minModifiers; ///< Modifiers affecting min value.
-
         /**
          * Constructs a VitalData object with explicit values.
          * 
-         * @param c Initial current value.
+         * @param curr Initial current value.
          * @param cMin Initial minimum value.
          * @param cMax Initial maximum value.
          */
-        VitalData(int c, int cMin, int cMax);
+        VitalData(int curr, int cMin, int cMax);
     
         /**
          * Constructs a VitalData object based on the vital type.
@@ -79,25 +73,36 @@ namespace stats
         /**
          * Constructs a VitalData object with all values explicitly provided.
          * 
-         * @param c Initial current value.
+         * @param curr Initial current value.
          * @param cMin Initial minimum value.
          * @param cMax Initial maximum value.
          * @param maxMods Modifiers affecting the currentMax value.
          * @param minMods Modifiers affecting the currentMin value.
          */
-        VitalData(int c,
+        VitalData(int curr,
                   int cMin,
                   int cMax,
                   const std::vector<rpg::Modifier<int>>& maxMods,
                   const std::vector<rpg::Modifier<int>>& minMods);
-            
+           
+        /**
+         * Adds a modifier to either the maximum value and updates the corresponding value.
+         *
+         * @param mod[const rpg::Modifier<int>&] - The modifier to add.
+         * @param recalc[bool] - true if a recalculation is requested. Should typically only be false
+         *     for deserialization.
+         */
+        void addMaxModifier(const rpg::Modifier<int>& mod, bool recalc = true);
+         
         /**
          * Adds a modifier to either the minimum or maximum value and updates the corresponding value.
          *
-         * @param mod The modifier to add.
-         * @param target Enum indicating whether to modify currentMin or currentMax.
+         * @param mod[const rpg::Modifier<int>&] - The modifier to add.
+         * @param target[VitalDataTarget] - Enum indicating whether to modify currentMin or currentMax.
+         * @param recalc[bool] - true if a recalculation is requested. Should typically only be false
+         *     for deserialization.
          */
-        void addModifier(const rpg::Modifier<int>& mod, VitalDataTarget target);
+        void addModifier(const rpg::Modifier<int>& mod, VitalDataTarget target, bool recalc = true);
 
         /**
          * Removes a modifier from either the minimum or maximum value and updates the corresponding value.
@@ -107,7 +112,64 @@ namespace stats
          */
         void removeModifier(const rpg::Modifier<int>& mod, VitalDataTarget target);
         
+        /**
+         * Returns the current value of the vital.
+         *
+         * @return[int] - The current value of the vital.
+         */
+        int getCurrent() const { return current; }
+
+        /**
+         * Sets the current value of the vital.
+         *
+         * @param curr[int] - The new current value.
+         */
+        void setCurrent(int curr) { current = std::clamp(curr, currentMin, currentMax); }
+
+        /**
+         * Returns the current minimum value of the vital.
+         *
+         * @return[int] - The current minimum value of the vital.
+         */
+        int getCurrentMin() const { return currentMin; }
+
+        /**
+         * Sets the current minimum value of the vital.
+         *
+         * @param cMin[int] - The new minimum value.
+         */
+        void setCurrentMin(int cMin) { currentMin = cMin; }
+
+        /**
+         * Returns the current maximum value of the vital.
+         *
+         * @return[int] - The current maximum value of the vital.
+         */
+        int getCurrentMax() const { return currentMax; }
+
+        /**
+         * Sets the current maximum value of the vital.
+         *
+         * @param cMax[int] - The new maximum value.
+         */
+        void setCurrentMax(int cMax) { currentMax = cMax; }
+        
+        /**
+         * Returns the modifiers for the specified target.
+         *
+         * @param target[VitalDataTarget] - Enum indicating which modifier vector to return (CURRENT_MIN or CURRENT_MAX).
+         * @return [const std::vector<rpg::Modifier<int>>&] - The modifier vector for the specified target.
+         * @throws [std::invalid_argument] If the target is UNKNOWN or CURRENT.
+         */
+        const std::vector<rpg::Modifier<int>>& getModifiers(VitalDataTarget target) const;
+        
     private:
+    
+        int current{0};   ///< Current value.
+        int currentMin;   ///< Current minimum value (usually 0).
+        int currentMax;   ///< Current maximum value.
+        std::vector<rpg::Modifier<int>> maxModifiers; ///< Modifiers affecting max value.
+        std::vector<rpg::Modifier<int>> minModifiers; ///< Modifiers affecting min value.
     
         /**
          * Recalculates either the currentMin or currentMax value after a modifier is added or removed.

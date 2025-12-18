@@ -125,8 +125,7 @@ This section details the configuration strategy for the MIA RPG system, focusing
 \subsection{Vision}
 The configuration system uses JSON files in code folders to define example items, vitals, loot tables, and other objects for testing and development. These will be compressed into a single, MPQ-like format for game releases, with tools to view and edit the archive, supporting editor-driven game creation. Server-side database features will store character-specific data and save states, with consideration for including item definitions to prevent tampering. A file-based ``saveToFile'' and ``loadFromFile'' system will support player data storage during testing. These files can even be stored locally for the release game, and hased values can be checked against the server-side saves to detect tampering and restore changed or damaged files.
 
-\subsection{Configuration Design}
-The configuration system is structured to support the following objectives, ensuring simplicity, editor compatibility, and MMO-scale robustness.
+The configuration system will be structured to support the following objectives, ensuring simplicity, editor compatibility, and MMO-scale robustness.
 
 \begin{enumerate}
     \item \textbf{JSON-Based Configuration for Testing}
@@ -228,6 +227,56 @@ bool Player::loadFromFile(const std::string& path);
                 \end{itemize}
         \end{itemize}
 \end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Configuration Design}
+
+The configuration system will begin with defining various objects within a JSON configuration file. Each object will contain a unique ID, name, and description which will serve as an identifier for the object itself. The remaining fields will depend on the object's purpose and function. In order to have multiple defined types within the JSON files, an object type will be declared as well, to separate the various types. 
+\begin{lstlisting}[style=htmlstyle]
+{
+	"OBJECTTYPE": 
+	[
+	{
+		"id": 1,
+		"name": "object name 1",
+		"description": "object description 1",
+		// Type specific values...
+	},
+	{
+		"id": 2,
+		"name": "object name 2",
+		"description": "object description 2",
+		// Type specific values...
+	},
+	// Other values...
+	]
+}
+\end{lstlisting}
+These object types will have associated data classes which match the data fields to store each type. These types will define the main objects of the RPG system and will need continual referencing to gather their data and use their values. Since these are configurable, they are not deterministic (except for their structure) at compile time. For this reason, a registry will be designed for each type which will load in all of the configurable values defined in the JSON files and store them in a unique singleton instance. This will provide a single location to gather this information.
+
+The various types all will potentially store in different ways. For example, a vital may store some current value, as well as some min or max, whereas a currency may just be a single value. A separate storage class for each type will need designed which defines the stored values associated with it.
+
+
+
+
+
+
+
+
+
 
 
 

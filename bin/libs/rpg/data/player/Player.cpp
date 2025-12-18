@@ -19,6 +19,7 @@ namespace rpg
         {
             return false;
         }
+        file << attributes.serialize() << "\n";
         file << vitals.serialize() << "\n";
         file << wallet.serialize() << "\n";
         file.close();
@@ -42,6 +43,7 @@ namespace rpg
         {
             vitals = stats::Vitals::deserialize(data);
             wallet = currency::Wallet::deserialize(data);
+            attributes = stats::Attributes::deserialize(data);
         } 
         catch (const std::exception&) 
         {

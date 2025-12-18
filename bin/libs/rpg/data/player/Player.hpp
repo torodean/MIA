@@ -9,6 +9,7 @@
 #include <string>
 #include "Wallet.hpp"
 #include "Vitals.hpp"
+#include "Attributes.hpp"
 
 namespace rpg
 {
@@ -27,10 +28,16 @@ namespace rpg
         currency::Wallet& getWallet() { return wallet; }
         
         /**
-         * Gets the player's vitasl.
-         * @return Reference to the Vitals.
+         * Gets the player's vitals.
+         * @return Reference to the vitals.
          */
         stats::Vitals& getVitals() { return vitals; }
+        
+        /**
+         * Gets the player's attributes.
+         * @return Reference to the attributes.
+         */
+        stats::Attributes& getAttributes() { return attributes; }
 
         /**
          * Writes the contents of the player's data to a file.
@@ -49,7 +56,8 @@ namespace rpg
         bool loadFromFile(const std::string& filename);
 
     private:
-        currency::Wallet wallet;  ///< The player's currency container.
-        stats::Vitals vitals;     ///< The player's vitals.
+        currency::Wallet wallet;      ///< The player's currency container.
+        stats::Attributes attributes; ///< The player's attributes.
+        stats::Vitals vitals;         ///< The player's vitals.
     };
 } // namespace rpg

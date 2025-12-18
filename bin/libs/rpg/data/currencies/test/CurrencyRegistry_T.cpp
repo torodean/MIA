@@ -16,7 +16,7 @@ class CurrencyRegistry_T : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        jsonData = R"({ "currency" : [
+        jsonData = R"({ "CURRENCY" : [
             {
                 "id": 1,
                 "name": "Gold",
@@ -52,7 +52,7 @@ protected:
 
 TEST_F(CurrencyRegistry_T, LoadFromFileAndRetrieveById) 
 {
-    const Currency* gold = registry->getById(1);
+    const Currency* gold = registry->getByID(1);
     ASSERT_NE(gold, nullptr);
     EXPECT_EQ(gold->getName(), "Gold");
     EXPECT_EQ(gold->getDescription(), "Primary currency");

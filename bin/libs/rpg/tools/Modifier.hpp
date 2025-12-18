@@ -6,8 +6,10 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <cstdint>
+#include <iostream>
 
 namespace rpg
 {
@@ -69,32 +71,32 @@ namespace rpg
     template<typename T>
     struct Modifier
     {
-        uint32_t sourceId;         ///< ID of the source (e.g., attribute ID, item ID).
+        uint32_t sourceID;         ///< ID of the source (e.g., attribute ID, item ID).
         ModifierSourceType source; ///< Type of source (e.g., "attribute", "item", "buff").
         T value;                   ///< The modifier value (positive or negative, depending on type).
 
         Modifier(uint32_t id, ModifierSourceType src, T val)
-            : sourceId(id), source(src), value(val) {}
+            : sourceID(id), source(src), value(val) {}
             
         /**
          * Equality operator for Modifier.
          *
-         * Compares two Modifier objects for equality based on their sourceId and source fields.
+         * Compares two Modifier objects for equality based on their sourceID and source fields.
          * The value field is intentionally excluded from the comparison.
          *
          * @param other The Modifier object to compare with.
-         * @return true if both sourceId and source are equal; false otherwise.
+         * @return true if both sourceID and source are equal; false otherwise.
          */
         bool operator==(const Modifier<T>& other) const
         {
-            return sourceId == other.sourceId && source == other.source;
+            return sourceID == other.sourceID && source == other.source;
         }
 
     };
             
     /**
      * Stream insertion operator for Modifier.
-     * Formats the Modifier as: "Modifier{sourceId=<id>, source=<source>, value=<value>}".
+     * Formats the Modifier as: "Modifier{sourceID=<id>, source=<source>, value=<value>}".
      *
      * @param os The output stream to write to.
      * @param modifier The Modifier object to serialize.
@@ -103,7 +105,7 @@ namespace rpg
     template<typename T>
     std::ostream& operator<<(std::ostream& os, const Modifier<T>& modifier)
     {
-        os << "Modifier{sourceId=" << modifier.sourceId
+        os << "Modifier{sourceID=" << modifier.sourceID
            << ", source=" << modifierSourceTypeToString(modifier.source)
            << ", value=" << modifier.value << "}";
         return os;

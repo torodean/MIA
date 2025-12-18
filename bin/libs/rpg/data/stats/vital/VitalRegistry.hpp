@@ -16,7 +16,10 @@ namespace stats
     protected:
     
         /// Returns the JSON key for the class's data array.
-        std::string getJsonKey() const override { return "vital"; }
+        std::string getJsonKey() const override 
+        { 
+            return "VITAL"; 
+        }
     
         /**
          * Parses a JSON object into a Vital instance.
@@ -26,15 +29,7 @@ namespace stats
          */
         Vital parseJson(const nlohmann::json& json) override
         {
-            auto id = json.at("id").get<uint32_t>(); // use at() to require id
-            auto name = json.at("name").get<std::string>();
-            auto description = json.value("description", "");
-            auto type = stringToVitalType(json.value("type", "UNKNOWN"));
-            auto BaseMin = json.value("BaseMin", 0);
-            auto BaseMax = json.value("BaseMax", 100);
-
-            Vital vital(id, name, description, type, BaseMin, BaseMax);
-            return vital;
+            return stats::Vital::fromJson(json);
         }
         
         /**
