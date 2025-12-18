@@ -7,5 +7,11 @@ add_subdirectory( old_game_tools )
 add_subdirectory( workout )
 add_subdirectory( MIASequencer )
 add_subdirectory( mia_original )
-add_subdirectory( rpg )
+
+# OS-Specific Path Configuration
+if(WIN32 OR CYGWIN)
+    message(STATUS "rpg app not yet supported on Windows.")
+elseif(UNIX AND NOT APPLE)
+    add_subdirectory( rpg )
+endif()
 
