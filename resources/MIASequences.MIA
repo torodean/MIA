@@ -54,3 +54,14 @@ CLICK=LEFTCLICK
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
 ENDOFSEQUENCE
+
+
+
+###################################################
+# Contrinual Mouse Scrolling
+###################################################
+SEQUENCENAME=continuous_scrolling
+DELAY=150
+LISTEN=1
+PRESS=SCROLL_DOWN
+ENDOFSEQUENCE

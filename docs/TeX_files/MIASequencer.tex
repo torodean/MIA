@@ -121,7 +121,7 @@ The below table shows the valid action keywords and their valid values.
 
 \subsection{SpecialButton Enumeration} \label{SpecialButton-Enumeration}
 
-The \texttt{SpecialButton} enumeration defines a set of special, non-alphanumeric button types. These typically correspond to keys that cannot be represented as single characters and are used in scenarios where such special key input needs to be identified or handled explicitly.
+The \texttt{SpecialButton} enumeration defines a set of special, non-alphanumeric button types. These typically correspond to keys that cannot be represented as single characters and are used in scenarios where such special key input needs to be identified or handled explicitly. Some of these also refer to mouse input which does not fall nicely into the category of a mouse-press (such as using the scroll wheel).
 
 \begin{itemize}
 	\item \textbf{UNKNOWN} \hfill \\
@@ -134,10 +134,16 @@ The \texttt{SpecialButton} enumeration defines a set of special, non-alphanumeri
 	Represents the Tab key, used to move focus or navigate between input fields.
 	
 	\item \textbf{SPACE} \hfill \\
-	Represents the Spacebar key, used to insert a space character or activate UI elements.
+	Represents the Space-bar key, used to insert a space character or activate UI elements.
 	
 	\item \textbf{NUM\_LOCK} \hfill \\
 	Represents the Num Lock key, which toggles the numeric keypad input mode.
+	
+	\item \textbf{SCROLL\_UP} \hfill \\
+	Represents a single upward mouse wheel scroll action.
+	
+	\item \textbf{SCROLL\_DOWN} \hfill \\
+	Represents a single downward mouse wheel scroll action.
 \end{itemize}
 
 \noindent Additional special button types may be added to this enumeration as needed to support more complex input scenarios.
