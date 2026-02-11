@@ -77,7 +77,9 @@ namespace virtual_keys
             ENTER,
             TAB,
             SPACE,
-            NUM_LOCK
+            NUM_LOCK,
+			SCROLL_DOWN,
+			SCROLL_UP
         };
         
         /**
@@ -135,6 +137,22 @@ namespace virtual_keys
     
         void leftclick(bool verboseMode = false);        
         void rightclick(bool verboseMode = false);
+		
+		/**
+		 * Simulates a single mouse scroll wheel step upward
+		 * (away from the user).
+		 *
+		 * @param verboseMode If true, prints the action to stdout.
+		 */
+		void scrollWheelUp(bool verboseMode);
+
+		/**
+		 * Simulates a single mouse scroll wheel step downward
+		 * (toward the user).
+		 *
+		 * @param verboseMode If true, prints the action to stdout.
+		 */
+		void scrollWheelDown(bool verboseMode);
     
         void moveMouseTo(int x, int y);
     

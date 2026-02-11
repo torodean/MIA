@@ -60,7 +60,7 @@ namespace virtual_keys
             case VirtualKeyStrokes::ClickType::LEFT_CLICK:
                 return "LEFT_CLICK"; 
             case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
-                return "RIGHT_CLICK"; 
+                return "RIGHT_CLICK";
             case VirtualKeyStrokes::ClickType::MIDDLE_CLICK:
                 return "MIDDLE_CLICK"; 
             default:
@@ -98,7 +98,11 @@ namespace virtual_keys
             case VirtualKeyStrokes::SpecialButton::SPACE:
                 return "SPACE";
             case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
-                return "NUM_LOCK"; 
+                return "NUM_LOCK";
+            case VirtualKeyStrokes::SpecialButton::SCROLL_DOWN:
+                return "SCROLL_DOWN";
+            case VirtualKeyStrokes::SpecialButton::SCROLL_UP:
+                return "SCROLL_UP";
             default:
                 return "UNKNOWN"; 
         }
@@ -120,6 +124,10 @@ namespace virtual_keys
             return SpecialButton::SPACE;
         else if (input == "num_lock" || input == "numlock")
             return SpecialButton::NUM_LOCK;
+        else if (input == "scroll_down" || input == "scrolldown")
+            return SpecialButton::SCROLL_DOWN;
+        else if (input == "scroll_up" || input == "scrollup")
+            return SpecialButton::SCROLL_UP;
         else
             return SpecialButton::UNKNOWN;
     }
@@ -194,6 +202,56 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Num_Lock", 0);
     #endif
     }
+	
+	void VirtualKeyStrokes::scrollWheelUp(bool verboseMode)
+	{
+	#if defined(IS_WINDOWS)
+		// Scroll wheel up
+		ip.type = INPUT_MOUSE;
+		ip.mi.dwFlags = MOUSEEVENTF_WHEEL;
+		ip.mi.mouseData = WHEEL_DELTA; // positive = wheel up
+		ip.mi.dx = 0;
+		ip.mi.dy = 0;
+		ip.mi.time = 0;
+		ip.mi.dwExtraInfo = 0;
+
+		SendInput(1, &ip, sizeof(INPUT));
+
+		if (verboseMode)
+			std::cout << "SCROLL_UP" << std::endl;
+
+		defaultSleep();
+
+	#elif defined(__linux__)
+		// Button 4 = scroll up
+		xdo_click_window(xdo, CURRENTWINDOW, 4);
+	#endif
+	}
+
+	void VirtualKeyStrokes::scrollWheelDown(bool verboseMode)
+	{
+	#if defined(IS_WINDOWS)
+		// Scroll wheel down
+		ip.type = INPUT_MOUSE;
+		ip.mi.dwFlags = MOUSEEVENTF_WHEEL;
+		ip.mi.mouseData = -WHEEL_DELTA; // negative = wheel down
+		ip.mi.dx = 0;
+		ip.mi.dy = 0;
+		ip.mi.time = 0;
+		ip.mi.dwExtraInfo = 0;
+
+		SendInput(1, &ip, sizeof(INPUT));
+
+		if (verboseMode)
+			std::cout << "SCROLL_DOWN" << std::endl;
+
+		defaultSleep();
+
+	#elif defined(__linux__)
+		// Button 5 = scroll down
+		xdo_click_window(xdo, CURRENTWINDOW, 5);
+	#endif
+	}
     
     
     void VirtualKeyStrokes::enter(bool verboseMode)
@@ -593,6 +651,12 @@ namespace virtual_keys
                 break;
             case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
                 numlock(verboseMode);
+                break;
+            case VirtualKeyStrokes::SpecialButton::SCROLL_DOWN:
+                scrollWheelDown(verboseMode);
+                break;
+            case VirtualKeyStrokes::SpecialButton::SCROLL_UP:
+                scrollWheelUp(verboseMode);
                 break;
             default:
                 break;
