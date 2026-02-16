@@ -31,14 +31,16 @@
 # This combination is for testing.
 ##################################
 SEQUENCENAME=test
-DELAY=3000
-LISTEN=10
+DELAY=1000
+LISTEN=1
 TYPE=abcdefg
+TYPEHOLD=ab;3000
 TYPE=hijk
 TYPE=lmnop
 SLEEP=500
 TYPE=hijk
 PRESS=SPACE
+PRESSHOLD=SPACE;2000
 MOVEMOUSE=145,887
 CLICK=RIGHTCLICK
 ENDOFSEQUENCE
@@ -57,11 +59,32 @@ ENDOFSEQUENCE
 
 
 
-###################################################
-# Contrinual Mouse Scrolling
-###################################################
+#############################
+# Contrinual Mouse Scrolling.
+#############################
 SEQUENCENAME=continuous_scrolling
 DELAY=150
 LISTEN=1
 PRESS=SCROLL_DOWN
+ENDOFSEQUENCE
+
+
+
+#############################################################
+# This combination is for walking forward with ASDW controls.
+#############################################################
+SEQUENCENAME=hold_w
+DELAY=1000
+LISTEN=1
+TYPEHOLD=w;4000
+ENDOFSEQUENCE
+
+
+############################################################
+# This combination is for holding the left mouse click down.
+############################################################
+SEQUENCENAME=hold_left_click
+DELAY=1000
+LISTEN=2
+CLICKHOLD=LEFTCLICK;4000
 ENDOFSEQUENCE

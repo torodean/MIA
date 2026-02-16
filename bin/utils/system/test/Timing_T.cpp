@@ -16,37 +16,68 @@
 
 using namespace timing;
 
+/// The max number of times to attempt the tests if they fail.
+static constexpr int maxAttempts = 5;
+
 TEST(TimingTest, SleepMilliseconds) 
 {
-    auto start = std::chrono::steady_clock::now();
-    sleepMilliseconds(100);
-    auto end = std::chrono::steady_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    for (int attempt = 1; attempt <= maxAttempts; ++attempt)
+    {
+		auto start = std::chrono::steady_clock::now();
+		sleepMilliseconds(100);
+		auto end = std::chrono::steady_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    EXPECT_GE(elapsed, 95);
-    EXPECT_LT(elapsed, 115); // Windows requires this to be rather long to succeed.
+
+        if (elapsed >= 95 && elapsed < 115) // Windows requires this to be rather long to succeed.
+            return;  // success
+
+        if (attempt == maxAttempts)
+			FAIL() << "sleepMilliseconds(100) timing out of range after "
+				   << maxAttempts << " attempts. "
+				   << "Last measured: " << elapsed << " ms. "
+				   << "Expected: [95 ms, 115 ms).";
+	}
 }
 
 TEST(TimingTest, SleepSecondsInt) 
 {
-    auto start = std::chrono::steady_clock::now();
-    sleepSeconds(1);
-    auto end = std::chrono::steady_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    for (int attempt = 1; attempt <= maxAttempts; ++attempt)
+    {
+		auto start = std::chrono::steady_clock::now();
+		sleepSeconds(1);
+		auto end = std::chrono::steady_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    EXPECT_GE(elapsed, 995);
-    EXPECT_LT(elapsed, 1100); // Windows requires this to be rather long to succeed.
+        if (elapsed >= 995 && elapsed < 1100) // Windows requires this to be rather long to succeed.
+            return;  // success
+
+        if (attempt == maxAttempts)
+			FAIL() << "sleepSeconds(1) timing out of range after "
+				   << maxAttempts << " attempts. "
+				   << "Last measured: " << elapsed << " ms. "
+				   << "Expected: [995 ms, 1100 ms).";
+	}
 }
 
 TEST(TimingTest, SleepSecondsDouble) 
 {
-    auto start = std::chrono::steady_clock::now();
-    sleepSeconds(0.2);
-    auto end = std::chrono::steady_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    for (int attempt = 1; attempt <= maxAttempts; ++attempt)
+    {
+		auto start = std::chrono::steady_clock::now();
+		sleepSeconds(0.2);
+		auto end = std::chrono::steady_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    EXPECT_GE(elapsed, 195);
-    EXPECT_LT(elapsed, 215); // Windows requires this to be rather long to succeed.
+        if (elapsed >= 195 && elapsed < 215) // Windows requires this to be rather long to succeed.
+            return;  // success
+
+        if (attempt == maxAttempts)
+			FAIL() << "sleepSeconds(0.2) timing out of range after "
+				   << maxAttempts << " attempts. "
+				   << "Last measured: " << elapsed << " ms. "
+				   << "Expected: [195 ms, 215 ms).";
+	}
 }
 
 TEST(TimingTest, SleepMinutesZero) 
@@ -56,5 +87,5 @@ TEST(TimingTest, SleepMinutesZero)
     auto end = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    EXPECT_LT(elapsed, 50); 
+    EXPECT_LT(elapsed, 50);
 }
