@@ -52,6 +52,9 @@ public:
         MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
         CLICK,       ///< This will perform a click with the mouse.
         PRESS,       ///< This will perform a special button press.
+        TYPEHOLD,    ///< This will press a character and hold it for a specified time.
+        PRESSHOLD,   ///< This will perform a special button press and hold it for a specified time.
+        CLICKHOLD,   ///< This will perform a click with the mouse and hold it for a specified time.
         LISTEN,      ///< This will listen for a key press and stop or restart the sequence.
     };
     
@@ -86,11 +89,13 @@ public:
          * the relevant data members (i.e., coordinates, time, string, click type).
          * Only the data appropriate to the action type is used.
          * @param keys[VirtualKeyStrokes& keys] - The object for simulating actions.
+         * @param verboseMode[bool] If true, enables verbose output.
          * @param testMode[bool] - Enables test mode (default = false).
          * @return [optional<int>] - Returns optional new delay time (ms) to use for 
          *     subsequent actions if it needs updated via an action.
          */
-        std::optional<int> performAction(virtual_keys::VirtualKeyStrokes& keys, 
+        std::optional<int> performAction(virtual_keys::VirtualKeyStrokes& keys,
+                                         bool verboseMode = false,
                                          bool testMode = false);
     };
     
@@ -133,21 +138,23 @@ public:
          * Iterates through the `actions` list and calls `performAction()` on each entry,
          * pausing for `delayTime` milliseconds between actions.
          * @param keys[VirtualKeyStrokes& keys] - The object for simulating actions.
+         * @param verboseMode[bool] If true, enables verbose output.
          * @param testMode[bool] - Enables test mode (default = false).
          * @param [bool] - Enables test mode.
          */
         void performActions(virtual_keys::VirtualKeyStrokes& keys, 
+                            bool verboseMode = false,
                             bool testMode = false);
     };
     
     /// Maps sequence names to their corresponding list of actions.
     using sequenceList = std::unordered_map<std::string, CompleteSequence>;
-	
-	/**
-	 * Dumps the list of the valid sequences to output stream.
-	 * @param out[std::ostream&] - The output stream to print the output to.
-	 */
-	void printSequenceList(std::ostream& out = std::cout);
+    
+    /**
+     * Dumps the list of the valid sequences to output stream.
+     * @param out[std::ostream&] - The output stream to print the output to.
+     */
+    void printSequenceList(std::ostream& out = std::cout);
 
     /**
      * The main constructor of the MIASequencer class. This will construct the command options.
@@ -222,19 +229,19 @@ private:
      * in which need custom parsing and interpretation.
      */
     config::MIAConfig config;
-		
+        
     // Command options for this app.
     CommandOption sequencesFileOpt;  ///< Used for loading a custom sequences file.
     CommandOption testOpt;           ///< Used for enabling test mode.
     CommandOption sequenceNameOpt;   ///< Used for running a particular sequence.
     CommandOption loopModeOpt;       ///< Used for setting the sequence loop mode option.
     CommandOption printSequencesOpt; ///< Used for printing all valid sequences.
-	
-	/// Determines whether to loop sequences or terminate after they finish.
-	bool loopMode{false};
-	
-	/// Determines whether to print the sequences on application start.
-	bool printSequences{false};
+    
+    /// Determines whether to loop sequences or terminate after they finish.
+    bool loopMode{false};
+    
+    /// Determines whether to print the sequences on application start.
+    bool printSequences{false};
     
     /// Name of the option-entered sequence to run. Empty if no sequence option used.
     std::string sequenceName{};

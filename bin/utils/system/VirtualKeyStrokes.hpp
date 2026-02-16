@@ -109,7 +109,7 @@ namespace virtual_keys
         /**
          * This will simulate a key press.
          * @param character[const char&] - the key to press.
-         * @param holdTime [int] - A time to gold after the keypress in ms (default = 0)
+         * @param holdTime [int] - A time to hold after the keypress in ms (default = 0).
          * @param verboseMode[bool] If true, prints the pressed number to standard output.
          * @throw [MIAException] - Throws if an unsupported character is entered.
          */
@@ -118,25 +118,29 @@ namespace virtual_keys
         /**
          * This will simulate the key presses for a string.
          * @param character[const std::string&] - the string to simulate key presses for.
+         * @param holdTime [int] - A time to hold each keypress in ms (default = 0).
+         * @param verboseMode[bool] If true, prints the pressed number to standard output.
          */
-        void type(const std::string& word);
+        void type(const std::string& word, int holdTime = 0, bool verboseMode = false);
     
         /**
          * @brief Simulates a mouse click of the specified type.
          * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
+         * @param holdTime [int] - A time to hold each click in ms (default = 0).
          * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
          */
-        void mouseClick(ClickType clickType, bool verboseMode = false);        
+        void mouseClick(ClickType clickType, int holdTime = 0, bool verboseMode = false);        
         
         /**
          * @brief Simulates a mouse click of the specified type.
          * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
+         * @param holdTime [int] - A time to hold each keypress in ms (default = 0).
          * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
          */
-        void pressSpecialButton(SpecialButton specialButton, bool verboseMode = false);
+        void pressSpecialButton(SpecialButton specialButton, int holdTime = 0, bool verboseMode = false);
     
-        void leftclick(bool verboseMode = false);        
-        void rightclick(bool verboseMode = false);
+        void leftclick(int holdTime = 0, bool verboseMode = false);        
+        void rightclick(int holdTime = 0, bool verboseMode = false);
 		
 		/**
 		 * Simulates a single mouse scroll wheel step upward
@@ -156,12 +160,14 @@ namespace virtual_keys
     
         void moveMouseTo(int x, int y);
     
-        void minus(bool verboseMode = false);       ///< Simulates press of the minus key.
-        void equal(bool verboseMode = false);       ///< Simulates press of the equal key.
-        void space(bool verboseMode = false);       ///< Simulates press of the space key.
-        void tab(bool verboseMode = false);         ///< Simulates press of the tab key.
-        void enter(bool verboseMode = false);       ///< Simulates press of the enter key.
-        void numlock(bool verboseMode = false);     ///< Simulates press of the numlock key.
+        void minus(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the minus key.
+        void equal(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the equal key.
+        void space(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the space key.
+        void tab(bool verboseMode = false);                           ///< Simulates press of the tab key.
+        void enter(bool verboseMode = false);                         ///< Simulates press of the enter key.
+        void numlock(bool verboseMode = false);                       ///< Simulates press of the numlock key.
+        void backslash(int holdTime = 0, bool verboseMode = false);   ///< Simulates press of the backslash key.
+        void slash(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the slash key.
     
         /// Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class..
         void defaultSleep() const;
@@ -197,8 +203,6 @@ namespace virtual_keys
         void alt0248();
         void alt136();
         void paste();
-        void backslash();
-        void slash();
     
         // Other useful functions.
         void findMouseCoords(int waitTime);

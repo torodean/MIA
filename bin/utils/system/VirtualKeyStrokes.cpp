@@ -146,28 +146,24 @@ namespace virtual_keys
         } 
         else if(character == ' ')
         {
-            space();
+            space(holdTime, verboseMode);
         } 
         else if(character == '-')
         {
-            minus();
+            minus(holdTime, verboseMode);
         }  
         else if(character == '=')
         {
-            equal();
+            equal(holdTime, verboseMode);
         } 
         else if (character == '\\')
         {
-            backslash();
+            backslash(holdTime, verboseMode);
         } 
         else if (character == '/')
         {
-            slash();
-        } 
-        else if (character == ' ')
-        {
-            space();
-        } 
+            slash(holdTime, verboseMode);
+        }
         else 
         {
             std::string err = std::to_string(character);
@@ -291,9 +287,9 @@ namespace virtual_keys
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
     
-        timing::sleepMilliseconds(holdTime);
         if(verboseMode)
             std::cout << num << std::endl;
+        timing::sleepMilliseconds(holdTime);
     
         // Release the "num" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -423,13 +419,17 @@ namespace virtual_keys
     
     
     // Press the "\" key
-    void VirtualKeyStrokes::backslash()
+    void VirtualKeyStrokes::backslash(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
         // Press the "\" key
         ip.ki.wVk = 0xE2; // virtual-key code for the "\" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
+		
+        if(verboseMode)
+            std::cout << "\\" << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // Release the "/" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -443,13 +443,17 @@ namespace virtual_keys
     
     
     // Press the "/" key
-    void VirtualKeyStrokes::slash()
+    void VirtualKeyStrokes::slash(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
         // Press the "/" key
         ip.ki.wVk = 0x6F; // virtual-key code for the "/" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
+		
+        if(verboseMode)
+            std::cout << "/" << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // Release the "/" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -554,7 +558,7 @@ namespace virtual_keys
 #endif
     
     
-    void VirtualKeyStrokes::leftclick(bool verboseMode)
+    void VirtualKeyStrokes::leftclick(int holdTime, bool verboseMode)
     {
 	#if defined(IS_WINDOWS)
         INPUT Input;
@@ -565,6 +569,7 @@ namespace virtual_keys
     
         if(verboseMode)
             std::cout << "LEFT CLICK" << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // left up
         ZeroMemory(&Input,sizeof(INPUT));
@@ -587,7 +592,7 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::rightclick(bool verboseMode)
+    void VirtualKeyStrokes::rightclick(int holdTime, bool verboseMode)
     {
 	#if defined(IS_WINDOWS)
         INPUT Input;
@@ -598,6 +603,7 @@ namespace virtual_keys
     
         if(verboseMode)
             std::cout << "RIGHT CLICK" << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // right up
         ZeroMemory(&Input,sizeof(INPUT));
@@ -620,15 +626,15 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::mouseClick(VirtualKeyStrokes::ClickType clickType, bool verboseMode)
+    void VirtualKeyStrokes::mouseClick(VirtualKeyStrokes::ClickType clickType, int holdTime, bool verboseMode)
     {
         switch(clickType)
         {
             case VirtualKeyStrokes::ClickType::LEFT_CLICK:
-                leftclick(verboseMode);
+                leftclick(holdTime, verboseMode);
                 break;            
             case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
-                rightclick(verboseMode);
+                rightclick(holdTime, verboseMode);
                 break;
             default:
                 break;
@@ -636,7 +642,7 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::pressSpecialButton(VirtualKeyStrokes::SpecialButton specialButton, bool verboseMode)
+    void VirtualKeyStrokes::pressSpecialButton(VirtualKeyStrokes::SpecialButton specialButton, int holdTime, bool verboseMode)
     {
         switch(specialButton)
         {
@@ -647,7 +653,7 @@ namespace virtual_keys
                 tab(verboseMode);
                 break;
             case VirtualKeyStrokes::SpecialButton::SPACE:
-                space(verboseMode);
+                space(holdTime, verboseMode);
                 break;
             case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
                 numlock(verboseMode);
@@ -675,7 +681,7 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::minus(bool verboseMode)
+    void VirtualKeyStrokes::minus(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
     
@@ -683,9 +689,10 @@ namespace virtual_keys
         ip.ki.wVk = VK_OEM_MINUS; // virtual-key code for the "-" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+		
         if(verboseMode)
             std::cout << "-" << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // Release the "-" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -697,7 +704,7 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::equal(bool verboseMode)
+    void VirtualKeyStrokes::equal(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
     
@@ -708,6 +715,7 @@ namespace virtual_keys
     
         if(verboseMode)
             std::cout << "=" << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // Release the "=" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -719,7 +727,7 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::space(bool verboseMode)
+    void VirtualKeyStrokes::space(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
     
@@ -729,7 +737,8 @@ namespace virtual_keys
         SendInput(1, &ip, sizeof(INPUT));
     
         if(verboseMode)
-            std::cout << "space" << std::endl;
+            std::cout << " " << std::endl;
+		timing::sleepMilliseconds(holdTime);
     
         // Release the "space" key
         ip.ki.wVk = VK_SPACE; // virtual-key code for the "space" key
@@ -764,13 +773,13 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::type(const std::string& word)
+    void VirtualKeyStrokes::type(const std::string& word, int holdTime, bool verboseMode)
     {
         int size = word.size();
         for(int i=0;i<size;i++)
         {
             char letter(word[i]);
-            press(letter);
+            press(letter, holdTime, verboseMode);
             defaultSleep();
         }
     }

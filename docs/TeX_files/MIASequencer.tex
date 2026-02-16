@@ -70,7 +70,9 @@ SEQUENCENAME=test
 DELAY=3000
 LISTEN=1
 TYPE=abcdefg
+TYPEHOLD=ab;3000
 PRESS=SPACE
+PRESSHOLD=SPACE;2000
 SLEEP=500
 MOVEMOUSE=145,887
 CLICK=RIGHTCLICK
@@ -82,7 +84,9 @@ ENDOFSEQUENCE
 	\item \inlinecode{DELAY=3000} This sets the timing between each event in the sequence. The units are in milliseconds.
 	\item \inlinecode{LISTEN=1} This will open a background thread which listens for the key corresponding to a key code of 10 (the '1' key). When detected, the sequence will toggle on and off. When toggled, the sequence will stop or restart. 
 	\item \inlinecode{TYPE=abcdefg} This command will type the text entered. In this case ``abcdefg'' will be typed.
+	\item \inlinecode{TYPEHOLD=ab;3000} This command will type the text entered. In this case ``ab'' will be typed. Each character will be held down for 3 seconds.
 	\item \inlinecode{PRESS=SPACE} This command will press the space key.
+	\item \inlinecode{PRESSHOLD=SPACE;2000} This command will press the space key and hold it for 2 seconds.
 	\item \inlinecode{SLEEP=500} This defines the time to sleep when the hover keyword is used.
 	\item \inlinecode{MOVEMOUSE=145,887} This is a command signaling to move the mouse to the coordinates (145,887).
 	\item \inlinecode{CLICK=RIGHTCLICK} This is a command signaling to perform a right click.
@@ -106,13 +110,19 @@ The below table shows the valid action keywords and their valid values.
 		\hline
 		\texttt{TYPE} & String & Any string of characters to be typed as keystrokes. \\
 		\hline
+		\texttt{TYPEHOLD} & String;Integer (ms) & Any string of characters to be typed as keystrokes, a semi-colon delimiter, then a delay to hold each character in milliseconds. \\
+		\hline
 		\texttt{PRESS} & Enum (SpecialButton) & See section \ref{SpecialButton-Enumeration}\\
+		\hline
+		\texttt{PRESSHOLD} & Enum (SpecialButton);Integer (ms) & See section \ref{SpecialButton-Enumeration} for first input, followed by a semi-colon delimiter, then a delay to hold each character in milliseconds.\\
 		\hline
 		\texttt{SLEEP} & Integer (ms) & Sleep/pause time in milliseconds before next action. \\
 		\hline
 		\texttt{MOVEMOUSE} & Integer pair & X,Y screen coordinates to move the mouse to. Format: \texttt{MOVEMOUSE=x,y}, i.e., \texttt{MOVEMOUSE=145,887} \\
 		\hline
 		\texttt{CLICK} & Enum (ClickType) & One of: \texttt{LEFTCLICK}, \texttt{RIGHTCLICK}, \texttt{MIDDLECLICK} \\
+		\hline
+		\texttt{CLICKHOLD} & Enum (ClickType);Integer (ms) & One of: \texttt{LEFTCLICK}, \texttt{RIGHTCLICK}, \texttt{MIDDLECLICK}, followed by a semi-colon delimiter, then a delay to hold each character in milliseconds. \\
 		\hline
 		\texttt{ENDOFSEQUENCE} & None & Terminates the current sequence definition. Must appear at the end of a sequence. \\
 		\hline
