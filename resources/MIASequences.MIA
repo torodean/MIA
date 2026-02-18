@@ -51,7 +51,7 @@ ENDOFSEQUENCE
 ###################################################
 SEQUENCENAME=spam_left_click
 DELAY=2
-LISTEN=1
+LISTEN=9
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
 CLICK=LEFTCLICK
@@ -64,7 +64,7 @@ ENDOFSEQUENCE
 #############################
 SEQUENCENAME=continuous_scrolling
 DELAY=150
-LISTEN=1
+LISTEN=9
 PRESS=SCROLL_DOWN
 ENDOFSEQUENCE
 
@@ -74,9 +74,9 @@ ENDOFSEQUENCE
 # This combination is for walking forward with ASDW controls.
 #############################################################
 SEQUENCENAME=hold_w
-DELAY=1000
-LISTEN=1
-TYPEHOLD=w;4000
+DELAY=100
+LISTEN=0
+TYPEHOLD=w;10000
 ENDOFSEQUENCE
 
 
@@ -84,7 +84,7 @@ ENDOFSEQUENCE
 # This combination is for holding the left mouse click down.
 ############################################################
 SEQUENCENAME=hold_left_click
-DELAY=1000
-LISTEN=2
-CLICKHOLD=LEFTCLICK;4000
+DELAY=100
+LISTEN=9
+CLICKHOLD=LEFTCLICK;10000
 ENDOFSEQUENCE
