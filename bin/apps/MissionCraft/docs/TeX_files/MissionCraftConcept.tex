@@ -321,7 +321,16 @@ Many modern games implement an achievement system. This seems to be a trend whic
 
 \section{Trees}
 
+A `tree' will be a simplified term which refers to a structured, permanent progression graph which is made of interconnected nodes - representing unlockable content, roles, mechanics, or systems. Nodes are gated by prerequisites and may depend on multiple prior nodes. Advancement through a tree grants access to new gameplay capabilities and may unlock additional trees. A more technically accurate term for these would be directed acyclic graphs (DAGs), though trees will suffice and better describe the individual parts within the larger system.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{./images/basic_tree.png}
+    \caption{This shows a very basic tree. The tree begins with the node A0. Once completely satisfied, this unlocks the node A1. When A1 is satisfied, A2, B1, and C1 become available. Further down the tree, A3 requires A2 and B2, while A4 requires A3 and C3. This shows that although there are multiple paths and options to take, certain things require nodes from other paths before they can be unlocked.}
+    \label{fig:Basictree}
+\end{figure}
+
+Most of the systems will be tied to a tree in some way. This will determine pre-requisites or progress along the game when trying to unlock certain things (new adventurers, new buildings, craftables, mission types, etc). For a basic example of a tree with multiple different systems which interconnect, see Figure \ref{fig:Basictree}.
 
 
 
