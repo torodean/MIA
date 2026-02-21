@@ -77,7 +77,7 @@ The building menu will be available either directly by the player or after the p
 
 There will be many types of buildings the player can build. Some of these buildings will serve as purely cosmetic, but the primary buildings will all serve a different function. A potential list of building types, possible names, and their purpose follows:
 
-\begin{itemize}
+\begin{itemize}[noitemsep, topsep=0pt]
 	\item \textbf{Housing Units}: This is the primary housing unit for the adventurer(s). As the housing unit expands, or more are built, the player can have more adventurers at their base.
 	\item \textbf{Farm}: A farm is a building capable of producing food. Adventurers can work at the farm to provide increased food supply, which allows the players to increase the number of total adventurers they have and the number of missions they can go on.
 	\item \textbf{Mission Hall}: The primary building for coordinating missions. This building will provide the player with daily missions and allow the player to send their adventurers out on various missions.
@@ -326,11 +326,11 @@ A `tree' will be a simplified term which refers to a structured, permanent progr
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{./images/basic_tree.png}
-    \caption{This shows a very basic tree. The tree begins with the node A0. Once completely satisfied, this unlocks the node A1. When A1 is satisfied, A2, B1, and C1 become available. Further down the tree, A3 requires A2 and B2, while A4 requires A3 and C3. This shows that although there are multiple paths and options to take, certain things require nodes from other paths before they can be unlocked.}
+    \caption{This shows a very basic tree with three systems - A, B, and C. The tree begins with the node A0. Once completely satisfied, this unlocks the node A1. When A1 is satisfied, A2, B1, and C1 become available. Further down the tree, A3 requires A2 and B2, while A4 requires A3 and C3. This shows that although there are multiple paths and options to take, certain things require nodes from other paths before they can be unlocked.}
     \label{fig:Basictree}
 \end{figure}
 
-Most of the systems will be tied to a tree in some way. This will determine pre-requisites or progress along the game when trying to unlock certain things (new adventurers, new buildings, craftables, mission types, etc). For a basic example of a tree with multiple different systems which interconnect, see Figure \ref{fig:Basictree}.
+Most of the systems will be tied to a tree in some way. This will determine prerequisites or progress along the game when trying to unlock certain things (new adventurers, new buildings, craftables, mission types, etc). For a basic example of a tree with multiple different systems which interconnect, see Figure \ref{fig:Basictree}.
 
 
 
