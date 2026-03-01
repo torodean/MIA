@@ -9,6 +9,43 @@ As of MIA version 2\footnote{Note: Although the coding standards are adopted in 
 
 Since this project was (and still is at the time of writing this) solely for personal edification, learning, and experimentation, its primary purpose has been to explore new tools, techniques, and patterns across C++, CMake, and Bash. However, it also serves as a practical demonstration of my coding style and development practices - much like a portfolio, though firmly within the realm of hobby code. As such, while the codebase may not meet production-level rigor in every detail, this coding standards documentation exists to highlight the conventions I choose to follow, the rationale behind them, and how they reflect what I believe to be a synthesis of the best practices across the diverse landscape of existing standards. This includes adapting principles from well-known style guides while also incorporating personal preferences that I’ve found to improve clarity, maintainability, and efficiency through hands-on experience.
 
+
+
+
+
+
+
+\section{Engineering Principals}
+
+Many `coding standards' are based around preference or visual desires for code. These rules are nice to have for consistency, however most people tend to have somewhat differing opinions about what preferences they have. A good coding standard should pertain to things outside this realm of preferential stylistic choices and rather focus on principals that actually improve the robustness of the systems being created. Many of the standards written in the sections following this are of the former kind (stylistic, preference, visual consistency, etc). However, the principals in this section are designed to be rules which would benefit safety critical code. The idea of differentiating rules like this come from a document I found which outlines rules specifically designed for safety critical code \cite{Rules_For_Developing_Safety_Critical_Code}. In this section, I outline rules of this sort which still fit within the scope of the MIA project.
+
+
+\subsection{Function Size Constraint}
+
+Functions must remain small enough to be reviewed as a single logical unit. As a practical limit, a function should not exceed roughly one printed page when formatted with one statement and one declaration per line (approximately 60 lines of code). \cite{Rules_For_Developing_Safety_Critical_Code}
+
+Each function (or method) should be a single unit in the code. It is the smallest unit of behavior and provides a specific purpose. Part of understanding the purpose of a function (especially the context of why it exists, how it's used, etc) lies within the associated documentation and comments. However, the specific functionality should be able to be understood as a standalone unit by the code itself. When a function is multiple pages (or screens), comprehension and readability degrades and potential issues can be masked or overlooked. Large functions typically indicate excessive responsibility - that the unit is doing too much. Enforcing a strict size limit forces clearer separation of concerns and improves reviewability, testability, and long-term maintainability.
+
+
+
+\subsection{Return Value and Parameter Validation}
+
+The return value of every non-void function must be explicitly handled by the caller and parameters should be checked for validity within each function. In cases where responding to an error case would be no different than to a success, casting the function return to void is acceptable - as it indicates that the programmer explicitly chose to ignore the return values.
+
+Parameter validation is important for a few reasons. First, it provides a clear check for potential error cases. Second, it forces the developer to think about the possible input possibilities (both desired and potentially not) to help ensure they understand the consequences of different input parameters. Third, parameter validation enforces defensive boundaries between components. Functions should not rely on external guarantees about input correctness. By validating inputs at the point of entry, the code establishes explicit preconditions, prevents undefined behavior, and localizes faults to their source rather than allowing them to propagate unpredictably through the system. 
+
+By explicitly handling function return values, the code ensures that errors are detected and addressed immediately, rather than silently ignored. This enforces propagation of failure information, allows higher-level logic to respond appropriately, and prevents subtle bugs from spreading through the system. Even when a return value is intentionally ignored, doing so explicitly documents the decision, making it clear that it is a conscious, justified exception rather than an oversight.
+
+
+
+
+
+
+
+
+
+
+
 \section{C++ Coding Standards}
 
 \subsection{Formatting and Style}
