@@ -99,17 +99,6 @@ namespace BasicUtilities
     }
     
     
-    /**
-     * @brief Ensures that a file exists at the given path.
-     * 
-     * Checks if the file exists. If it does, returns true.
-     * If it doesn't exist and createIfMissing is true, creates an empty file.
-     * Returns false if the path exists but is not a regular file, or on error.
-     * 
-     * @param path The path to the file.
-     * @param createIfMissing Whether to create an empty file if missing.
-     * @return true if file exists or was successfully created, false otherwise.
-     */
     bool ensureFileExists(const std::string& path, bool createIfMissing)
     {
         try
