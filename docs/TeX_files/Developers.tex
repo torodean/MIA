@@ -761,7 +761,7 @@ if (someErrorCondition)
 if (someErrorCondition) 
 {
     std::string err = "Details of this error!";
-    THROW_MIA_EXCEPTION(error::ErrorCode::Catastrophic_Failure, err); 
+    MIA_THROW(error::ErrorCode::Catastrophic_Failure, err); 
 }
 	\end{lstlisting}
 	\item Use \texttt{getErrorDescription()} to log or report known error codes.

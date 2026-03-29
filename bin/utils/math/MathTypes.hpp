@@ -14,8 +14,10 @@ namespace math
      */
     struct Coordinate 
     {
+        /// Main constructor which takes and sets two integer coordinate values.
         Coordinate(int x_val = 0, int y_val = 0) : x(x_val), y(y_val) {}
-        /// Storage for the coordinate values.
-        int x, y;
+        
+        int x; ///< Storage for the X coordinate value.
+        int y; ///< Storage for the Y coordinate value.
     };
 } // namespace math
