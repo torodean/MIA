@@ -62,7 +62,15 @@ protected:
     }
 };
 
-
+/**
+ * @test MIAConfigTest.LoadAndRetrieveValues
+ * @brief Verifies that MIAConfig loads a key-value configuration file and correctly
+ *        retrieves values using the typed getter methods.
+ *
+ * After initialization, the test checks retrieval of integer, string, double,
+ * boolean, and vector values from the configuration map and confirms that the
+ * stored configuration filename matches the provided path.
+ */
 TEST_F(MIAConfigTest, LoadAndRetrieveValues) 
 {
     MIAConfig config(filePath, ConfigType::KEY_VALUE);
@@ -81,6 +89,15 @@ TEST_F(MIAConfigTest, LoadAndRetrieveValues)
     EXPECT_EQ(config.getVector("names", ','), expectedNames);
 }
 
+/**
+ * @test MIAConfigTest.ReloadAndGetType
+ * @brief Verifies that the configuration type is preserved and that reload()
+ *        re-parses the configuration file successfully.
+ *
+ * The test confirms that getConfigType() returns the expected configuration
+ * format and that calling reload() maintains correct access to configuration
+ * values.
+ */
 TEST_F(MIAConfigTest, ReloadAndGetType) 
 {
     MIAConfig config(filePath, ConfigType::KEY_VALUE);
@@ -92,6 +109,14 @@ TEST_F(MIAConfigTest, ReloadAndGetType)
     EXPECT_EQ(config.getString("host"), "localhost");
 }
 
+/**
+ * @test MIAConfigTest.GetAllPairsAndDump
+ * @brief Verifies that configuration entries can be retrieved as a collection
+ *        and serialized using dumpConfigMap().
+ *
+ * The test ensures that getAllConfigPairs() returns a non-empty container and
+ * that dumpConfigMap() writes key-value entries to the provided output stream.
+ */
 TEST_F(MIAConfigTest, GetAllPairsAndDump) 
 {
     MIAConfig config(filePath, ConfigType::KEY_VALUE);
@@ -106,6 +131,15 @@ TEST_F(MIAConfigTest, GetAllPairsAndDump)
     EXPECT_NE(output.find("port=8080"), std::string::npos);
 }
 
+/**
+ * @test MIAConfigTest.SetConfigFileNameReinitializes
+ * @brief Verifies that setConfigFileName() updates the configuration source and
+ *        initializes the configuration data.
+ *
+ * The test constructs a default MIAConfig instance, sets the configuration file
+ * name and type, and confirms that configuration values can be retrieved
+ * immediately afterward.
+ */
 TEST_F(MIAConfigTest, SetConfigFileNameReinitializes) 
 {
     MIAConfig config;
@@ -113,6 +147,14 @@ TEST_F(MIAConfigTest, SetConfigFileNameReinitializes)
     EXPECT_EQ(config.getInt("port"), 8080);
 }
 
+/**
+ * @test MIAConfigTest.ExceptionThrownForMissingKey
+ * @brief Verifies that accessing undefined configuration keys throws MIAException.
+ *
+ * The test attempts to retrieve integer, vector, and boolean values for keys
+ * that do not exist in the configuration and confirms that the expected
+ * exception type is thrown.
+ */
 TEST_F(MIAConfigTest, ExceptionThrownForMissingKey) 
 {
     MIAConfig config(filePath, ConfigType::KEY_VALUE);

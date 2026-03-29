@@ -11,7 +11,14 @@
 #include "CommandOption.hpp"
 #include "gtest/gtest.h"
 
-// Mocks for command_parser functions
+/**
+ * @brief Mock implementations for command-line parsing helpers.
+ *
+ * These functions replace the real command_parser implementations during
+ * unit testing to isolate CommandOption behavior. Each stub simulates a
+ * successful parse operation by assigning deterministic values to the
+ * output parameter without performing any real command-line parsing.
+ */
 namespace command_parser 
 {
     void parseBoolFlag(int, char**, const std::string&, const std::string&, bool& out) 
@@ -39,7 +46,12 @@ using error::MIAException;
 using error::ErrorCode;
 
 /**
- * @brief Test help string formatting with short and long options.
+ * @test CommandOptionTest.HelpStringFormatting
+ * @brief Verifies that CommandOption generates a correctly formatted help string.
+ *
+ * The test constructs an option with both short and long forms and checks
+ * that the resulting help string includes the combined option identifiers
+ * and the provided description text.
  */
 TEST(CommandOptionTest, HelpStringFormatting) 
 {
@@ -50,7 +62,9 @@ TEST(CommandOptionTest, HelpStringFormatting)
 }
 
 /**
- * @brief Test correct parsing dispatch for bool option.
+ * @test CommandOptionTest.GetBoolOptionSuccess
+ * @brief Verifies that CommandOption correctly dispatches boolean options
+ *        to the boolean parsing routine.
  */
 TEST(CommandOptionTest, GetBoolOptionSuccess) 
 {
@@ -62,7 +76,8 @@ TEST(CommandOptionTest, GetBoolOptionSuccess)
 }
 
 /**
- * @brief Test correct parsing dispatch for int option.
+ * @test CommandOptionTest.GetIntOptionSuccess
+ * @brief Verifies that integer command-line options are parsed correctly.
  */
 TEST(CommandOptionTest, GetIntOptionSuccess) 
 {
@@ -74,7 +89,8 @@ TEST(CommandOptionTest, GetIntOptionSuccess)
 }
 
 /**
- * @brief Test correct parsing dispatch for double option.
+ * @test CommandOptionTest.GetDoubleOptionSuccess
+ * @brief Verifies that double command-line options are parsed correctly.
  */
 TEST(CommandOptionTest, GetDoubleOptionSuccess) 
 {
@@ -86,7 +102,8 @@ TEST(CommandOptionTest, GetDoubleOptionSuccess)
 }
 
 /**
- * @brief Test correct parsing dispatch for string option.
+ * @test CommandOptionTest.GetStringOptionSuccess
+ * @brief Verifies that string command-line options are parsed correctly.
  */
 TEST(CommandOptionTest, GetStringOptionSuccess) 
 {
@@ -98,7 +115,13 @@ TEST(CommandOptionTest, GetStringOptionSuccess)
 }
 
 /**
- * @brief Test type mismatch throws MIAException.
+ * @test CommandOptionTest.ThrowsOnTypeMismatch
+ * @brief Verifies that requesting an option value with an incompatible type
+ *        results in an exception.
+ *
+ * The test attempts to retrieve an integer option using a boolean variable.
+ * The operation should throw MIAException with the error code
+ * Invalid_Type_Requested and a message indicating the expected type.
  */
 TEST(CommandOptionTest, ThrowsOnTypeMismatch) 
 {
@@ -119,7 +142,13 @@ TEST(CommandOptionTest, ThrowsOnTypeMismatch)
 }
 
 /**
- * @brief Test unsupported template type throws MIAException.
+ * @test CommandOptionTest.ThrowsOnUnsupportedTemplateType
+ * @brief Verifies that unsupported template types passed to getOptionVal()
+ *        trigger an exception.
+ *
+ * The test provides a custom type that is not supported by the CommandOption
+ * parsing interface. The method is expected to throw MIAException with the
+ * Invalid_Type_Requested error code and an explanatory message.
  */
 TEST(CommandOptionTest, ThrowsOnUnsupportedTemplateType) 
 {

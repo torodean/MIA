@@ -10,11 +10,11 @@
  */
 #pragma once
 
-namespace SystemSounds
+namespace system_sounds
 {
     /**
      * Sends a beep sound.
      * @throw [MIAException] - Throws an exception when not on a supported OS.
      */
     void beep();
-} // namespace SystemSounds
+} // namespace system_sounds

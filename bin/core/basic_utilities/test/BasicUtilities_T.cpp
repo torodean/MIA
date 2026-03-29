@@ -14,6 +14,7 @@
 namespace fs = std::filesystem;
 
 /**
+ * @test BasicUtilitiesTest.FindCharInString
  * @brief Tests the findCharInString function to locate characters in strings.
  */
 TEST(BasicUtilitiesTest, FindCharInString)
@@ -24,6 +25,7 @@ TEST(BasicUtilitiesTest, FindCharInString)
 }
 
 /**
+ * @test BasicUtilitiesTest.StripFunctions
  * @brief Tests whitespace trimming functions: lstrip, rstrip, and strip.
  */
 TEST(BasicUtilitiesTest, StripFunctions)
@@ -35,6 +37,7 @@ TEST(BasicUtilitiesTest, StripFunctions)
 }
 
 /**
+ * @test BasicUtilitiesTest.GetCurrentDateTime
  * @brief Tests that getCurrentDateTime returns a properly formatted timestamp.
  */
 TEST(BasicUtilitiesTest, GetCurrentDateTime)
@@ -50,6 +53,7 @@ TEST(BasicUtilitiesTest, GetCurrentDateTime)
 }
 
 /**
+ * @test BasicUtilitiesTest.EnsureDirectoryExists
  * @brief Tests ensureDirectoryExists function including creation and existence checks.
  */
 TEST(BasicUtilitiesTest, EnsureDirectoryExists)
@@ -72,6 +76,7 @@ TEST(BasicUtilitiesTest, EnsureDirectoryExists)
 }
 
 /**
+ * @test BasicUtilitiesTest.EnsureFileExists
  * @brief Tests ensureFileExists function including file creation and edge cases.
  */
 TEST(BasicUtilitiesTest, EnsureFileExists)
@@ -98,14 +103,5 @@ TEST(BasicUtilitiesTest, EnsureFileExists)
 
     // Cleanup after test
     fs::remove(testFile);
-}
-
-/**
- * @brief Main entry point for Google Test.
- */
-int main(int argc, char **argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
 

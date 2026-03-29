@@ -14,6 +14,19 @@
 
 using namespace threading;
 
+/**
+ * @brief Test implementation of BackgroundTask used for unit testing.
+ *
+ * This class provides a minimal implementation of BackgroundTask to test 
+ * lifecycle behavior in tests. The run() method increments an atomic
+ * counter each time it executes and automatically requests termination after
+ * three iterations. A short sleep is introduced to simulate work and allow
+ * thread scheduling.
+ *
+ * The doWhenStopped() override records whether the shutdown callback was
+ * invoked, allowing tests to verify that the BackgroundTask termination
+ * sequence completes correctly.
+ */
 class TestTask : public BackgroundTask 
 {
 public:
@@ -40,6 +53,16 @@ public:
     }
 };
 
+/**
+ * @test BackgroundTaskTest.RunsAndStopsCorrectly
+ * @brief Verifies that a BackgroundTask executes repeatedly and stops when requested.
+ *
+ * A TestTask instance is started and allowed to execute its run() method multiple
+ * times in a background thread. The test waits until the task has executed at
+ * least three iterations, then stops the task. It verifies that the task is no
+ * longer running, that run() executed the expected number of times, and that
+ * the doWhenStopped() callback was invoked during shutdown.
+ */
 TEST(BackgroundTaskTest, RunsAndStopsCorrectly) 
 {
     TestTask task;
@@ -60,6 +83,15 @@ TEST(BackgroundTaskTest, RunsAndStopsCorrectly)
     EXPECT_TRUE(task.stoppedCalled);
 }
 
+/**
+ * @test BackgroundTaskTest.ConditionToggle
+ * @brief Verifies that the condition flag managed by BackgroundTask can be set,
+ *        queried, and toggled correctly.
+ *
+ * The test confirms that the condition flag initially evaluates to false,
+ * becomes true when setConditionMet(true) is called, and alternates correctly
+ * when toggleCondition() is invoked.
+ */
 TEST(BackgroundTaskTest, ConditionToggle) 
 {
     TestTask task;

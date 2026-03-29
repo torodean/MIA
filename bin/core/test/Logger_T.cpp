@@ -26,7 +26,14 @@ void cleanupFile(const std::string& filename)
     std::remove(filename.c_str());
 }
 
-
+/**
+ * @test LoggerFreeFunctions.LogToFile_WritesMessage
+ * @brief Verifies that logger::logToFile writes the provided message to the specified file.
+ *
+ * The test removes any existing test file, calls logger::logToFile with a
+ * known message, then reads the file contents and confirms that the message
+ * appears in the file.
+ */
 TEST(LoggerFreeFunctions, LogToFile_WritesMessage)
 {
     const std::string testMessage = "Test message for specific log";
@@ -41,6 +48,14 @@ const std::string testFile = std::filesystem::absolute("test_log.log").string();
     cleanupFile(testFile);
 }
 
+/**
+ * @test LoggerFreeFunctions.LogMethodCallToFile_FormatsCorrectly
+ * @brief Verifies that logger::logMethodCallToFile logs a method call entry containing
+ *        the method name and parameter string.
+ *
+ * The test writes a formatted method call to a log file and confirms that both the
+ * method name and parameter string appear in the resulting log output.
+ */
 TEST(LoggerFreeFunctions, LogMethodCallToFile_FormatsCorrectly)
 {
     const std::string methodName = "TestMethod";
@@ -57,6 +72,14 @@ TEST(LoggerFreeFunctions, LogMethodCallToFile_FormatsCorrectly)
     cleanupFile(testFile);
 }
 
+/**
+ * @test LoggerClass.ConstructorWithFilename_UsesGivenFile
+ * @brief Verifies that constructing logger::Logger with a filename sets the active log file.
+ *
+ * The test constructs a Logger with a specific file path, checks that getLogFile()
+ * returns that path, writes a log entry, and confirms the message is written to the
+ * expected file.
+ */
 TEST(LoggerClass, ConstructorWithFilename_UsesGivenFile)
 {
     const std::string testFile = std::filesystem::absolute("custom_log.log").string();
@@ -72,6 +95,14 @@ TEST(LoggerClass, ConstructorWithFilename_UsesGivenFile)
     cleanupFile(testFile);
 }
 
+/**
+ * @test LoggerClass.SetLogFile_ChangesLogFile
+ * @brief Verifies that setLogFile changes the destination file used for logging.
+ *
+ * The test logs a message to the initial file, switches the log file using
+ * setLogFile(), logs another message, and verifies each message appears in the
+ * correct file.
+ */
 TEST(LoggerClass, SetLogFile_ChangesLogFile)
 {
     const std::string file1 = std::filesystem::absolute("file1.log").string();
@@ -97,6 +128,13 @@ TEST(LoggerClass, SetLogFile_ChangesLogFile)
     cleanupFile(file2);
 }
 
+/**
+ * @test LoggerClass.LogMethodCall_LogsMethodNameAndParams
+ * @brief Verifies that Logger::logMethodCall records both the method name and parameters.
+ *
+ * The test writes a method call entry using Logger::logMethodCall and confirms that
+ * the resulting log entry contains the specified method name and parameter string.
+ */
 TEST(LoggerClass, LogMethodCall_LogsMethodNameAndParams)
 {
     const std::string testFile = std::filesystem::absolute("method_log.log").string();

@@ -5,18 +5,18 @@
  * Description:
  */
 
+#include "SystemSounds.hpp"
+
 #include <cstdio>
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
 
-//Used for error codes.
+// Used for error codes.
 #include "Error.hpp"
 #include "MIAException.hpp"
-// Include the associated header file.
-#include "SystemSounds.hpp"
 
-namespace SystemSounds
+namespace system_sounds
 {
     void beep()
     {
@@ -34,4 +34,4 @@ namespace SystemSounds
         throw error::MIAException(error::ErrorCode::Linux_Only_Feature);
     #endif
     }
-} // namespace SystemSounds
+} // namespace system_sounds
