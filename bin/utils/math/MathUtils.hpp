@@ -14,7 +14,7 @@
 namespace math
 {
     /**
-     * Generates a random integer between two values.
+     * Generates a random integer between two values (inclusive).
      * @param min[int] - Lower bound value to use.
      * @param max[int] - Higher bound to use.
      * @param seed[int] - A seed to randomize output.

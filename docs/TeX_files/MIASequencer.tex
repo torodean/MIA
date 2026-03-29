@@ -72,6 +72,7 @@ LISTEN=1
 TYPE=abcdefg
 TYPEHOLD=ab;3000
 PRESS=SPACE
+PRESSRANDNUM=2;5
 PRESSHOLD=SPACE;2000
 SLEEP=500
 MOVEMOUSE=145,887
@@ -86,6 +87,7 @@ ENDOFSEQUENCE
 	\item \inlinecode{TYPE=abcdefg} This command will type the text entered. In this case ``abcdefg'' will be typed.
 	\item \inlinecode{TYPEHOLD=ab;3000} This command will type the text entered. In this case ``ab'' will be typed. Each character will be held down for 3 seconds.
 	\item \inlinecode{PRESS=SPACE} This command will press the space key.
+	\item \inlinecode{PRESSRANDNUM=2;5} This command will press a random key between 2 and 5. Note that this key press can trigger the LISTEN key and therefore a non-numerical listen key may be needed when using this action.
 	\item \inlinecode{PRESSHOLD=SPACE;2000} This command will press the space key and hold it for 2 seconds.
 	\item \inlinecode{SLEEP=500} This defines the time to sleep when the hover keyword is used.
 	\item \inlinecode{MOVEMOUSE=145,887} This is a command signaling to move the mouse to the coordinates (145,887).
@@ -113,6 +115,8 @@ The below table shows the valid action keywords and their valid values.
 		\texttt{TYPEHOLD} & String;Integer (ms) & Any string of characters to be typed as keystrokes, a semi-colon delimiter, then a delay to hold each character in milliseconds. \\
 		\hline
 		\texttt{PRESS} & Enum (SpecialButton) & See section \ref{SpecialButton-Enumeration}\\
+		\hline
+		\texttt{PRESSRANDNUM} & Integer pair & MIN;MAX integer pair separated by a semi-colon (e.g., 2;5) and ordered from small to large (left to right). \\
 		\hline
 		\texttt{PRESSHOLD} & Enum (SpecialButton);Integer (ms) & See section \ref{SpecialButton-Enumeration} for first input, followed by a semi-colon delimiter, then a delay to hold each character in milliseconds.\\
 		\hline

@@ -88,3 +88,22 @@ DELAY=100
 LISTEN=9
 CLICKHOLD=LEFTCLICK;10000
 ENDOFSEQUENCE
+
+
+######################################################################
+# This combination is for pressing a random number between two values.
+######################################################################
+SEQUENCENAME=rand_between_0_9
+DELAY=100
+LISTEN=p
+PRESSRANDNUM=0;9
+ENDOFSEQUENCE
+
+######################################################################
+# This combination is for pressing a random number between two values.
+######################################################################
+SEQUENCENAME=rand_between_7_9
+DELAY=100
+LISTEN=p
+PRESSRANDNUM=7;9
+ENDOFSEQUENCE

@@ -52,6 +52,7 @@ public:
         MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
         CLICK,       ///< This will perform a click with the mouse.
         PRESS,       ///< This will perform a special button press.
+        PRESSRANDNUM,///< This will press a random numered key between two values.
         TYPEHOLD,    ///< This will press a character and hold it for a specified time.
         PRESSHOLD,   ///< This will perform a special button press and hold it for a specified time.
         CLICKHOLD,   ///< This will perform a click with the mouse and hold it for a specified time.
@@ -68,11 +69,13 @@ public:
     {
         SequenceActionType actionType{};  ///< An action type (what to perform).
         int timeValue{};                  ///< Timing information (for pause or delay).
-        math::Coordinate coords{};        ///< Coordinates (for moving mouse).
         std::string strToType{};          ///< A string (for typing).
         virtual_keys::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
         virtual_keys::VirtualKeyStrokes::SpecialButton press{}; ///< A special button for pressing. 
         unsigned int keyCode{};           ///< A generic key code.
+        
+        /// Coordinates (for moving mouse). Also stores the range for the PRESSRANDNUM option.
+        math::Coordinate coords{};
         
         /// Returns true if this is a valid action.
         bool isValid();

@@ -277,7 +277,7 @@ namespace virtual_keys
         // Press the "num" key (num must be an int number from 0 to 9.
         if ( num < 0 || num > 9 )
         {
-            return;
+            return; // TODO - this method should not silently return.
         }
         
     #if defined(IS_WINDOWS)        
@@ -300,6 +300,7 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
     #endif
     }
+    
     
     void VirtualKeyStrokes::pressChar(char ch, int holdTime, bool verboseMode)
     {
