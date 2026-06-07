@@ -25,8 +25,11 @@ KeyListenerTask::KeyListenerTask()
 { }
 
 
-KeyListenerTask::KeyListenerTask(char keyCode) : keyCode(keyCode)
-#if defined(__linux__)
+KeyListenerTask::KeyListenerTask(char keyCode) : 
+#if defined(IS_WINDOWS)
+	keyCode(std::toupper(keyCode))
+#elif defined(__linux__)
+	keyCode(keyCode)
     , display(XOpenDisplay(nullptr))
     , root(display ? DefaultRootWindow(display) : 0)
 #endif
@@ -49,11 +52,11 @@ KeyListenerTask::~KeyListenerTask()
 
 void KeyListenerTask::initialize()
 {
-if (!isActive())
-{
-    // TODO - throw MIAException here.
-    return;
-}
+	if (!isActive())
+	{
+		// TODO - throw MIAException here.
+		return;
+	}
 
 #if defined(__linux__)
     if (display && root) 
@@ -64,6 +67,18 @@ if (!isActive())
         XSelectInput(display, root, KeyPressMask);
         grabbed = true;
     }
+#endif
+}
+
+
+void KeyListenerTask::setKeyCode(char code)
+{ 
+#if defined(IS_WINDOWS)
+	keyCode = std::toupper(static_cast<unsigned char>(code));
+#elif defined(__linux__)
+	keyCode = code;
+#else	
+	keyCode = code;
 #endif
 }
 

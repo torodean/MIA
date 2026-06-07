@@ -53,8 +53,16 @@ SEQUENCENAME=spam_left_click
 DELAY=2
 LISTEN=9
 CLICK=LEFTCLICK
-CLICK=LEFTCLICK
-CLICK=LEFTCLICK
+ENDOFSEQUENCE
+
+
+###################################################
+# Spam right click - used for random clicker things.
+###################################################
+SEQUENCENAME=spam_right_click
+DELAY=15000
+LISTEN=9
+CLICK=RIGHTCLICK
 ENDOFSEQUENCE
 
 
@@ -93,10 +101,10 @@ ENDOFSEQUENCE
 ######################################################################
 # This combination is for pressing a random number between two values.
 ######################################################################
-SEQUENCENAME=rand_between_0_9
+SEQUENCENAME=rand_between_1_9
 DELAY=100
-LISTEN=p
-PRESSRANDNUM=0;9
+LISTEN=0
+PRESSRANDNUM=1;9
 ENDOFSEQUENCE
 
 ######################################################################
@@ -104,6 +112,25 @@ ENDOFSEQUENCE
 ######################################################################
 SEQUENCENAME=rand_between_7_9
 DELAY=100
-LISTEN=p
+LISTEN=0
 PRESSRANDNUM=7;9
+ENDOFSEQUENCE
+
+######################################################################
+# This combination is for pressing a random number between two values.
+######################################################################
+SEQUENCENAME=rand_between_4_9
+DELAY=100
+LISTEN=0
+PRESSRANDNUM=4;9
+ENDOFSEQUENCE
+
+
+######################################################################
+# This combination is for pressing a random number between two values.
+######################################################################
+SEQUENCENAME=rand_between_1_6
+DELAY=100
+LISTEN=0
+PRESSRANDNUM=1;6
 ENDOFSEQUENCE

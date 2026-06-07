@@ -62,8 +62,7 @@ public:
      *
      * @param code The key code to be assigned for listening.
      */
-    void setKeyCode(char code)
-    { keyCode = code; }
+    void setKeyCode(char code);
     
     /**
      * @brief Indicates whether the listener is active and bound to a valid key.
