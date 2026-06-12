@@ -1,2 +1,67 @@
 \chapter{Mapping Concepts}\label{chapter:mapping_concept}
 
+\section{Map Visual Areas}
+
+The player will start at a location of the map (see figure \ref{fig:small_explore_area} as an example location). Ideally, they will be able to select among a many different starting areas. Each starting area will be in a different region which will offer similar early game options, but modify late game options - providing different experiences for different players whom choose different starting areas. At first, a small section around the starting area will be the only visible area for the player (see the left side of figure \ref{fig:visual_area}).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/small_explore_area.jpg}
+    \caption{A small section of the Matella region displayed in figure \ref{fig:Matella}.}
+    \label{fig:small_explore_area}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./images/visual_area.jpg}
+    \caption{A visual representation of the unlocked area that a player will be able to see. As the player explores more regions, the visual area will expand (depicted from left to right).}
+    \label{fig:visual_area}
+\end{figure}
+
+\section{Storing The Unlocked Areas With A B\&W Pixel Map}
+
+This section outlines one option for storing the unlocked areas in an easily accessible method. The unlocked areas can be stored as their own image which contains only black and white pixels. The black pixels will represent the explored regions of the map, and the white will represent the unexplored regions. As the map is explored, pixels can simply be changed from white to black. See figure \ref{fig:explore_area} for a visual example of this. This data can be stored as an array of bits, or as an actual image. Once the unlocked region is stored for a player, this data can be overlayed onto the entire region map to display what is shown and what is not shown to the player. Since the data itself is binary in nature, any fading, feathering, or other effects can be added to make the map show as a visual fog-of-war rather than rigid edging (see figure \ref{fig:map_exploration} for an example).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/explore_area.jpg}
+    \caption{A visual representation of the unlocked areas that a player has unlocked. This data is stored as simple on/off (or black and white) to show what has been unlocked. As the player explores more regions, the unlocked area will expand (depicted from left to right).}
+    \label{fig:explore_area}
+\end{figure}
+
+\subsection{Biomes}
+
+As the player explores the map, they will unlock different things. These can include new zones, special items, and more. These unlockable things can change based on the different region types and areas. These regions can be stored as different \textit{biomes}. Another color map can store the various biomes which will determine what pixels will translate to what biomes, which allows different options of unlockable things to be available based on the pixels that the players are exploring (see figure \ref{fig:biome_map} for an example of a biome map).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/biome_map.jpg}
+    \caption{A visual representation of a small section of Matella which has two distinct biomes (yellow and blue). In this particular case, yellow could represent a desert region, and blue an ocean region. The discoveries players make as they explore can be based on the biomes of the pixels in the direction they are exploring.}
+    \label{fig:biome_map}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+\section{Map Exploration}
+
+As the players explore, they send missions out from their base of operations. The players can specify a direction to send their adventurers or a random direction. Some areas will require certain milestones before they can go there (such as through oceans, heavy mountains, etc). As the players explore, individual pixels will unlock from each mission (with possible upgrades to exploration rate). These pixels will spread out as shown in figure \ref{fig:explore_area} (left) as the player unlocks new areas. The visual area shown will be somewhat expanded from what is actually explored, in order to hide the individual pixels (though that view may be an unlockable option for the players to see).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/map_exploration.jpg}
+    \caption{A visual representation of the unlocked areas that a player has unlocked (left) verse the visible area that is renders as on the map (right). Since players will only be able to fully explore a few pixels at a time, the unlocked areas correspond to this accordingly. However, since they can see farther than they actually explore, the visual area is a bit further.}
+    \label{fig:map_exploration}
+\end{figure}
+
+
+
+
+
