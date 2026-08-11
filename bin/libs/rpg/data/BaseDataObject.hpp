@@ -34,7 +34,7 @@ namespace rpg
             description(description)
         { }
 
-        /// Getters for the various data mambers.
+        /// Getters for the various data members.
         uint32_t getID() const { return id; }
         std::string getName() const { return name; }
         std::string getDescription() const { return description; }
