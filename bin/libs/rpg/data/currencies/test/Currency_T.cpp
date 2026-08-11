@@ -11,24 +11,31 @@
 using namespace currency;
 
 /**
- * Tests for currency type conversion functions.
+ * @brief Verifies stringToCurrencyType maps each valid currency name to its enum value, including mixed-case input.
  */
 TEST(CurrencyTypeConversionTest, StringToCurrencyTypeValid)
 {
     EXPECT_EQ(stringToCurrencyType("COIN"), CurrencyType::COIN);
     EXPECT_EQ(stringToCurrencyType("fiat"), CurrencyType::FIAT);
     EXPECT_EQ(stringToCurrencyType("Token"), CurrencyType::TOKEN);
-    EXPECT_EQ(stringToCurrencyType("EVENT"), CurrencyType::EVENT);
+    EXPECT_EQ(stringToCurrencyType("EvEnT"), CurrencyType::EVENT);
     EXPECT_EQ(stringToCurrencyType("gem"), CurrencyType::GEM);
 }
 
+/**
+ * @brief Verifies stringToCurrencyType resolves unrecognized, empty, and numeric strings to CurrencyType::UNKNOWN.
+ */
 TEST(CurrencyTypeConversionTest, StringToCurrencyTypeInvalid)
 {
     EXPECT_EQ(stringToCurrencyType("INVALID"), CurrencyType::UNKNOWN);
     EXPECT_EQ(stringToCurrencyType(""), CurrencyType::UNKNOWN);
     EXPECT_EQ(stringToCurrencyType("123"), CurrencyType::UNKNOWN);
+    EXPECT_EQ(stringToCurrencyType("UnknOWn"), CurrencyType::UNKNOWN);
 }
 
+/**
+ * @brief Verifies currencyTypeToString serializes each CurrencyType enum value to its uppercase string name.
+ */
 TEST(CurrencyTypeConversionTest, CurrencyTypeToString)
 {
     EXPECT_EQ(currencyTypeToString(CurrencyType::COIN), "COIN");
@@ -40,11 +47,12 @@ TEST(CurrencyTypeConversionTest, CurrencyTypeToString)
 }
 
 /**
- * Tests for the Currency class.
+ * Test fixture for the Currency class. 
  */
 class Currency_T : public ::testing::Test
 {
 protected:
+    /// Sample Currency used across the test fixture.
     Currency testCurrency{
         42,
         "Gold",
@@ -55,6 +63,9 @@ protected:
     };
 };
 
+/**
+ * @brief Verifies the parameterized constructor stores all fields and the getters return them unchanged.
+ */
 TEST_F(Currency_T, ConstructorAndGetters)
 {
     EXPECT_EQ(testCurrency.getID(), 42u);
@@ -65,6 +76,9 @@ TEST_F(Currency_T, ConstructorAndGetters)
     EXPECT_EQ(testCurrency.getIconArt(), "gold_icon.png");
 }
 
+/**
+ * @brief Verifies toJson serializes the Currency into the expected field set and values.
+ */
 TEST_F(Currency_T, ToJsonProducesCorrectJson)
 {
     nlohmann::json expected = {
@@ -77,4 +91,3 @@ TEST_F(Currency_T, ToJsonProducesCorrectJson)
     };
     EXPECT_EQ(testCurrency.toJson(), expected);
 }
-
