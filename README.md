@@ -39,4 +39,4 @@ MIA is a personal hobby project built primarily for experimentation, learning, a
 
 ## Windows vs Linux
 
-MIA is primarily developed on a Linux machine. For this reason, a stable Windows build may not always be the current state and some features on Windows may lag behind in compatability.
+MIA is primarily developed on a Linux machine. For this reason, a stable Windows build may not always be the current state and some features on Windows may lag behind in compatibility.
