@@ -40,3 +40,11 @@ MIA is a personal hobby project built primarily for experimentation, learning, a
 ## Windows vs Linux
 
 MIA is primarily developed on a Linux machine. For this reason, a stable Windows build may not always be the current state and some features on Windows may lag behind in compatibility.
+
+## Use Of Artificial Intelligence
+
+Since this project is primarily for learning and exploration, the use of Artificial Intelligence (AI, LLMs, etc) is not as conducive for the MIA project as it would be for many other projects. With that said, there are many tasks that are needed in this project which are primarily (by their nature) algorithmic, repetitive, or labor-intensive with any thought or design already done (e.g., fixing the format of Doxygen comments after a standard was updated). These types of tasks may not always provide any learning opportunities and are rather just time consuming. In cases like this, AI may or may not be leveraged. Task files are placed in the `.ai/` folder, which provide guidance for these kinds of mechanical tasks, such as standardizing comment formats.
+
+### Approach to AI use
+
+A common adage when referencing current AI systems is 'trust but verify.' My experience in using these modern systems is that they cannot be trusted at the level this statement implies - they produce too many hallucinations and mistakes. I have found these systems to be beneficial tools only in the context of the user having full knowledge of the systems they are affecting (essentially, as workhorses). Therefore, I use these systems more so with the perspective of 'do not trust, and therefore verify.' 
