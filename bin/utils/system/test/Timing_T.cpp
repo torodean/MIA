@@ -244,6 +244,4 @@ namespace timing
         EXPECT_TRUE(sleeper.sleep(10, timingUnit::time_ms))
             << "The sleep method of the InterruptableSleeper should return true when not interrupted.";
     }
-
-    // TODO - add tests for the InterruptableSleeper class when interupting.
 } // namespace timing
