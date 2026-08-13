@@ -89,6 +89,4 @@ namespace timing
         }
         conditional.notify_one();
     }
-    
-    // TODO - add tests for the InterruptableSleeper class.
 } // namespace timing
