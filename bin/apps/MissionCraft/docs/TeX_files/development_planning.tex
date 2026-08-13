@@ -17,9 +17,68 @@ This chapter will cover planning for the actual development of various parts. Th
 
 The MissionCraft game will consist of various interconnected systems all working in tandem. Often times, when developing a large project like this, the development of the systems can begin to get complicated and the project can begin to become overwhelming. In order to alleviate some of that, the various systems can be developed and tested independently - then connected afterwards. The systems will need to be designed with this in mind.
 
+\subsection{Minimum Testable Systems}
+
+To avoid unnecessary complexity and reduce development risk, each major system should be developed using a minimum testable system approach. Rather than fully implementing a system with all planned features from the beginning, a small but functional version should be created first. This allows the core functionality to be tested, evaluated, and refined before additional content or features are added.
+
+For example, when developing the building construction system, only a small number of buildings (such as three) should initially be implemented. Once the placement, construction, interaction, and management mechanics are functioning correctly, additional buildings can be added with confidence. The same approach can be applied to other systems, such as resources, missions, units, or production chains.
+
+This method provides several benefits. It reduces development time spent on untested systems, makes debugging easier, allows for earlier playtesting, and helps ensure that each system is enjoyable before significant effort is invested in expanding it. Once a minimum testable system is proven to work effectively, it can be gradually expanded into its full intended form.
 
 
 
+
+\section{Player System}\label{Player System}
+
+The player system is the system that contains the player data, progress, and interactions. It is essentially the top level system that contains and connects all the others. The player system will need to contain the following:
+
+\begin{itemize}
+  \item Storage for the structures the player has built.
+  \item Storage for the adventurers the player has.
+  \item Storage for the items and currencies the player has.
+  \item Storage for the progression tree(s) that the player has unlocked.
+\end{itemize}
+
+
+
+
+
+
+
+\section{Structures Systems}\label{Structures Systems}
+
+A structure (building) is the main component of the player garrison. Different structures do different things. All of the structures will contain a set of common information. This can be called something like the StructureMetaData. The StructureMetaData will contain basic information about the structure which is defined in the following chart:
+
+\begin{table}[htbp]
+\centering
+\caption{StructureMetaData Fields}
+\label{tab}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Field} & \textbf{Purpose} \
+\hline
+Structure ID & Unique identifier for the structure type. \
+\hline
+Structure Name & Display name presented to the player. \
+\hline
+Description & Description of the structure and its purpose. \
+\hline
+Structure Type & Classification of the structure (e.g., Farm, Housing Unit, Mine). \
+\hline
+Icon Asset & Icon displayed in menus and user interface elements. \
+\hline
+Model Asset & Visual model used to represent the structure in the garrison. \
+\hline
+Build Cost & Resources required to construct the structure. \
+\hline
+Construction Time & Time required to complete construction. \
+\hline
+Is Cosmetic & Indicates whether the structure provides gameplay functionality or is purely decorative. \
+\hline
+\end{tabular}
+\end{table}
+
+This StructureMetaData will load the fields from a config file at initialization time, rather than having them hard-coded. The StructureMetaData therefore will need some sort of method for populating that data, say populate
 
 
 
@@ -27,6 +86,13 @@ The MissionCraft game will consist of various interconnected systems all working
 
 
 \section{Garrison System}
+
+The garrison system is essentially a system of buildings that the player controls. It consists of a few various parts, such as the garrison as a whole, the individual buildings, the construction of new buildings, and other related systems. This section will primarily focus on the garrison as a whole, which includes features such as adding buildings, removing buildings, and more. The individual structures which the garrison contain will be discussed in section \ref{Structures Systems}.
+
+
+
+
+
 
 
 
