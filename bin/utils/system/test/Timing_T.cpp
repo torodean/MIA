@@ -59,6 +59,7 @@ namespace timing
                        << " ms, " << maxMilliseconds << " ms).";
         }
     }
+    
 
     TEST(TimingTest, SleepMilliseconds) 
     {
@@ -158,5 +159,91 @@ namespace timing
         EXPECT_LT(elapsed, 50);
     }
     
+    /**
+     * @brief Tests that sleep() from the InterruptableSleeper class can be interrupted for
+     * an integer duration.
+     */
+    TEST(TimingTest, InterruptableSleepInterrupted)
+    {
+        InterruptableSleeper sleeper;
+
+        std::atomic<bool> wasNotInterrupted{true};
+
+        std::thread sleepingThread([&]
+        {
+            wasNotInterrupted = sleeper.sleep(1, timingUnit::time_sec);
+        });
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        auto start = std::chrono::steady_clock::now();
+        sleeper.interruptSleep();
+        sleepingThread.join();
+        auto end = std::chrono::steady_clock::now();
+
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+        EXPECT_FALSE(wasNotInterrupted)
+            << "The sleep method of the InterruptableSleeper should have been interrupted.";
+        EXPECT_LT(elapsed, 75)
+            << "The total elapsed time should not be much more than 50ms.";
+    }
+    
+    /**
+     * @brief Tests that sleep() from the InterruptableSleeper class can be interrupted for
+     * an double duration.
+     */
+    TEST(TimingTest, InterruptableSleepFractionalInterrupted)
+    {
+        InterruptableSleeper sleeper;
+
+        std::atomic<bool> wasNotInterrupted{true};
+
+        std::thread sleepingThread([&]
+        {
+            wasNotInterrupted = sleeper.sleep(0.9, timingUnit::time_sec);
+        });
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        auto start = std::chrono::steady_clock::now();
+        sleeper.interruptSleep();
+        sleepingThread.join();
+        auto end = std::chrono::steady_clock::now();
+
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+        EXPECT_FALSE(wasNotInterrupted)
+            << "The sleep method of the InterruptableSleeper should have been interrupted.";
+        EXPECT_LT(elapsed, 75)
+            << "The total elapsed time should not be much more than 50ms.";
+    }
+    
+    /**
+     * @brief Tests that a sleep following an interruption completes normally.
+     */
+    TEST(TimingTest, InterruptableSleepAfterInterruption)
+    {
+        InterruptableSleeper sleeper;
+
+        std::atomic<bool> wasNotInterrupted{true};
+
+        std::thread sleepingThread([&]
+        {
+            wasNotInterrupted = sleeper.sleep(1, timingUnit::time_sec);
+        });
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        sleeper.interruptSleep();
+        sleepingThread.join();
+
+        EXPECT_FALSE(wasNotInterrupted)
+            << "The sleep method of the InterruptableSleeper should have been interrupted.";
+
+        EXPECT_TRUE(sleeper.sleep(10, timingUnit::time_ms))
+            << "The sleep method of the InterruptableSleeper should return true when not interrupted.";
+    }
+
     // TODO - add tests for the InterruptableSleeper class when interupting.
 } // namespace timing
