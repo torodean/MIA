@@ -81,6 +81,13 @@ By explicitly handling function return values, the code ensures that errors are 
 \subsection{Code Organization and Practices}
 \begin{itemize}\itemsep0em
     \item Header files should include include guards or \texttt{\#pragma once}.
+    \item \textbf{Header include order}: When a source or header file includes other files, group the includes in a fixed order, separated by blank lines:
+        \begin{enumerate}\itemsep0em
+        \item The associated (pairing) header first. In a \texttt{.cpp} file this is the matching \texttt{.hpp}. This makes missing dependencies in the pairing header surface immediately.
+        \item System headers (e.g., \texttt{<iostream>}, \texttt{<vector>}).
+        \item Third-party library headers (e.g., \texttt{<gtest/gtest.h>}).
+        \item Other MIA headers (project headers outside the pairing header).
+        \end{enumerate}
     \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \texttt{std::unique\_ptr} and \texttt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
     \item Avoid using \texttt{using namespace std;} in headers. Placing \texttt{using namespace} directives in headers pollutes the global namespace for any file that includes that header, potentially causing name collisions and ambiguous references. This can lead to subtle and hard-to-debug errors, especially in large codebases or when integrating with third-party libraries. Instead, fully qualify names (i.e., \texttt{std::vector}) in headers to keep dependencies explicit and avoid unintended side effects.
     \item Separate declaration and implementation: use headers (\texttt{.hpp}) for interfaces and source files (\texttt{.cpp}) for implementation.
@@ -224,22 +231,57 @@ This convention helps match braces quickly without excessive scrolling.
     \item All functions that may throw exceptions must document them using @throws. 
 \end{itemize}
 
+\subsubsection*{Doxygen tag forms}
+
+Use standard Doxygen tag forms throughout. The authoritative Doxygen comments live in header files; for methods implemented in \texttt{.cpp} files that are not declared in a header, add the Doxygen comment in the \texttt{.cpp}.
+\begin{itemize}\itemsep0em
+    \item \texttt{@brief} - short summary.
+    \item \texttt{@param name description} - one per parameter, in order.
+    \item \texttt{@return description} - for non-void, non-constructor functions.
+    \item \texttt{@throws type description} - for any function that may throw. Use \texttt{@throws}, not \texttt{@throw}.
+    \item \texttt{@note}, \texttt{@see}, \texttt{@code}/\texttt{@endcode} as needed.
+\end{itemize}
+Do not use the legacy bracketed forms \texttt{@param name[type] - ...} or \texttt{@return [type] - ...}; those are being phased out. At the time of writing this, the legacy form is common throughout the project.
+
+\subsubsection*{File headers}
+
+Every \texttt{.cpp} and \texttt{.hpp} file begins with a Doxygen header block. Required tags: \texttt{@file} (followed by the file's basename), \texttt{@author}, \texttt{@date} (\texttt{MM/DD/YYYY}), and \texttt{@brief} for the one-line summary. Do not use the plain \texttt{Description:} line that appears in many older files; use \texttt{@brief}. A \texttt{@copyright} line is optional and is carried only by the older encryption files.
+\begin{lstlisting}[style=cppstyle]
+/**
+ * @file Timing.hpp
+ * @author Antonius Torode
+ * @date 03/09/2021
+ * @brief Declares system-level timing utilities for sleeping and waiting.
+ */
+\end{lstlisting}
+
+\subsubsection*{Block comment shape and \texttt{///} usage}
+
+For multi-line Doxygen and plain block comments, the \texttt{/**} (or \texttt{/*}) and \texttt{*/} delimiters each go on their own line, with body lines prefixed by \texttt{ * }. Never place \texttt{/**} or \texttt{*/} on the same line as body text, and never cram a \texttt{/** ... */} block onto a single physical line. A one-line Doxygen comment is written as \texttt{///}; a multi-line one is the block form.
+
+The choice between \texttt{///} and \texttt{/** ... */} depends on what is being documented and the line count:
+\begin{itemize}\itemsep0em
+    \item For methods (except trivial getters and setters) and tests, the \texttt{/** ... */} block form is preferred even when the brief is a single sentence, since these comments tend to grow a body or tags later. A single-line \texttt{///} is acceptable, but the block form is the preferred choice.
+    \item For trivial methods such as simple getters and setters, \texttt{///} is acceptable and often preferable.
+    \item Member variables use \texttt{///} on its own line above the declaration, or \texttt{///<} inline on the same line, for a single-line description. Use the \texttt{/** ... */} block form when the description spans multiple lines.
+    \item Other single-line Doxygen (e.g. a one-off declaration that is not a method or test) uses \texttt{///}.
+\end{itemize}
+For non-Doxygen single-line comments, always use \texttt{//}, never \texttt{/* ... */} for single line comments. Use \texttt{/* ... */} blocks for multi-line non-Doxygen prose.
+
 \subsubsection*{Example Doxygen comments}
 
-For multi-line comments, use the \texttt{/** .. */} comment block.
+For multi-line comments, use the \texttt{/** .. */} comment block. The \texttt{/**} and \texttt{*/} delimiters each go on their own line, and body lines are prefixed with \texttt{ * } (space, asterisk, space).
 \begin{lstlisting}[style=cppstyle]
 /**
  * @brief Represents a configurable widget.
  * This class manages widget configuration and state.
- * @param config[Config] - Configuration settings for the widget.
- * @return Widget instance initialized with given config.
  */
 class Widget 
 {
 public:
     /**
      * @brief Initializes the widget with given settings.
-     * @param settings[Config] - The configuration to apply.
+     * @param settings The configuration to apply.
      */
     void initialize(const Config& settings);
 };
