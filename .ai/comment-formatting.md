@@ -71,8 +71,9 @@ This is the consistent house style and applies to plain `/* ... */` blocks too.
 
 The `///` vs `/** ... */` block choice depends on what is being documented, not just line count:
 
-- **Methods and tests** always use the `/** ... */` block form, even when the brief is a single sentence that would fit on one line. These comments tend to grow a body paragraph or tags later, so the block form is the consistent choice.
-- **Member variables** use `///` for a single-line doc (on its own line above the declaration, or `///<` inline on the same line). See [Member variables](#member-variables).
+- **Methods and tests** prefer the `/** ... */` block form, even when the brief is a single sentence that would fit on one line. These comments tend to grow a body paragraph or tags later, so the block form is the preferred choice. A single-line `///` is acceptable for single line comments, but the block form is preferred.
+- **Trivial methods** such as simple getters and setters may use `///` if they fit on a single line; there is no strong preference between `///` and the `/** ... */` block form for these.
+- **Member variables** use `///` for a single-line doc (on its own line above the declaration, or `///<` inline on the same line). Use the `/** ... */` block form when the description spans multiple lines. See [Member variables](#member-variables).
 - **Other single-line Doxygen** (e.g. a one-off declaration doc that is not a method or test) uses `///`.
 
 Never write `/** ... */` crammed onto a single physical line; a one-line Doxygen comment is `///`, and a multi-line one is the block form with delimiters on their own lines.
