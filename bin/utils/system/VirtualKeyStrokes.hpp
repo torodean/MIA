@@ -108,25 +108,25 @@ namespace virtual_keys
     
         /**
          * This will simulate a key press.
-         * @param character[const char&] - the key to press.
-         * @param holdTime [int] - A time to hold after the keypress in ms (default = 0).
-         * @param verboseMode[bool] If true, prints the pressed number to standard output.
-         * @throw [MIAException] - Throws if an unsupported character is entered.
+         * @param character the key to press.
+         * @param holdTime A time to hold after the keypress in ms (default = 0).
+         * @param verboseMode If true, prints the pressed number to standard output.
+         * @throw Throws if an unsupported character is entered.
          */
         void press(const char& character, int holdTime = 0, bool verboseMode = false);
     
         /**
          * This will simulate the key presses for a string.
-         * @param character[const std::string&] - the string to simulate key presses for.
-         * @param holdTime [int] - A time to hold each keypress in ms (default = 0).
-         * @param verboseMode[bool] If true, prints the pressed number to standard output.
+         * @param character[const std::string&] the string to simulate key presses for.
+         * @param holdTime A time to hold each keypress in ms (default = 0).
+         * @param verboseMode If true, prints the pressed number to standard output.
          */
         void type(const std::string& word, int holdTime = 0, bool verboseMode = false);
     
         /**
          * @brief Simulates a mouse click of the specified type.
          * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
-         * @param holdTime [int] - A time to hold each click in ms (default = 0).
+         * @param holdTime A time to hold each click in ms (default = 0).
          * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
          */
         void mouseClick(ClickType clickType, int holdTime = 0, bool verboseMode = false);        
@@ -134,7 +134,7 @@ namespace virtual_keys
         /**
          * @brief Simulates a mouse click of the specified type.
          * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
-         * @param holdTime [int] - A time to hold each keypress in ms (default = 0).
+         * @param holdTime A time to hold each keypress in ms (default = 0).
          * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
          */
         void pressSpecialButton(SpecialButton specialButton, int holdTime = 0, bool verboseMode = false);
@@ -158,6 +158,11 @@ namespace virtual_keys
 		 */
 		void scrollWheelDown(bool verboseMode);
     
+        /**
+         * This will move the users mouse to a specific coordinate.
+         * @param x The horizontal coordinate to use.
+         * @param y The vertical coordinate to use.
+         */
         void moveMouseTo(int x, int y);
     
         void minus(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the minus key.
@@ -169,9 +174,12 @@ namespace virtual_keys
         void backslash(int holdTime = 0, bool verboseMode = false);   ///< Simulates press of the backslash key.
         void slash(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the slash key.
     
-        /// Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class..
+        /** 
+         * Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class. The purpose
+         * of this sleep is to give the OS time to catch up. There were some slight issues when
+         * all of the key interactions were done without any delay in between them.
+         */
         void defaultSleep() const;
-    	void sleep(int time);
 
         /**
          * @brief Simulates pressing a number key (0–9) using virtual key codes.
@@ -181,9 +189,9 @@ namespace virtual_keys
          * Windows SendInput API, waits for the specified hold duration, and then releases
          * the key. Optionally prints the number to stdout if verboseMode is enabled.
          *
-         * @param num[int] - The number key to press (must be in range 0–9).
-         * @param holdTime[int] - Duration in milliseconds to hold the key before releasing.
-         * @param verboseMode[bool] - If true, prints the pressed number to standard output.
+         * @param num The number key to press (must be in range 0–9).
+         * @param holdTime Duration in milliseconds to hold the key before releasing.
+         * @param verboseMode If true, prints the pressed number to standard output.
          */
         void pressNumber(int num, int holdTime = 0, bool verboseMode = false);
         
@@ -194,9 +202,9 @@ namespace virtual_keys
          * It supports both uppercase and lowercase letters by adjusting the virtual key code
          * and shift state as needed. Uses the Windows SendInput API to simulate input.
          *
-         * @param ch[char] - The character to press (must be a letter a–z or A–Z).
-         * @param holdTime[int] - Duration in milliseconds to hold the key before releasing.
-         * @param verboseMode[bool] - If true, prints the pressed character to standard output.
+         * @param ch The character to press (must be a letter a–z or A–Z).
+         * @param holdTime Duration in milliseconds to hold the key before releasing.
+         * @param verboseMode If true, prints the pressed character to standard output.
          */
         void pressChar(char ch, int holdTime = 0, bool verboseMode = false);
         
