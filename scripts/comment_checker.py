@@ -502,7 +502,7 @@ def has_pragma_once(file_path, lines):
 
     @param file_path The path to the header file.
     @param lines The list of lines from the file.
-    @return  A list with a string describing the issue if '#pragma once' is missing, empty if present.
+    @return A list with a string describing the issue if '#pragma once' is missing, empty if present.
     """
     for i, line in enumerate(lines, 1):
         if line.strip() == "#pragma once":
