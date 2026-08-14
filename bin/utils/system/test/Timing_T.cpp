@@ -16,7 +16,12 @@
 
 namespace timing
 {
-    /// The max number of times to attempt the tests if they fail.
+    /*
+     * Timing tests compare elapsed wall-clock time against a tight window (e.g. [95, 115) ms). OS
+     * scheduler jitter (worse on Windows) can push a single run outside the window even when the
+     * sleep is correct. Retrying up to this many times absorbs that jitter so a borderline run is
+     * not reported as a failure. Tests with a wide margin do not need it.
+     */
     static constexpr int maxAttempts = 5;
 
     /**
@@ -60,27 +65,35 @@ namespace timing
         }
     }
     
-
+    /**
+     * @brief Verifies sleepMilliseconds blocks for approximately the requested duration.
+     */
     TEST(TimingTest, SleepMilliseconds) 
     {
         expectSleepDuration([] { sleepMilliseconds(100); }, 95, 115, "sleepMilliseconds(100)");
     }
 
-
+    /**
+     * @brief Verifies sleepSeconds blocks for approximately one whole second.
+     */
     TEST(TimingTest, SleepSecondsInt) 
     {
         // Windows requires the end time difference to be rather long to succeed.
         expectSleepDuration([] { sleepSeconds(1); }, 995, 1100, "sleepSeconds(1)");
     }
 
-
+    /**
+     * @brief Verifies sleepSeconds accepts a fractional second value and blocks for that duration.
+     */
     TEST(TimingTest, SleepSecondsDouble) 
     {
         // Windows requires the end time difference to be rather long to succeed.
         expectSleepDuration([] { sleepSeconds(0.2); }, 195, 215, "sleepSeconds(0.2)");
     }
 
-
+    /**
+     * @brief Verifies sleepMinutes(0) returns immediately rather than blocking.
+     */
     TEST(TimingTest, SleepMinutesZero) 
     {
         auto start = std::chrono::steady_clock::now();
