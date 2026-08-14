@@ -462,7 +462,7 @@ def check_docstrings(file_path, methods):
     
     This function verifies that each method has a docstring, that all parameters are documented 
     with '@param name Description' where type matches the declared type, and that non-void, 
-    non-constructor methods have '@return [returnType] - Description'. It skips docstring checks 
+    non-constructor methods have '@return Description'. It skips docstring checks 
     for .cpp files and ignores constructors when checking for @return.
     
     @param file_path The path to the file being checked.
