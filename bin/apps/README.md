@@ -2,6 +2,9 @@
 
 This directory contains the standalone apps for the MIA project. Below is a brief description of each subfolder:
 
+- **maple/**
+  This app (monetary autonomous projection and learning extension) is a small tool for creating future projections and tasks related to finances.
+
 - **mia_original/**  
   This app contains many of the random features from the original MIA project that don't exist in other apps (before it was moved to an app-based system). Still in dev.
 

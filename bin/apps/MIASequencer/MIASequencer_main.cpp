@@ -9,7 +9,7 @@
 
 // The MIA Application Framework templates
 #include "AppFramework.hpp"
-// The file containing the fishbot app.
+// The file containing the MIASequencer class.
 #include "MIASequencer.hpp"
 
 MIA_MAIN(MIASequencer)

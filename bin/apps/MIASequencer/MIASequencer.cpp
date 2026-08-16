@@ -16,7 +16,7 @@
 // The associated header file.
 #include "MIASequencer.hpp"
 
-// Used for error handling.
+// Used for error handling and configuration.
 #include "Paths.hpp"
 #include "MIAException.hpp"
 // Used for string manipulation and parsing.
@@ -86,16 +86,16 @@ namespace
 MIASequencer::MIASequencer() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
     sequencesFileOpt("-c", "--config", "Specify a config file to use (default = " +
-                                paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
-                                CommandOption::commandOptionType::STRING_OPTION),
+                     paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
+                     CommandOption::commandOptionType::STRING_OPTION),
     testOpt("-t", "--test", "Enables test mode. This mode will only output the sequence to terminal.",
-                                CommandOption::commandOptionType::BOOL_OPTION),
+            CommandOption::commandOptionType::BOOL_OPTION),
     sequenceNameOpt("-s", "--sequence", "Run a sequence, then exit.",
-                                CommandOption::commandOptionType::STRING_OPTION),
+                    CommandOption::commandOptionType::STRING_OPTION),
     loopModeOpt("-L", "--loop", "Loop over the activated sequence indefinitely.",
-                                CommandOption::commandOptionType::BOOL_OPTION),
+                CommandOption::commandOptionType::BOOL_OPTION),
     printSequencesOpt("-P", "--list", "Print a list of all valid sequences when ran.",
-                                CommandOption::commandOptionType::BOOL_OPTION)
+                      CommandOption::commandOptionType::BOOL_OPTION)
 { };
 
 
