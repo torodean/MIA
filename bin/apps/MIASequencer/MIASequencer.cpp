@@ -81,7 +81,7 @@ namespace
         int randomVal = math::randomInt(min_num, max_num);
         vkeys.pressNumber(randomVal, holdTime, verboseMode);
     }
-}
+} // namespace
 
 MIASequencer::MIASequencer() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),

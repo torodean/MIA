@@ -8,11 +8,14 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 // Used for the configuration.
 #include "MIAConfig.hpp"
 // Used for common app setup.
 #include "MIAApplication.hpp"
+// Storage for calculation values.
+#include "TaxConstants.hpp"
 
 namespace maple
 {
@@ -64,6 +67,9 @@ namespace maple
         virtual void printHelp() const;
 
     private:
+    
+        /// Just a temporary method for testing while developing the app.
+        void test();
        
         /**
          * TODO.

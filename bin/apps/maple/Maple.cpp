@@ -2,7 +2,7 @@
  * @file Maple.cpp
  * @author Antonius Torode
  * @date 08/16/2026
- * @brief TODO
+ * @brief The main implementation file for the Maple application 
  */
 
 // The pairing header file which defines the class methods for Maple.
@@ -34,7 +34,6 @@ namespace maple
             
             // Set the values from the command line arguments.
             testOpt.getOptionVal<bool>(argc, argv, testMode);
-            sequenceNameOpt.getOptionVal<std::string>(argc, argv, sequenceName);
             
             // Set and load the config file.
             std::string configFile = defaultConfigFile;
@@ -53,10 +52,20 @@ namespace maple
         }
     }
     
+    
+    void Maple::test()
+    {
+        std::cout << "test!" << std::endl;
+    }
+    
 
     int Maple::run()
-    {}
-
+    {
+        test();
+        
+        return 0;
+    }
+    
 
     void Maple::printHelp() const
     {
@@ -71,5 +80,7 @@ namespace maple
 
 
     bool Maple::loadConfig()
-    {}
+    {
+        return true;
+    }
 } // namespace Maple

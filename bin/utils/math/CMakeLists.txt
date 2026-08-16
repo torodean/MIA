@@ -2,11 +2,13 @@
 # Create the Math_UTIL
 set(Math_SRC 
     MathUtils.cpp 
-    D3CMath.cpp )
+    D3CMath.cpp
+    FinanceUtils.cpp )
 set(Math_INC 
     MathUtils.hpp
     D3CMath.hpp 
-    MathTypes.hpp )
+    MathTypes.hpp
+    FinanceUtils.hpp )
 add_library(Math_UTIL ${Math_SRC} ${Math_INC})
 target_link_libraries(Math_UTIL PUBLIC Types_UTIL)
 
