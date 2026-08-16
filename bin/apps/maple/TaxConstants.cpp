@@ -8,6 +8,14 @@
 
 namespace maple
 {
+
+    bool updateTaxRateConstantsFromLine(TaxRateConstants& constants,
+                                        const std::string& lineToParse)
+    {
+        return true;
+    }
+    
+
     TaxRateConstants loadTaxRateConstantsFromFile(const std::string& fileName, 
                                                   bool printWarnings)
     {

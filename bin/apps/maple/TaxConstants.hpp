@@ -48,6 +48,18 @@ namespace maple
     }; // struct TaxRateConstants
     
     /**
+     * This method will take a TaxRateConstants object and update any value of it
+     * (if applicable) based on an input line. The input line is expected to be a
+     * line from a constants::ConfigType::KEY_VALUE formatted config file.
+     * @param constants The object to update.
+     * @param lineToParse The line of the config file to parse.
+     * @return true if constants was updated with information from the line.
+     * @return false if constants was not updated with information from the line.
+     */
+    bool updateTaxRateConstantsFromLine(TaxRateConstants& constants,
+                                        const std::string& lineToParse); 
+    
+    /**
      * Constructs a TaxRateConstants object from data from a configuration file.
      * This method expects the configuration file to be formatted in the 
      * constants::ConfigType::KEY_VALUE format. For values that are not found in
