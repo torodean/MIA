@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+// Used for the configuration file parsing.
+#include "MIAConfig.hpp"
+
 namespace maple
 {
     /**
@@ -69,6 +72,19 @@ namespace maple
      * @param printWarnings Whether or not to print warnings for missing values.
      * @return A constructed TaxRateConstants with values from the config file. 
      */
-    TaxRateConstants loadTaxRateConstantsFromFile(const std::string& fileName, 
+    TaxRateConstants createTaxRateConstantsFromFile(const std::string& fileName, 
                                                   bool printWarnings = false);
+
+    /**
+     * Constructs a TaxRateConstants object from data from a configuration object.
+     * This method expects the configuration object to be formatted in the 
+     * constants::ConfigType::KEY_VALUE format. For values that are not found in
+     * the config, the default values are kept and an optional warning is produced.
+     * 
+     * @param config The configuration object to use.
+     * @param printWarnings Whether or not to print warnings for missing values.
+     * @return A constructed TaxRateConstants with values from the config object. 
+     */
+    TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config, 
+                                                    bool printWarnings = false);
 } // namespace maple
