@@ -111,6 +111,8 @@ namespace finance
      * @param variability The per-month variability applied to the low and high series.
      * @param months The number of months to project.
      * @return A vector of three vectors: low, base, high multipliers for each month.
+     *
+     * @note STILL EXPERIMENTAL
      */
     std::vector<std::vector<double>> generateInflationModel(double startingRate,
                                                             double variability,
