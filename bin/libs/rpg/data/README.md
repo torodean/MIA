@@ -15,6 +15,8 @@ This folder contains the various data storage classes for the rpg elements.
 
 - **progression/**: Contains the various values to keep track of progression trackers.
 
+- **player/**: Contains the classes related to the player.
+- 
 - **stats/**: Contains the various stat-related classes. 
 
 ---
