@@ -2,11 +2,11 @@
  * @file StringUtils.cpp
  * @author Antonius Torode
  * @date 03/01/2021
- * Description:
- *     Utility implementations for common string operations such as parsing, transformation,
- *     formatting, and analysis. These functions support general-purpose tasks including
- *     case conversion, character search/removal, delimiter-based splitting, and pattern matching,
- *     useful across multiple modules in the application.
+ *
+ * Utility implementations for common string operations such as parsing, transformation,
+ * formatting, and analysis. These functions support general-purpose tasks including
+ * case conversion, character search/removal, delimiter-based splitting, and pattern matching,
+ * useful across multiple modules in the application.
  */
 
 #include <iostream>
@@ -29,12 +29,12 @@ using std::to_string;
 
 namespace StringUtils
 {
-    std::string toLower(std::string &input)
+    std::string toLower(const std::string& input)
     {
         std::string output = input;
-        for(int i=0; input[i]; i++)
+        for(size_t i = 0; i < input.size(); ++i)
         {
-            output[i] = std::tolower(input[i]);
+            output[i] = std::tolower(static_cast<unsigned char>(input[i]));
         }
         return output;
     }
