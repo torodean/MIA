@@ -12,12 +12,11 @@
 
 // Used for the configuration file parsing.
 #include "MIAConfig.hpp"
+// Used for the shared ALL_SCOPE constant.
+#include "MapleConstants.hpp"
 
 namespace maple
 {
-    /// The scope value for an expense that applies in every scenario.
-    inline const std::string ALL_SCOPE{"all"};
-
     /**
      * @brief A single named monthly expense and the scenario it applies to.
      *
