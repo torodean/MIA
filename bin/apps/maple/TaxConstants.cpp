@@ -28,37 +28,35 @@ namespace maple
          * The string "inf" (case-insensitive) becomes positive infinity, so the open top
          * tax bracket has no upper bound. Anything else is converted with std::stod.
          *
-         * @param token The string to convert.
+         * @param element The string to convert.
          * @return The double value.
          * @throws std::invalid_argument if the string is not a number and not "inf".
          */
-        double parseBracketToken(const std::string& token)
+        double parseBracketElement(const std::string& element)
         {
-            // Lowercase the token so "inf", "INF", etc. all match. toLower takes a
-            // non-const ref, so pass a mutable copy.
-            std::string mutableToken = token;
-            std::string lower = StringUtils::toLower(mutableToken);
+            // Lowercase the element so "inf", "INF", etc. all match.
+            std::string lower = StringUtils::toLower(element);
 
             if (lower == "inf")
                 return std::numeric_limits<double>::infinity();
 
-            return std::stod(token);
+            return std::stod(element);
         }
 
         /**
          * @brief Converts a list of string elements into doubles.
          *
-         * Each element is converted by parseBracketToken, so "inf" is handled.
+         * Each element is converted by parseBracketElement, so "inf" is handled.
          *
-         * @param tokens The strings to convert.
+         * @param elements The strings to convert.
          * @return The converted values.
          */
-        std::vector<double> parseBracketList(const std::vector<std::string>& tokens)
+        std::vector<double> parseBracketList(const std::vector<std::string>& elements)
         {
             std::vector<double> values;
-            values.reserve(tokens.size());
-            for (const std::string& token : tokens)
-                values.push_back(parseBracketToken(token));
+            values.reserve(elements.size());
+            for (const std::string& element : elements)
+                values.push_back(parseBracketElement(element));
             return values;
         }
 
@@ -107,8 +105,8 @@ namespace maple
         {
             try
             {
-                std::vector<std::string> tokens = config.getVector(key, ',');
-                return parseBracketList(tokens);
+                std::vector<std::string> strings = config.getVector(key, ',');
+                return parseBracketList(strings);
             }
             catch (const error::MIAException&)
             {
