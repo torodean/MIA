@@ -24,3 +24,29 @@ tax_rate_bracket=0.00,0.10,0.12,0.22,0.24,0.32,0.35,0.37
 standard_deductible_single=12950.00
 standard_deductible_head_of_household=19400.00
 standard_deductible_married=25900.00
+
+# Income
+income_all_salary_husband=132000.0
+income_all_salary_wife=66000.0
+
+# Savings
+savings_all_initial=0.0
+savings_all_emergency_fund_min=20000.0
+
+# Expenses when renting
+expense_renting_rent=1113.0
+expense_renting_insurance=4.25
+expense_renting_internet=75.0
+expense_renting_service_fee=4.25
+expense_renting_trash=10.0
+expense_renting_water=130.0
+expense_renting_electric=250.0
+
+# Monthly misc expenses
+expense_all_phone=100.0
+expense_all_car_insurance=125.0
+expense_all_food=1000.0
+expense_all_gas=400.0
+
+# Misc values
+

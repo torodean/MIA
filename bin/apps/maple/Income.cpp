@@ -25,6 +25,13 @@ namespace maple
         /// The config key prefix that marks an income entry (lowercase).
         const std::string INCOME_PREFIX{"income_"};
     }
+    
+    
+    std::ostream& operator<<(std::ostream& stream, const IncomeSource& source)
+    {
+        stream << "value:" << source.value << ", " << "scope:" << source.scope;
+        return stream;
+    }
 
 
     void Income::addSource(const std::string& name, double value,
@@ -52,6 +59,23 @@ namespace maple
     size_t Income::size() const
     {
         return sources.size();
+    }
+    
+
+    std::ostream& operator<<(std::ostream& stream, const Income& income)
+    {
+        bool first = true;
+        
+        for (const auto& source : income.sources)
+        {
+            if (first)
+                first = false;
+            else            
+                stream << ", ";
+            stream << "[name:" << source.first << ", " // The key/name.
+                   << source.second << "]";       // The Expense object.
+        }
+        return stream;
     }
 
 

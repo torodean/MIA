@@ -6,15 +6,17 @@
  */
 #include "TaxConstants.hpp"
 
-// Used for catching config access failures on missing keys.
-#include "MIAException.hpp"
-
 #include <algorithm>
 #include <cstddef>
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
 #include <string>
+
+// Used for catching config access failures on missing keys.
+#include "MIAException.hpp"
+// Used for converting vectors to strings.
+#include "VectorUtils.hpp"
 
 namespace maple
 {
@@ -87,6 +89,22 @@ namespace maple
             }
         }
     } // namespace
+    
+    
+    std::ostream& operator<<(std::ostream &stream, const TaxRateConstants& constants)
+    {
+        stream << "medicareTaxRate: " << constants.medicareTaxRate
+               << ", oasdiTaxRate: " << constants.oasdiTaxRate
+               << ", salesTax: " << constants.salesTax
+               << ", standardDeductibleSingle: " << constants.standardDeductibleSingle
+               << ", standardDeductibleHeadOfHousehold: " << constants.standardDeductibleHeadOfHousehold
+               << ", standardDeductibleMarried: " << constants.standardDeductibleMarried
+               << ", taxBracketSingle: [" << VectorUtils::vectorToString(constants.taxBracketSingle)
+               << "], taxBracketMarried: [" << VectorUtils::vectorToString(constants.taxBracketMarried)
+               << "], taxRateBracket: [" << VectorUtils::vectorToString(constants.taxRateBracket) << "]";
+       return stream;
+               
+    }
 
 
     math::finance::TaxBrackets toTaxBrackets(const TaxRateConstants& constants,

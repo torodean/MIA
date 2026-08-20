@@ -25,9 +25,17 @@ namespace maple
         /// The config key prefix that marks an expense entry (lowercase).
         const std::string EXPENSE_PREFIX{"expense_"};
     }
+    
+    
+    std::ostream& operator<<(std::ostream& stream, const Expense& expense)
+    {
+        stream << "value:" << expense.value << ", " << "scope:" << expense.scope;
+        return stream;
+    }
 
 
-    void MonthlyExpenses::addExpense(const std::string& name, double value,
+    void MonthlyExpenses::addExpense(const std::string& name, 
+                                     double value,
                                      const std::string& scope)
     {
         expenses[name] = {value, StringUtils::toLower(scope)};
@@ -52,6 +60,23 @@ namespace maple
     size_t MonthlyExpenses::size() const
     {
         return expenses.size();
+    }
+    
+
+    std::ostream& operator<<(std::ostream& stream, const MonthlyExpenses& monthlyExpenses)
+    {
+        bool first = true;
+        
+        for (const auto& expense : monthlyExpenses.expenses)
+        {
+            if (first)
+                first = false;
+            else            
+                stream << ", ";
+            stream << "[name:" << expense.first << ", " // The key/name.
+                   << expense.second << "]";       // The Expense object.
+        }
+        return stream;
     }
 
 

@@ -30,6 +30,15 @@ namespace maple
         double value{0.0};               ///< The monthly amount.
         std::string scope{ALL_SCOPE};    ///< The scenario this income applies to.
     };
+    
+    /**
+     * @brief Turns a IncomeSource object into a string via an std::ostream.
+     * 
+     * @param stream The stream to output the string data to.
+     * @param source The IncomeSource object to feed into the stream.
+     * @return The stream with the source data piped into it.
+     */
+    std::ostream& operator<<(std::ostream& stream, const IncomeSource& source);
 
     /**
      * @brief Stores monthly income sources as named values.
@@ -76,6 +85,15 @@ namespace maple
          */
         size_t size() const;
     }; // struct Income
+    
+    /**
+     * @brief Turns a Income object into a string via an std::ostream.
+     * 
+     * @param stream The stream to output the string data to.
+     * @param income The Income object to feed into the stream.
+     * @return The stream with the income data piped into it.
+     */
+    std::ostream& operator<<(std::ostream& stream, const Income& income);
 
     /**
      * @brief Returns the total of income sources that apply in a given scenario.

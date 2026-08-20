@@ -14,8 +14,12 @@
 #include "MIAConfig.hpp"
 // Used for common app setup.
 #include "MIAApplication.hpp"
-// Storage for calculation values.
+// Storage for tax calculation values.
 #include "TaxConstants.hpp"
+// Storage for the expense
+#include "MonthlyExpenses.hpp"
+// Storage for the income
+#include "Income.hpp"
 
 namespace maple
 {
@@ -87,6 +91,13 @@ namespace maple
         
         /// Stores true for testMode functionality.
         bool testMode{false};
+        
+        /// Storage for the tax constants.
+        TaxRateConstants taxConstants;
+        /// Storage for the income.
+        Income income;
+        /// Storage for the expenses.
+        MonthlyExpenses expenses;
         
     }; // class Maple
 } // namespace maple

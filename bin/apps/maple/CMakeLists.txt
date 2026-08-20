@@ -2,10 +2,15 @@
 set(MAPLE_SRC 
     Maple.cpp 
     Maple_main.cpp
-    TaxConstants.cpp )
+    TaxConstants.cpp 
+    Income.cpp
+    MonthlyExpenses.cpp )
 set(MAPLE_INC 
     Maple.hpp 
-    TaxConstants.hpp )
+    MapleConstants.hpp
+    TaxConstants.hpp
+    Income.hpp 
+    MonthlyExpenses.hpp )
 add_executable(maple ${MAPLE_SRC} ${MAPLE_INC} )
 target_link_libraries(maple PRIVATE Framework_CORE System_UTIL Math_UTIL )
 

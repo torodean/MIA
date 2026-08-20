@@ -9,6 +9,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <ostream>
 
 // Used for the configuration file parsing.
 #include "MIAConfig.hpp"
@@ -34,7 +35,7 @@ namespace maple
     struct TaxRateConstants
     {
         /// Various tax rates.
-        double medicareTaxRate{0.0145};   ///< The medicare tax rate.
+        double medicareTaxRate{0.0145};  ///< The medicare tax rate.
         double oasdiTaxRate{0.062};      ///< The OASDI tax rate.
         double salesTax{0.0625};         ///< The state sales tax (default is TX).
         
@@ -72,6 +73,15 @@ namespace maple
         double standardDeductibleHeadOfHousehold{19400.0}; ///< Head of Household deductible.
         double standardDeductibleMarried{25900.0};         ///< Married deductible.
     }; // struct TaxRateConstants
+    
+    /**
+     * @brief Turns a TaxRateConstants object into a string via an std::ostream.
+     * 
+     * @param stream The stream to output the string data to.
+     * @param constants The TaxRateConstants object to feed into the stream.
+     * @return The stream with the constants data piped into it.
+     */
+    std::ostream& operator<<(std::ostream& stream, const TaxRateConstants& constants);
 
     /**
      * @brief Builds a TaxBrackets list from a TaxRateConstants object for a filing status.

@@ -7,6 +7,9 @@
 
 // The pairing header file which defines the class methods for Maple.
 #include "Maple.hpp"
+
+#include <iostream>
+
 // Used for error handling and configuration.
 #include "Paths.hpp"
 #include "MIAException.hpp"
@@ -55,7 +58,9 @@ namespace maple
     
     void Maple::test()
     {
-        std::cout << "test!" << std::endl;
+        std::cout << "Tax Constants: {" << taxConstants << "}" << std::endl;
+        std::cout << "Income: {" << income << "}" << std::endl;
+        std::cout << "Expenses: {" << expenses << "}" << std::endl;
     }
     
 
@@ -81,6 +86,10 @@ namespace maple
 
     bool Maple::loadConfig()
     {
+        taxConstants = createTaxRateConstantsFromConfig(config, true);
+        income = createIncomeFromConfig(config, true);
+        expenses = createMonthlyExpensesFromConfig(config, true);
+        
         return true;
     }
 } // namespace Maple

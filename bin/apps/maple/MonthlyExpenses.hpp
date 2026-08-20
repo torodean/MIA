@@ -30,6 +30,15 @@ namespace maple
         double value{0.0};               ///< The monthly amount.
         std::string scope{ALL_SCOPE};    ///< The scenario this expense applies to.
     };
+    
+    /**
+     * @brief Turns a Expense object into a string via an std::ostream.
+     * 
+     * @param stream The stream to output the string data to.
+     * @param expense The Expense object to feed into the stream.
+     * @return The stream with the expense data piped into it.
+     */
+    std::ostream& operator<<(std::ostream& stream, const Expense& expense);
 
     /**
      * @brief Stores monthly expenses as named values.
@@ -50,7 +59,8 @@ namespace maple
          * @param value The monthly amount.
          * @param scope The scenario this expense applies to.
          */
-        void addExpense(const std::string& name, double value,
+        void addExpense(const std::string& name, 
+                        double value,
                         const std::string& scope = ALL_SCOPE);
 
         /**
@@ -76,6 +86,15 @@ namespace maple
          */
         size_t size() const;
     }; // struct MonthlyExpenses
+    
+    /**
+     * @brief Turns a MonthlyExpenses object into a string via an std::ostream.
+     * 
+     * @param stream The stream to output the string data to.
+     * @param monthlyExpenses The MonthlyExpenses object to feed into the stream.
+     * @return The stream with the monthlyExpenses data piped into it.
+     */
+    std::ostream& operator<<(std::ostream& stream, const MonthlyExpenses& monthlyExpenses);
 
     /**
      * @brief Returns the total of expenses that apply in a given scenario.
