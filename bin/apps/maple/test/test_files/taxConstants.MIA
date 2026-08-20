@@ -1,0 +1,9 @@
+medicare_tax_rate=0.075
+oasdi_tax_rate=0.095
+sales_tax=0.085
+tax_bracket_single=0.0,1000.0,inf
+tax_bracket_married=0.0,2000.0,inf
+tax_rate_bracket=0.00,0.10,0.50
+standard_deductible_single=10000.0
+standard_deductible_head_of_household=15000.0
+standard_deductible_married=20000.0

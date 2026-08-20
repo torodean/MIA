@@ -22,4 +22,4 @@ if(RELEASE_BUILD)
     install(TARGETS maple DESTINATION ${RELEASE_INSTALL_LOCATION})
 endif()
 
-#add_subdirectory( test )
+add_subdirectory( test )
