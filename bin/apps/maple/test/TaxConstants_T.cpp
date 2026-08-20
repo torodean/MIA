@@ -19,6 +19,8 @@
 #include "FinanceUtils.hpp"
 // Needed for config types.
 #include "Constants.hpp"
+// Used for finding test data
+#include "Paths.hpp"
 
 namespace maple
 {
@@ -39,9 +41,7 @@ namespace maple
             constants.taxBracketMarried = {0.0, 2000.0, 22000.0};
             constants.taxRateBracket = {0.0, 0.10, 0.50};
             
-            std::string thisFilesPath = __FILE__; // Full path of this file at compile time.
-            std::size_t pos = thisFilesPath.find_last_of('/');
-            testDataFolder = (pos == std::string::npos) ? "" : thisFilesPath.substr(0, pos);
+            testDataFolder = paths::getCppFileDirAtCompileTime(__FILE__) + "/test_files";
         }
         
         /**
@@ -98,8 +98,9 @@ namespace maple
     TEST_F(TaxConstants_T, ConstructingTaxConstantsFromConfigFile)
     {
         // Construct and load the config from a test file.
-        std::string configFile = testDataFolder + "/test_files/taxConstants.MIA";
-        ASSERT_TRUE(std::filesystem::exists(configFile));
+        std::string configFile = testDataFolder + "/taxConstants.MIA";
+        ASSERT_TRUE(std::filesystem::exists(configFile))
+            << "Cannot find test config file at: " << configFile << std::endl;
         config::MIAConfig config(configFile, constants::ConfigType::KEY_VALUE);
         config.initialize();
         
