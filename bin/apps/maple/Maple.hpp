@@ -34,8 +34,9 @@ namespace maple
     enum MapleOperations : uint8_t
     {
         PrintOpList = 0,      ///< Prints the list of operations.
-        TaxCalculation = 1,   ///< Calculations annual taxes owed.
-        OperationCount = 2    ///< The total number of operations in this enum. KEEP LAST!
+        testOption = 1,       ///< Reserved for testing to develop new features.
+        TaxCalculation = 2,   ///< Calculations annual taxes owed.
+        OperationCount = 3    ///< The total number of operations in this enum. KEEP LAST!
     }; // enum MapleOperations
     
     /**

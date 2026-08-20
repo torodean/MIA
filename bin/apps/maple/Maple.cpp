@@ -65,9 +65,7 @@ namespace maple
     
 
     int Maple::run()
-    {
-        test();
-        
+    {        
         defaultFrontEnd();
         
         return 0;
@@ -110,6 +108,11 @@ namespace maple
                                     "List Operations", 
                                     "Prints this list of valid operations.");
                 break;
+            case testOption:
+                output = formatDesc(operation, 
+                                    "Test Operation ", 
+                                    "Performs test-specific features (for development).");
+                break;
             case TaxCalculation:
                 output = formatDesc(operation, 
                                     "Calculate Taxes", 
@@ -136,8 +139,10 @@ namespace maple
     
     void Maple::printOperationsList()
     {
+        std::cout << "--------------------------------------------" << std::endl;
         for (uint8_t i=0; i<OperationCount; i++)
             std::cout << operationToDesc(static_cast<MapleOperations>(i)) << std::endl;
+        std::cout << "--------------------------------------------" << std::endl;
     }
     
     
@@ -146,7 +151,8 @@ namespace maple
         switch(operation)
         {
             case PrintOpList: printOperationsList(); break;
-            case TaxCalculation: /* TODO */          break;
+            case testOption:  test();                break;
+            case TaxCalculation: std::cout << "IN DEV\n"; break; // TODO
             default: return false;
         }
         return true;
