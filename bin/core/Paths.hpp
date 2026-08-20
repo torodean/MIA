@@ -2,9 +2,11 @@
  * @file Paths.hpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: Declares project-wide directory paths used
- *     across the application. These paths provide centralized access to default
- *     resource locations such as configuration files, logs, and user data directories.
+ * @brief Provides file pathing related features for the MIA project.
+ * 
+ * Declares project-wide directory paths used across the application. These paths 
+ * provide centralized access to default resource locations such as configuration 
+ * files, logs, and user data directories.
  */
 #pragma once
 
@@ -111,7 +113,7 @@ namespace paths
      *
      * This checks whether the executable path is located within the system installation directory.
      *
-     * @return [bool] - true if running from an installed system location; false if running from the repo.
+     * @return true if running from an installed system location; false if running from the repo.
      */
     inline bool isInstalled()
     {
@@ -141,7 +143,7 @@ namespace paths
      * as the executable, that will be returned second. Otherwise, it returns the git-repository 
      * configuration directory, typically used for development or testing.
      *
-     * @return [std::string] - Path to the appropriate configuration directory.
+     * @return Path to the appropriate configuration directory.
      */
     inline std::string getDefaultConfigDirToUse()
     {
@@ -171,7 +173,7 @@ namespace paths
      * as the executable, that will be returned second. Otherwise, it returns the git-repository 
      * log directory, typically used for development or testing.
      *
-     * @return [std::string] - Path to the appropriate configuration directory.
+     * @return Path to the appropriate configuration directory.
      */
     inline std::string getDefaultLogDirToUse()
     {
