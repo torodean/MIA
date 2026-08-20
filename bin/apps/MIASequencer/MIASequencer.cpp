@@ -37,7 +37,7 @@ using StringUtils::delimiterString;
 MIASequencer::MIASequencer() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
     sequencesFileOpt("-c", "--config", "Specify a config file to use (default = " +
-                     paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
+                     paths::getDefaultConfigDirToUse() + "/" + defaultSequencesFile + ")",
                      CommandOption::commandOptionType::STRING_OPTION),
     testOpt("-t", "--test", "Enables test mode. This mode will only output the sequence to terminal.",
             CommandOption::commandOptionType::BOOL_OPTION),

@@ -9,12 +9,14 @@
 #include "Maple.hpp"
 
 #include <iostream>
+#include <sstream>
 
 // Used for error handling and configuration.
 #include "Paths.hpp"
 #include "MIAException.hpp"
 // Used for the ConfigType
 #include "Constants.hpp"
+#include "StringUtils.hpp"
 
 
 namespace maple
@@ -49,10 +51,8 @@ namespace maple
             std::cerr << "Error during Maple::initialize: " << ex.what() << std::endl;
         }
         
-        if (!loadConfig())
-        {
-            // TODO - handle error case.
-        }
+        // TODO - handle error case. Currently loadConfig always returns true.
+        (void)loadConfig();
     }
     
     
@@ -68,7 +68,88 @@ namespace maple
     {
         test();
         
+        defaultFrontEnd();
+        
         return 0;
+    }
+    
+    
+    void Maple::defaultFrontEnd()
+    {
+        std::string input;
+        
+        std::cout << "Valid operations are as follows:" << std::endl;
+        printOperationsList();
+        
+        // Loop over the default interface.
+        while (true) 
+        {
+            std::cout << "Enter the index of an operation to perform: ";
+            std::getline(std::cin, input);
+
+            if (input.empty()) 
+                continue;
+                
+            // Perform the operation.
+            if (StringUtils::is_digits(input) &&   // Ensure an int was entered.
+                !runOperation(static_cast<MapleOperations>(std::stoi(input))) )  // Attempt to run the operation.
+            { // Failure case.
+                std::cout << "Invalid index entered: " << input << std::endl;
+            }
+        }
+    }
+    
+    
+    std::string operationToDesc(MapleOperations operation)
+    {
+        std::string output;
+        switch(operation)
+        {
+            case PrintOpList:
+                output = formatDesc(operation, 
+                                    "List Operations", 
+                                    "Prints this list of valid operations.");
+                break;
+            case TaxCalculation:
+                output = formatDesc(operation, 
+                                    "Calculate Taxes", 
+                                    "Calculates various tax-related information.");
+                break;
+            default:
+                output = "Invalid Operation";
+                break;
+        }
+        return output;
+    }
+    
+    
+    std::string formatDesc(MapleOperations operation,
+                       const std::string& name,
+                       const std::string& desc)
+    {
+        std::stringstream stream;
+        stream << static_cast<unsigned>(operation)
+               << ") " << name
+               << " - " << desc;
+       return stream.str();
+    }
+    
+    void Maple::printOperationsList()
+    {
+        for (uint8_t i=0; i<OperationCount; i++)
+            std::cout << operationToDesc(static_cast<MapleOperations>(i)) << std::endl;
+    }
+    
+    
+    bool Maple::runOperation(MapleOperations operation)
+    {        
+        switch(operation)
+        {
+            case PrintOpList: printOperationsList(); break;
+            case TaxCalculation: /* TODO */          break;
+            default: return false;
+        }
+        return true;
     }
     
 

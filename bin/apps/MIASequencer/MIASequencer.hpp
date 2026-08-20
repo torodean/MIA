@@ -34,6 +34,10 @@
 class MIASequencer : public MIAApplication
 {
 public:
+    
+    /// The name of the defauilt config file that this class uses.
+    const std::string defaultSequencesFile{"MIASequences.MIA"};
+    
     /**
      * The main constructor of the MIASequencer class. This will construct the command options.
      */
@@ -103,9 +107,6 @@ private:
      * This will load in the configuration file and load the sequences.
      */
     void loadConfig();
-    
-    /// The name of the defauilt config file that this class uses.
-    std::string defaultSequencesFile{"MIASequences.MIA"};
     
     /**
      * The configuration loader for this app. The configuration for this app uses the
