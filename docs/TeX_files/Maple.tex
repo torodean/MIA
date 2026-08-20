@@ -1,0 +1,21 @@
+\chapter{Monetary Autonomous Projection and Learning Extension (MAPLE)}
+\pagestyle{fancy}
+
+The Monetary Autonomous Projection and Learning Extension (MAPLE) extension is a tool for creating future financial projections based on a given input. The tool supports multiple commands to perform different types of projections based on the desired outcome.
+
+
+
+
+\section{Design}
+
+At the time of writing this design, no MAPLE code has been implemented. This section is intended to be an initial design and a record of design notes before implementation.
+
+The maple tool will take a configuration file with various values needed for the various features of the app. The app itself will be setup as a terminal application which takes various commands to perform different tasks. When the tasks are requested based on an input command, the application will use the configuration file to find the appropriate needed values and perform the task. If the needed values from the configuration file are not found, the application will not be able to proceed until those values are supplied. In some cases, the values will be made configurable directly through the application, such as a toggle-able house price when determining mortgage calculations.
+
+At the present, the following tasks are needed by the MAPLE tool:
+\begin{itemize}
+	\item Annual tax calculations and payments.
+	\item Future projections of a mortgage or loan.
+	\item Comparison projections of renting vs buying property.
+	\item Future projections of buying power.
+\end{itemize}

@@ -3,10 +3,11 @@
 add_subdirectory( template )
 
 # Add various app folders.
-add_subdirectory( old_game_tools )
-add_subdirectory( workout )
+add_subdirectory( maple )
 add_subdirectory( MIASequencer )
 add_subdirectory( mia_original )
+add_subdirectory( old_game_tools )
+add_subdirectory( workout )
 
 # OS-Specific Path Configuration
 if(WIN32 OR CYGWIN)

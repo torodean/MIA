@@ -11,4 +11,8 @@ This folder contains all of the classes and configuration related to currencies 
 
 - **CurrencyRegistry**: The `CurrencyRegistry.hpp` file defines a singleton class for managing static `Currency` objects loaded from a configuration file. It allows lookup by currency ID or name and provides methods for loading and dumping the registry. Acts as a centralized repository for all defined currencies in the system.
 
+- **CurrencyType**: The `CurrencyType.hpp` file defines the `CurrencyType` enum (e.g., coin, fiat, token, event, gem) and helpers for converting between the enum and string representations.
+
+- **CurrencyQuantity**: The `CurrencyQuantity.hpp` file defines a struct pairing a `Currency` with an amount, with getters and adjusters for the quantity. Used where a single currency and its count must be tracked together.
+
 - **currencies.json**: A JSON configuration file listing predefined currencies with properties like name, description, type, tradeability, and icon. Used by the `CurrencyRegistry` to load and initialize static currency definitions for the RPG system.
