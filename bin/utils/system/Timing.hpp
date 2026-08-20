@@ -85,6 +85,7 @@ namespace timing
          * @param units The timing unit used to interpret timeToSleep.
          * @return true if the full sleep duration elapsed.
          * @return false if the sleep was interrupted.
+         * @throw MIAException if units is not a recognized timingUnit.
          */
         bool sleep(int timeToSleep, timingUnit units);
         bool sleep(double timeToSleep, timingUnit units);

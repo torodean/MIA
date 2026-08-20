@@ -13,6 +13,8 @@
 #include <thread>
 #include <chrono>
 
+#include "MIAException.hpp"
+
 namespace timing
 {
     void sleepMilliseconds(int time)
@@ -63,9 +65,12 @@ namespace timing
             case timingUnit::time_hour:
                 duration = std::chrono::duration<double, std::ratio<3600>>(timeToSleep);
                 break;
-            default:
-                // TODO - determine default behavior.
+            case timingUnit::time_day:
+                duration = std::chrono::duration<double, std::ratio<86400>>(timeToSleep);
                 break;
+            default:
+                MIA_THROW(error::ErrorCode::Invalid_Parameter,
+                          "Unknown timingUnit passed to InterruptableSleeper::sleep");
         }
 
         std::unique_lock lock(mutex);
