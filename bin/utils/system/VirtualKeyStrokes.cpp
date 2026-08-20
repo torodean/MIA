@@ -18,6 +18,9 @@
 #include "Error.hpp"
 #include "MIAException.hpp"
 
+// Used for finding random values for some features.
+#include "MathUtils.hpp"
+
 
 #if defined(IS_WINDOWS)
     #pragma comment (lib, "gdi32.lib")
@@ -53,15 +56,15 @@ namespace virtual_keys
     }
     
     
-    std::string VirtualKeyStrokes::clickTypeToString(VirtualKeyStrokes::ClickType click) 
+    std::string clickTypeToString(ClickType click) 
     {
         switch (click) 
         {
-            case VirtualKeyStrokes::ClickType::LEFT_CLICK:
+            case ClickType::LEFT_CLICK:
                 return "LEFT_CLICK"; 
-            case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+            case ClickType::RIGHT_CLICK:
                 return "RIGHT_CLICK";
-            case VirtualKeyStrokes::ClickType::MIDDLE_CLICK:
+            case ClickType::MIDDLE_CLICK:
                 return "MIDDLE_CLICK"; 
             default:
                 return "UNKNOWN"; 
@@ -69,7 +72,7 @@ namespace virtual_keys
     }
     
     
-    VirtualKeyStrokes::ClickType VirtualKeyStrokes::stringToClickType(const std::string& in)
+    ClickType stringToClickType(const std::string& in)
     {
         std::string input = in;
         // Convert the string to lowercase.
@@ -87,21 +90,21 @@ namespace virtual_keys
     }
     
     
-    std::string VirtualKeyStrokes::specialButtonToString(VirtualKeyStrokes::SpecialButton specialButton) 
+    std::string specialButtonToString(SpecialButton specialButton) 
     {
         switch (specialButton) 
         {
-            case VirtualKeyStrokes::SpecialButton::ENTER:
+            case SpecialButton::ENTER:
                 return "ENTER"; 
-            case VirtualKeyStrokes::SpecialButton::TAB:
+            case SpecialButton::TAB:
                 return "TAB"; 
-            case VirtualKeyStrokes::SpecialButton::SPACE:
+            case SpecialButton::SPACE:
                 return "SPACE";
-            case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
+            case SpecialButton::NUM_LOCK:
                 return "NUM_LOCK";
-            case VirtualKeyStrokes::SpecialButton::SCROLL_DOWN:
+            case SpecialButton::SCROLL_DOWN:
                 return "SCROLL_DOWN";
-            case VirtualKeyStrokes::SpecialButton::SCROLL_UP:
+            case SpecialButton::SCROLL_UP:
                 return "SCROLL_UP";
             default:
                 return "UNKNOWN"; 
@@ -109,7 +112,7 @@ namespace virtual_keys
     }
     
     
-    VirtualKeyStrokes::SpecialButton VirtualKeyStrokes::stringToSpecialButton(const std::string& in)
+    SpecialButton stringToSpecialButton(const std::string& in)
     {
         std::string input = in;
         // Convert the string to lowercase.
@@ -627,14 +630,14 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::mouseClick(VirtualKeyStrokes::ClickType clickType, int holdTime, bool verboseMode)
+    void VirtualKeyStrokes::mouseClick(ClickType clickType, int holdTime, bool verboseMode)
     {
         switch(clickType)
         {
-            case VirtualKeyStrokes::ClickType::LEFT_CLICK:
+            case ClickType::LEFT_CLICK:
                 leftclick(holdTime, verboseMode);
                 break;            
-            case VirtualKeyStrokes::ClickType::RIGHT_CLICK:
+            case ClickType::RIGHT_CLICK:
                 rightclick(holdTime, verboseMode);
                 break;
             default:
@@ -643,26 +646,26 @@ namespace virtual_keys
     }
     
     
-    void VirtualKeyStrokes::pressSpecialButton(VirtualKeyStrokes::SpecialButton specialButton, int holdTime, bool verboseMode)
+    void VirtualKeyStrokes::pressSpecialButton(SpecialButton specialButton, int holdTime, bool verboseMode)
     {
         switch(specialButton)
         {
-            case VirtualKeyStrokes::SpecialButton::ENTER:
+            case SpecialButton::ENTER:
                 enter(verboseMode);
                 break;
-            case VirtualKeyStrokes::SpecialButton::TAB:
+            case SpecialButton::TAB:
                 tab(verboseMode);
                 break;
-            case VirtualKeyStrokes::SpecialButton::SPACE:
+            case SpecialButton::SPACE:
                 space(holdTime, verboseMode);
                 break;
-            case VirtualKeyStrokes::SpecialButton::NUM_LOCK:
+            case SpecialButton::NUM_LOCK:
                 numlock(verboseMode);
                 break;
-            case VirtualKeyStrokes::SpecialButton::SCROLL_DOWN:
+            case SpecialButton::SCROLL_DOWN:
                 scrollWheelDown(verboseMode);
                 break;
-            case VirtualKeyStrokes::SpecialButton::SCROLL_UP:
+            case SpecialButton::SCROLL_UP:
                 scrollWheelUp(verboseMode);
                 break;
             default:
@@ -783,5 +786,28 @@ namespace virtual_keys
             press(letter, holdTime, verboseMode);
             defaultSleep();
         }
+    }
+    
+    
+    void pressRandomNumber(VirtualKeyStrokes& vkeys, 
+                           int min_num, 
+                           int max_num, 
+                           int holdTime, 
+                           bool verboseMode)
+    {
+        // If they are equal, the 'random value' will just be the number itself.
+        if ( min_num == max_num)
+            vkeys.pressNumber(min_num, holdTime, verboseMode);
+            
+        // Check for valid ranges on the input numbers. 
+        if ( min_num < 0 || max_num > 9 || max_num < min_num )
+        {
+            std::string invalidInputErr = "ERROR: Invalid range for PRESSRANDNUM: " 
+                                        + std::to_string(min_num) + ";" + std::to_string(max_num);
+            MIA_THROW(error::ErrorCode::Invalid_Parameter, invalidInputErr);
+        }
+        
+        int randomVal = math::randomInt(min_num, max_num);
+        vkeys.pressNumber(randomVal, holdTime, verboseMode);
     }
 } // namespace virtual_keys
