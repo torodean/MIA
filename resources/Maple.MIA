@@ -17,7 +17,7 @@
 # Federal Tax rates
 medicare_tax_rate_federal=0.0145
 oasdi_tax_rate_federal=0.062
-sales_tax_federal=0.0625
+sales_tax_federal=0.0
 tax_bracket_single_federal=0.00,10275.00,41775.00,89075.00,170050.00,215950.00,539900.00,inf
 tax_bracket_married_federal=0.00,20550.00,83550.00,178150.00,340100.00,431900.00,647850.00,inf
 tax_rate_bracket_federal=0.00,0.10,0.12,0.22,0.24,0.32,0.35,0.37
@@ -28,7 +28,7 @@ standard_deductible_married_federal=25900.00
 # State Tax rates (Currently TX which has no state tax)
 medicare_tax_rate_state=0.0
 oasdi_tax_rate_state=0.0
-sales_tax_state=0.0
+sales_tax_state=0.0625
 tax_bracket_single_state=0.0,inf
 tax_bracket_married_state=0.0,inf
 tax_rate_bracket_state=0.0,0.0
@@ -41,7 +41,7 @@ income_all_salary_husband=132000.0
 income_all_salary_wife=66000.0
 
 # Savings
-savings_all_initial=0.0
+savings_all_initial=200000.0
 savings_all_emergency_fund_min=20000.0
 
 # Expenses when renting
@@ -59,5 +59,9 @@ expense_all_car_insurance=125.0
 expense_all_food=1000.0
 expense_all_gas=400.0
 
-# Misc values
+# Pre-tax expenses. Monthly
+expense_all_pension_pretax=595.65
 
+# Misc values
+tax_deductions=0.0
+tax_filingStatus=married

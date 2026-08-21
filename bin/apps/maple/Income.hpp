@@ -7,7 +7,7 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
+#include <list>
 #include <vector>
 
 // Used for the configuration file parsing.
@@ -24,11 +24,16 @@ namespace maple
      * so new scenarios can be introduced from the config without code changes.
      * The special scope ALL_SCOPE marks an income source that applies in every
      * scenario. Scope comparisons are case-insensitive.
+     * 
+     * Each IncomeSource object also has an optionl tags container for tagging
+     * the data with anything extra - such as preTax.
      */
     struct IncomeSource
     {
+        std::string name{};              ///< The name of this income source
         double value{0.0};               ///< The monthly amount.
         std::string scope{ALL_SCOPE};    ///< The scenario this income applies to.
+        std::vector<std::string> tags{}; ///< Any additional tags to give this source.
     };
     
     /**
@@ -50,7 +55,7 @@ namespace maple
     struct Income
     {
         /// The stored income sources, keyed by name.
-        std::unordered_map<std::string, IncomeSource> sources;
+        std::list<IncomeSource> sources;
 
         /**
          * @brief Adds or replaces an income source by name.
@@ -58,9 +63,12 @@ namespace maple
          * @param name The income source name.
          * @param value The monthly amount.
          * @param scope The scenario this income applies to.
+         * @param tags Any additional tags to attach to the data.
          */
-        void addSource(const std::string& name, double value,
-                       const std::string& scope = ALL_SCOPE);
+        void addSource(const std::string& name, 
+                       double value,
+                       const std::string& scope = ALL_SCOPE,
+                       const std::vector<std::string>& tags = {});
 
         /**
          * @brief Returns whether an income source with the given name is stored.
@@ -69,14 +77,6 @@ namespace maple
          * @return True if an income source with that name exists.
          */
         bool hasSource(const std::string& name) const;
-
-        /**
-         * @brief Returns the income source with the given name.
-         *
-         * @param name The income source name to look up.
-         * @return Pointer to the income source, or nullptr if not found.
-         */
-        const IncomeSource* getSource(const std::string& name) const;
 
         /**
          * @brief Returns the number of stored income sources.
@@ -104,10 +104,12 @@ namespace maple
      *
      * @param income The stored income sources to total.
      * @param scope The scenario to total for.
+     * @param constrainingTags Additional tags to optionally constrain the data with.
      * @return The sum of the matching income source values.
      */
     double getTotalIncome(const Income& income,
-                          const std::string& scope);
+                          const std::string& scope,
+                          const std::vector<std::string>& constrainingTags = {});
 
     /**
      * @brief Returns the total of income sources that apply in any of the given scenarios.
@@ -118,10 +120,12 @@ namespace maple
      *
      * @param income The stored income sources to total.
      * @param scopes The scenarios to total for.
+     * @param constrainingTags Additional tags to optionally constrain the data with.
      * @return The sum of the matching income source values.
      */
     double getTotalIncome(const Income& income,
-                          const std::vector<std::string>& scopes);
+                          const std::vector<std::string>& scopes,
+                          const std::vector<std::string>& constrainingTags = {});
 
     /**
      * @brief Returns the total of every stored income source regardless of scope.

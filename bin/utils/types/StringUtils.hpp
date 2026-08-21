@@ -45,24 +45,24 @@ namespace StringUtils
      * @param ch The character to find.
      * @return The index of the first occurrence of ch in str, or -1 if not found.
      */
-    int findCharInString(std::string& input, char c);
+    int findCharInString(const std::string& input, char c);
 
     /**
-     * Determines if a character is contained within a string.
+     * @brief Determines if a character is contained within a string.
      * @param input Reference to the input string to parse.
      * @param c The character to find.
      * @return Returns true if the character is in the string.
      */
-    bool stringContainsChar(std::string& input, char c);
+    bool stringContainsChar(const std::string& input, char c);
 
     /**
-     * Separates a string into components via a delimiter.
+     * @brief Separates a string into components via a delimiter.
      * @param input Reference to the input string to parse.
      * @param delimiter Delimiter to use when parsing.
      * @param verboseMode Enables verboseMode output (default = false).
      * @return
      */
-    std::vector<std::string> delimiterString(std::string& input, const std::string &delimiter, bool verboseMode = false);
+    std::vector<std::string> delimiterString(const std::string& input, const std::string &delimiter, bool verboseMode = false);
 
     /**
      * Function for determining if all characters in a string are digits/integers.
@@ -76,14 +76,14 @@ namespace StringUtils
      * @param input Reference to the input string to parse.
      * @return True if the string is a dice roll.
      */
-    bool inputRoll(std::string &input);
+    bool inputRoll(const std::string &input);
 
     /**
      * A function used to determine if an answer is equivalent to yes.
      * @param input Reference to the input string to parse.
      * @return True if answer is a form of yes.
      */
-    bool formOfYes(std::string &input);
+    bool formOfYes(const std::string &input);
 
     /**
      * Returns the date for today.

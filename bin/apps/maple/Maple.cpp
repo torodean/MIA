@@ -17,6 +17,8 @@
 // Used for the ConfigType
 #include "Constants.hpp"
 #include "StringUtils.hpp"
+// Used for performing various financial calculations.
+#include "FinancialCalculations.hpp"
 
 
 namespace maple
@@ -70,9 +72,8 @@ namespace maple
 
     int Maple::run()
     {        
-        defaultFrontEnd();
-        
-        return 0;
+        defaultFrontEnd();        
+        return constants::ReturnCode::SUCCESS;
     }
     
     
@@ -154,10 +155,17 @@ namespace maple
     {        
         switch(operation)
         {
-            case PrintOpList: printOperationsList(); break;
-            case testOption:  test();                break;
-            case TaxCalculation: std::cout << "IN DEV\n"; break; // TODO
-            default: return false;
+            case PrintOpList: 
+                printOperationsList(); 
+                break;
+            case testOption:  
+                test();
+                break;
+            case TaxCalculation: 
+                calculateTaxesOperation(income, federalTaxConstants, stateTaxConstants);
+                break;
+            default: 
+                return false;
         }
         return true;
     }
