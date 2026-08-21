@@ -44,6 +44,17 @@ namespace maple
             testDataFolder = paths::getCppFileDirAtCompileTime(__FILE__) + "/test_files";
         }
         
+        void SetUp() override
+        {
+            // Construct and load the config from a test file.
+            std::string configFile = testDataFolder + "/taxConstants.MIA";
+            
+            ASSERT_TRUE(std::filesystem::exists(configFile))
+                << "Cannot find test config file at: " << configFile << std::endl;
+            config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE);
+            config.initialize();
+        }
+        
         /**
          * A custom constants object with simplified values for testing.
          * These values are set in the constructor.
@@ -52,6 +63,9 @@ namespace maple
         
         /// The folder location for the test data used by this file.
         std::string testDataFolder;
+        
+        /// A config object for parsing a test config file.
+        config::MIAConfig config;
     }; // class TaxConstants_T
 
 
@@ -96,14 +110,7 @@ namespace maple
      * constructed from a test file), then ensure that all of the values are set as expected.
      */
     TEST_F(TaxConstants_T, ConstructingTaxConstantsFromConfigFile)
-    {
-        // Construct and load the config from a test file.
-        std::string configFile = testDataFolder + "/taxConstants.MIA";
-        ASSERT_TRUE(std::filesystem::exists(configFile))
-            << "Cannot find test config file at: " << configFile << std::endl;
-        config::MIAConfig config(configFile, constants::ConfigType::KEY_VALUE);
-        config.initialize();
-        
+    {        
         // Construct the expected bracket vectors.
         double inf = std::numeric_limits<double>::infinity();
         const std::vector<double> expectedSingle{0.0, 1000.0, inf};
@@ -111,7 +118,7 @@ namespace maple
         const std::vector<double> expectedRates{0.00, 0.10, 0.50};
         
         // Create the constants and compare to what matches the file values.
-        TaxRateConstants constants = createTaxRateConstantsFromConfig(config);
+        constants = createTaxRateConstantsFromConfig(config);
         ASSERT_EQ(constants.medicareTaxRate, 0.075);
         ASSERT_EQ(constants.oasdiTaxRate, 0.095);
         ASSERT_EQ(constants.salesTax, 0.085);
@@ -121,5 +128,33 @@ namespace maple
         ASSERT_EQ(constants.standardDeductibleSingle, 10000.0);
         ASSERT_EQ(constants.standardDeductibleHeadOfHousehold, 15000.0);
         ASSERT_EQ(constants.standardDeductibleMarried, 20000.0);
+    }
+    
+    
+    /**
+     * @brief This will construct a TaxRateConstants from a config object (which is
+     * constructed from a test file), then ensure that all of the values are set as expected.
+     * This uses a custom suffix on the tax values in the config file and ensures the method
+     * still parses correctly when a suffix is supplied.
+     */
+    TEST_F(TaxConstants_T, ConstructingTaxConstantsFromConfigFileWithSuffix)
+    {        
+        // Construct the expected bracket vectors.
+        double inf = std::numeric_limits<double>::infinity();
+        const std::vector<double> expectedSingle{0.0, 2000.0, inf};
+        const std::vector<double> expectedMarried{0.0, 4000.0, inf};
+        const std::vector<double> expectedRates{0.00, 0.20, 0.70};
+        
+        // Create the constants and compare to what matches the file values.
+        constants = createTaxRateConstantsFromConfig(config, "_custom");
+        ASSERT_EQ(constants.medicareTaxRate, 0.035);
+        ASSERT_EQ(constants.oasdiTaxRate, 0.025);
+        ASSERT_EQ(constants.salesTax, 0.015);
+        ASSERT_EQ(constants.taxBracketSingle, expectedSingle);
+        ASSERT_EQ(constants.taxBracketMarried, expectedMarried);
+        ASSERT_EQ(constants.taxRateBracket, expectedRates);
+        ASSERT_EQ(constants.standardDeductibleSingle, 20000.0);
+        ASSERT_EQ(constants.standardDeductibleHeadOfHousehold, 25000.0);
+        ASSERT_EQ(constants.standardDeductibleMarried, 30000.0);
     }
 } // namespace maple

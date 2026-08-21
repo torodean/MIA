@@ -139,7 +139,8 @@ namespace maple
         bool testMode{false};
         
         /// Storage for the tax constants.
-        TaxRateConstants taxConstants;
+        TaxRateConstants federalTaxConstants;
+        TaxRateConstants stateTaxConstants;
         /// Storage for the income.
         Income income;
         /// Storage for the expenses.

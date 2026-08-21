@@ -58,8 +58,12 @@ namespace maple
     
     void Maple::test()
     {
-        std::cout << "Tax Constants: {" << taxConstants << "}" << std::endl;
+        std::cout << "Federal Tax Constants: {" << federalTaxConstants << "}" << std::endl;
+        std::cout << "----------------------" << std::endl;
+        std::cout << "State Tax Constants: {" << stateTaxConstants << "}" << std::endl;
+        std::cout << "----------------------" << std::endl;
         std::cout << "Income: {" << income << "}" << std::endl;
+        std::cout << "----------------------" << std::endl;
         std::cout << "Expenses: {" << expenses << "}" << std::endl;
     }
     
@@ -173,9 +177,12 @@ namespace maple
 
     bool Maple::loadConfig()
     {
-        taxConstants = createTaxRateConstantsFromConfig(config, true);
-        income = createIncomeFromConfig(config, true);
-        expenses = createMonthlyExpensesFromConfig(config, true);
+        bool printWarnings = getVerboseMode();
+    
+        federalTaxConstants = createTaxRateConstantsFromConfig(config, "_federal", printWarnings);
+        stateTaxConstants = createTaxRateConstantsFromConfig(config, "_state", printWarnings);
+        income = createIncomeFromConfig(config, printWarnings);
+        expenses = createMonthlyExpensesFromConfig(config, printWarnings);
         
         return true;
     }

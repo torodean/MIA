@@ -34,6 +34,9 @@ namespace maple
      */
     struct TaxRateConstants
     {
+        /// Default constructor.
+        TaxRateConstants() = default;
+        
         /// Various tax rates.
         double medicareTaxRate{0.0145};  ///< The medicare tax rate.
         double oasdiTaxRate{0.062};      ///< The OASDI tax rate.
@@ -108,10 +111,18 @@ namespace maple
      * Bracket lists are comma-separated. The token "inf" marks the open top bracket
      * and is parsed as positive infinity.
      *
+     * The key's needed for this object in the config file are pre-determined and hard
+     * coded. In order to allow for multiple configurable objects (such as one for
+     * federal taxes, and one for state taxes), and optionalSuffix parameter is
+     * provided which allows for custom suffixes appended to these keys. 
+     *
      * @param config The configuration object to use.
+     * @param optionalSuffix When scanning the config values, this is an optional suffix
+     *                       appended to the key names.
      * @param printWarnings Whether or not to print warnings for missing values.
      * @return A constructed TaxRateConstants with values from the config object.
      */
-    TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config, 
+    TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config,
+                                                      const std::string& optionalSuffix = "",  
                                                       bool printWarnings = false);
 } // namespace maple

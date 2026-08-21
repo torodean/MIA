@@ -127,39 +127,40 @@ namespace maple
     
     
     TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config,
+                                                      const std::string& optionalSuffix, 
                                                       bool printWarnings)
     {
         TaxRateConstants constants;
 
         // Rates and deductions: keep the struct default when a key is missing.
         constants.medicareTaxRate =
-            readDoubleOrKeepDefault(config, "medicare_tax_rate",
+            readDoubleOrKeepDefault(config, "medicare_tax_rate" + optionalSuffix,
                                     constants.medicareTaxRate, printWarnings);
         constants.oasdiTaxRate =
-            readDoubleOrKeepDefault(config, "oasdi_tax_rate",
+            readDoubleOrKeepDefault(config, "oasdi_tax_rate" + optionalSuffix,
                                     constants.oasdiTaxRate, printWarnings);
         constants.salesTax =
-            readDoubleOrKeepDefault(config, "sales_tax",
+            readDoubleOrKeepDefault(config, "sales_tax" + optionalSuffix,
                                     constants.salesTax, printWarnings);
         constants.standardDeductibleSingle =
-            readDoubleOrKeepDefault(config, "standard_deductible_single",
+            readDoubleOrKeepDefault(config, "standard_deductible_single" + optionalSuffix,
                                     constants.standardDeductibleSingle, printWarnings);
         constants.standardDeductibleHeadOfHousehold =
-            readDoubleOrKeepDefault(config, "standard_deductible_head_of_household",
+            readDoubleOrKeepDefault(config, "standard_deductible_head_of_household" + optionalSuffix,
                                     constants.standardDeductibleHeadOfHousehold, printWarnings);
         constants.standardDeductibleMarried =
-            readDoubleOrKeepDefault(config, "standard_deductible_married",
+            readDoubleOrKeepDefault(config, "standard_deductible_married" + optionalSuffix,
                                     constants.standardDeductibleMarried, printWarnings);
 
         // Bracket lists: comma-separated, with "inf" marking the open top bracket.
         constants.taxBracketSingle =
-            readBracketListOrKeepDefault(config, "tax_bracket_single",
+            readBracketListOrKeepDefault(config, "tax_bracket_single" + optionalSuffix,
                                          constants.taxBracketSingle, printWarnings);
         constants.taxBracketMarried =
-            readBracketListOrKeepDefault(config, "tax_bracket_married",
+            readBracketListOrKeepDefault(config, "tax_bracket_married" + optionalSuffix,
                                          constants.taxBracketMarried, printWarnings);
         constants.taxRateBracket =
-            readBracketListOrKeepDefault(config, "tax_rate_bracket",
+            readBracketListOrKeepDefault(config, "tax_rate_bracket" + optionalSuffix,
                                          constants.taxRateBracket, printWarnings);
 
         return constants;
