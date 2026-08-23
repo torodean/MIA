@@ -25,7 +25,7 @@ namespace maple
         FilingStatus filingStatus{FilingStatus::Single};
         
         /// Defines a list of expense scopes to consider when doing the tax calculations.
-        std::vector<std::string> addedTaxExpenses{};
+        std::vector<std::string> addedTaxExpenses;
     };
     
     /**
