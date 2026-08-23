@@ -27,7 +27,9 @@ namespace maple
                                      double deductible,
                                      FilingStatus status,
                                      const TaxRateConstants& constants);
-    
+    /**
+     * The cadence of the values in various data sets.
+     */
     enum Cadence
     {
         Annual,   ///< Yearly.
