@@ -31,7 +31,6 @@ namespace maple
                                                 MapleMiscTaxValues miscTaxValues)
     {
         TaxOperationReturns returns;
-        std::cout << "STILL IN DEV" << std::endl;
         
         // Find the appropriate deductible value to use.
         double standardDeductible = 0.0;
