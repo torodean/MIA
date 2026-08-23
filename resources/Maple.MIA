@@ -14,7 +14,7 @@
 # Do not include spaces unless within a string variable. 
 # This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
 
-# Federal Tax rates
+# Federal Tax rates.
 medicare_tax_rate_federal=0.0145
 oasdi_tax_rate_federal=0.062
 sales_tax_federal=0.0
@@ -25,7 +25,7 @@ standard_deductible_single_federal=12950.00
 standard_deductible_head_of_household_federal=19400.00
 standard_deductible_married_federal=25900.00
 
-# State Tax rates (Currently TX which has no state tax)
+# State Tax rates (Currently TX which has no state tax).
 medicare_tax_rate_state=0.0
 oasdi_tax_rate_state=0.0
 sales_tax_state=0.0625
@@ -36,15 +36,15 @@ standard_deductible_single_state=0.0
 standard_deductible_head_of_household_state=0.0
 standard_deductible_married_state=0.0
 
-# Income
+# Income (these are yearly salaries).
 income_all_salary_husband=132000.0
 income_all_salary_wife=66000.0
 
-# Savings
+# Savings.
 savings_all_initial=200000.0
 savings_all_emergency_fund_min=20000.0
 
-# Expenses when renting
+# Expenses when renting (these are monthly).
 expense_renting_rent=1113.0
 expense_renting_insurance=4.25
 expense_renting_internet=75.0
@@ -53,15 +53,18 @@ expense_renting_trash=10.0
 expense_renting_water=130.0
 expense_renting_electric=250.0
 
-# Monthly misc expenses
+# Monthly misc expenses (these are monthly).
 expense_all_phone=100.0
 expense_all_car_insurance=125.0
 expense_all_food=1000.0
 expense_all_gas=400.0
 
-# Pre-tax expenses. Monthly
+# Pre-tax expenses (these are monthly). 
 expense_all_pension_pretax=595.65
 
-# Misc values
+# Misc values.
 tax_deductions=0.0
 tax_filingStatus=married
+
+# The "addedExpenses" value is a scope specifier to add to the total expenses when doing tax calculations.
+tax_addedExpenses=renting

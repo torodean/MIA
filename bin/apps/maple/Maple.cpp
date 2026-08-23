@@ -17,8 +17,6 @@
 // Used for the ConfigType
 #include "Constants.hpp"
 #include "StringUtils.hpp"
-// Used for performing various financial calculations.
-#include "FinancialCalculations.hpp"
 
 
 namespace maple
@@ -152,7 +150,9 @@ namespace maple
     
     
     bool Maple::runOperation(MapleOperations operation)
-    {        
+    {
+        // Storage for operation containers.
+        
         switch(operation)
         {
             case PrintOpList: 
@@ -161,8 +161,15 @@ namespace maple
             case testOption:  
                 test();
                 break;
-            case TaxCalculation: 
-                calculateTaxesOperation(income, federalTaxConstants, stateTaxConstants);
+            case TaxCalculation:
+                // Only recalculate if this hasn't been done yet.
+                if (!taxOperationReturns.initialized)
+                    taxOperationReturns = calculateTaxesOperation(income,
+                                                                  expenses,
+                                                                  federalTaxConstants, 
+                                                                  stateTaxConstants,
+                                                                  miscTaxValues);
+                printTaxOperationReturns(taxOperationReturns);            
                 break;
             default: 
                 return false;
@@ -189,8 +196,9 @@ namespace maple
     
         federalTaxConstants = createTaxRateConstantsFromConfig(config, "_federal", printWarnings);
         stateTaxConstants = createTaxRateConstantsFromConfig(config, "_state", printWarnings);
-        income = createMoneyHandlerFromConfig(config, "income_", printWarnings);
-        expenses = createMoneyHandlerFromConfig(config, "expense_", printWarnings);
+        income = createMoneyHandlerFromConfig(config, "income", printWarnings);
+        expenses = createMoneyHandlerFromConfig(config, "expense", printWarnings);
+        miscTaxValues = createMapleMiscTaxFromConfig(config, "tax", printWarnings);
         
         return true;
     }

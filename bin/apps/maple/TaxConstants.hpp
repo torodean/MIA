@@ -27,6 +27,17 @@ namespace maple
         Married,          ///< Filing jointly as a married couple.
         HeadOfHousehold   ///< Filing as head of household.
     };
+    
+    /**
+     * @brief Converts a string representation of a filing status to a FilingStatus enum.
+     *
+     * @note The input string is converted to lowercase before comparison.
+     *
+     * @param str The string representation of the filing status.
+     * @return The corresponding FilingStatus enum value.
+     * @throws MIAException If the string does not represent a valid filing status.
+     */
+    FilingStatus stringToFilingStatus(const std::string& str);
 
     /**
      * This struct defines constants that are used for various tax calculations.

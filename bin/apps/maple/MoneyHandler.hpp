@@ -2,7 +2,7 @@
  * @file MoneyHandler.hpp
  * @author Antonius Torode
  * @date 08/19/2026
- * @brief Defines a storage struct for monthly income sources and helpers to total them.
+ * @brief Defines a storage struct for monthly money sources and helpers to total them.
  */
 #pragma once
 
@@ -18,11 +18,11 @@
 namespace maple
 {
     /**
-     * @brief A single named monthly income source and the scenario it applies to.
+     * @brief A single named monthly money source and the scenario it applies to.
      *
      * The scope is a free-form string (for example "house", "rent", or "rv")
      * so new scenarios can be introduced from the config without code changes.
-     * The special scope ALL_SCOPE marks an income source that applies in every
+     * The special scope ALL_SCOPE marks an money source that applies in every
      * scenario. Scope comparisons are case-insensitive.
      * 
      * Each MoneyHandlerSource object also has an optionl tags container for tagging
@@ -108,8 +108,8 @@ namespace maple
      * @return The sum of the matching money source values.
      */
     double getTotalMoney(const MoneyHandler& money,
-                          const std::string& scope,
-                          const std::vector<std::string>& constrainingTags = {});
+                         const std::string& scope,
+                         const std::vector<std::string>& constrainingTags = {});
 
     /**
      * @brief Returns the total of money sources that apply in any of the given scenarios.
@@ -124,8 +124,8 @@ namespace maple
      * @return The sum of the matching income source values.
      */
     double getTotalMoney(const MoneyHandler& money,
-                          const std::vector<std::string>& scopes,
-                          const std::vector<std::string>& constrainingTags = {});
+                         const std::vector<std::string>& scopes,
+                         const std::vector<std::string>& constrainingTags = {});
 
     /**
      * @brief Returns the total of every stored income source regardless of scope.
@@ -136,18 +136,17 @@ namespace maple
     double getTotalMoney(const MoneyHandler& income);
 
     /**
-     * @brief Constructs an MoneyHandler object from a configuration object.
+     * @brief Constructs a MoneyHandler object from a configuration object.
      *
-     * Expects the configuration object to be in the
-     * constants::ConfigType::KEY_VALUE format.
+     * Expects the configuration object to be in the constants::ConfigType::KEY_VALUE format.
      *
      * MoneyHandler entries are read by key prefix. The key format is
-     * "Income_<scope>_<name>" where the scope is the first token after the
+     * "prefix_<scope>_<name>" where the scope is the first token after the
      * prefix and the name is everything after it. For example:
      *
-     * - "Income_primary = 7451.99" is scope ALL_SCOPE, name "primary".
-     * - "Income_house_rental = 1500.0" is scope "house", name "rental".
-     * - "Income_rv_side = 200.0" is scope "rv", name "side".
+     * - "prefix_primary=7451.99" is scope ALL_SCOPE, name "primary".
+     * - "prefix_house_rental=1500.0" is scope "house", name "rental".
+     * - "prefix_rv_side=200.0" is scope "rv", name "side".
      *
      * A key with only one token after the prefix (no scope token) is treated
      * as scope ALL_SCOPE. The prefix and scope are matched case-insensitively.
@@ -157,7 +156,7 @@ namespace maple
      * true, a warning is printed for each skipped value.
      *
      * @param config The configuration object to use.
-     * @param prefix The prefix attached to this handler's config objects (e.g., "income_").
+     * @param prefix The prefix attached to this handler's config objects (e.g., "income").
      * @param printWarnings Whether to print warnings for unparseable values.
      * @return A constructed MoneyHandler with values from the config object.
      */

@@ -17,6 +17,8 @@
 #include "MIAException.hpp"
 // Used for converting vectors to strings.
 #include "VectorUtils.hpp"
+// Used for string manipulation
+#include "StringUtils.hpp"
 
 namespace maple
 {
@@ -90,6 +92,20 @@ namespace maple
         }
     } // namespace
     
+    FilingStatus stringToFilingStatus(const std::string& str)
+    {
+        const std::string lowerStr = StringUtils::toLower(str);
+
+        if (lowerStr == "single")
+            return FilingStatus::Single;
+        else if (lowerStr == "married")
+            return FilingStatus::Married;
+        else if (lowerStr == "head of household")
+            return FilingStatus::HeadOfHousehold;
+            
+        std::string err = "Invalid filing status: " + str;
+        MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
+    }
     
     std::ostream& operator<<(std::ostream &stream, const TaxRateConstants& constants)
     {

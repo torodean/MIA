@@ -158,7 +158,7 @@ namespace maple
         for (const constants::KeyValuePair& pair : pairs)
         {
             std::string key = StringUtils::toLower(pair.first);
-            if (key.rfind(prefix, 0) != 0)
+            if (key.rfind(prefix + "_", 0) != 0)
                 continue;
 
             /* 

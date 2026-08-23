@@ -18,6 +18,10 @@
 #include "TaxConstants.hpp"
 // Storage for the income
 #include "MoneyHandler.hpp"
+// Used for storing and performing various financial calculations.
+#include "FinancialCalculations.hpp"
+// Used for storing misc-needed values.
+#include "MapleMisc.hpp"
 
 namespace maple
 {
@@ -143,6 +147,11 @@ namespace maple
         MoneyHandler income;
         /// Storage for the expenses.
         MoneyHandler expenses;
+        /// Storage for some misc values needed for tax calculations.
+        MapleMiscTaxValues miscTaxValues;
+        
+        /// Stores the tax-operation values.
+        TaxOperationReturns taxOperationReturns;
         
     }; // class Maple
 } // namespace maple

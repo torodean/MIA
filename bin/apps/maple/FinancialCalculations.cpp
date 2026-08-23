@@ -22,19 +22,20 @@ namespace maple
                                                                toTaxBrackets(constants, status),
                                                                deductible);
     }
-    
-    
-    void calculateTaxesOperation(const MoneyHandler& income,
-                                 const TaxRateConstants& federalConstants,
-                                 const TaxRateConstants& stateConstants,
-                                 FilingStatus status,
-                                 double deductible)
+
+
+    TaxOperationReturns calculateTaxesOperation(const MoneyHandler& income,
+                                                const MoneyHandler& expenses,
+                                                const TaxRateConstants& federalConstants,
+                                                const TaxRateConstants& stateConstants,
+                                                MapleMiscTaxValues miscTaxValues)
     {
+        TaxOperationReturns returns;
         std::cout << "STILL IN DEV" << std::endl;
         
         // Find the appropriate deductible value to use.
         double standardDeductible = 0.0;
-        switch(status)
+        switch(miscTaxValues.filingStatus)
         {
             case FilingStatus::Single:
                 standardDeductible = federalConstants.standardDeductibleSingle;
@@ -49,41 +50,65 @@ namespace maple
                 // TODO - maybe throw here.
                 standardDeductible = 0.0;
                 break;
-        }
+        }        
+        if (standardDeductible > miscTaxValues.deductions)
+            returns.deductible = standardDeductible;
+        else
+            returns.deductible = miscTaxValues.deductions;            
         
-        if (standardDeductible > deductible)
-            deductible = standardDeductible;
+        returns.grossIncome = getTotalMoney(income, "all");
+        returns.preTaxIncome = getTotalMoney(income, "all", {"pretax"});
+        returns.taxableIncome = returns.grossIncome - returns.deductible;
+        returns.federalTaxesOwed = getTaxesFromTaxableIncome(returns.grossIncome, 
+                                                             returns.deductible, 
+                                                             miscTaxValues.filingStatus, 
+                                                             federalConstants);
+        returns.stateTaxesOwed = getTaxesFromTaxableIncome(returns.grossIncome, 
+                                                           returns.deductible, 
+                                                           miscTaxValues.filingStatus, 
+                                                           stateConstants);
+        returns.medicareTaxOwed = math::finance::getFlatRateTax(returns.taxableIncome, 
+                                                                federalConstants.medicareTaxRate);
+        returns.oasdiTaxOwed = math::finance::getFlatRateTax(returns.taxableIncome, 
+                                                             federalConstants.oasdiTaxRate);
         
-        double grossIncome = getTotalMoney(income, "all");
-        double preTaxIncome = getTotalMoney(income, "all", {"pretax"});
-        double taxableIncome = grossIncome - deductible;
-        double federalTaxes = getTaxesFromTaxableIncome(grossIncome, 
-                                                        deductible, 
-                                                        FilingStatus::Married, 
-                                                        federalConstants);
-        double stateTaxes = getTaxesFromTaxableIncome(grossIncome, 
-                                                      deductible, 
-                                                      FilingStatus::Married, 
-                                                      stateConstants);
-        double medicareTax = math::finance::getFlatRateTax(taxableIncome, federalConstants.medicareTaxRate);
-        double oasdiTax = math::finance::getFlatRateTax(taxableIncome, federalConstants.oasdiTaxRate);
+        returns.totalIncomeEarned = returns.grossIncome + returns.preTaxIncome;
+        returns.totalTaxesOwed = returns.federalTaxesOwed + returns.stateTaxesOwed + 
+                                 returns.medicareTaxOwed + returns.oasdiTaxOwed;
+        returns.totalTakeHomeIncome = returns.grossIncome - returns.totalTaxesOwed;
         
-        double totalIncome = grossIncome + preTaxIncome;
-        double totalTaxes = federalTaxes + stateTaxes + medicareTax + oasdiTax;
-        double takeHome = grossIncome - totalTaxes;
-        double estSalesTax = math::finance::getFlatRateTax(takeHome, stateConstants.salesTax);
+        std::vector<std::string> taxExpenseScopes = miscTaxValues.addedTaxExpenses;
+        taxExpenseScopes.push_back("all");
+        returns.yearlyExpenses = getTotalMoney(expenses, taxExpenseScopes) * 12.0;
+        returns.estimatedSpedingMoney = returns.totalTakeHomeIncome - returns.yearlyExpenses;
+        returns.estimatedSalesTaxToSpend = math::finance::getFlatRateTax(returns.estimatedSpedingMoney, 
+                                                                         stateConstants.salesTax);
         
-        std::cout << "Gross income: " << grossIncome << std::endl;
-        std::cout << "Pre-tax income: " << preTaxIncome << std::endl;
-        std::cout << "Total Income: " << totalIncome << std::endl;
-        std::cout << "Deductible: " << deductible << std::endl;
-        std::cout << "Taxable Income: " << taxableIncome << std::endl;
-        std::cout << "Total Taxes Owed: " << totalTaxes << std::endl;
-        std::cout << " -- Federal Taxes Owed: " << federalTaxes << std::endl;
-        std::cout << " -- Medicare Taxes Owed: " << medicareTax << std::endl;
-        std::cout << " -- OASDI Taxes Owed: " << oasdiTax << std::endl;
-        std::cout << " -- State Taxes Owed: " << stateTaxes << std::endl;
-        std::cout << "Take-home Pay After Taxes: " << takeHome << std::endl;
-        std::cout << "Estimated Sales Tax on take-home: " << estSalesTax << std::endl;
+        returns.initialized = true;
+        return returns;
+    }
+
+
+    void printTaxOperationReturns(const TaxOperationReturns& returns,
+                                  std::ostream& stream)
+    {
+        stream << "-----------------------------------" << std::endl;
+        stream << "YEARLY TAX INFORMATION" << std::endl;
+        stream << "Gross income: " << returns.grossIncome << std::endl;
+        stream << "Pre-tax income: " << returns.preTaxIncome << std::endl;
+        stream << "Total Income: " << returns.totalIncomeEarned << std::endl;
+        stream << "Deductible: " << returns.deductible << std::endl;
+        stream << "Taxable Income: " << returns.taxableIncome << std::endl;
+        stream << "Total Taxes Owed: " << returns.totalTaxesOwed << std::endl;
+        stream << " -- Federal Taxes Owed: " << returns.federalTaxesOwed << std::endl;
+        stream << " -- Medicare Taxes Owed: " << returns.medicareTaxOwed << std::endl;
+        stream << " -- OASDI Taxes Owed: " << returns.oasdiTaxOwed << std::endl;
+        stream << " -- State Taxes Owed: " << returns.stateTaxesOwed << std::endl;
+        stream << "Take-home Pay After Taxes: " << returns.totalTakeHomeIncome << std::endl;
+        stream << "Yearly expenses: " << returns.yearlyExpenses << std::endl;
+        stream << "Estimated Spending Money left: " << returns.estimatedSpedingMoney << std::endl;
+        stream << "Estimated Sales Tax on spending money: " << returns.estimatedSalesTaxToSpend << std::endl;
+        stream << "-----------------------------------" << std::endl;
+    
     }
 } // namespace maple
