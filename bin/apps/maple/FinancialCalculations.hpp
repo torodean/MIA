@@ -69,7 +69,7 @@ namespace maple
                                                 const MoneyHandler& expenses,
                                                 const TaxRateConstants& federalConstants,
                                                 const TaxRateConstants& stateConstants,
-                                                MapleMiscTaxValues miscTaxValues);
+                                                const MapleMiscTaxValues& miscTaxValues);
                                  
      /**
       * Dumps/prints the data contained in a TaxOperationReturns object.

@@ -28,7 +28,7 @@ namespace maple
                                                 const MoneyHandler& expenses,
                                                 const TaxRateConstants& federalConstants,
                                                 const TaxRateConstants& stateConstants,
-                                                MapleMiscTaxValues miscTaxValues)
+                                                const MapleMiscTaxValues& miscTaxValues)
     {
         TaxOperationReturns returns;
         
