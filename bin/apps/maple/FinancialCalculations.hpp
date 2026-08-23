@@ -32,8 +32,11 @@ namespace maple
      * @param income The income values to use.
      * @param federalConstants Federal tax constants.
      * @param stateConstants State tax constants.
+     * @param deductible A deductible to use for the calculation.
      */
     void calculateTaxesOperation(const MoneyHandler& income,
                                  const TaxRateConstants& federalConstants,
-                                 const TaxRateConstants& stateConstants);
+                                 const TaxRateConstants& stateConstants,
+                                 FilingStatus status = FilingStatus::Married,
+                                 double deductible = 0);
 } // namespace maple

@@ -26,37 +26,37 @@ namespace maple
     
     void calculateTaxesOperation(const MoneyHandler& income,
                                  const TaxRateConstants& federalConstants,
-                                 const TaxRateConstants& stateConstants)
+                                 const TaxRateConstants& stateConstants,
+                                 FilingStatus status,
+                                 double deductible)
     {
         std::cout << "STILL IN DEV" << std::endl;
         
-        // this will default to standard when getTaxesFromTaxableIncome is called.
-        double deductible = 0.0; // TODO - get configurable value from config file.
-        
-        /* TODO - get filing status from config file.
+        // Find the appropriate deductible value to use.
+        double standardDeductible = 0.0;
         switch(status)
         {
             case FilingStatus::Single:
-                deductible = constants.standardDeductibleSingle;
+                standardDeductible = federalConstants.standardDeductibleSingle;
                 break;
             case FilingStatus::Married:
-                deductible = constants.standardDeductibleMarried;
+                standardDeductible = federalConstants.standardDeductibleMarried;
                 break;
             case FilingStatus::HeadOfHousehold:
-                deductible = constants.standardDeductibleHeadOfHousehold;
+                standardDeductible = federalConstants.standardDeductibleHeadOfHousehold;
                 break;
             default:
                 // TODO - maybe throw here.
-                deductible = 0.0;
+                standardDeductible = 0.0;
                 break;
         }
-        */ 
-        deductible = federalConstants.standardDeductibleMarried; // Hard-coding married for now.
+        
+        if (standardDeductible > deductible)
+            deductible = standardDeductible;
         
         double grossIncome = getTotalMoney(income, "all");
         double preTaxIncome = getTotalMoney(income, "all", {"pretax"});
         double taxableIncome = grossIncome - deductible;
-        // TODO - Add optional deductions and filing status input here from maple config.
         double federalTaxes = getTaxesFromTaxableIncome(grossIncome, 
                                                         deductible, 
                                                         FilingStatus::Married, 
@@ -76,7 +76,8 @@ namespace maple
         std::cout << "Gross income: " << grossIncome << std::endl;
         std::cout << "Pre-tax income: " << preTaxIncome << std::endl;
         std::cout << "Total Income: " << totalIncome << std::endl;
-        std::cout << "Taxable Income: " << taxableIncome << std::endl; // TODO
+        std::cout << "Deductible: " << deductible << std::endl;
+        std::cout << "Taxable Income: " << taxableIncome << std::endl;
         std::cout << "Total Taxes Owed: " << totalTaxes << std::endl;
         std::cout << " -- Federal Taxes Owed: " << federalTaxes << std::endl;
         std::cout << " -- Medicare Taxes Owed: " << medicareTax << std::endl;
