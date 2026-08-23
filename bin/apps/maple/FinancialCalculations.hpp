@@ -7,7 +7,7 @@
 #pragma once
 
 #include "TaxConstants.hpp"
-#include "Income.hpp"
+#include "MoneyHandler.hpp"
 
 namespace maple
 {
@@ -33,7 +33,7 @@ namespace maple
      * @param federalConstants Federal tax constants.
      * @param stateConstants State tax constants.
      */
-    void calculateTaxesOperation(const Income& income,
+    void calculateTaxesOperation(const MoneyHandler& income,
                                  const TaxRateConstants& federalConstants,
                                  const TaxRateConstants& stateConstants);
 } // namespace maple

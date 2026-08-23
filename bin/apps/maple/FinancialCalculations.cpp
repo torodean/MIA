@@ -8,7 +8,7 @@
 // Associated header file.
 #include "FinancialCalculations.hpp"
 
-#include "Income.hpp"
+#include "MoneyHandler.hpp"
 #include "TaxConstants.hpp"
 
 namespace maple
@@ -24,7 +24,7 @@ namespace maple
     }
     
     
-    void calculateTaxesOperation(const Income& income,
+    void calculateTaxesOperation(const MoneyHandler& income,
                                  const TaxRateConstants& federalConstants,
                                  const TaxRateConstants& stateConstants)
     {
@@ -53,8 +53,8 @@ namespace maple
         */ 
         deductible = federalConstants.standardDeductibleMarried; // Hard-coding married for now.
         
-        double grossIncome = getTotalIncome(income, "all");
-        double preTaxIncome = getTotalIncome(income, "all", {"pretax"});
+        double grossIncome = getTotalMoney(income, "all");
+        double preTaxIncome = getTotalMoney(income, "all", {"pretax"});
         double taxableIncome = grossIncome - deductible;
         // TODO - Add optional deductions and filing status input here from maple config.
         double federalTaxes = getTaxesFromTaxableIncome(grossIncome, 

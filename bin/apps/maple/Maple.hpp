@@ -16,10 +16,8 @@
 #include "MIAApplication.hpp"
 // Storage for tax calculation values.
 #include "TaxConstants.hpp"
-// Storage for the expense
-#include "MonthlyExpenses.hpp"
 // Storage for the income
-#include "Income.hpp"
+#include "MoneyHandler.hpp"
 
 namespace maple
 {
@@ -142,9 +140,9 @@ namespace maple
         TaxRateConstants federalTaxConstants;
         TaxRateConstants stateTaxConstants;
         /// Storage for the income.
-        Income income;
+        MoneyHandler income;
         /// Storage for the expenses.
-        MonthlyExpenses expenses;
+        MoneyHandler expenses;
         
     }; // class Maple
 } // namespace maple

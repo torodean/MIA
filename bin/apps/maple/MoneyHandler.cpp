@@ -1,12 +1,12 @@
 /**
- * @file Income.cpp
+ * @file MoneyHandler.cpp
  * @author Antonius Torode
  * @date 08/19/2026
  * @brief Implementations for the API defined in the associated header file.
  */
  
 // The associated header file.
-#include "Income.hpp"
+#include "MoneyHandler.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -22,14 +22,7 @@
 
 namespace maple
 {
-    namespace
-    {
-        /// The config key prefix that marks an income entry (lowercase).
-        const std::string INCOME_PREFIX{"income_"};
-    }
-    
-    
-    std::ostream& operator<<(std::ostream& stream, const IncomeSource& source)
+    std::ostream& operator<<(std::ostream& stream, const MoneyHandlerSource& source)
     {
         stream << "name:" << source.name << ", "
                << "value:" << source.value << ", " 
@@ -40,7 +33,7 @@ namespace maple
     }
 
 
-    void Income::addSource(const std::string& name, 
+    void MoneyHandler::addSource(const std::string& name, 
                            double value,
                            const std::string& scope,
                            const std::vector<std::string>& tags)
@@ -49,25 +42,25 @@ namespace maple
     }
 
 
-    bool Income::hasSource(const std::string& name) const
+    bool MoneyHandler::hasSource(const std::string& name) const
     {
         return std::find_if(sources.begin(), sources.end(),
-                            [&](const IncomeSource& source)
+                            [&](const MoneyHandlerSource& source)
                             { return source.name == name; }) != sources.end();
     }
 
 
-    size_t Income::size() const
+    size_t MoneyHandler::size() const
     {
         return sources.size();
     }
     
 
-    std::ostream& operator<<(std::ostream& stream, const Income& income)
+    std::ostream& operator<<(std::ostream& stream, const MoneyHandler& money)
     {
         bool first = true;
         
-        for (const auto& source : income.sources)
+        for (const auto& source : money.sources)
         {
             if (first)
                 first = false;
@@ -79,14 +72,14 @@ namespace maple
     }
 
 
-    double getTotalIncome(const Income& income,
-                          const std::string& scope,
-                          const std::vector<std::string>& constrainingTags)
+    double getTotalMoney(const MoneyHandler& money,
+                         const std::string& scope,
+                         const std::vector<std::string>& constrainingTags)
     {
         std::string want = StringUtils::toLower(scope);
         double total = 0.0;
         
-        for (const auto& source : income.sources)
+        for (const auto& source : money.sources)
         {
             if (source.scope != want)
                 continue;
@@ -105,9 +98,9 @@ namespace maple
     }
 
 
-    double getTotalIncome(const Income& income,
-                          const std::vector<std::string>& scopes,
-                          const std::vector<std::string>& constrainingTags)
+    double getTotalMoney(const MoneyHandler& money,
+                         const std::vector<std::string>& scopes,
+                         const std::vector<std::string>& constrainingTags)
     {
         std::vector<std::string> want;
         want.reserve(scopes.size());
@@ -115,7 +108,7 @@ namespace maple
             want.push_back(StringUtils::toLower(scope));
 
         double total = 0.0;
-        for (const auto& source : income.sources)
+        for (const auto& source : money.sources)
         {
             if (std::find(want.begin(), want.end(), source.scope) == want.end())
                 continue;
@@ -134,19 +127,20 @@ namespace maple
     }
 
 
-    double getTotalIncome(const Income& income)
+    double getTotalMoney(const MoneyHandler& money)
     {
         double total = 0.0;
-        for (const auto& source : income.sources)
+        for (const auto& source : money.sources)
             total += source.value;
         return total;
     }
 
 
-    Income createIncomeFromConfig(const config::MIAConfig& config,
-                                  bool printWarnings)
+    MoneyHandler createMoneyHandlerFromConfig(const config::MIAConfig& config,
+                                              const std::string& prefix,
+                                              bool printWarnings)
     {
-        Income income;
+        MoneyHandler money;
 
         std::vector<constants::KeyValuePair> pairs;
         try
@@ -156,15 +150,15 @@ namespace maple
         catch (const error::MIAException&)
         {
             if (printWarnings)
-                std::cerr << "Maple: could not read config pairs for income."
+                std::cerr << "Maple: could not read config pairs for money handler."
                           << std::endl;
-            return income;
+            return money;
         }
 
         for (const constants::KeyValuePair& pair : pairs)
         {
             std::string key = StringUtils::toLower(pair.first);
-            if (key.rfind(INCOME_PREFIX, 0) != 0)
+            if (key.rfind(prefix, 0) != 0)
                 continue;
 
             /* 
@@ -197,7 +191,7 @@ namespace maple
             if (name.empty())
             {
                 if (printWarnings)
-                    std::cerr << "Maple: income key '" << pair.first
+                    std::cerr << "Maple: money handler key '" << pair.first
                               << "' has no name, skipping." << std::endl;
                 continue;
             }
@@ -210,7 +204,7 @@ namespace maple
             catch (const std::invalid_argument&)
             {
                 if (printWarnings)
-                    std::cerr << "Maple: income '" << pair.first
+                    std::cerr << "Maple: money handler '" << pair.first
                               << "' has unparseable value '" << pair.second
                               << "', skipping." << std::endl;
                 continue;
@@ -218,15 +212,15 @@ namespace maple
             catch (const std::out_of_range&)
             {
                 if (printWarnings)
-                    std::cerr << "Maple: income '" << pair.first
+                    std::cerr << "Maple: money handler '" << pair.first
                               << "' has out-of-range value '" << pair.second
                               << "', skipping." << std::endl;
                 continue;
             }
 
-            income.addSource(name, value, scope, tags);
+            money.addSource(name, value, scope, tags);
         }
 
-        return income;
+        return money;
     }
 } // namespace maple

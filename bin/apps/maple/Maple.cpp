@@ -189,8 +189,8 @@ namespace maple
     
         federalTaxConstants = createTaxRateConstantsFromConfig(config, "_federal", printWarnings);
         stateTaxConstants = createTaxRateConstantsFromConfig(config, "_state", printWarnings);
-        income = createIncomeFromConfig(config, printWarnings);
-        expenses = createMonthlyExpensesFromConfig(config, printWarnings);
+        income = createMoneyHandlerFromConfig(config, "income_", printWarnings);
+        expenses = createMoneyHandlerFromConfig(config, "expense_", printWarnings);
         
         return true;
     }
