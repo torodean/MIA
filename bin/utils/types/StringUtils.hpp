@@ -27,6 +27,14 @@ namespace StringUtils
      * @return A lower case copy of the input.
      */
     std::string toLower(const std::string& input);
+    
+    /**
+     * @brief Converts a string to upper case.
+     *
+     * @param input The string to convert.
+     * @return An upper case copy of the input.
+     */
+    std::string toUpper(const std::string& input);
 
     /**
      * Removes a specific character from a string.
@@ -231,5 +239,17 @@ namespace StringUtils
      * @return A new string which is the reverse of inputStr.
      */
     std::string invertString(const std::string& inputStr);
+    
+    /**
+     * @brief Centers text within a field of the specified width.
+     *
+     * If the text is wider than or equal to the specified width, the original
+     * text is returned unchanged.
+     *
+     * @param text The text to center.
+     * @param width The total width of the resulting field.
+     * @return The text centered within the specified width.
+     */
+    std::string centerText(const std::string& text, std::size_t width);
 
 } // namespace types

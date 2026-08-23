@@ -30,6 +30,18 @@ TEST(StringUtilsTest, ToLowerConvertsAllCharacters)
     EXPECT_EQ(toLower(input3), "digits: 1234567");
 }
 
+TEST(StringUtilsTest, ToUpperConvertsAllCharacters) 
+{
+    std::string input1 = "HeLLo";           // Check a simple string with upper-case characters.
+    std::string input2 = "HeLLo WoRld!";    // Check for multi-word strings with puncutation.
+    std::string input3 = "Digits: 1234567"; // Check that numbers don't change.
+
+    // Check expected results.
+    EXPECT_EQ(toUpper(input1), "HELLO");
+    EXPECT_EQ(toUpper(input2), "HELLO WORLD!");
+    EXPECT_EQ(toUpper(input3), "DIGITS: 1234567");
+}
+
 TEST(StringUtilsTest, RemoveCharInStringRemovesAllOccurrences) 
 {
     std::string input = "hello world";
@@ -206,4 +218,14 @@ TEST(StringUtilsTest, InvertStringTests)
 
     // String with numbers
     EXPECT_EQ(invertString("12345"), "54321");
+}
+
+TEST(StringUtilsTest, CenterText)
+{
+    EXPECT_EQ(centerText("Test", 10), "   Test   ");
+    EXPECT_EQ(centerText("Test", 9), "  Test   ");
+    EXPECT_EQ(centerText("Test", 8), "  Test  ");
+    EXPECT_EQ(centerText("Test", 4), "Test");
+    EXPECT_EQ(centerText("Test", 3), "Test");
+    EXPECT_EQ(centerText("", 5), "     ");
 }

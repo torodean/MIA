@@ -151,7 +151,8 @@ namespace maple
         MapleMiscTaxValues miscTaxValues;
         
         /// Stores the tax-operation values.
-        TaxOperationReturns taxOperationReturns;
+        TaxOperationReturns taxOperationReturnsMonthly;
+        TaxOperationReturns taxOperationReturnsAnnual;
         
     }; // class Maple
 } // namespace maple

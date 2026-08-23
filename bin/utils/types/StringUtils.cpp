@@ -34,6 +34,17 @@ namespace StringUtils
     }
     
     
+    std::string toUpper(const std::string& input)
+    {
+        std::string output = input;
+        for(size_t i = 0; i < input.size(); ++i)
+        {
+            output[i] = std::toupper(static_cast<unsigned char>(input[i]));
+        }
+        return output;
+    }
+    
+    
     std::string removeCharInString(std::string str, char c)
     {
         str.erase(remove(str.begin(), str.end(), c), str.end());
@@ -321,5 +332,17 @@ namespace StringUtils
             output[i] = inputStr[strSize-1-i];
 
         return output;
+    }
+    
+    std::string centerText(const std::string& text, std::size_t width)
+    {
+        if (text.size() >= width)
+            return text;
+
+        std::size_t padding = width - text.size();
+        std::size_t left = padding / 2;    
+        std::size_t right = padding - left;
+
+        return std::string(left, ' ') + text + std::string(right, ' ');
     }
 } // namespace types

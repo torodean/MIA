@@ -163,13 +163,17 @@ namespace maple
                 break;
             case TaxCalculation:
                 // Only recalculate if this hasn't been done yet.
-                if (!taxOperationReturns.initialized)
-                    taxOperationReturns = calculateTaxesOperation(income,
-                                                                  expenses,
-                                                                  federalTaxConstants, 
-                                                                  stateTaxConstants,
-                                                                  miscTaxValues);
-                printTaxOperationReturns(taxOperationReturns);            
+                if (!taxOperationReturnsAnnual.initialized)
+                {
+                    taxOperationReturnsAnnual = calculateTaxesOperation(income,
+                                                                        expenses,
+                                                                        federalTaxConstants, 
+                                                                        stateTaxConstants,
+                                                                        miscTaxValues);
+                    taxOperationReturnsMonthly = annualToMonthly(taxOperationReturnsAnnual);
+                }
+                printTaxOperationReturns(taxOperationReturnsAnnual);
+                printTaxOperationReturns(taxOperationReturnsMonthly);
                 break;
             default: 
                 return false;

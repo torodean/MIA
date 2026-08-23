@@ -28,6 +28,21 @@ namespace maple
                                      FilingStatus status,
                                      const TaxRateConstants& constants);
     
+    enum Cadence
+    {
+        Annual,   ///< Yearly.
+        Monthly,  ///< By month.
+        Unknown   ///< Unset.
+    };
+    
+    /**
+     * @brief Converts a Cadence value to its string representation.
+     *
+     * @param cadence The Cadence value to convert.
+     * @return The string representation of the cadence.
+     */
+    std::string cadenceToString(Cadence cadence);
+    
     /**
      * This is an object which stores values calculated in the calculateTaxesOperation
      * method. This allows these values to be accessible elsewhere without having to
@@ -38,6 +53,9 @@ namespace maple
     {
         /// Set to true once the values are set.
         bool initialized{false};
+        
+        /// The cadence appropriate for these constants.
+        Cadence cadence{Cadence::Unknown};
     
         double grossIncome{0.0};
         double deductible{0.0};
@@ -55,6 +73,18 @@ namespace maple
         double estimatedSpedingMoney{0.0};
         double estimatedSalesTaxToSpend{0.0};
     };
+    
+    /**
+     * @brief Converts annual tax operation return values to monthly values.
+     *
+     * Creates a copy of the provided annual values, converts all monetary values
+     * from annual to monthly by dividing them by 12, and sets the cadence to
+     * Cadence::Monthly. The original object is not modified.
+     *
+     * @param annual The annual tax operation return values to convert.
+     * @return A copy of the values converted to a monthly cadence.
+     */
+    TaxOperationReturns annualToMonthly(const TaxOperationReturns& annual);
     
     /**
      * @brief Calculates various tax values based on the input income and tax constants.
