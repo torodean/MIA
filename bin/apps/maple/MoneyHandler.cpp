@@ -199,21 +199,13 @@ namespace maple
             double value = 0.0;
             try
             {
-                value = std::stod(pair.second);
+                value = config.getDouble(pair.first);
             }
-            catch (const std::invalid_argument&)
+            catch (const error::MIAException&)
             {
                 if (printWarnings)
                     std::cerr << "Maple: money handler '" << pair.first
-                              << "' has unparseable value '" << pair.second
-                              << "', skipping." << std::endl;
-                continue;
-            }
-            catch (const std::out_of_range&)
-            {
-                if (printWarnings)
-                    std::cerr << "Maple: money handler '" << pair.first
-                              << "' has out-of-range value '" << pair.second
+                              << "' has invalid value '" << pair.second
                               << "', skipping." << std::endl;
                 continue;
             }
