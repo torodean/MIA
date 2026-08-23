@@ -21,12 +21,6 @@
 // Include the core utilities for some re-defined methods.
 #include "BasicUtilities.hpp"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::vector;
-using std::to_string;
-
 namespace StringUtils
 {
     std::string toLower(const std::string& input)
@@ -40,20 +34,31 @@ namespace StringUtils
     }
     
     
-    std::string removeCharInString(string str, char c)
+    std::string toUpper(const std::string& input)
+    {
+        std::string output = input;
+        for(size_t i = 0; i < input.size(); ++i)
+        {
+            output[i] = std::toupper(static_cast<unsigned char>(input[i]));
+        }
+        return output;
+    }
+    
+    
+    std::string removeCharInString(std::string str, char c)
     {
         str.erase(remove(str.begin(), str.end(), c), str.end());
         return str;
     }
     
     
-    int findCharInString(string& input, char c)
+    int findCharInString(const std::string& input, char c)
     {
         return BasicUtilities::findCharInString(input, c);
     }
     
     
-    bool stringContainsChar(string& input, char c)
+    bool stringContainsChar(const std::string& input, char c)
     {
         if(findCharInString(input, c) == -1)
             return false;
@@ -61,52 +66,60 @@ namespace StringUtils
     }
     
     
-    vector<string> delimiterString(string& input, const string& delimiter, bool verboseMode)
+    std::vector<std::string> delimiterString(const std::string& input, const std::string& delimiter, bool verboseMode)
     {
+        std::string inputCopy = input;
+        
         if(verboseMode)
-            cout << "input string: " << input << endl;
-        vector<string> output;
+            std::cout << "input string: " << inputCopy << std::endl;
+            
+        std::vector<std::string> output;
         size_t pos;
         std::string item;
-        while ((pos = input.find(delimiter)) != string::npos)
+        
+        while ((pos = inputCopy.find(delimiter)) != std::string::npos)
         {
-            item = input.substr(0, pos);
+            item = inputCopy.substr(0, pos);
             output.push_back(item);
             if(verboseMode)
-                cout << "delimiter item: " << item << endl;
-            input.erase(0, pos + delimiter.length());
+                std::cout << "delimiter item: " << item << std::endl;
+            inputCopy.erase(0, pos + delimiter.length());
         }
-        output.push_back(input);
+        output.push_back(inputCopy);
+        
         if(verboseMode)
-            cout << "delimiter item: " << input << endl;
+            std::cout << "delimiter item: " << inputCopy << std::endl;
+            
         int outputSize = output.size();
+        
         if(verboseMode)
         {
-            cout << "Contents of output: ";
+            std::cout << "Contents of output: ";
             for(int i=0; i<outputSize; i++)
             {
-                cout << output[i];
+                std::cout << output[i];
                 if(i != outputSize - 1)
-                    cout << delimiter;
+                    std::cout << delimiter;
             }
-            cout << endl;
+            std::cout << std::endl;
         }
+        
         return output;
     }
     
     
-    bool is_digits(const string& input)
+    bool is_digits(const std::string& input)
     {
-        if(input.find_first_not_of("0123456789") == string::npos)
+        if(input.find_first_not_of("0123456789") == std::string::npos)
             return true;
         return false;
     }
     
     
-    bool inputRoll(string& input)
+    bool inputRoll(const std::string& input)
     {
-        if(input.size() <= 6 && input.find('d') != string::npos &&
-           input.find_first_not_of("1234567890d") == string::npos &&
+        if(input.size() <= 6 && input.find('d') != std::string::npos &&
+           input.find_first_not_of("1234567890d") == std::string::npos &&
            delimiterString(input, "d", false).size() == 2)
         {
             return true;
@@ -115,7 +128,7 @@ namespace StringUtils
     }
     
     
-    bool formOfYes(string& input)
+    bool formOfYes(const std::string& input)
     {
         if (toLower(input) == "y" ||
             toLower(input) == "yes" ||
@@ -133,51 +146,51 @@ namespace StringUtils
     }
     
     
-    string today()
+    std::string today()
     {
         std::time_t t = std::time(nullptr);   // get time now
         std::tm* now = std::localtime(&t);
-        string month = to_string(now->tm_mon + 1);
-        string day = to_string(now->tm_mday);
-        string year = to_string(now->tm_year + 1900);
-        string todaysDate =  month + "-" + day + "-" + year;
+        std::string month = std::to_string(now->tm_mon + 1);
+        std::string day = std::to_string(now->tm_mday);
+        std::string year = std::to_string(now->tm_year + 1900);
+        std::string todaysDate =  month + "-" + day + "-" + year;
         return todaysDate;
     }
     
     
-    string shuffleString(string input)
+    std::string shuffleString(std::string input)
     {
-        string output = std::move(input);
+        std::string output = std::move(input);
         std::shuffle(output.begin(), output.end(), std::mt19937(std::random_device()()));
         return output;
     }
     
     
-    string getBeforeChar(string line, char c, bool verboseMode)
+    std::string getBeforeChar(std::string line, char c, bool verboseMode)
     {
         int equalSignLocation = findCharInString(line, c);
     
         std::string out = line.substr(0, equalSignLocation);
         if(verboseMode)
-            cout << "...stringBeforeEqual: " << out << endl;
+            std::cout << "...stringBeforeEqual: " << out << std::endl;
     
         return trim(out);
     }
     
     
-    string getAfterChar(string line, char c, bool verboseMode)
+    std::string getAfterChar(std::string line, char c, bool verboseMode)
     {
         int semiColonLocation = findCharInString(line, c);
         
         std::string out = line.substr(semiColonLocation+1, line.size()-1);
         if(verboseMode)
-            cout << "...stringAfterSemiColon: " << out << endl;
+            std::cout << "...stringAfterSemiColon: " << out << std::endl;
     
         return trim(out);
     }
     
     
-    string getBetweenEqualAndSemiColon(string line, bool verboseMode)
+    std::string getBetweenEqualAndSemiColon(std::string line, bool verboseMode)
     {
         int equalSignLocation = findCharInString(line, '=');
         int semiColonLocation = findCharInString(line, ';');
@@ -187,13 +200,13 @@ namespace StringUtils
         line = line.substr(equalSignLocation+1, line.size()-1);
     
         if(verboseMode)
-            cout << "...stringBetweenEqualAndSemiColon: " << line << endl;
+            std::cout << "...stringBetweenEqualAndSemiColon: " << line << std::endl;
     
         return line;
     }
 
 
-    string getBetweenXAndY(std::string line, char x, char y, bool verboseMode)
+    std::string getBetweenXAndY(std::string line, char x, char y, bool verboseMode)
     {
         int xLocation = findCharInString(line, x);
         int yLocation = findCharInString(line, y);
@@ -209,7 +222,7 @@ namespace StringUtils
     }
     
     
-    std::vector<std::string> entangleText(const string &input)
+    std::vector<std::string> entangleText(const std::string &input)
     {
         int counter = 0;
     
@@ -319,5 +332,17 @@ namespace StringUtils
             output[i] = inputStr[strSize-1-i];
 
         return output;
+    }
+    
+    std::string centerText(const std::string& text, std::size_t width)
+    {
+        if (text.size() >= width)
+            return text;
+
+        std::size_t padding = width - text.size();
+        std::size_t left = padding / 2;    
+        std::size_t right = padding - left;
+
+        return std::string(left, ' ') + text + std::string(right, ' ');
     }
 } // namespace types

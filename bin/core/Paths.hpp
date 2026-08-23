@@ -2,9 +2,11 @@
  * @file Paths.hpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: Declares project-wide directory paths used
- *     across the application. These paths provide centralized access to default
- *     resource locations such as configuration files, logs, and user data directories.
+ * @brief Provides file pathing related features for the MIA project.
+ * 
+ * Declares project-wide directory paths used across the application. These paths 
+ * provide centralized access to default resource locations such as configuration 
+ * files, logs, and user data directories.
  */
 #pragma once
 
@@ -87,12 +89,31 @@ namespace paths
     }
     
     /**
+     * @brief Get the directory of the cpp file this was called from at compile time.
+     * 
+     * @note This method utilizes __FILE__ which is a preprocessor macro that has 
+     * to be determined in the calling file. The intent of this method is to always
+     * be called with that macro as the file parameter. 
+     * @note This method will also strup the last "/" from the path.
+     * 
+     * @param thisFilesPath should always be "__FILE__". This will always give the
+     *                      filepath of the file it is being called in.
+     * @return std::string The directory path of the cpp file calling this method.
+     */
+    inline std::string getCppFileDirAtCompileTime(const std::string& thisFilesPath)
+    {
+        std::size_t pos = thisFilesPath.find_last_of('/');
+        return (pos == std::string::npos) ? "" : thisFilesPath.substr(0, pos);
+         
+    }
+    
+    /**
      * Determines whether the application is running from a system-installed location
      * or from the repository (development/testing) directory.
      *
      * This checks whether the executable path is located within the system installation directory.
      *
-     * @return [bool] - true if running from an installed system location; false if running from the repo.
+     * @return true if running from an installed system location; false if running from the repo.
      */
     inline bool isInstalled()
     {
@@ -122,7 +143,7 @@ namespace paths
      * as the executable, that will be returned second. Otherwise, it returns the git-repository 
      * configuration directory, typically used for development or testing.
      *
-     * @return [std::string] - Path to the appropriate configuration directory.
+     * @return Path to the appropriate configuration directory.
      */
     inline std::string getDefaultConfigDirToUse()
     {
@@ -152,7 +173,7 @@ namespace paths
      * as the executable, that will be returned second. Otherwise, it returns the git-repository 
      * log directory, typically used for development or testing.
      *
-     * @return [std::string] - Path to the appropriate configuration directory.
+     * @return Path to the appropriate configuration directory.
      */
     inline std::string getDefaultLogDirToUse()
     {

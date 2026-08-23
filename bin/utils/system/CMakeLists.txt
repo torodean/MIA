@@ -8,7 +8,7 @@ set(System_INC
     VirtualKeyStrokes.hpp 
     TerminalColors.hpp )
 add_library(System_UTIL ${System_SRC} ${System_INC})
-target_link_libraries(System_UTIL PUBLIC Framework_CORE)
+target_link_libraries(System_UTIL PUBLIC Framework_CORE Math_UTIL)
 if(UNIX AND NOT APPLE AND NOT CYGWIN)
     find_library(XDO_LIB xdo REQUIRED)    
     find_package(X11 REQUIRED)

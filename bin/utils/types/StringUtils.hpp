@@ -27,6 +27,14 @@ namespace StringUtils
      * @return A lower case copy of the input.
      */
     std::string toLower(const std::string& input);
+    
+    /**
+     * @brief Converts a string to upper case.
+     *
+     * @param input The string to convert.
+     * @return An upper case copy of the input.
+     */
+    std::string toUpper(const std::string& input);
 
     /**
      * Removes a specific character from a string.
@@ -45,24 +53,24 @@ namespace StringUtils
      * @param ch The character to find.
      * @return The index of the first occurrence of ch in str, or -1 if not found.
      */
-    int findCharInString(std::string& input, char c);
+    int findCharInString(const std::string& input, char c);
 
     /**
-     * Determines if a character is contained within a string.
+     * @brief Determines if a character is contained within a string.
      * @param input Reference to the input string to parse.
      * @param c The character to find.
      * @return Returns true if the character is in the string.
      */
-    bool stringContainsChar(std::string& input, char c);
+    bool stringContainsChar(const std::string& input, char c);
 
     /**
-     * Separates a string into components via a delimiter.
+     * @brief Separates a string into components via a delimiter.
      * @param input Reference to the input string to parse.
      * @param delimiter Delimiter to use when parsing.
      * @param verboseMode Enables verboseMode output (default = false).
      * @return
      */
-    std::vector<std::string> delimiterString(std::string& input, const std::string &delimiter, bool verboseMode = false);
+    std::vector<std::string> delimiterString(const std::string& input, const std::string &delimiter, bool verboseMode = false);
 
     /**
      * Function for determining if all characters in a string are digits/integers.
@@ -76,14 +84,14 @@ namespace StringUtils
      * @param input Reference to the input string to parse.
      * @return True if the string is a dice roll.
      */
-    bool inputRoll(std::string &input);
+    bool inputRoll(const std::string &input);
 
     /**
      * A function used to determine if an answer is equivalent to yes.
      * @param input Reference to the input string to parse.
      * @return True if answer is a form of yes.
      */
-    bool formOfYes(std::string &input);
+    bool formOfYes(const std::string &input);
 
     /**
      * Returns the date for today.
@@ -231,5 +239,17 @@ namespace StringUtils
      * @return A new string which is the reverse of inputStr.
      */
     std::string invertString(const std::string& inputStr);
+    
+    /**
+     * @brief Centers text within a field of the specified width.
+     *
+     * If the text is wider than or equal to the specified width, the original
+     * text is returned unchanged.
+     *
+     * @param text The text to center.
+     * @param width The total width of the resulting field.
+     * @return The text centered within the specified width.
+     */
+    std::string centerText(const std::string& text, std::size_t width);
 
 } // namespace types

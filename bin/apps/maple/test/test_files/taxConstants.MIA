@@ -1,0 +1,21 @@
+# Some random tax values.
+medicare_tax_rate=0.075
+oasdi_tax_rate=0.095
+sales_tax=0.085
+tax_bracket_single=0.0,1000.0,inf
+tax_bracket_married=0.0,2000.0,inf
+tax_rate_bracket=0.00,0.10,0.50
+standard_deductible_single=10000.0
+standard_deductible_head_of_household=15000.0
+standard_deductible_married=20000.0
+
+# Values with a custom suffix:
+medicare_tax_rate_custom=0.035
+oasdi_tax_rate_custom=0.025
+sales_tax_custom=0.015
+tax_bracket_single_custom=0.0,2000.0,inf
+tax_bracket_married_custom=0.0,4000.0,inf
+tax_rate_bracket_custom=0.00,0.20,0.70
+standard_deductible_single_custom=20000.0
+standard_deductible_head_of_household_custom=25000.0
+standard_deductible_married_custom=30000.0

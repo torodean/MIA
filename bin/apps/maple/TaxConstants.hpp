@@ -9,6 +9,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <ostream>
 
 // Used for the configuration file parsing.
 #include "MIAConfig.hpp"
@@ -26,6 +27,17 @@ namespace maple
         Married,          ///< Filing jointly as a married couple.
         HeadOfHousehold   ///< Filing as head of household.
     };
+    
+    /**
+     * @brief Converts a string representation of a filing status to a FilingStatus enum.
+     *
+     * @note The input string is converted to lowercase before comparison.
+     *
+     * @param str The string representation of the filing status.
+     * @return The corresponding FilingStatus enum value.
+     * @throws MIAException If the string does not represent a valid filing status.
+     */
+    FilingStatus stringToFilingStatus(const std::string& str);
 
     /**
      * This struct defines constants that are used for various tax calculations.
@@ -33,8 +45,11 @@ namespace maple
      */
     struct TaxRateConstants
     {
+        /// Default constructor.
+        TaxRateConstants() = default;
+        
         /// Various tax rates.
-        double medicareTaxRate{0.0145};   ///< The medicare tax rate.
+        double medicareTaxRate{0.0145};  ///< The medicare tax rate.
         double oasdiTaxRate{0.062};      ///< The OASDI tax rate.
         double salesTax{0.0625};         ///< The state sales tax (default is TX).
         
@@ -72,6 +87,15 @@ namespace maple
         double standardDeductibleHeadOfHousehold{19400.0}; ///< Head of Household deductible.
         double standardDeductibleMarried{25900.0};         ///< Married deductible.
     }; // struct TaxRateConstants
+    
+    /**
+     * @brief Turns a TaxRateConstants object into a string via an std::ostream.
+     * 
+     * @param stream The stream to output the string data to.
+     * @param constants The TaxRateConstants object to feed into the stream.
+     * @return The stream with the constants data piped into it.
+     */
+    std::ostream& operator<<(std::ostream& stream, const TaxRateConstants& constants);
 
     /**
      * @brief Builds a TaxBrackets list from a TaxRateConstants object for a filing status.
@@ -98,10 +122,18 @@ namespace maple
      * Bracket lists are comma-separated. The token "inf" marks the open top bracket
      * and is parsed as positive infinity.
      *
+     * The key's needed for this object in the config file are pre-determined and hard
+     * coded. In order to allow for multiple configurable objects (such as one for
+     * federal taxes, and one for state taxes), and optionalSuffix parameter is
+     * provided which allows for custom suffixes appended to these keys. 
+     *
      * @param config The configuration object to use.
+     * @param optionalSuffix When scanning the config values, this is an optional suffix
+     *                       appended to the key names.
      * @param printWarnings Whether or not to print warnings for missing values.
      * @return A constructed TaxRateConstants with values from the config object.
      */
-    TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config, 
+    TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config,
+                                                      const std::string& optionalSuffix = "",  
                                                       bool printWarnings = false);
 } // namespace maple

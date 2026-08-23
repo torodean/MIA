@@ -324,12 +324,59 @@ vk.leftclick();
 
 
 
+\section{Type Manipulation Utility}
+\label{sec:typeManipulationUtility}
+
+These features are all part of the \texttt{Types\_UTIL}.
+
+
+\subsection{String Utilities}
+
+The MIA project contains many helper methods particularly related to string manipulation, parsing, transformation, and formatting. The API for this utility is in the \texttt{StringUtils.hpp} file, where the various helper methods are stored. This file contains the complete documentation for each available function. To use the string utilities, simply include the \texttt{StringUtils.hpp} file and link to the \texttt{Types\_UTIL} in the CMake.
+
+The string utilities provide functionality in several general categories (not an exhaustive list):
+\begin{itemize}
+	\item \textbf{Case and character manipulation}: Conversion between upper- and lower-case strings, removal of characters, and character containment checks.
+	
+	\item \textbf{String parsing}: Splitting strings using delimiters and extracting portions of strings before, after, or between specified characters.
+	
+	\item \textbf{String validation}:  Checking whether strings contain digits, represent dice-roll notation, represent affirmative responses, or contain specified substrings and delimiters.
+	
+	\item \textbf{String transformation}: Shuffling, reversing, trimming, and otherwise transforming strings.
+	
+	\item \textbf{Type conversion}: Conversion between strings and vectors of characters or integer values.
+	
+	\item \textbf{Formatting}: Utilities for producing formatted strings, including centering text within a specified width.
+	
+	\item \textbf{Miscellaneous utilities}: Functions such as retrieving the current date and generating specialized string representations.
+\end{itemize}
+
+\subsubsection{Example}
+
+The following demonstrates basic use of the string utilities:
+
+\begin{lstlisting}[style=cppstyle]
+#include "StringUtils.hpp"
+
+std::string input = "  Hello World  ";
+
+std::string upper = StringUtils::toUpper(input);
+std::string lower = StringUtils::toLower(input);
+std::string trimmed = StringUtils::trim(input);
+std::string reversed = StringUtils::invertString(input);
+\end{lstlisting}
+The resulting strings are:
+\begin{lstlisting}[style=cppstyle]
+// input:    "  Hello World  "
+// upper:    "  HELLO WORLD  "
+// lower:    "  hello world  "
+// trimmed:  "Hello World"
+// reversed: "  dlroW olleH  "
+\end{lstlisting}
 
 
 
 
+\subsection{Vector Utilities}
 
-
-
-
-
+The MIA project provides a collection of general-purpose utilities for working with C++ vectors. The API for these utilities is defined in \texttt{VectorUtils.hpp}, where the available functions and their detailed behavior are documented. To use the vector utilities, include the \texttt{VectorUtils.hpp} header and link the application against the \texttt{Types\_UTIL} library in CMake.

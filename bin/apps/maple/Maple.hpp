@@ -14,8 +14,14 @@
 #include "MIAConfig.hpp"
 // Used for common app setup.
 #include "MIAApplication.hpp"
-// Storage for calculation values.
+// Storage for tax calculation values.
 #include "TaxConstants.hpp"
+// Storage for the income
+#include "MoneyHandler.hpp"
+// Used for storing and performing various financial calculations.
+#include "FinancialCalculations.hpp"
+// Used for storing misc-needed values.
+#include "MapleMisc.hpp"
 
 namespace maple
 {
@@ -23,12 +29,40 @@ namespace maple
     const std::string defaultConfigFile{"Maple.MIA"};
         
     /**
-     * This enum defines the various commands/tasks that are available to the Maple app.
+     * This enum defines the various operations/tasks that are available to the Maple app.
+     * When adding new operations, the operationToDesc() method will need updated along
+     * with this enum.
      */
-    enum MapleCommands
+    enum MapleOperations : uint8_t
     {
-        TaxCalculation,   ///< Calculations annual taxes owed. 
-    }; // enum MapleCommands
+        PrintOpList = 0,      ///< Prints the list of operations.
+        testOption = 1,       ///< Reserved for testing to develop new features.
+        TaxCalculation = 2,   ///< Calculations annual taxes owed.
+        OperationCount = 3    ///< The total number of operations in this enum. KEEP LAST!
+    }; // enum MapleOperations
+    
+    /**
+     * Prints the description of a valid maple operation. This will print the index of
+     * the operation, the operation name, and a short description of the operation.
+     * @param operation The operation to get information about.
+     * @return A String representation of the operation information. 
+     */
+    std::string operationToDesc(MapleOperations operation);
+    
+    /**
+     * @brief Formats a description of an operation based on various inputs.
+     *
+     * The string constructed by this method is of the following form:
+     *     "index) name - description"
+     *
+     * @param operation The operation to format - needed for the index.
+     * @param name The name of the operation.
+     * @param desc The descroption of the operation.
+     * @return A string formatted description.
+     */
+    std::string formatDesc(MapleOperations operation,
+                           const std::string& name,
+                           const std::string& desc);
     
     /**
      * @class Maple
@@ -47,7 +81,8 @@ namespace maple
         ~Maple() = default;
         
         /**
-         * TODO
+         * This will initialize this class by parsing command line arguments for 
+         * configuration options and then loading the config file if provided.
          *
          * @param argc Number of command line arguments.
          * @param argv Array of command line argument strings.
@@ -68,6 +103,23 @@ namespace maple
 
     private:
     
+        /**
+         * This will load a default front-end. This will continually loop, while asking the
+         * use for an input option. When a valid input is entered. The appropriate
+         * feature will be performed, then loop back to the start of the loop.
+         */
+        void defaultFrontEnd();
+        
+        /// Prints a list of the valid operations programmed into Maple.
+        void printOperationsList();
+        
+        /**
+         * @brief Maps an operation to the correct function/methods.
+         * @param operation The index of the operation to perform.
+         * @return true if the operation is valid. false otherwise.
+         */
+        bool runOperation(MapleOperations operation);
+    
         /// Just a temporary method for testing while developing the app.
         void test();
        
@@ -87,6 +139,20 @@ namespace maple
         
         /// Stores true for testMode functionality.
         bool testMode{false};
+        
+        /// Storage for the tax constants.
+        TaxRateConstants federalTaxConstants;
+        TaxRateConstants stateTaxConstants;
+        /// Storage for the income.
+        MoneyHandler income;
+        /// Storage for the expenses.
+        MoneyHandler expenses;
+        /// Storage for some misc values needed for tax calculations.
+        MapleMiscTaxValues miscTaxValues;
+        
+        /// Stores the tax-operation values.
+        TaxOperationReturns taxOperationReturnsMonthly;
+        TaxOperationReturns taxOperationReturnsAnnual;
         
     }; // class Maple
 } // namespace maple

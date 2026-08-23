@@ -2,18 +2,12 @@
  * @file MIASequencer.hpp
  * @author Antonius Torode
  * @date 12/26/2019
- * Description: A sequencer for processing and executing MIASequences from file.
- *              This component supports loading, parsing, and triggering predefined
- *              input sequences including coordinates and actions.
+ *
+ * A sequencer for processing and executing MIASequences from file.
+ * This component supports loading, parsing, and triggering predefined
+ * input sequences including coordinates and actions.
  */
 #pragma once
-
-#include <string>
-#include <vector>
-#include <map>
-#include <optional>
-#include <iostream>
-#include <limits>
 
 // Used for the configuration.
 #include "MIAConfig.hpp"
@@ -26,6 +20,7 @@
 //Used for virtual key strokes.
 #include "VirtualKeyStrokes.hpp"
 #include "KeyListenerTask.hpp"
+#include "Sequences.hpp"
 
 /**
  * @class MIASequencer
@@ -39,126 +34,10 @@
 class MIASequencer : public MIAApplication
 {
 public:
-
-    /**
-     * These are the various actions which the sequencer supports.
-     */
-    enum SequenceActionType
-    {
-        UNKNOWN,     ///< Unknown action - do nothing.
-        TYPE,        ///< This will type a sequence of characters.
-        SLEEP,       ///< This will wait/pause some time.
-        DELAY,       ///< This is the time to wait between each action.
-        MOVEMOUSE,   ///< This will move the mouse to a specific cordinate.
-        CLICK,       ///< This will perform a click with the mouse.
-        PRESS,       ///< This will perform a special button press.
-        PRESSRANDNUM,///< This will press a random numered key between two values.
-        TYPEHOLD,    ///< This will press a character and hold it for a specified time.
-        PRESSHOLD,   ///< This will perform a special button press and hold it for a specified time.
-        CLICKHOLD,   ///< This will perform a click with the mouse and hold it for a specified time.
-        LISTEN,      ///< This will listen for a key press and stop or restart the sequence.
-    };
     
-    /**
-     * This struct represents storage for a valid sequencer action. This action
-     * defines a type, which specifies what the action will do, and then containers
-     * for each type of data needed for the various actions. The intention is to only
-     * fill the data type associated with the type needed for the action.
-     */
-    struct SequenceAction
-    {
-        SequenceActionType actionType{};  ///< An action type (what to perform).
-        int timeValue{};                  ///< Timing information (for pause or delay).
-        std::string strToType{};          ///< A string (for typing).
-        virtual_keys::VirtualKeyStrokes::ClickType click{}; ///< A click type (for mouse input).
-        virtual_keys::VirtualKeyStrokes::SpecialButton press{}; ///< A special button for pressing. 
-        unsigned int keyCode{};           ///< A generic key code.
-        
-        /// Coordinates (for moving mouse). Also stores the range for the PRESSRANDNUM option.
-        math::Coordinate coords{};
-        
-        /// Returns true if this is a valid action.
-        bool isValid();
-        
-        /**
-         * @brief Outputs a human-readable representation of the acvtion to the standard output.
-         * Useful for debugging or verifying the sequence contents before execution.
-         */
-        void dump() const;
-        
-        /**
-         * @brief Executes the stored action based on its type and associated data.
-         * This function performs the action defined by the `action` field using
-         * the relevant data members (i.e., coordinates, time, string, click type).
-         * Only the data appropriate to the action type is used.
-         * @param keys[VirtualKeyStrokes& keys] - The object for simulating actions.
-         * @param verboseMode[bool] If true, enables verbose output.
-         * @param testMode[bool] - Enables test mode (default = false).
-         * @return [optional<int>] - Returns optional new delay time (ms) to use for 
-         *     subsequent actions if it needs updated via an action.
-         */
-        std::optional<int> performAction(virtual_keys::VirtualKeyStrokes& keys,
-                                         bool verboseMode = false,
-                                         bool testMode = false);
-    };
+    /// The name of the defauilt config file that this class uses.
+    const std::string defaultSequencesFile{"MIASequences.MIA"};
     
-    /// A list of sequencer actions forming a complete sequence.
-    using SequenceActions = std::vector<SequenceAction>;
-    
-    /**
-     * @brief Represents a fully defined input sequence with a name, timing, and actions.
-     *
-     * A CompleteSequence contains:
-     * - A unique name identifying the sequence,
-     * - A delay time in milliseconds between each action,
-     * - An ordered list of SequenceAction items to execute.
-     * - An optional listenerKeyCode for stop/restarts.
-     */
-    struct CompleteSequence
-    {
-        std::string name{};        ///< The name of this sequence.
-        int delayTime{1000};       ///< The time between each action (ms).
-        SequenceActions actions{}; ///< All actions in this sequence.
-        
-        /// This stores a key code to listen for in order to stop or restart the sequence.
-        char listenerKeyCode{'\0'}; 
-        
-        /// Returns true if this is a valid sequence.
-        bool isValid();
-        /// Clear this object.
-        void clear();
-        
-        /**
-         * @brief Outputs a human-readable representation of the sequence to the standard output.
-         * Prints the name of the sequence, the delay time between actions, and each action
-         * with its specific parameters (e.g., string to type, coordinates, click type, etc.).
-         * Useful for debugging or verifying the sequence contents before execution.
-         */
-        void dump() const;
-        
-        /**
-         * @brief Executes all actions in the sequence in order, applying the defined delay between each.
-         * Iterates through the `actions` list and calls `performAction()` on each entry,
-         * pausing for `delayTime` milliseconds between actions.
-         * @param keys[VirtualKeyStrokes& keys] - The object for simulating actions.
-         * @param verboseMode[bool] If true, enables verbose output.
-         * @param testMode[bool] - Enables test mode (default = false).
-         * @param [bool] - Enables test mode.
-         */
-        void performActions(virtual_keys::VirtualKeyStrokes& keys, 
-                            bool verboseMode = false,
-                            bool testMode = false);
-    };
-    
-    /// Maps sequence names to their corresponding list of actions.
-    using sequenceList = std::unordered_map<std::string, CompleteSequence>;
-    
-    /**
-     * Dumps the list of the valid sequences to output stream.
-     * @param out[std::ostream&] - The output stream to print the output to.
-     */
-    void printSequenceList(std::ostream& out = std::cout);
-
     /**
      * The main constructor of the MIASequencer class. This will construct the command options.
      */
@@ -168,8 +47,8 @@ public:
     ~MIASequencer() = default;
     
     /**
-     * This will initialize this class by parsing command line arguments for configuration options
-     * and then loading the config file if provided.
+     * @brief This will initialize this class by parsing command line arguments for 
+     * configuration options and then loading the config file if provided.
      *
      * @param argc Number of command line arguments.
      * @param argv Array of command line argument strings.
@@ -178,35 +57,41 @@ public:
     
     /// Runs the MIASequencer application.
     int run() override;
+    
+    /**
+     * @brief Dumps the list of the valid sequences to output stream.
+     * @param out The output stream to print the output to.
+     */
+    void printSequenceList(std::ostream& out = std::cout);
 
 protected:
 
     /**
-     * Prints help info for optional config file.
+     * @brief Prints help info for optional config file.
      */
     virtual void printHelp() const;
 
 private:
     
     /**
-     * This will create a SequenceAction from a key-value pair.
-     * @param key[std::String] - The key defining the action type.
-     * @param value[std::String] - The value defining the data needed to perform the action.
-     * @return [SequenceAction] - Returns the constructed SequenceAction.  
+     * @brief This will create a SequenceAction from a key-value pair.
+     * @param key The key defining the action type.
+     * @param value The value defining the data needed to perform the action.
+     * @return Returns the constructed SequenceAction.  
      */
-    SequenceAction createAction(std::string key, std::string value);
+    sequences::SequenceAction createAction(std::string key, std::string value);
     
     /**
-     * Runs a sequence based on the name (key) of the sequence.
-     * @param sequenceName[const std::String&] - The name of the sequence to run.
+     * @brief Runs a sequence based on the name (key) of the sequence.
+     * @param sequenceName The name of the sequence to run.
      */
     void runSequence(const std::string& sequenceName);
     
     /**
-     * Runs a sequence.
-     * @param sequence[const CompleteSequence&] - The sequence to run.
+     * @brief Runs a sequence.
+     * @param sequence The sequence to run.
      */
-    void runSequence(CompleteSequence& sequence);
+    void runSequence(sequences::CompleteSequence& sequence);
      
     /**
      * This will load a default front-end. This will continually loop, while asking the
@@ -222,9 +107,6 @@ private:
      * This will load in the configuration file and load the sequences.
      */
     void loadConfig();
-    
-    /// The name of the defauilt config file that this class uses.
-    std::string defaultSequencesFile{"MIASequences.MIA"};
     
     /**
      * The configuration loader for this app. The configuration for this app uses the
@@ -252,13 +134,13 @@ private:
     bool testMode{false};
     
     /// The complete list of sequences.
-    sequenceList sequences;
+    sequences::sequenceList sequences;
           
     /**
-     * This is a listener, which will (if initialized and set), monitor for a specific
-     * user-defined key-press throughout the sequence to stop and/or restart the sequence looping.
-     * Since this is a threaded class, this will be constructed outside of the sequences when it
-     * is needed and used.
+     * This is a listener, which will (if initialized and set), monitor for a 
+     * specific user-defined key-press throughout the sequence to stop and/or 
+     * restart the sequence looping. Since this is a threaded class, this will 
+     * be constructed outside of the sequences when it is needed and used.
      */
     KeyListenerTask listener{};
     

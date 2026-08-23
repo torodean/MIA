@@ -2,7 +2,7 @@
  * @file MIASequencer.cpp
  * @author Antonius Torode
  * @date 05/24/2025
- * Description: Implementation of the MIASequencer app.
+ * @brief Implementation of the MIASequencer app.
  */
 
 #include <iostream>
@@ -26,67 +26,18 @@
 // Used for config type.
 #include "Constants.hpp"
 
-// Used for finding random values for some features.
-#include "MathUtils.hpp"
-
 using StringUtils::stringContainsChar;
 using StringUtils::getBeforeChar;
 using StringUtils::getAfterChar;
 using StringUtils::contains;
 using StringUtils::trim;
 using StringUtils::delimiterString;
-using virtual_keys::VirtualKeyStrokes;
 
-/*
- * This namespace defines methods and wrappers intended to be used only by this file. This
- * typically defines custom features and sequences of calls which utilize other utilities in
- * combination, which may not have a good place within those utilities or any other existing libs.
- */
-namespace
-{
-    /**
-     * @brief Simulates pressing a random number key between two values (0–9) using virtual key codes.
-     *
-     * This method will choose a random value between the input min and max, and then simulate a key
-     * press of the chosen value. After chooseing the random value, this simply calls pressNumber(..)
-     * to perform the actual key press.
-     * 
-     * @note The min_num must be less than or equal to the max_num.
-     * @note This method is designed specifically for the PRESSRANDNUM function.
-     *
-     * @param vkeys[VirtualKeyStrokes& keys] - The object for simulating actions.
-     * @param min_num[int] - The min value to use (must be in range 0–9) - inclusive.
-     * @param max_num[int] - The max value to use (must be in range 0–9) - inclusive.
-     * @param holdTime[int] - Duration in milliseconds to hold the key before releasing.
-     * @param verboseMode[bool] - If true, prints the pressed number to standard output.
-     */
-    void pressRandomNumber(VirtualKeyStrokes& vkeys, 
-                           int min_num, 
-                           int max_num, 
-                           int holdTime = 0, 
-                           bool verboseMode = false)
-    {
-        // If they are equal, the 'random value' will just be the number itself.
-        if ( min_num == max_num)
-            vkeys.pressNumber(min_num, holdTime, verboseMode);
-            
-        // Check for valid ranges on the input numbers. 
-        if ( min_num < 0 || max_num > 9 || max_num < min_num )
-        {
-            std::string invalidInputErr = "ERROR: Invalid range for PRESSRANDNUM: " 
-                                        + std::to_string(min_num) + ";" + std::to_string(max_num);
-            MIA_THROW(error::ErrorCode::Invalid_Parameter, invalidInputErr);
-        }
-        
-        int randomVal = math::randomInt(min_num, max_num);
-        vkeys.pressNumber(randomVal, holdTime, verboseMode);
-    }
-} // namespace
 
 MIASequencer::MIASequencer() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
     sequencesFileOpt("-c", "--config", "Specify a config file to use (default = " +
-                     paths::getDefaultConfigDirToUse() + "/MIASequences.MIA)",
+                     paths::getDefaultConfigDirToUse() + "/" + defaultSequencesFile + ")",
                      CommandOption::commandOptionType::STRING_OPTION),
     testOpt("-t", "--test", "Enables test mode. This mode will only output the sequence to terminal.",
             CommandOption::commandOptionType::BOOL_OPTION),
@@ -130,7 +81,7 @@ void MIASequencer::initialize(int argc, char* argv[])
 
 void MIASequencer::loadConfig()
 {    
-    CompleteSequence sequence;
+    sequences::CompleteSequence sequence;
     
     // The config stores all non-comment and non-empty lines from the config file.
     std::vector<std::string> lines = config.getRawLines();
@@ -190,7 +141,7 @@ void MIASequencer::loadConfig()
         }
         else // Everything else is an action or invalid.
         {
-            SequenceAction action = createAction(key, value);
+            sequences::SequenceAction action = createAction(key, value);
             if (action.isValid())
                 sequence.actions.push_back(action);
         }
@@ -198,27 +149,27 @@ void MIASequencer::loadConfig()
 }
 
 
-MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::string value)
+sequences::SequenceAction MIASequencer::createAction(std::string key, std::string value)
 {
-    SequenceAction action;
+    sequences::SequenceAction action;
     if (key == "TYPE")
     {
-        action.actionType = SequenceActionType::TYPE;
+        action.actionType = sequences::SequenceActionType::TYPE;
         action.strToType = value;
     }
     else if (key == "SLEEP")
     {
-        action.actionType = SequenceActionType::SLEEP;
+        action.actionType = sequences::SequenceActionType::SLEEP;
         action.timeValue = std::stoi(value);
     }
     else if (key == "DELAY")
     {
-        action.actionType = SequenceActionType::DELAY;
+        action.actionType = sequences::SequenceActionType::DELAY;
         action.timeValue = std::stoi(value);
     }
     else if (key == "MOVEMOUSE")
     {
-        action.actionType = SequenceActionType::MOVEMOUSE;
+        action.actionType = sequences::SequenceActionType::MOVEMOUSE;
         math::Coordinate coords(0,0);
         if (stringContainsChar(value, ','))
         {
@@ -229,19 +180,19 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     }
     else if (key == "CLICK")
     {
-        action.actionType = SequenceActionType::CLICK;
+        action.actionType = sequences::SequenceActionType::CLICK;
         std::string trimmedClickString = trim(value);
-        action.click = VirtualKeyStrokes::stringToClickType(trimmedClickString);
+        action.click = virtual_keys::stringToClickType(trimmedClickString);
     }
     else if (key == "PRESS")
     {
-        action.actionType = SequenceActionType::PRESS;
+        action.actionType = sequences::SequenceActionType::PRESS;
         std::string trimmedPressString = trim(value);
-        action.press = VirtualKeyStrokes::stringToSpecialButton(trimmedPressString);
+        action.press = virtual_keys::stringToSpecialButton(trimmedPressString);
     }
     else if (key == "TYPEHOLD")
     {
-        action.actionType = SequenceActionType::TYPEHOLD;
+        action.actionType = sequences::SequenceActionType::TYPEHOLD;
         std::string trimmedTypeHoldString = trim(value);
         std::vector<std::string> typeHoldVec = delimiterString(trimmedTypeHoldString, ";");
         action.strToType = typeHoldVec[0];
@@ -249,23 +200,23 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     }
     else if (key == "PRESSHOLD")
     {
-        action.actionType = SequenceActionType::PRESSHOLD;
+        action.actionType = sequences::SequenceActionType::PRESSHOLD;
         std::string trimmedPressHoldString = trim(value);
         std::vector<std::string> pressHoldVec = delimiterString(trimmedPressHoldString, ";");
-        action.press = VirtualKeyStrokes::stringToSpecialButton(pressHoldVec[0]);
+        action.press = virtual_keys::stringToSpecialButton(pressHoldVec[0]);
         action.timeValue = std::stoi(pressHoldVec[1]);
     }
     else if (key == "CLICKHOLD")
     {
-        action.actionType = SequenceActionType::CLICKHOLD;
+        action.actionType = sequences::SequenceActionType::CLICKHOLD;
         std::string trimmedClickHoldString = trim(value);
         std::vector<std::string> clickHoldVec = delimiterString(trimmedClickHoldString, ";");
-        action.click = VirtualKeyStrokes::stringToClickType(clickHoldVec[0]);
+        action.click = virtual_keys::stringToClickType(clickHoldVec[0]);
         action.timeValue = std::stoi(clickHoldVec[1]);
     }
     else if (key == "PRESSRANDNUM")
     {
-        action.actionType = SequenceActionType::PRESSRANDNUM;
+        action.actionType = sequences::SequenceActionType::PRESSRANDNUM;
         math::Coordinate coords(0,0);
         if (stringContainsChar(value, ';'))
         {
@@ -276,7 +227,7 @@ MIASequencer::SequenceAction MIASequencer::createAction(std::string key, std::st
     }
     else
     {    
-        action.actionType = SequenceActionType::UNKNOWN;
+        action.actionType = sequences::SequenceActionType::UNKNOWN;
     }
     
     if (getVerboseMode())
@@ -305,218 +256,7 @@ void MIASequencer::printHelp() const
 }
 
 
-bool MIASequencer::SequenceAction::isValid()
-{
-    switch (actionType) 
-    {
-        case SequenceActionType::TYPE:
-            return !strToType.empty();
-
-        case SequenceActionType::SLEEP:
-        case SequenceActionType::DELAY:
-            return timeValue >= 0;
-
-        case SequenceActionType::MOVEMOUSE:
-            return true;  // No restriction on coords
-
-        case SequenceActionType::CLICK:
-            return click != VirtualKeyStrokes::ClickType::UNKNOWN;
-
-        case SequenceActionType::PRESS:
-            return press != VirtualKeyStrokes::SpecialButton::UNKNOWN;
-
-        case SequenceActionType::TYPEHOLD:
-            return !strToType.empty() && timeValue > 0;
-
-        case SequenceActionType::PRESSHOLD:
-            return press != VirtualKeyStrokes::SpecialButton::UNKNOWN  && timeValue > 0;
-
-        case SequenceActionType::CLICKHOLD:
-            return click != VirtualKeyStrokes::ClickType::UNKNOWN  && timeValue > 0;
-            
-        case SequenceActionType::PRESSRANDNUM:
-            return (coords.x >= 0 && coords.y >= 0) && (coords.x <= 9 && coords.y <= 9);
-
-        default:
-            return false;
-    }
-}
-
-
-bool MIASequencer::CompleteSequence::isValid()
-{
-    return !name.empty() && !actions.empty();
-}
-
-
-void MIASequencer::CompleteSequence::clear()
-{
-    name.clear();
-    delayTime = 1000; // The default value.
-    listenerKeyCode = '\0';
-    actions.clear();
-    return;
-}
-
-
-std::optional<int> MIASequencer::SequenceAction::performAction(VirtualKeyStrokes& keys,
-                                                               bool verboseMode,
-                                                               bool testMode)
-{
-    if (testMode)
-    {
-        dump();
-    }
-    else
-    {
-        switch(actionType)
-        {
-            case SequenceActionType::TYPE:
-                keys.type(strToType, 0, verboseMode);
-                break;
-            case SequenceActionType::SLEEP:
-                timing::sleepMilliseconds(timeValue);
-                break;
-            case SequenceActionType::MOVEMOUSE:
-                keys.moveMouseTo(coords.x, coords.y);
-                break;
-            case SequenceActionType::CLICK:
-                if (isValid())
-                    keys.mouseClick(click, 0, verboseMode);
-                break;
-            case SequenceActionType::PRESS:
-                if (isValid())
-                    keys.pressSpecialButton(press, timeValue, verboseMode);
-                break;
-            case SequenceActionType::TYPEHOLD:
-                if (isValid())
-                    keys.type(strToType, timeValue, verboseMode);
-                break;
-            case SequenceActionType::PRESSHOLD:
-                if (isValid())
-                    keys.pressSpecialButton(press, timeValue, verboseMode);
-                break;
-            case SequenceActionType::CLICKHOLD:
-                if (isValid())
-                    keys.mouseClick(click, timeValue, verboseMode);
-                break;
-            case SequenceActionType::PRESSRANDNUM:
-                if (isValid())
-                    ::pressRandomNumber(keys, coords.x, coords.y, timeValue, verboseMode);
-                break;
-            case SequenceActionType::DELAY:
-                return timeValue;
-            default:
-                // Do nothing...
-                break;
-        }
-    }
-    
-    if (testMode)
-        std::cout << std::endl;
-        
-    return std::nullopt;
-}
-
-
-void MIASequencer::CompleteSequence::performActions(VirtualKeyStrokes& keys, 
-                                                    bool verboseMode,
-                                                    bool testMode)
-{
-    for (auto& action : actions)
-    {
-        if (testMode)
-        {
-            action.dump();
-            std::cout << " ";
-        }
-        else
-        {
-            // Update the delayTime if performActions returns an int.
-            if (auto newDelay = action.performAction(keys, verboseMode))
-                delayTime = *newDelay;
-            
-            timing::sleepMilliseconds(delayTime);
-        }
-    }
-    
-    if (testMode)
-        std::cout << std::endl;
-}
-
-
-void MIASequencer::SequenceAction::dump() const 
-{
-    switch (actionType) 
-    {
-        case SequenceActionType::TYPE:
-            std::cout << "TYPE:" << strToType;
-            break;
-            
-        case SequenceActionType::SLEEP:
-            std::cout << "SLEEP:" << timeValue << "ms";
-            break;
-            
-        case SequenceActionType::MOVEMOUSE:
-            std::cout << "MOVEMOUSE:" << coords.x << "," << coords.y;
-            break;
-            
-        case SequenceActionType::CLICK:
-            std::cout << "CLICK:" << VirtualKeyStrokes::clickTypeToString(click);
-            break;
-            
-        case SequenceActionType::PRESS:
-            std::cout << "PRESS:" << VirtualKeyStrokes::specialButtonToString(press);
-            break;
-            
-        case SequenceActionType::TYPEHOLD:
-            std::cout << "TYPE:" << strToType
-                      << ";HOLD:" << timeValue << "ms";
-            break;
-            
-        case SequenceActionType::PRESSHOLD:
-            std::cout << "PRESS:" << VirtualKeyStrokes::specialButtonToString(press)
-                      << ";HOLD:" << timeValue << "ms";
-            
-        case SequenceActionType::CLICKHOLD:
-            std::cout << "CLICK:" << VirtualKeyStrokes::clickTypeToString(click)
-                      << ";HOLD:" << timeValue << "ms";
-            break;
-            
-        case SequenceActionType::DELAY:
-            std::cout << "DELAY:" << timeValue << "ms";
-            break;
-            
-        case SequenceActionType::PRESSRANDNUM:
-            std::cout << "PRESSRANDNUM:" << coords.x << ";" << coords.y;
-            break;
-                        
-        default:
-            std::cout << "UNKNOWN";
-            break;
-    }
-    std::cout << std::flush;
-}
-
-
-void MIASequencer::CompleteSequence::dump() const 
-{
-    std::cout << " -- { " << name << ", DELAY=";
-    std::cout << delayTime << "ms";
-    
-    if (listenerKeyCode != '\0')
-        std::cout << ", LISTEN=" << listenerKeyCode;
-
-    for (const auto& action : actions) 
-    {
-        std::cout << ", ";
-        action.dump();
-    }
-    std::cout << " }" << std::endl;
-}
-
-
-void MIASequencer::runSequence(CompleteSequence& sequence)
+void MIASequencer::runSequence(sequences::CompleteSequence& sequence)
 {
     sequence.performActions(keys, getVerboseMode(), testMode);
 }
@@ -576,7 +316,7 @@ int MIASequencer::run()
         auto it = sequences.find(sequenceName);
         if (it != sequences.end())
         {
-            CompleteSequence& sequence = it->second;
+            sequences::CompleteSequence& sequence = it->second;
             
             // If this is false, then a LISTEN value is not set for this sequence.
             if (sequence.listenerKeyCode != '\0')

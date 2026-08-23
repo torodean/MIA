@@ -198,7 +198,7 @@ Then, the average number of reps (normalized by the weights) done per workout wo
 
 \section{Real World Difficulties} 
 
-Due to the way that we set up the weighted system for each exercise, we can easily determine how difficult, denoted $D$ a workout is in reality based upon the generation. First, a workout is directly proportional to the number of sets it contains and thus $D \propto S$. Similarly, the difficulty of each set is proportional to the number of exercises are contained within each set and thus we use $D \propto E_{W}$. Lastly, the difficulty of each exercise is proportional to the number of normalized reps, and thus $D \propto E_{W}$. By combining all of these components we get
+Due to the way that we set up the weighted system for each exercise, we can easily determine how difficult, denoted $D$ a workout is in reality based upon the generation. First, a workout is directly proportional to the number of sets it contains and thus $D \propto S$. Similarly, the difficulty of each set is proportional to the number of exercises that are contained within each set and thus we use $D \propto E_{W}$. Lastly, the difficulty of each exercise is proportional to the number of normalized reps, and thus $D \propto E_{W}$. By combining all of these components we get
 \begin{align}
 	D \equiv S E_{W} R_{W} = S \left(\frac{1}{S}\sum_{i=1}^{S}E_i \right)\frac{1}{S}\sum_{i=1}^{S}\frac{1}{E_i}\sum_{j=1}^{E_i}\frac{R_j}{w_j}.
 \end{align}

@@ -14,13 +14,57 @@
 # Do not include spaces unless within a string variable. 
 # This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
 
-# Tax rates
-medicare_tax_rate=0.0145
-oasdi_tax_rate=0.062
-sales_tax=0.0625
-tax_bracket_single=0.00,10275.00,41775.00,89075.00,170050.00,215950.00,539900.00,inf
-tax_bracket_married=0.00,20550.00,83550.00,178150.00,340100.00,431900.00,647850.00,inf
-tax_rate_bracket=0.00,0.10,0.12,0.22,0.24,0.32,0.35,0.37
-standard_deductible_single=12950.00
-standard_deductible_head_of_household=19400.00
-standard_deductible_married=25900.00
+# Federal Tax rates.
+medicare_tax_rate_federal=0.0145
+oasdi_tax_rate_federal=0.062
+sales_tax_federal=0.0
+tax_bracket_single_federal=0.00,10275.00,41775.00,89075.00,170050.00,215950.00,539900.00,inf
+tax_bracket_married_federal=0.00,20550.00,83550.00,178150.00,340100.00,431900.00,647850.00,inf
+tax_rate_bracket_federal=0.00,0.10,0.12,0.22,0.24,0.32,0.35,0.37
+standard_deductible_single_federal=12950.00
+standard_deductible_head_of_household_federal=19400.00
+standard_deductible_married_federal=25900.00
+
+# State Tax rates (Currently TX which has no state tax).
+medicare_tax_rate_state=0.0
+oasdi_tax_rate_state=0.0
+sales_tax_state=0.0625
+tax_bracket_single_state=0.0,inf
+tax_bracket_married_state=0.0,inf
+tax_rate_bracket_state=0.0,0.0
+standard_deductible_single_state=0.0
+standard_deductible_head_of_household_state=0.0
+standard_deductible_married_state=0.0
+
+# Income (these are yearly salaries).
+income_all_salary_husband=132000.0
+income_all_salary_wife=66000.0
+
+# Savings.
+savings_all_initial=200000.0
+savings_all_emergency_fund_min=20000.0
+
+# Expenses when renting (these are monthly).
+expense_renting_rent=1113.0
+expense_renting_insurance=4.25
+expense_renting_internet=75.0
+expense_renting_service_fee=4.25
+expense_renting_trash=10.0
+expense_renting_water=130.0
+expense_renting_electric=250.0
+
+# Monthly misc expenses (these are monthly).
+expense_all_phone=100.0
+expense_all_car_insurance=125.0
+expense_all_food=1000.0
+expense_all_gas=400.0
+
+# Pre-tax expenses (these are monthly). 
+expense_all_pension_pretax=595.65
+
+# Misc values.
+tax_deductions=0.0
+tax_filingStatus=married
+
+# The "addedExpenses" value is a scope specifier to add to the total expenses when doing tax calculations.
+tax_addedExpenses=renting

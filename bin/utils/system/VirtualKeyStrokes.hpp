@@ -30,71 +30,72 @@
 
 namespace virtual_keys
 {
+    
+    /**
+     * @enum ClickType
+     * @brief Represents the various mouse click types.
+     * Used to identify the type of mouse click interaction.
+     */
+    enum class ClickType
+    {
+        UNKNOWN,      ///< An unknown click type.
+        LEFT_CLICK,   ///< Represents a left click.
+        RIGHT_CLICK,  ///< Represents a right click.
+        MIDDLE_CLICK  ///< Represents a middle click.
+    };
+    
+    /**
+     * @brief Converts a ClickType enum value to its corresponding human-readable string.
+     * @param clickType The ClickType to convert.
+     * @return A string representation of the given ClickType.
+     */
+    std::string clickTypeToString(ClickType clickType);
+
+    /**
+     * @brief Converts a string to the corresponding ClickType enum value.
+     * @param input The string representing the click type.
+     * @return The matching ClickType, or ClickType::UNKNOWN if no match is found.
+     */
+    ClickType stringToClickType(const std::string& input);
+    
+    /**
+     * @enum SpecialButton
+     * @brief Represents the various 'special' button types (non-alpha-numeric). Typically,
+     * these are buttons which can't be represented by a single character. 
+     * Used to identify the type of button interaction for special cases.
+     */
+    enum class SpecialButton
+    {
+        UNKNOWN,      ///< An unknown button type.
+        ENTER,
+        TAB,
+        SPACE,
+        NUM_LOCK,
+		SCROLL_DOWN,
+		SCROLL_UP
+    };
+        
+    /**
+     * @brief Converts a SpecialButton enum value to its corresponding human-readable string.
+     * @param specialButton The SpecialButton to convert.
+     * @return A string representation of the given SpecialButton.
+     */
+    std::string specialButtonToString(SpecialButton specialButton);
+
+    /**
+     * @brief Converts a string to the corresponding SpecialButton enum value.
+     * @param input The string representing the click type.
+     * @return The matching SpecialButton, or SpecialButton::UNKNOWN if no match is found.
+     */
+    SpecialButton stringToSpecialButton(const std::string& input); 
+        
     /**
      * This class is for sending virtual key strokes and simulating user input.
      * This class is cross platform.
      */
     class VirtualKeyStrokes
     {
-    public:
-    
-        /**
-         * @enum ClickType
-         * @brief Represents the various mouse click types.
-         * Used to identify the type of mouse click interaction.
-         */
-        enum class ClickType
-        {
-            UNKNOWN,      ///< An unknown click type.
-            LEFT_CLICK,   ///< Represents a left click.
-            RIGHT_CLICK,  ///< Represents a right click.
-            MIDDLE_CLICK  ///< Represents a middle click.
-        };
-        
-        /**
-         * @brief Converts a ClickType enum value to its corresponding human-readable string.
-         * @param clickType The ClickType to convert.
-         * @return A string representation of the given ClickType.
-         */
-        static std::string clickTypeToString(ClickType clickType);
-
-        /**
-         * @brief Converts a string to the corresponding ClickType enum value.
-         * @param input The string representing the click type.
-         * @return The matching ClickType, or ClickType::UNKNOWN if no match is found.
-         */
-        static ClickType stringToClickType(const std::string& input);
-        
-        /**
-         * @enum SpecialButton
-         * @brief Represents the various 'special' button types (non-alpha-numeric). Typically,
-         * these are buttons which can't be represented by a single character. 
-         * Used to identify the type of button interaction for special cases.
-         */
-        enum class SpecialButton
-        {
-            UNKNOWN,      ///< An unknown button type.
-            ENTER,
-            TAB,
-            SPACE,
-            NUM_LOCK,
-			SCROLL_DOWN,
-			SCROLL_UP
-        };
-        
-        /**
-         * @brief Converts a SpecialButton enum value to its corresponding human-readable string.
-         * @param specialButton The SpecialButton to convert.
-         * @return A string representation of the given SpecialButton.
-         */
-        static std::string specialButtonToString(SpecialButton specialButton);
-
-        /**
-         * @brief Converts a string to the corresponding SpecialButton enum value.
-         * @param input The string representing the click type.
-         * @return The matching SpecialButton, or SpecialButton::UNKNOWN if no match is found.
-         */
-        static SpecialButton stringToSpecialButton(const std::string& input);        
+    public:       
     
         /**
          * Main default constructor for the VirtualKeyStrokes class.
@@ -271,4 +272,26 @@ namespace virtual_keys
         
     #endif
     }; // class VirtualKeyStrokes
+    
+    /**
+     * @brief Simulates pressing a random number key between two values (0–9) using virtual key codes.
+     *
+     * This method will choose a random value between the input min and max, and then simulate a key
+     * press of the chosen value. After chooseing the random value, this simply calls pressNumber(..)
+     * to perform the actual key press.
+     * 
+     * @note The min_num must be less than or equal to the max_num.
+     * @note This method is designed initially for the PRESSRANDNUM function of the MIASequencer.
+     *
+     * @param vkeys The object for simulating actions.
+     * @param min_num The min value to use (must be in range 0–9) - inclusive.
+     * @param max_num The max value to use (must be in range 0–9) - inclusive.
+     * @param holdTime Duration in milliseconds to hold the key before releasing.
+     * @param verboseMode If true, prints the pressed number to standard output.
+     */
+    void pressRandomNumber(VirtualKeyStrokes& vkeys, 
+                           int min_num, 
+                           int max_num, 
+                           int holdTime = 0, 
+                           bool verboseMode = false);
 } // namespace virtual_keys

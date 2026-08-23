@@ -6,15 +6,19 @@
  */
 #include "TaxConstants.hpp"
 
-// Used for catching config access failures on missing keys.
-#include "MIAException.hpp"
-
 #include <algorithm>
 #include <cstddef>
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
 #include <string>
+
+// Used for catching config access failures on missing keys.
+#include "MIAException.hpp"
+// Used for converting vectors to strings.
+#include "VectorUtils.hpp"
+// Used for string manipulation
+#include "StringUtils.hpp"
 
 namespace maple
 {
@@ -87,6 +91,36 @@ namespace maple
             }
         }
     } // namespace
+    
+    FilingStatus stringToFilingStatus(const std::string& str)
+    {
+        const std::string lowerStr = StringUtils::toLower(str);
+
+        if (lowerStr == "single")
+            return FilingStatus::Single;
+        else if (lowerStr == "married")
+            return FilingStatus::Married;
+        else if (lowerStr == "head of household")
+            return FilingStatus::HeadOfHousehold;
+            
+        std::string err = "Invalid filing status: " + str;
+        MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
+    }
+    
+    std::ostream& operator<<(std::ostream &stream, const TaxRateConstants& constants)
+    {
+        stream << "medicareTaxRate: " << constants.medicareTaxRate
+               << ", oasdiTaxRate: " << constants.oasdiTaxRate
+               << ", salesTax: " << constants.salesTax
+               << ", standardDeductibleSingle: " << constants.standardDeductibleSingle
+               << ", standardDeductibleHeadOfHousehold: " << constants.standardDeductibleHeadOfHousehold
+               << ", standardDeductibleMarried: " << constants.standardDeductibleMarried
+               << ", taxBracketSingle: [" << VectorUtils::vectorToString(constants.taxBracketSingle)
+               << "], taxBracketMarried: [" << VectorUtils::vectorToString(constants.taxBracketMarried)
+               << "], taxRateBracket: [" << VectorUtils::vectorToString(constants.taxRateBracket) << "]";
+       return stream;
+               
+    }
 
 
     math::finance::TaxBrackets toTaxBrackets(const TaxRateConstants& constants,
@@ -109,39 +143,40 @@ namespace maple
     
     
     TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config,
+                                                      const std::string& optionalSuffix, 
                                                       bool printWarnings)
     {
         TaxRateConstants constants;
 
         // Rates and deductions: keep the struct default when a key is missing.
         constants.medicareTaxRate =
-            readDoubleOrKeepDefault(config, "medicare_tax_rate",
+            readDoubleOrKeepDefault(config, "medicare_tax_rate" + optionalSuffix,
                                     constants.medicareTaxRate, printWarnings);
         constants.oasdiTaxRate =
-            readDoubleOrKeepDefault(config, "oasdi_tax_rate",
+            readDoubleOrKeepDefault(config, "oasdi_tax_rate" + optionalSuffix,
                                     constants.oasdiTaxRate, printWarnings);
         constants.salesTax =
-            readDoubleOrKeepDefault(config, "sales_tax",
+            readDoubleOrKeepDefault(config, "sales_tax" + optionalSuffix,
                                     constants.salesTax, printWarnings);
         constants.standardDeductibleSingle =
-            readDoubleOrKeepDefault(config, "standard_deductible_single",
+            readDoubleOrKeepDefault(config, "standard_deductible_single" + optionalSuffix,
                                     constants.standardDeductibleSingle, printWarnings);
         constants.standardDeductibleHeadOfHousehold =
-            readDoubleOrKeepDefault(config, "standard_deductible_head_of_household",
+            readDoubleOrKeepDefault(config, "standard_deductible_head_of_household" + optionalSuffix,
                                     constants.standardDeductibleHeadOfHousehold, printWarnings);
         constants.standardDeductibleMarried =
-            readDoubleOrKeepDefault(config, "standard_deductible_married",
+            readDoubleOrKeepDefault(config, "standard_deductible_married" + optionalSuffix,
                                     constants.standardDeductibleMarried, printWarnings);
 
         // Bracket lists: comma-separated, with "inf" marking the open top bracket.
         constants.taxBracketSingle =
-            readBracketListOrKeepDefault(config, "tax_bracket_single",
+            readBracketListOrKeepDefault(config, "tax_bracket_single" + optionalSuffix,
                                          constants.taxBracketSingle, printWarnings);
         constants.taxBracketMarried =
-            readBracketListOrKeepDefault(config, "tax_bracket_married",
+            readBracketListOrKeepDefault(config, "tax_bracket_married" + optionalSuffix,
                                          constants.taxBracketMarried, printWarnings);
         constants.taxRateBracket =
-            readBracketListOrKeepDefault(config, "tax_rate_bracket",
+            readBracketListOrKeepDefault(config, "tax_rate_bracket" + optionalSuffix,
                                          constants.taxRateBracket, printWarnings);
 
         return constants;
