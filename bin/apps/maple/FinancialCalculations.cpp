@@ -142,51 +142,48 @@ namespace maple
                                   std::ostream& stream)
     {
         std::string cadence = StringUtils::toUpper(cadenceToString(returns.cadence));
+        
+        // Sets the doubles at 2 decimal places.
+        stream << std::fixed << std::setprecision(2);
 
         stream << "==================================================" << std::endl;
         stream << StringUtils::centerText(cadence + " TAX INFORMATION", 50) << std::endl;
         stream << "--------------------------------------------------" << std::endl;
 
-        stream << std::left  << std::setw(38) << "Gross Income:"
+        stream << "INCOME:" << std::endl;
+        stream << std::left  << std::setw(38) << "  Gross Income:"
                << std::right << std::setw(12) << returns.grossIncome << std::endl;
-
-        stream << std::left  << std::setw(38) << "Pre-tax Income:"
+        stream << std::left  << std::setw(38) << "  Pre-tax Income:"
                << std::right << std::setw(12) << returns.preTaxIncome << std::endl;
-
-        stream << std::left  << std::setw(38) << "Total Income Earned:"
+        stream << std::left  << std::setw(38) << "  Total Income Earned:"
                << std::right << std::setw(12) << returns.totalIncomeEarned << std::endl;
-
-        stream << std::left  << std::setw(38) << "Deductible:"
+        stream << std::left  << std::setw(38) << "  Deductible:"
                << std::right << std::setw(12) << returns.deductible << std::endl;
-
-        stream << std::left  << std::setw(38) << "Taxable Income:"
+        stream << std::left  << std::setw(38) << "  Taxable Income:"
                << std::right << std::setw(12) << returns.taxableIncome << std::endl;
-
-        stream << std::left  << std::setw(38) << "Total Taxes Owed:"
+               
+        stream << "TAXES:" << std::endl;
+        stream << std::left  << std::setw(38) << "  Total Taxes Owed:"
                << std::right << std::setw(12) << returns.totalTaxesOwed << std::endl;
-
-        stream << std::left  << std::setw(38) << "  -- Federal Taxes Owed:"
+        stream << std::left  << std::setw(38) << "   - Federal Taxes Owed:"
                << std::right << std::setw(12) << returns.federalTaxesOwed << std::endl;
-
-        stream << std::left  << std::setw(38) << "  -- Medicare Taxes Owed:"
+        stream << std::left  << std::setw(38) << "   - Medicare Taxes Owed:"
                << std::right << std::setw(12) << returns.medicareTaxOwed << std::endl;
-
-        stream << std::left  << std::setw(38) << "  -- OASDI Taxes Owed:"
+        stream << std::left  << std::setw(38) << "   - OASDI Taxes Owed:"
                << std::right << std::setw(12) << returns.oasdiTaxOwed << std::endl;
-
-        stream << std::left  << std::setw(38) << "  -- State Taxes Owed:"
+        stream << std::left  << std::setw(38) << "   - State Taxes Owed:"
                << std::right << std::setw(12) << returns.stateTaxesOwed << std::endl;
-
-        stream << std::left  << std::setw(38) << "Take-home Pay After Taxes:"
+               
+        stream << "SUMMARY:" << std::endl;
+        stream << std::left  << std::setw(38) << "  Take-home Pay After Taxes:"
                << std::right << std::setw(12) << returns.totalTakeHomeIncome << std::endl;
-
-        stream << std::left  << std::setw(38) << "Total Expenses:"
+        
+        stream << "SPENDING/SAVINGS:" << std::endl;
+        stream << std::left  << std::setw(38) << "  Total Expenses:"
                << std::right << std::setw(12) << returns.yearlyExpenses << std::endl;
-
-        stream << std::left  << std::setw(38) << "Estimated Spending Money Left:"
+        stream << std::left  << std::setw(38) << "  Estimated Spending Money Left:"
                << std::right << std::setw(12) << returns.estimatedSpedingMoney << std::endl;
-
-        stream << std::left  << std::setw(38) << "Estimated Sales Tax on Spending:"
+        stream << std::left  << std::setw(38) << "  Estimated Sales Tax on Spending:"
                << std::right << std::setw(12) << returns.estimatedSalesTaxToSpend << std::endl;
 
         stream << "==================================================" << std::endl;
