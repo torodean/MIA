@@ -1,4 +1,4 @@
-\chapter{Monetary Autonomous Projection and Learning Extension (MAPLE)}
+\chapter{Monetary Autonomous Projection and Learning Extension (MAPLE)}\label{chapter:maple}
 \pagestyle{fancy}
 
 The Monetary Autonomous Projection and Learning Extension (MAPLE) extension is a tool for creating future financial projections based on a given input. The tool supports multiple commands to perform different types of projections based on the desired outcome.
@@ -6,9 +6,9 @@ The Monetary Autonomous Projection and Learning Extension (MAPLE) extension is a
 
 
 
-\section{Design}
+\section{Maple Design}
 
-At the time of writing this design, no MAPLE code has been implemented. This section is intended to be an initial design and a record of design notes before implementation.
+At the time of starting this design, no MAPLE code has been implemented. This section is intended to be an initial design and a record of design notes before and during implementation.
 
 The maple tool will take a configuration file with various values needed for the various features of the app. The app itself will be setup as a terminal application which takes various commands to perform different tasks. When the tasks are requested based on an input command, the application will use the configuration file to find the appropriate needed values and perform the task. If the needed values from the configuration file are not found, the application will not be able to proceed until those values are supplied. In some cases, the values will be made configurable directly through the application, such as a toggle-able house price when determining mortgage calculations.
 
@@ -19,3 +19,117 @@ At the present, the following tasks are needed by the MAPLE tool:
 	\item Comparison projections of renting vs buying property.
 	\item Future projections of buying power.
 \end{itemize}
+
+
+
+\section{Running MAPLE}
+
+MAPLE is a terminal app. When run, it presents an interactive operations menu. The command-line options are as follows.
+
+\begin{lstlisting}[style=terminalstyle]
+$ ./maple -h
+Base MIA application options:
+	-v, --verbose           Enable verbose output.
+	-d, --debug             Enable debug output at a specified level.
+	-h, --help              Show this help message
+	-l, --logfile           Set a custom logfile.
+
+Maple specific options:
+	-c, --configFile        Specify the config file to use (default = <configDir>/Maple.MIA)
+	-t, --test              Enables test mode. This mode will allow various testing during development.
+\end{lstlisting}
+
+The \texttt{-c/--configFile} option selects the config file to load; the default is \texttt{Maple.MIA} in the default config directory. The \texttt{-t/--test} flag enables test mode, used during development to dump the loaded tax constants, income, and expenses for inspection.
+
+\section{Operations Menu}
+
+On startup, MAPLE prints its list of valid operations and then prompts repeatedly for an operation index. The operations are defined by the \inlinecode{MapleOperations} enum.
+
+\begin{table}[h]
+	\centering
+	\label{table:maple_operations}
+	\begin{tabularx}{\textwidth}{|c|l|X|}
+		\hline
+		\textbf{Index} & \textbf{Operation} & \textbf{Description} \\
+		\hline
+		0 & PrintOpList & Prints the list of valid operations. \\
+		\hline
+		1 & testOption & Performs test-specific features (for development). \\
+		\hline
+		2 & TaxCalculation & Calculates various tax-related information. See section \ref{section:tax_calculation}\\
+		\hline
+	\end{tabularx}
+\end{table}
+
+Entering an index runs the corresponding operation and returns to the prompt. An invalid or non-numeric index is rejected with a message. The \inlinecode{TaxCalculation} operation computes its results once and caches them, so subsequent invocations re-print the cached annual and monthly results without recalculating.
+
+\section{Configuration File}
+
+MAPLE reads its data from a key-value config file (default \texttt{Maple.MIA}). Settings are written as \texttt{key=value}. The file holds various kinds of data, described below.
+
+\subsection{Tax Constants}
+
+Tax constants are a fixed set of keys that define rates, brackets, and deductions. Each key carries a suffix identifying the jurisdiction it applies to: \texttt{\_federal} or \texttt{\_state}. The suffix is just a string the loader appends to each key name, so \texttt{\_federal} and \texttt{\_state} are the two used today, but the in-code mechanism itself is not limited to them. The recognized base key names are:
+
+\begin{itemize}
+	\item \texttt{medicare\_tax\_rate} - the Medicare tax rate.
+	\item \texttt{oasdi\_tax\_rate} - the OASDI (Social Security) tax rate.
+	\item \texttt{sales\_tax} - the sales tax rate.
+	\item \texttt{standard\_deductible\_single} - standard deduction for single filers.
+	\item \texttt{standard\_deductible\_head\_of\_household} - standard deduction for head-of-household filers.
+	\item \texttt{standard\_deductible\_married} - standard deduction for married filers.
+	\item \texttt{tax\_bracket\_single} - comma-separated income brackets for single filers, ending in \texttt{inf}.
+	\item \texttt{tax\_bracket\_married} - comma-separated income brackets for married filers, ending in \texttt{inf}.
+	\item \texttt{tax\_rate\_bracket} - comma-separated marginal rates, one per bracket.
+\end{itemize}
+
+For example, the federal single-filer brackets and rates:
+
+\begin{lstlisting}[style=pythonstyle]
+tax_bracket_single_federal=0.00,10275.00,41775.00,89075.00,170050.00,215950.00,539900.00,inf
+tax_rate_bracket_federal=0.00,0.10,0.12,0.22,0.24,0.32,0.35,0.37
+standard_deductible_single_federal=12950.00
+\end{lstlisting}
+
+\subsection{Income and Expense Keys}
+
+Income and expense keys follow the form \texttt{<prefix>\_<scope>\_<name>[\_<tag>...]}. The prefix is \texttt{income} or \texttt{expense}. The \textit{scope} groups sources so they can be summed selectively (for example, \texttt{all} for everything, or \texttt{renting} for rent-related expenses). Anything after the name is treated as a \textit{tag}, used to mark pre-tax or other specifiers.
+
+\begin{lstlisting}[style=pythonstyle]
+# Yearly salary income, scope "all".
+income_all_salary_husband=132000.0
+income_all_salary_wife=66000.0
+
+# Monthly expenses, scope "renting" and "all".
+expense_renting_rent=1113.0
+expense_all_food=1000.0
+
+# A pre-tax expense, tagged "pretax".
+expense_all_pension_pretax=595.65
+\end{lstlisting}
+
+Income values are treated as yearly amounts. Expense values are treated as monthly and are annualized (multiplied by 12) during tax calculations. If a key has no scope (specifically, only one underscore), the whole element after the prefix is the name and the scope defaults to \texttt{all}; this form cannot carry tags. Tags only take effect when a scope is present (indicated by more than one existing underscore), so a pre-tagged source must include the scope explicitly: \texttt{expense\_all\_pension\_pretax} is name \texttt{pension} with tag \texttt{pretax}, whereas \texttt{expense\_pension\_pretax} is name \texttt{pretax} in scope \texttt{pension} with no tag.
+
+\subsection{Misc Tax Values}
+
+A small set of \texttt{tax\_} keys control the calculation.
+
+\begin{table}[h]
+	\centering
+	\label{tab:maple_misc_tax}
+	\begin{tabularx}{\textwidth}{|l|X|}
+		\hline
+		\textbf{Key} & \textbf{Meaning} \\
+		\hline
+		\texttt{tax\_filingstatus} & Filing status: \texttt{single}, \texttt{married}, or \texttt{head of household}. Selects the bracket and deduction to use. \\
+		\hline
+		\texttt{tax\_deductions} & The taxpayer's itemized deductions. Compared against the standard deduction for the filing status; whichever is larger is used as the deductible. \\
+		\hline
+		\texttt{tax\_addedexpenses} & A scope name (e.g., \texttt{renting}) whose expenses are added to the calculations when computing remaining spending money and estimates for sales tax to be spent after the usual tax calculations. \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+\section{Tax Calculation}\label{section:tax_calculation}
+
+The \inlinecode{TaxCalculation} operation (index 2) computes a full annual tax picture from the loaded config and also prints a monthly breakdown.
