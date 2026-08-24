@@ -9,6 +9,7 @@ Each file is a self-contained set of instructions for one concern.
   These rules constrain AI output, not a human author's own writing.
 - [library-opportunities.md](library-opportunities.md) - When an AI looks at a file for any reason, scan for methods that belong in a utility or library (especially internal-namespace ones) and for logic that duplicates an existing utility, and flag the opportunities to the user rather than making the changes.
 - [readme-sync.md](readme-sync.md) - When a folder's files or features change, check whether its README is still in sync and either propose a specific edit for the user to confirm or flag the gap when the change is not clear enough to write.
+- [latex-doc-audit.md](latex-doc-audit.md) - Parse the LaTeX manual fragments in docs/TeX_files/ and find inaccuracies (claims the code contradicts), deficiencies (things missing that should be added), and LaTeX-level problems (broken refs, missing labels, missing images), then propose a specific edit for the user to confirm or flag the gap when the fix is not clear.
 
 The MIA codebase is not yet fully standardized; these files describe the target conventions.
 When a file here and [../docs/TeX_files/CodingStandards.tex](../docs/TeX_files/CodingStandards.tex) disagree, the .tex is authoritative.
