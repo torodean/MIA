@@ -105,22 +105,36 @@ namespace maple
             returns.deductible = miscTaxValues.deductions;            
         
         returns.grossIncome = getTotalMoney(income, "all");
-        returns.preTaxIncome = getTotalMoney(income, "all", {"pretax"});
-        returns.taxableIncome = returns.grossIncome - returns.deductible;
-        returns.federalTaxesOwed = getTaxesFromTaxableIncome(returns.grossIncome, 
+
+        // Pre-tax contributions come from expenses tagged "pretax" are monthly.
+        returns.preTaxIncome = getTotalMoney(income, "all", {"pretax"}) * 12.0;
+        returns.taxableIncome = returns.grossIncome - returns.preTaxIncome - returns.deductible;
+
+        /* 
+         * For income tax, pre-tax contributions and the deductible both reduce gross income.
+         * getTaxesFromTaxableIncome applies the deductible itself.
+         */
+        returns.federalTaxesOwed = getTaxesFromTaxableIncome(returns.grossIncome - returns.preTaxIncome, 
                                                              returns.deductible, 
                                                              miscTaxValues.filingStatus, 
                                                              federalConstants);
-        returns.stateTaxesOwed = getTaxesFromTaxableIncome(returns.grossIncome, 
+        returns.stateTaxesOwed = getTaxesFromTaxableIncome(returns.grossIncome - returns.preTaxIncome, 
                                                            returns.deductible, 
                                                            miscTaxValues.filingStatus, 
                                                            stateConstants);
-        returns.medicareTaxOwed = math::finance::getFlatRateTax(returns.taxableIncome, 
+        /* 
+         * Medicare and OASDI are payroll (FICA) taxes based on covered wages, rather than federal
+         * taxable income. The standard deduction does not reduce FICA wages, and traditional 401(k)
+         * contributions generally remain subject to FICA. (Certain pre-tax benefits, such as
+         * qualifying Section 125 cafeteria-plan contributions, can reduce FICA wages.) The OASDI
+         * wage cap is not modeled here.
+         */
+        returns.medicareTaxOwed = math::finance::getFlatRateTax(returns.grossIncome, 
                                                                 federalConstants.medicareTaxRate);
-        returns.oasdiTaxOwed = math::finance::getFlatRateTax(returns.taxableIncome, 
+        returns.oasdiTaxOwed = math::finance::getFlatRateTax(returns.grossIncome, 
                                                              federalConstants.oasdiTaxRate);
         
-        returns.totalIncomeEarned = returns.grossIncome + returns.preTaxIncome;
+        returns.totalIncomeEarned = returns.grossIncome; // TODO - delete this as it is now redundant.
         returns.totalTaxesOwed = returns.federalTaxesOwed + returns.stateTaxesOwed + 
                                  returns.medicareTaxOwed + returns.oasdiTaxOwed;
         returns.totalTakeHomeIncome = returns.grossIncome - returns.totalTaxesOwed;
