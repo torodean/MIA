@@ -5,25 +5,41 @@
 
 \section{Introduction to MIAConfig}
 
-The \texttt{MIAConfig.MIA} file is a plaintext configuration file used to define the runtime behavior of the MIA application. It serves as a centralized source for main program variables and environment-specific settings. This file allows the behavior of the program(s) to be adjusted without requiring recompilation, making it suitable for use cases where the end-user either lacks access to the build system or needs to fine-tune behavior in different execution environments.
+A \texttt{MIAConfig} file is a plaintext configuration file (ending in \texttt{.MIA}) used to define the runtime behavior of the MIA application. It serves as a centralized source for program variables and environment-specific settings. This file allows the behavior of the program(s) to be adjusted without requiring recompilation, making it suitable for use cases where the end-user either lacks access to the build system or needs to fine-tune behavior in different execution environments.
 
-Variables stored in this file affect initialization, input/output paths, user preferences, and runtime flags. Because the file is read during program startup, any changes made to it will be reflected in subsequent executions unless the program is specifically designed to reinitialize the configuration.
+Variables stored in this file affect initialization, input/output paths, user preferences, and runtime flags. Because the file is read during program startup, any changes made to it will be reflected in subsequent executions unless the program is specifically designed to reinitialize the configuration. The configuration system is still growing. New applications, keys, and formats are being added over time, so the details in this chapter attempt to describe the current state rather than a fixed specification.
 
 \section{Structure, Format, and Syntax}
 
-The format of the configuration file is simple and strictly line-based. Each setting must follow a key-value structure on a single line, with the key and value separated by an equals sign \texttt{=}. The correct format is essential for successful parsing. The configuration classes are designed so this can be expanded to other formats at a later time if needed.
+The format of the configuration file is simple and strictly line-based. The \texttt{MIAConfig} class currently supports two configuration types, selected by the \texttt{constants::ConfigType} value passed when a file is loaded: \texttt{KEY\_VALUE} for \texttt{key=value} pairs, and \texttt{RAW\_LINES} for files stored line by line without key-value parsing. The correct format of each type is essential for successful parsing. The configuration classes are designed so this can be expanded to other formats at a later time if needed.
 
 \subsection*{General Rules}
+
+The following apply to all configuration types:
 
 \begin{itemize}\itemsep0em
 	\item Comment lines begin with the \texttt{\#} character. These lines are ignored during parsing.
 	\item Empty lines are allowed and ignored.
-	\item Whitespace around the equals sign is not permitted and may result in incorrect key parsing.
-	\item Values may contain spaces and special characters, and they will be interpreted as-is.
+\end{itemize}
+
+\subsection*{Key-Value Rules}
+
+The following apply to \texttt{KEY\_VALUE} files:
+
+\begin{itemize}\itemsep0em
+	\item Each setting is a key-value pair on a single line, separated by an equals sign \texttt{=}.
+	\item Leading and trailing whitespace is stripped from both the key and the value during parsing. Whitespace inside a value is preserved, so a line such as \texttt{key= value} stores the value as \texttt{value} rather than \texttt{ value}.
+	\item Values may contain spaces and special characters and are interpreted as-is after stripping.
 	\item All keys and values are treated as strings during parsing; type conversion occurs at access time.
 \end{itemize}
 
+\subsection*{Raw-Lines Rules}
+
+\texttt{RAW\_LINES} files have no key-value structure. Each non-comment line is stored verbatim, with no stripping, and is interpreted by the application that loads it. The sequencer is an example of an app which uses this type for its sequence files (see chapter \ref{sequencer}).
+
 \subsection*{Example}
+
+The following is an example of a MIAConfig file. This example is the actual MIA config from a past (now legacy) version of the MIA application:
 
 \begin{lstlisting}[style=pythonstyle]
 #============================================================================
@@ -47,27 +63,50 @@ excuseFilePath=Resources/Excuses.txt
 # Program behavior flags
 verboseMode=false
 MIATerminalMode=true
+maxRetries=3
+userList=alice,bob,carol
 
 # ... Additional runtime variables below
 \end{lstlisting}
 
+Each application uses its own configuration file rather than a shared one. Examples include \texttt{MIAWorkout.MIA}, \texttt{Maple.MIA}, and \texttt{WoWConfig.MIA}, all of which use the \texttt{KEY\_VALUE} format. \texttt{MIASequences.MIA} uses the \texttt{RAW\_LINES} format and is documented with the sequencer. The set of files grows as applications are added.
+
 \section{How MIAConfig Files Are Handled at Runtime}
 
-At runtime, the MIA system utilizes the \texttt{MIAConfig} class to locate, read, and parse the configuration file. This class stores all configuration values internally in a key-value map structure and provides type-safe access methods to retrieve values in common formats (e.g., \texttt{int}, \texttt{bool}, \texttt{double}, \texttt{string}, and vectors of each type).
+At runtime, the MIA system utilizes the \texttt{MIAConfig} class to locate, read, and parse the configuration file. For \texttt{KEY\_VALUE} files, the class stores all configuration values internally in a key-value map structure and provides type-safe access methods to retrieve values in common formats (e.g., \texttt{int}, \texttt{bool}, \texttt{double}, \texttt{string}, and vectors of each type). For \texttt{RAW\_LINES} files it stores the lines as-is.
 
 The following mechanisms are supported:
 
 \begin{itemize}\itemsep0em
 	\item If a full file path is provided to the \texttt{MIAConfig} object, that path is used directly.
 	\item If only a filename is provided, the system will search default paths for a matching file.
-	\item Once loaded, the configuration can be queried using accessor functions like \texttt{getString()}, \texttt{getInt()}, or \texttt{getVector()}.
+	\item Once loaded:
+	\begin{itemize}\itemsep0em
+		\item \texttt{KEY\_VALUE} configuration can be queried with accessors such as \texttt{getString()}, \texttt{getInt()}, \texttt{getDouble()}, \texttt{getBool()}, \texttt{getVector()}, and \texttt{getIntVector()}. \texttt{getAllConfigPairs()} returns every pair, and \texttt{getRawLines()} returns the stored lines.
+		\item \texttt{KEY\_VALUE} accessors throw if a key is missing; \texttt{RAW\_LINES} files support only \texttt{getRawLines()}.
+	\end{itemize}
 	\item The configuration can be reloaded dynamically using the \texttt{reload()} method, allowing runtime updates.
 \end{itemize}
 
 \subsection*{Example Usage (C++)}
 
 \begin{lstlisting}[style=cppstyle]
-config::MIAConfig config("MIAConfig.MIA");
+config::MIAConfig config("MIAConfig.MIA", constants::ConfigType::KEY_VALUE);
+config.initialize();
+
+std::string path = config.getString("inputFilePath");
+bool verbose = config.getBool("verboseMode");
+int retryCount = config.getInt("maxRetries");
+std::vector<std::string> names = config.getVector("userList", ',');
+\end{lstlisting}
+
+A configuration object can also be default-constructed and loaded later with \texttt{setConfigFileName(file, type)}, which loads the file as part of the call. This is how the application framework typically loads a file whose name comes from a command-line option.
+
+\begin{lstlisting}[style=cppstyle]
+config::MIAConfig config;
+
+// Later in the code...
+config.setConfigFileName("MIAConfig.MIA", constants::ConfigType::KEY_VALUE);
 
 std::string path = config.getString("inputFilePath");
 bool verbose = config.getBool("verboseMode");
@@ -77,8 +116,8 @@ std::vector<std::string> names = config.getVector("userList", ',');
 
 \section{Extensibility and Maintainability}
 
-The configuration system was designed to be flexible and extensible. Internally, all configuration is maintained as string-based key-value pairs, but typed access is provided by the interface. This design allows for future integration with other configuration formats (e.g., JSON or environment variables) or backend sources with minimal changes to consuming code. Additional configuration maps or derived classes can be introduced later without altering the core interface or behavior.
+The configuration system was designed to be flexible and extensible. The design allows for future integration with other configuration formats (e.g., JSON or environment variables) or backend sources with minimal changes to consuming code. Additional configuration maps or derived classes can be introduced later without altering the core interface or behavior.
 
-\section{MIA Configuration (MIAC)}
+\section{Historical Context}
 
 Previously, all configuration variables for MIA were contained within a single file called the MIAC (MIA Configuration file). This meant that settings for all applications and modules were centralized in one place. In newer versions of MIA, configuration has been modularized: each application now uses its own standalone configuration file. This separation improves organization, simplifies customization, and reduces the risk of conflicts between different application settings. At the time of writing this, this change is relatively new, so this section is here to explain this change in case the MIAC acronym is used.
