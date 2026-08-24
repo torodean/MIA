@@ -37,7 +37,7 @@ namespace stats
                   int baseValue = 0,
                   const std::vector<rpg::Modifies>& modifies = {});
 
-        /// Getters for the various data mambers.
+        /// Getters for the various data members.
         int getBaseValue() const;
         const std::vector<rpg::Modifies>& getModifies() const;
 
