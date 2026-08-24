@@ -60,7 +60,8 @@ expense_all_food=1000.0
 expense_all_gas=400.0
 
 # Pre-tax expenses (these are monthly). 
-expense_all_pension_pretax=595.65
+expense_all_pension_pretax=868.45
+expense_all_parking_pretax=17.0
 
 # Misc values.
 tax_deductions=0.0
