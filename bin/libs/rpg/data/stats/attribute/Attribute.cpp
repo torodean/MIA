@@ -24,7 +24,7 @@ namespace stats
         modifies(modifies)
     { }
 
-    // Getters for the various data mambers.
+    // Getters for the various data members.
     int Attribute::getBaseValue() const { return baseValue; }
     const std::vector<rpg::Modifies>& Attribute::getModifies() const { return modifies; }
 
