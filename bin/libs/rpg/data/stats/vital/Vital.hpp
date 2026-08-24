@@ -45,7 +45,7 @@ namespace stats
               int min = 0,
               int max = 100);
 
-        /// Getters for the various data mambers.
+        /// Getters for the various data members.
         VitalType getType() const;
         int getBaseMin() const;
         int getBaseMax() const;
