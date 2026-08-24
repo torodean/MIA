@@ -41,7 +41,7 @@ namespace currency
                  bool trade = true,
                  const std::string& icon = "");
     
-        /// Getters for the various data mambers.
+        /// Getters for the various data members.
         std::string getIconArt() const;
         bool isTradeable() const;
         CurrencyType getCurrencyType() const;
