@@ -18,8 +18,8 @@
 medicare_tax_rate_federal=0.0145
 oasdi_tax_rate_federal=0.062
 sales_tax_federal=0.0
-tax_bracket_single_federal=0.00,10275.00,41775.00,89075.00,170050.00,215950.00,539900.00,inf
-tax_bracket_married_federal=0.00,20550.00,83550.00,178150.00,340100.00,431900.00,647850.00,inf
+tax_bracket_single_federal=0.00,10275.00,41775.00,89075.00,170050.00,215950.00,539900.00
+tax_bracket_married_federal=0.00,20550.00,83550.00,178150.00,340100.00,431900.00,647850.00
 tax_rate_bracket_federal=0.10,0.12,0.22,0.24,0.32,0.35,0.37
 standard_deductible_single_federal=12950.00
 standard_deductible_head_of_household_federal=19400.00
