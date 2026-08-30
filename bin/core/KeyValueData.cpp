@@ -51,18 +51,18 @@ namespace config
         std::string variable, value;
         for (int i=0; i<size;i++)
         {
-            equalSignLocation = BasicUtilities::findCharInString(lines[i], '=');
+            equalSignLocation = basic_utils::findCharInString(lines[i], '=');
             if (equalSignLocation <= 0 || equalSignLocation >= static_cast<int>(lines[i].size()) - 1)
                 continue; // or log malformed line
                 
-            variable = BasicUtilities::strip(lines[i].substr(0, equalSignLocation));
+            variable = basic_utils::strip(lines[i].substr(0, equalSignLocation));
             value = lines[i].substr(equalSignLocation+1,lines[i].size()-1);
 
             //removes end of line characters from variable name and value. Fixes a bug.
             variable.erase(remove(variable.begin(), variable.end(), '\r'), variable.end());
             value.erase(remove(value.begin(), value.end(), '\r'), value.end());
 
-            rawConfigValsMap[variable] = BasicUtilities::strip(value);
+            rawConfigValsMap[variable] = basic_utils::strip(value);
         }
         
         if (verboseMode) 

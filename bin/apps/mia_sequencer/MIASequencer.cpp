@@ -26,13 +26,6 @@
 // Used for config type.
 #include "Constants.hpp"
 
-using StringUtils::stringContainsChar;
-using StringUtils::getBeforeChar;
-using StringUtils::getAfterChar;
-using StringUtils::contains;
-using StringUtils::trim;
-using StringUtils::delimiterString;
-
 
 MIASequencer::MIASequencer() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
@@ -89,17 +82,17 @@ void MIASequencer::loadConfig()
     {
         std::string key, value;
         // See if the line is a key/value pair or contains the end of sequence marker.
-        if (stringContainsChar(line, '='))
+        if (string_utils::stringContainsChar(line, '='))
         {
             // Get the key value on the line.
-            key = getBeforeChar(line, '=');
+            key = string_utils::getBeforeChar(line, '=');
                 
             // Get the value of the key.
-            value = getAfterChar(line, '=');  
+            value = string_utils::getAfterChar(line, '=');  
         }
         else
         {
-            key = trim(line);
+            key = string_utils::trim(line);
         }
         
         // Check if this is the start of end of a sequence.
@@ -119,7 +112,7 @@ void MIASequencer::loadConfig()
         {
             if (sequence.isValid())
             {
-                std::string seqName = trim(sequence.name);
+                std::string seqName = string_utils::trim(sequence.name);
                 if (getVerboseMode())
                 {
                     std::cout << "Adding sequence to sequences map: " << seqName << std::endl;
@@ -171,46 +164,46 @@ sequences::SequenceAction MIASequencer::createAction(std::string key, std::strin
     {
         action.actionType = sequences::SequenceActionType::MOVEMOUSE;
         math::Coordinate coords(0,0);
-        if (stringContainsChar(value, ','))
+        if (string_utils::stringContainsChar(value, ','))
         {
-            coords.x = std::stoi(getBeforeChar(value, ','));
-            coords.y = std::stoi(getAfterChar(value, ','));
+            coords.x = std::stoi(string_utils::getBeforeChar(value, ','));
+            coords.y = std::stoi(string_utils::getAfterChar(value, ','));
         }
         action.coords = coords;
     }
     else if (key == "CLICK")
     {
         action.actionType = sequences::SequenceActionType::CLICK;
-        std::string trimmedClickString = trim(value);
+        std::string trimmedClickString = string_utils::trim(value);
         action.click = virtual_keys::stringToClickType(trimmedClickString);
     }
     else if (key == "PRESS")
     {
         action.actionType = sequences::SequenceActionType::PRESS;
-        std::string trimmedPressString = trim(value);
+        std::string trimmedPressString = string_utils::trim(value);
         action.press = virtual_keys::stringToSpecialButton(trimmedPressString);
     }
     else if (key == "TYPEHOLD")
     {
         action.actionType = sequences::SequenceActionType::TYPEHOLD;
-        std::string trimmedTypeHoldString = trim(value);
-        std::vector<std::string> typeHoldVec = delimiterString(trimmedTypeHoldString, ";");
+        std::string trimmedTypeHoldString = string_utils::trim(value);
+        std::vector<std::string> typeHoldVec = string_utils::delimiterString(trimmedTypeHoldString, ";");
         action.strToType = typeHoldVec[0];
         action.timeValue = std::stoi(typeHoldVec[1]);
     }
     else if (key == "PRESSHOLD")
     {
         action.actionType = sequences::SequenceActionType::PRESSHOLD;
-        std::string trimmedPressHoldString = trim(value);
-        std::vector<std::string> pressHoldVec = delimiterString(trimmedPressHoldString, ";");
+        std::string trimmedPressHoldString = string_utils::trim(value);
+        std::vector<std::string> pressHoldVec = string_utils::delimiterString(trimmedPressHoldString, ";");
         action.press = virtual_keys::stringToSpecialButton(pressHoldVec[0]);
         action.timeValue = std::stoi(pressHoldVec[1]);
     }
     else if (key == "CLICKHOLD")
     {
         action.actionType = sequences::SequenceActionType::CLICKHOLD;
-        std::string trimmedClickHoldString = trim(value);
-        std::vector<std::string> clickHoldVec = delimiterString(trimmedClickHoldString, ";");
+        std::string trimmedClickHoldString = string_utils::trim(value);
+        std::vector<std::string> clickHoldVec = string_utils::delimiterString(trimmedClickHoldString, ";");
         action.click = virtual_keys::stringToClickType(clickHoldVec[0]);
         action.timeValue = std::stoi(clickHoldVec[1]);
     }
@@ -218,10 +211,10 @@ sequences::SequenceAction MIASequencer::createAction(std::string key, std::strin
     {
         action.actionType = sequences::SequenceActionType::PRESSRANDNUM;
         math::Coordinate coords(0,0);
-        if (stringContainsChar(value, ';'))
+        if (string_utils::stringContainsChar(value, ';'))
         {
-            coords.x = std::stoi(getBeforeChar(value, ';'));
-            coords.y = std::stoi(getAfterChar(value, ';'));
+            coords.x = std::stoi(string_utils::getBeforeChar(value, ';'));
+            coords.y = std::stoi(string_utils::getAfterChar(value, ';'));
         }
         action.coords = coords;
     }

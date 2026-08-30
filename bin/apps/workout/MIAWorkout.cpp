@@ -152,7 +152,7 @@ void MIAWorkout::generateWorkout()
         string outputFileText = "//============================================================================\n"
                                 "// Name        : workout.txt                                                  \n"
                                 "// Author      : MIA                                                          \n"
-                                "// Created on  : " + StringUtils::today() + "                                       \n"
+                                "// Created on  : " + string_utils::today() + "                                       \n"
                                 "// Description : A daily generated workout via the MIA program (for one week).\n"
                                 "// Difficulty  : " + std::to_string(difficulty) + "                           \n"
                                 "//============================================================================\n\n";
@@ -175,11 +175,11 @@ void MIAWorkout::generateWorkout()
     for(const auto& exercise : exercisesList)
     {
         if (!exercise.second.empty() &&                              // skip empty lines
-            StringUtils::hasExactlyOneOfADelimiter(exercise.second, ';'))  // Make sure it's an exercise line.
+            string_utils::hasExactlyOneOfADelimiter(exercise.second, ';'))  // Make sure it's an exercise line.
         {
             workoutName.push_back(exercise.first);
-            workoutWeight.push_back( convertWorkoutWeight( StringUtils::getBeforeChar(exercise.second, ';') ) );
-            workoutUnit.push_back(StringUtils::getAfterChar(exercise.second, ';') );
+            workoutWeight.push_back( convertWorkoutWeight( string_utils::getBeforeChar(exercise.second, ';') ) );
+            workoutUnit.push_back(string_utils::getAfterChar(exercise.second, ';') );
 
             if(getVerboseMode())
             {

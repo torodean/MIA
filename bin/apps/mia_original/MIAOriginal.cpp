@@ -124,7 +124,7 @@ void MIAOriginal::standby()
     {
         getline(cin,input);
         cout << endl;
-        if(StringUtils::toLower(input) == "exit" || StringUtils::toLower(input) == "quit")
+        if(string_utils::toLower(input) == "exit" || string_utils::toLower(input) == "quit")
         {
             break;
         }
@@ -234,7 +234,7 @@ void MIAOriginal::helpNet()
 
 void MIAOriginal::performMIACommand(string& input)
 {
-    string cmdInput = StringUtils::toLower(input);
+    string cmdInput = string_utils::toLower(input);
     Commands::MIAInput in = Commands::commandToInputEnum(cmdInput);
 
     switch( in ){

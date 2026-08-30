@@ -155,13 +155,13 @@ namespace maple
     void printTaxOperationReturns(const TaxOperationReturns& returns,
                                   std::ostream& stream)
     {
-        std::string cadence = StringUtils::toUpper(cadenceToString(returns.cadence));
+        std::string cadence = string_utils::toUpper(cadenceToString(returns.cadence));
         
         // Sets the doubles at 2 decimal places.
         stream << std::fixed << std::setprecision(2);
 
         stream << "==================================================" << std::endl;
-        stream << StringUtils::centerText(cadence + " TAX INFORMATION", 50) << std::endl;
+        stream << string_utils::centerText(cadence + " TAX INFORMATION", 50) << std::endl;
         stream << "--------------------------------------------------" << std::endl;
 
         stream << "INCOME:" << std::endl;

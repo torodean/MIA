@@ -149,7 +149,7 @@ namespace paths
     {
         if (isInstalled())
         {
-            BasicUtilities::ensureDirectoryExists(SYSTEM_CONFIG_FILE_DIR, true);
+            basic_utils::ensureDirectoryExists(SYSTEM_CONFIG_FILE_DIR, true);
             return SYSTEM_CONFIG_FILE_DIR;
         }
         else
@@ -159,7 +159,7 @@ namespace paths
                 return resourcesFolder;
             else
             {
-                BasicUtilities::ensureDirectoryExists(REPO_CONFIG_FILE_DIR, true);
+                basic_utils::ensureDirectoryExists(REPO_CONFIG_FILE_DIR, true);
                 return REPO_CONFIG_FILE_DIR;
             }
         }
@@ -179,7 +179,7 @@ namespace paths
     {
         if (isInstalled())
         {
-            BasicUtilities::ensureDirectoryExists(SYSTEM_LOG_DIR, true);
+            basic_utils::ensureDirectoryExists(SYSTEM_LOG_DIR, true);
             return SYSTEM_LOG_DIR;
         }
         else
@@ -189,7 +189,7 @@ namespace paths
                 return resourcesFolder;
             else
             {
-                BasicUtilities::ensureDirectoryExists(REPO_LOG_DIR, true);
+                basic_utils::ensureDirectoryExists(REPO_LOG_DIR, true);
                 return REPO_LOG_DIR;
             }
         }

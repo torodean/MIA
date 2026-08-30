@@ -92,7 +92,7 @@ namespace maple
                 continue;
                 
             // Perform the operation.
-            if (StringUtils::isDigits(input) &&   // Ensure an int was entered.
+            if (string_utils::isDigits(input) &&   // Ensure an int was entered.
                 !runOperation(static_cast<MapleOperations>(std::stoi(input))) )  // Attempt to run the operation.
             { // Failure case.
                 std::cout << "Invalid index entered: " << input << std::endl;

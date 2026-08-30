@@ -116,7 +116,7 @@ Commands::MIAInput Commands::commandToInputEnum(string& input)
         output = MIAInput::NETSERVER_S;
     else if (input == "date")
         output = MIAInput::DATE;
-    else if (StringUtils::inputRoll(input))
+    else if (string_utils::inputRoll(input))
         output = MIAInput::DICEROLL;
     else if (input == "error info")
         output = MIAInput::ERRORINFO;
@@ -671,7 +671,7 @@ void Commands::solveQuadraticFormulaRunner()
 
 void Commands::pranjal()
 {
-    string output = StringUtils::shuffleString("pranjal");
+    string output = string_utils::shuffleString("pranjal");
     cout << "...Did you mean " << output << "?" << endl;
 }
 
@@ -915,7 +915,7 @@ void Commands::entangleTextRunner()
     cout << "..." << endl;
     cout << "...Enter text to entangle: " << endl;
     getline(std::cin,input);
-    std::vector<std::string> output = StringUtils::entangleText(input);
+    std::vector<std::string> output = string_utils::entangleText(input);
     cout << " First half: " << output[0] << endl;
     cout << "second half: " << output[1] << endl;
 }

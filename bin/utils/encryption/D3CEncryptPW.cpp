@@ -207,7 +207,7 @@ namespace d0s2
 
     std::string EncryptPW(std::string message, std::string PW)
     {
-        PW = StringUtils::invertString(PW);
+        PW = string_utils::invertString(PW);
 	    
 	    //CM stands for crypted message, which is the string that will be returned by the function.
         std::string CM; 
@@ -237,7 +237,7 @@ namespace d0s2
 
 
     std::string DecryptPW(const std::string& message, std::string PW){  	
-        PW = StringUtils::invertString(PW);
+        PW = string_utils::invertString(PW);
 	    
 	    //message = d0s1::expand(message);
 	    std::cout << message << std::endl;

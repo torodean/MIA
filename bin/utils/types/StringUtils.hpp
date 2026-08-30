@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-namespace StringUtils
+namespace string_utils
 {
     /**
      * @brief Converts a string to lower case.
@@ -46,7 +46,7 @@ namespace StringUtils
 
     /**
      * Finds the first occurrence of a character in a string.
-     * Delegates the actual search to BasicUtilities::findCharInString to avoid
+     * Delegates the actual search to basic_utils::findCharInString to avoid
      * core dependencies and promote reuse.
      *
      * @param input The string to search.
@@ -230,7 +230,7 @@ namespace StringUtils
      * into the corresponding position of the output string. Assumes that all
      * integers are valid ASCII character codes.
      *
-     * @param inputVec[const std::vector<int>&] - The vector of integers to convert.
+     * @param inputVec The vector of integers to convert.
      * @return A string composed of characters corresponding to the input integers.
      */
     std::string intVectorToString(const std::vector<int>& inputVec);
@@ -257,4 +257,4 @@ namespace StringUtils
      */
     std::string centerText(const std::string& text, std::size_t width);
 
-} // namespace types
+} // namespace string_utils
