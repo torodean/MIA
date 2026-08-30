@@ -37,20 +37,20 @@ namespace logger
             // Create the necessary directory if it does not exist.
             std::filesystem::path filePath(fullpath);
             std::string parentDir = filePath.parent_path().string();
-            BasicUtilities::ensureDirectoryExists(parentDir, true);
+            basic_utils::ensureDirectoryExists(parentDir, true);
         } 
         else 
         {
             fullpath = paths::getDefaultLogDirToUse() + "/" + filename;
         }
         
-        if (!BasicUtilities::ensureFileExists(fullpath))
+        if (!basic_utils::ensureFileExists(fullpath))
             MIA_THROW(error::ErrorCode::Failed_To_Open_File);
         
         std::ofstream ofs(fullpath, std::ios::app);
         if (ofs.is_open())
         {
-            ofs << BasicUtilities::getCurrentDateTime() << ": " << message << std::endl;
+            ofs << basic_utils::getCurrentDateTime() << ": " << message << std::endl;
         }
         if (verbose)
         {
@@ -100,7 +100,7 @@ namespace logger
     void Logger::log(const std::string& message, bool verbose) const
     {
         if (logStream.is_open())
-            logStream << BasicUtilities::getCurrentDateTime() << ": " << message << std::endl;
+            logStream << basic_utils::getCurrentDateTime() << ": " << message << std::endl;
             
         if (verbose)
             std::cout << message << std::endl;
@@ -126,14 +126,14 @@ namespace logger
             // Create the necessary directory if it does not exist.
             std::filesystem::path filePath(currentLogFileFullPath);
             std::string parentDir = filePath.parent_path().string();            
-            BasicUtilities::ensureDirectoryExists(parentDir, true);
+            basic_utils::ensureDirectoryExists(parentDir, true);
         } 
         else 
         {
             currentLogFileFullPath = paths::getDefaultLogDirToUse() + "/" + currentLogFileName;
         }
         
-        if (!BasicUtilities::ensureFileExists(currentLogFileFullPath))
+        if (!basic_utils::ensureFileExists(currentLogFileFullPath))
             MIA_THROW(error::ErrorCode::Failed_To_Open_File);
     
         logStream.open(currentLogFileFullPath, std::ios::app);

@@ -874,7 +874,7 @@ namespace d0s1
 
     string CryptNoRand(string input, bool toSquish)
     {
-        vector<int> inputVector = StringUtils::stringToIntVector(input);
+        vector<int> inputVector = string_utils::stringToIntVector(input);
         vector<int> baseTwoVector = internal::binaryVector(inputVector);
         string cryptedVector = internal::cryptCharsNoRand(baseTwoVector);
 
@@ -890,7 +890,7 @@ namespace d0s1
 
     string Crypt(const string& input, bool toSquish)
     {
-        vector<int> inputVector = StringUtils::stringToIntVector(input);
+        vector<int> inputVector = string_utils::stringToIntVector(input);
         vector<int> baseTwoVector = internal::binaryVector(inputVector);
         string cryptedVector = internal::cryptChars(baseTwoVector);
 	    
@@ -918,7 +918,7 @@ namespace d0s1
         vector<int> deCryptedBinaryVector = internal::DeCryptChars(seperatedcharacterVector, randomBinaryVector);
 
         vector<int> deCryptedIntVector = internal::binaryVecToASCIIVec(deCryptedBinaryVector);
-        string deCryptedVector = StringUtils::intVectorToString(deCryptedIntVector);
+        string deCryptedVector = string_utils::intVectorToString(deCryptedIntVector);
 
         return deCryptedVector;
     }

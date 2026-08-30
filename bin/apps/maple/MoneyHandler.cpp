@@ -38,7 +38,7 @@ namespace maple
                            const std::string& scope,
                            const std::vector<std::string>& tags)
     {
-        sources.push_back({name, value, StringUtils::toLower(scope), tags});
+        sources.push_back({name, value, string_utils::toLower(scope), tags});
     }
 
 
@@ -76,7 +76,7 @@ namespace maple
                          const std::string& scope,
                          const std::vector<std::string>& constrainingTags)
     {
-        std::string want = StringUtils::toLower(scope);
+        std::string want = string_utils::toLower(scope);
         double total = 0.0;
         
         for (const auto& source : money.sources)
@@ -105,7 +105,7 @@ namespace maple
         std::vector<std::string> want;
         want.reserve(scopes.size());
         for (const std::string& scope : scopes)
-            want.push_back(StringUtils::toLower(scope));
+            want.push_back(string_utils::toLower(scope));
 
         double total = 0.0;
         for (const auto& source : money.sources)
@@ -157,7 +157,7 @@ namespace maple
 
         for (const constants::KeyValuePair& pair : pairs)
         {
-            std::string key = StringUtils::toLower(pair.first);
+            std::string key = string_utils::toLower(pair.first);
             if (key.rfind(prefix + "_", 0) != 0)
                 continue;
 
@@ -167,7 +167,7 @@ namespace maple
              * ALL_SCOPE. With an underscore, the first token is the scope and
              * the remainder is the name. The tag parsing assume the scope exists.
              */ 
-            std::string afterPrefix = StringUtils::getAfterChar(key, '_');
+            std::string afterPrefix = string_utils::getAfterChar(key, '_');
             size_t underscore = afterPrefix.find('_');
 
             std::string scope;
@@ -181,7 +181,7 @@ namespace maple
             }
             else
             {
-                std::vector<std::string> elements = StringUtils::delimiterString(afterPrefix, "_");
+                std::vector<std::string> elements = string_utils::delimiterString(afterPrefix, "_");
                 scope = elements[0];
                 name = elements[1];
                 for (size_t i=2; i< elements.size(); i++)

@@ -1,5 +1,5 @@
 \chapter{Utilities}
-\label{chap:utilities}
+\label{chapter:utilities}
 
 This chapter documents reusable utility components that support common development needs across the project. All utility modules are defined in CMake using the naming convention \texttt{\textit{Name}\_UTIL}. These modules can be linked into your targets via CMake's \texttt{target\_link\_libraries} command. This allows modular inclusion of specific utility functionalities based on your build requirements. To use a utility, simply add the corresponding utility target to your CMake target, for example:
 \begin{lstlisting}[style=cppstyle]
@@ -360,10 +360,10 @@ The following demonstrates basic use of the string utilities:
 
 std::string input = "  Hello World  ";
 
-std::string upper = StringUtils::toUpper(input);
-std::string lower = StringUtils::toLower(input);
-std::string trimmed = StringUtils::trim(input);
-std::string reversed = StringUtils::invertString(input);
+std::string upper = string_utils::toUpper(input);
+std::string lower = string_utils::toLower(input);
+std::string trimmed = string_utils::trim(input);
+std::string reversed = string_utils::invertString(input);
 \end{lstlisting}
 The resulting strings are:
 \begin{lstlisting}[style=cppstyle]

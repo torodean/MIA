@@ -94,7 +94,7 @@ namespace maple
     
     FilingStatus stringToFilingStatus(const std::string& str)
     {
-        const std::string lowerStr = StringUtils::toLower(str);
+        const std::string lowerStr = string_utils::toLower(str);
 
         if (lowerStr == "single")
             return FilingStatus::Single;
