@@ -45,10 +45,11 @@ namespace StringUtils
     }
     
     
-    std::string removeCharInString(std::string str, char c)
+    std::string removeCharInString(const std::string& str, char c)
     {
-        str.erase(remove(str.begin(), str.end(), c), str.end());
-        return str;
+        std::string out = str;
+        out.erase(remove(out.begin(), out.end(), c), out.end());
+        return out;
     }
     
     
@@ -108,7 +109,7 @@ namespace StringUtils
     }
     
     
-    bool is_digits(const std::string& input)
+    bool isDigits(const std::string& input)
     {
         if(input.find_first_not_of("0123456789") == std::string::npos)
             return true;
@@ -137,7 +138,9 @@ namespace StringUtils
             toLower(input) == "ok" ||
             toLower(input) == "okay" ||
             toLower(input) == "true" ||
-            toLower(input) == "on")
+            toLower(input) == "on" ||
+            toLower(input) == "affirmative"  ||
+            toLower(input) == "indubitably")
         {
             return true;
         } else {
@@ -158,9 +161,9 @@ namespace StringUtils
     }
     
     
-    std::string shuffleString(std::string input)
+    std::string shuffleString(const std::string& input)
     {
-        std::string output = std::move(input);
+        std::string output = input;
         std::shuffle(output.begin(), output.end(), std::mt19937(std::random_device()()));
         return output;
     }
@@ -206,23 +209,33 @@ namespace StringUtils
     }
 
 
-    std::string getBetweenXAndY(std::string line, char x, char y, bool verboseMode)
+    std::string getBetweenXAndY(const std::string& line, char x, char y, bool verboseMode)
     {
         int xLocation = findCharInString(line, x);
         int yLocation = findCharInString(line, y);
-    
+        
+        // Handle the case of a delimiter not being found.
+        if (xLocation < 0 || yLocation < 0)
+            return "";
+            
+        if (xLocation == yLocation)
+        { // If 'x' == 'y', the second occurance of 'y' is used.
+            std::string afterYstr = line.substr(xLocation + 1, line.size());
+            yLocation = findCharInString(afterYstr, y) + xLocation + 1;
+        }
+        
         // Trim the string at the end delimiter, then extract the portion after the start delimiter
-        line = line.substr(0, yLocation);
-        line = line.substr(xLocation + 1, line.size() - 1);
+        std::string out = line.substr(0, yLocation);
+        out = out.substr(xLocation + 1, line.size() - 1);
     
         if (verboseMode)
-            std::cout << "...stringBetweenXAndY: " << line << std::endl;
+            std::cout << "...stringBetweenXAndY: " << out << std::endl;
     
-        return line;
+        return out;
     }
     
     
-    std::vector<std::string> entangleText(const std::string &input)
+    std::vector<std::string> entangleText(const std::string& input)
     {
         int counter = 0;
     
