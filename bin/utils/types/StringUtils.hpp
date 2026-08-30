@@ -42,7 +42,7 @@ namespace StringUtils
      * @param c the character to remove.
      * @return The string without hte character.
      */
-    std::string removeCharInString(std::string str, char c);
+    std::string removeCharInString(const std::string& str, char c);
 
     /**
      * Finds the first occurrence of a character in a string.
@@ -77,21 +77,21 @@ namespace StringUtils
      * @param input Reference to the input string to parse.
      * @return True if all characters are integers.
      */
-    bool is_digits(const std::string& input);
+    bool isDigits(const std::string& input);
 
     /**
      * Determines if a string is of the format for a dice roll. i.e 1d20 or 3d8.
      * @param input Reference to the input string to parse.
      * @return True if the string is a dice roll.
      */
-    bool inputRoll(const std::string &input);
+    bool inputRoll(const std::string& input);
 
     /**
      * A function used to determine if an answer is equivalent to yes.
      * @param input Reference to the input string to parse.
      * @return True if answer is a form of yes.
      */
-    bool formOfYes(const std::string &input);
+    bool formOfYes(const std::string& input);
 
     /**
      * Returns the date for today.
@@ -104,11 +104,12 @@ namespace StringUtils
      * @param input The string to shuffle.
      * @return That has been shuffled.
      */
-    std::string shuffleString(std::string input);
+    std::string shuffleString(const std::string& input);
 
     /**
      * Returns the substring of `line` that appears before the first occurrence of character `c`.
      * If `c` is not found, returns the entire string.
+     *
      * @param line The input string to process.
      * @param c The delimiter character.
      * @param verboseMode Enables verboseMode output (default = false).
@@ -119,6 +120,7 @@ namespace StringUtils
     /**
      * Returns the substring of `line` that appears after the first occurrence of character `c`.
      * If `c` is not found, returns an empty string.
+     *
      * @param line The input string to process.
      * @param c The delimiter character.
      * @param verboseMode Enables verboseMode output (default = false).
@@ -130,6 +132,7 @@ namespace StringUtils
      * Extracts and returns the substring between the first '=' and the first ';' in the input string.
      * It first trims the string at the ';' and then extracts the portion after the '='.
      * If '=' or ';' are not found, behavior depends on `findCharInString` return values and substr calls.
+     *
      * @param line The input string to parse.
      * @param verboseMode Enables verboseMode output (default = false).
      * @return Substring between '=' and ';', or possibly empty if delimiters are missing.
@@ -140,20 +143,22 @@ namespace StringUtils
     /**
      * Extracts and returns the substring between the first occurrences of characters `x` and `y`
      * in the input string. The result excludes the delimiter characters themselves.
-     * If either character is not found, the behavior depends on the result of `findCharInString`.
+     * If either character is not found, an empty string is returned.
+     * If 'x' == 'y', the second occurance of 'y' is used. 
      *
      * @param line The input string to parse.
      * @param x The starting delimiter character.
      * @param y The ending delimiter character.
      * @param verboseMode Enables verboseMode output (default = false).
-     * @return Substring between `x` and `y`, or possibly empty if delimiters are not found.
+     * @return Substring between `x` and `y`, or empty if delimiters are not found.
      */
-    std::string getBetweenXAndY(std::string line, char x, char y, bool verboseMode = false);
+    std::string getBetweenXAndY(const std::string& line, char x, char y, bool verboseMode = false);
 
     /**
      * This will create two strings of 'entangled' text. The first string contains every other character
      * of the input string and the second string contains the opposite characters. Spaces are added
      * in place of the characters not shown in each output string so that they can be easily matched.
+     *
      * @param input The input string to entangle.
      * @return The first element is the first half, and second element the second half.
      */
@@ -162,7 +167,7 @@ namespace StringUtils
     /**
      * Checks if the given line contains exactly one occurrence of each specified delimiter.
      *
-     * @param line[const std::string&] The string to check.
+     * @param line The string to check.
      * @param delimiterA The first delimiter to count.
      * @param delimiterB The second delimiter to count.
      * @return True if the line contains exactly one occurrence of delimiterA and exactly one occurrence of delimiterB; otherwise false.
@@ -172,7 +177,7 @@ namespace StringUtils
     /**
      * Checks if the given line contains exactly one occurrence of a specified delimiter.
      *
-     * @param line[const std::string&] The string to check.
+     * @param line The string to check.
      * @param delimiterA The first delimiter to count.
      * @return True if the line contains exactly one occurrence of the delimiter; otherwise false.
      */
