@@ -67,6 +67,13 @@ Flag structural issues in the source, separate from the prose content:
 - An `\includegraphics{...}` whose image file is missing from [../docs/images/](../docs/images/).
 - A chapter fragment that is not `\include`d by [MIAManual.tex](../docs/MIAManual.tex), or an `\include` whose file does not exist.
 - A label that is duplicated across fragments, which makes `\ref` ambiguous.
+- A `\label{...}` key that is not prefixed, uses a short-form prefix, or uses hyphens in the name.
+  Labels follow the long-form convention `\label{chapter:name}`, `\label{section:name}`, or `\label{table:name}`, with the full word as the prefix and underscores (not hyphens) as word separators, e.g. `\label{section:special_button_enumeration}`.
+  Short forms (`chap:`, `tab:`, `lab:`) are not used; bare labels (`\label{sequencer}`, `\label{WoW}`) and hyphenated names (`\label{sec:global-constants-and-paths}`) are not used.
+  Any label that is bare, uses a short-form prefix, or uses hyphens is non-conforming and should be flagged.
+  When renaming a label, update every `\ref` to it across all fragments.
+  Many older labels use `chap:`, bare names, or hyphens; these are pre-existing and get flagged on audit.
+  New and edited chapters use the long form with underscores.
 - Broken or mis-nested list, table, or `lstlisting` environments that would fail to compile.
 
 ## How to respond

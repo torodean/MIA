@@ -284,6 +284,7 @@ Comment out a line by prefixing `%`; use `%%` or `% ---` for visual section divi
 
 Doxygen-style headers do not apply to .tex files.
 A `.tex` chapter or file begins with its `\chapter{...}` or `\documentclass{...}` line; a leading comment block is optional and used only for notes to maintainers.
+\label{...}` keys use the long-form convention `\label{chapter:name}`, `\label{section:name}`, or `\label{table:name}`, with underscores (not hyphens) as word separators; see [latex-doc-audit.md](latex-doc-audit.md) for the full rule.
 
 Data/sequence files referenced from .tex (e.g. `MIASequences.txt`) use `#` line comments and may carry a `# Name / # Author / # Date / # Description` block at the top; match the existing format when editing those data files.
 
