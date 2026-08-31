@@ -2,7 +2,7 @@
  * @file BasicUtilities.cpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: Implements basic utility functions declared in BasicUtilities.hpp.
+ * @brief Implements basic utility functions declared in BasicUtilities.hpp.
  */
 
 #include <string>
@@ -19,7 +19,7 @@
 // Include the associated header file.
 #include "BasicUtilities.hpp"
 
-namespace BasicUtilities
+namespace basic_utils
 {
     int findCharInString(const std::string& str, char ch)
     {

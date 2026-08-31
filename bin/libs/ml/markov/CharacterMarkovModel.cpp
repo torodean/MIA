@@ -24,7 +24,7 @@ namespace markov_models
         std::vector<std::vector<char>> trainingVec;
         for (const auto& sequence : sequences)
         {
-            trainingVec.push_back( StringUtils::stringToCharVec(sequence) );
+            trainingVec.push_back( string_utils::stringToCharVec(sequence) );
         }
         train(trainingVec);
     }

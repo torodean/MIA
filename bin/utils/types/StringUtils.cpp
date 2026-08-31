@@ -21,7 +21,7 @@
 // Include the core utilities for some re-defined methods.
 #include "BasicUtilities.hpp"
 
-namespace StringUtils
+namespace string_utils
 {
     std::string toLower(const std::string& input)
     {
@@ -55,7 +55,7 @@ namespace StringUtils
     
     int findCharInString(const std::string& input, char c)
     {
-        return BasicUtilities::findCharInString(input, c);
+        return basic_utils::findCharInString(input, c);
     }
     
     
@@ -358,4 +358,4 @@ namespace StringUtils
 
         return std::string(left, ' ') + text + std::string(right, ' ');
     }
-} // namespace types
+} // namespace string_utils
