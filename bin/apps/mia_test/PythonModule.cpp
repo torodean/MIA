@@ -103,66 +103,6 @@ namespace
 
         return PythonResult();
     }
-
-
-    /**
-     * Creates a new Python int object from a C++ integer.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    PyObjectPtr toPython(long value)
-    {
-        return PyObjectPtr(PyLong_FromLong(value));
-    }
-
-
-    /**
-     * Creates a new Python float object from a C++ double.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    PyObjectPtr toPython(double value)
-    {
-        return PyObjectPtr(PyFloat_FromDouble(value));
-    }
-
-
-    /**
-     * Creates a new Python str object from a C++ string.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    PyObjectPtr toPython(const std::string& value)
-    {
-        return PyObjectPtr(PyUnicode_FromString(value.c_str()));
-    }
-
-
-    /**
-     * Packs arguments into a Python tuple for a method call.
-     * Each argument is a PyObjectPtr. The tuple takes its own reference to every
-     * argument, so the arguments passed in keep their references and release them
-     * as usual when they go out of scope.
-     *
-     * If any argument is null (its creation failed) or the tuple cannot be
-     * created, the returned pointer is null, which invoke() reports as an error.
-     * A call with no arguments produces an empty tuple.
-     *
-     * @param args Zero or more PyObjectPtr arguments to pack.
-     * @return The argument tuple, or null on failure.
-     */
-    template<typename... Args>
-    PyObjectPtr buildArgs(const Args&... args)
-    {
-        // The fold expression is true when at least one argument is null.
-        if ((!args || ...))
-            return nullptr;
-
-        return PyObjectPtr(PyTuple_Pack(sizeof...(args), args.get()...));
-    }
 } // namespace
 
 
@@ -253,34 +193,4 @@ PythonResult PythonModule::invoke(const std::string& methodName, PyObjectPtr arg
         return PythonResult::error("Call to '" + methodName + "' failed: " + fetchPythonError());
 
     return toResult(result.get());
-}
-
-
-PythonResult PythonModule::call(const std::string& name)
-{
-    return invoke(name, buildArgs());
-}
-
-
-PythonResult PythonModule::call(const std::string& name, long a, long b)
-{
-    return invoke(name, buildArgs(toPython(a), toPython(b)));
-}
-
-
-PythonResult PythonModule::call(const std::string& name, double a, double b)
-{
-    return invoke(name, buildArgs(toPython(a), toPython(b)));
-}
-
-
-PythonResult PythonModule::call(const std::string& name, const std::string& a)
-{
-    return invoke(name, buildArgs(toPython(a)));
-}
-
-
-PythonResult PythonModule::call(const std::string& name, const std::string& a, long b)
-{
-    return invoke(name, buildArgs(toPython(a), toPython(b)));
 }
