@@ -59,8 +59,14 @@ namespace paths
     // Path to the default log file from the repo directory (for testing).
     inline const std::string REPO_LOG = DEFAULT_REPO_LOG;
 
+    // Path to the python module directory in the repo directory (for testing).
+    inline const std::string REPO_PYTHON_DIR = DEFAULT_REPO_PYTHON_DIR;
+
     // Path to the system level installation directory.
     inline const std::string INSTALL_LOCATION = APP_INSTALL_LOCATION;
+
+    // Path to the python module directory when installed.
+    inline const std::string SYSTEM_PYTHON_DIR = PYTHON_INSTALL_LOCATION;
     
     /**
      * @brief Retrieves the directory of the currently running executable.
@@ -195,11 +201,36 @@ namespace paths
         }
     }
 
+    /**
+     * Returns the directory which holds the python modules used by the
+     * embedded interpreter, based on the runtime context.
+     *
+     * If the application is running from a system-installed location, this
+     * returns the system python directory. Otherwise, it returns the 'python'
+     * subdirectory of the resources folder next to the executable, falling
+     * back to the git-repository python directory when no local resources
+     * folder exists.
+     *
+     * @return Path to the appropriate python module directory.
+     */
+    inline std::string getPythonDirToUse()
+    {
+        if (isInstalled())
+        {
+            basic_utils::ensureDirectoryExists(SYSTEM_PYTHON_DIR, true);
+            return SYSTEM_PYTHON_DIR;
+        }
+        else
+        {
+            std::string resourcesFolder = getExecutableDir() + "/resources/python";
+            if (std::filesystem::exists(resourcesFolder))
+                return resourcesFolder;
+            else
+            {
+                basic_utils::ensureDirectoryExists(REPO_PYTHON_DIR, true);
+                return REPO_PYTHON_DIR;
+            }
+        }
+    }
+
 } // namespace paths
-
-
-
-
-
-
-
