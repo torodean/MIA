@@ -40,7 +40,7 @@ protected:
      */
     static void SetUpTestSuite()
     {
-        module = std::make_unique<PythonModule>("PythonModuleTests");
+        module = std::make_unique<PythonModule>("PythonModuleTests", __FILE__);
     }
 
     /**
@@ -63,7 +63,7 @@ std::unique_ptr<PythonModule> PythonModule_T::module = nullptr;
  */
 TEST_F(PythonModule_T, MissingModuleThrows)
 {
-    EXPECT_THROW(PythonModule module("NoSuchModuleAnywhere"), error::MIAException)
+    EXPECT_THROW(PythonModule module("NoSuchModuleAnywhere", __FILE__), error::MIAException)
         << "Constructing a module which cannot be imported should throw.";
 }
 
@@ -74,7 +74,7 @@ TEST_F(PythonModule_T, MissingModuleErrorCode)
 {
     try
     {
-        PythonModule module("NoSuchModuleAnywhere");
+        PythonModule module("NoSuchModuleAnywhere", __FILE__);
         FAIL() << "Constructing a missing module should not succeed.";
     }
     catch (const error::MIAException& e)
@@ -198,7 +198,7 @@ TEST_F(PythonModule_T, PythonTypeErrorIsErrorResult)
  */
 TEST_F(PythonModule_T, TwoModulesAlive)
 {
-    PythonModule second("PythonModuleTests");
+    PythonModule second("PythonModuleTests", __FILE__);
 
     PythonResult first = module->call("add", 1, 1);
     PythonResult fromSecond = second.call("add", 2, 2);
