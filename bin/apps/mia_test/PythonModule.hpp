@@ -2,12 +2,13 @@
  * @file PythonModule.hpp
  * @author Antonius Torode
  * @date 09/08/2026
- * @brief Declares a utility for loading Python modules and calling their methods.
+ * @brief Declares a variadic-template variant of the Python module wrapper.
  */
 #pragma once
 
 #include <memory>
 #include <string>
+#include <type_traits>
 
 #include <Python.h>
 
@@ -67,12 +68,14 @@ using PyObjectPtr = std::unique_ptr<PyObject, PyObjectDeleter>;
  * the last module shuts it down. Code using this class never touches the
  * Python C API directly.
  *
- * call() methods invoke Python methods with typed C++ arguments. Each overload
- * covers one argument signature; new signatures are added as they are needed.
- * All calls return a PythonResult, so expected call failures (missing method,
- * Python exception, conversion failure) surface as values without raw pointers
- * or exceptions. An app which wants to treat a call failure as fatal can check
- * isValid() and throw or exit on its own terms.
+ * call() is a variadic template: any mix of supported argument types is
+ * converted to the matching Python type and packed into the argument tuple.
+ * A new argument type is supported by extending the private toPython()
+ * helpers, not by adding another call() overload. All calls return a
+ * PythonResult, so expected call failures (missing method, Python exception,
+ * conversion failure) surface as values without raw pointers or exceptions.
+ * An app which wants to treat a call failure as fatal can check isValid()
+ * and throw or exit on its own terms.
  *
  * The interpreter reference count is not thread-safe; constructing and
  * destroying modules is assumed to happen on one thread.
@@ -122,51 +125,23 @@ public:
     bool hasMethod(const std::string& name) const;
 
     /**
-     * Calls a Python method which takes no arguments.
+     * Calls a Python method with any mix of supported argument types.
+     * C++ integer types become Python ints, floating point types become
+     * Python floats, and std::string or string literals become Python strs.
+     * Calling a method with no arguments is done with an empty argument list.
+     * An argument whose C++ type has no converter is a compile error, and a
+     * type mismatch with the Python method's expectations surfaces through
+     * the returned PythonResult as a normal call failure.
      *
      * @param name The name of the method to call.
+     * @param args Zero or more arguments, converted per their C++ type.
      * @return A PythonResult holding the return value of the call.
      */
-    PythonResult call(const std::string& name);
-
-    /**
-     * Calls a Python method which takes two integers.
-     *
-     * @param name The name of the method to call.
-     * @param a The first integer argument.
-     * @param b The second integer argument.
-     * @return A PythonResult holding the return value of the call.
-     */
-    PythonResult call(const std::string& name, long a, long b);
-
-    /**
-     * Calls a Python method which takes two doubles.
-     *
-     * @param name The name of the method to call.
-     * @param a The first double argument.
-     * @param b The second double argument.
-     * @return A PythonResult holding the return value of the call.
-     */
-    PythonResult call(const std::string& name, double a, double b);
-
-    /**
-     * Calls a Python method which takes one string.
-     *
-     * @param name The name of the method to call.
-     * @param a The string argument.
-     * @return A PythonResult holding the return value of the call.
-     */
-    PythonResult call(const std::string& name, const std::string& a);
-
-    /**
-     * Calls a Python method which takes a string and an integer.
-     *
-     * @param name The name of the method to call.
-     * @param a The string argument.
-     * @param b The integer argument.
-     * @return A PythonResult holding the return value of the call.
-     */
-    PythonResult call(const std::string& name, const std::string& a, long b);
+    template<typename... Args>
+    PythonResult call(const std::string& name, Args... args)
+    {
+        return invoke(name, buildArgs(toPython(args)...));
+    }
 
 private:
 
@@ -179,8 +154,79 @@ private:
     static void ensureInterpreter();
 
     /**
+     * Creates a new Python int object from any C++ integer type.
+     * The constraint keeps this template from also matching floating point
+     * types, which have their own overload below.
+     *
+     * @param value The value to convert.
+     * @return The Python object, or null if creation failed.
+     */
+    template<typename T> requires std::is_integral_v<T>
+    static PyObjectPtr toPython(T value)
+    {
+        return PyObjectPtr(PyLong_FromLongLong(value));
+    }
+
+    /**
+     * Creates a new Python float object from any C++ floating point type.
+     *
+     * @param value The value to convert.
+     * @return The Python object, or null if creation failed.
+     */
+    template<typename T> requires std::is_floating_point_v<T>
+    static PyObjectPtr toPython(T value)
+    {
+        return PyObjectPtr(PyFloat_FromDouble(value));
+    }
+
+    /**
+     * Creates a new Python str object from a C++ string.
+     *
+     * @param value The value to convert.
+     * @return The Python object, or null if creation failed.
+     */
+    static PyObjectPtr toPython(const std::string& value)
+    {
+        return PyObjectPtr(PyUnicode_FromString(value.c_str()));
+    }
+
+    /**
+     * Creates a new Python str object from a string literal.
+     *
+     * @param value The value to convert.
+     * @return The Python object, or null if creation failed.
+     */
+    static PyObjectPtr toPython(const char* value)
+    {
+        return toPython(std::string(value));
+    }
+
+    /**
+     * Packs converted arguments into a Python tuple for a method call.
+     * Each argument is a PyObjectPtr. The tuple takes its own reference to
+     * every argument, so the arguments passed in keep their references and
+     * release them as usual when they go out of scope.
+     *
+     * If any argument is null (its creation failed) or the tuple cannot be
+     * created, the returned pointer is null, which invoke() reports as an
+     * error. A call with no arguments produces an empty tuple.
+     *
+     * @param args Zero or more PyObjectPtr arguments to pack.
+     * @return The argument tuple, or null on failure.
+     */
+    template<typename... Args>
+    static PyObjectPtr buildArgs(const Args&... args)
+    {
+        // The fold expression is true when at least one argument is null.
+        if ((!args || ...))
+            return nullptr;
+
+        return PyObjectPtr(PyTuple_Pack(sizeof...(args), args.get()...));
+    }
+
+    /**
      * Calls a method with a pre-built argument tuple.
-     * This is the shared implementation behind the public call() overloads.
+     * This is the shared implementation behind the public call() template.
      *
      * @param name The name of the method to call.
      * @param args The argument tuple. An empty tuple calls the method with no
