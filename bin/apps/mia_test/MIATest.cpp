@@ -28,15 +28,10 @@ int MIATest::run()
     /*
      * Constructing the module is the only setup needed: the wrapper starts
      * the embedded interpreter on first use and shuts it down when the module
-     * object goes out of scope.
+     * object goes out of scope. A module which fails to load throws from the
+     * constructor, so a constructed module is always usable.
      */
     PythonModule module("MIATest");
-
-    if (!module.isLoaded())
-    {
-        std::cerr << "Failed to load module 'MIATest'." << std::endl;
-        return constants::FAILURE;
-    }
 
     // Prints the result of one call, reporting the error path instead of the
     // value when the call failed.
@@ -75,17 +70,17 @@ int MIATest::run()
               << (module.hasMethod("missingMethod") ? "true" : "false") << std::endl;
 
     /*
-     * Integer literals use the long suffix so overload resolution picks
-     * the integer overload; plain int literals would be ambiguous between
-     * the (long, long) and (double, double) overloads.
+     * The variadic call() converts each argument by its C++ type, so integer
+     * literals, doubles, and string literals all work without casts or
+     * suffixes, and mixed signatures need no dedicated overload.
      */
     report("main()", module.call("main"));
-    report("add(2, 3)", module.call("add", 2L, 3L));
+    report("add(2, 3)", module.call("add", 2, 3));
     report("multiply(2.5, 4.0)", module.call("multiply", 2.5, 4.0));
-    report("greet('user')", module.call("greet", std::string("user")));
-    report("describe('user', 30)", module.call("describe", std::string("user"), 30L));
-    report("repeat('word', 3)", module.call("repeat", std::string("word"), 3L));
-    report("printSum(10, 5)", module.call("printSum", 10L, 5L));
+    report("greet('user')", module.call("greet", "user"));
+    report("describe('user', 30)", module.call("describe", "user", 30));
+    report("repeat('word', 3)", module.call("repeat", "word", 3));
+    report("printSum(10, 5)", module.call("printSum", 10, 5));
 
     // One call to a missing method to verify the error path reports cleanly.
     report("missingMethod()", module.call("missingMethod"));
