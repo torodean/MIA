@@ -6,10 +6,7 @@
  */
 
 #include <iostream>
-<<<<<<< HEAD
 #include <Python.h>
-=======
->>>>>>> ef84e99 (Renaming folder case to lower)
 
 // The associated header file.
 #include "MIATest.hpp"
