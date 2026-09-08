@@ -31,7 +31,7 @@ int MIATest::run()
      * object goes out of scope. A module which fails to load throws from the
      * constructor, so a constructed module is always usable.
      */
-    PythonModule module("MIATest");
+    PythonModule module("MIATest", __FILE__);
 
     // Prints the result of one call, reporting the error path instead of the
     // value when the call failed.
