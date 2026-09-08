@@ -8,6 +8,9 @@
 // The associated header file.
 #include "PythonModule.hpp"
 
+// Used for resolving the python module directory.
+#include "Paths.hpp"
+
 #include <string>
 
 #include <Python.h>
@@ -116,25 +119,27 @@ void PythonModule::ensureInterpreter()
         return;
 
     Py_Initialize();
-
-    /*
-     * Add the current working directory to Python's module search path.
-     * This allows Python to find modules which sit next to the executable.
-     */
-    PyRun_SimpleString(
-        "import sys\n"
-        "sys.path.insert(0, '.')\n"
-    );
 }
 
 
-PythonModule::PythonModule(const std::string& moduleName)
+PythonModule::PythonModule(const std::string& moduleName, const std::string& callerFile)
     : name(moduleName)
 {
     // The interpreter must exist before the module can be imported, and the
     // count must rise before any call can observe it.
     ensureInterpreter();
     ++interpreterCount;
+
+    /*
+     * Add the python directory for this construction to Python's module
+     * search path. Doing it per construction lets callers in different
+     * directories coexist: each one adds the directory holding its own
+     * python files.
+     */
+    std::string setPath =
+        "import sys\n"
+        "sys.path.insert(0, r'" + paths::getPythonDirToUse(callerFile) + "')\n";
+    PyRun_SimpleString(setPath.c_str());
 
     module.reset(PyImport_ImportModule(moduleName.c_str()));
 
