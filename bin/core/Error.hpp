@@ -61,6 +61,12 @@ namespace error
         Undefined_RPG_Value = 31434,          ///< A referenced value for the RPG system wasn't defined.
         Duplicate_RPG_Value = 31435,          ///< A duplicate RPG entry was added.
         Invalid_RPG_Data = 31436,             ///< An invalid combination/set of RPG data was used. 
+
+        /*
+         * Python (embedded interpreter) error codes. 39XXX
+         */
+        Python_Module_Load_Failure = 39000,   ///< A Python module failed to load in the embedded interpreter.
+
         Catastrophic_Failure = 9001           ///< Some unprogrammed error occured.
     };
 
