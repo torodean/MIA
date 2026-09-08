@@ -6,10 +6,12 @@
  */
 
 #include <iostream>
-#include <Python.h>
+#include <string>
 
 // The associated header file.
 #include "MIATest.hpp"
+// Used for the Python module wrapper being tested.
+#include "PythonModule.hpp"
 
 
 MIATest::MIATest()                      
@@ -23,68 +25,71 @@ void MIATest::initialize(int argc, char* argv[])
 
 int MIATest::run()
 {
-	// Initialize the embedded Python interpreter.
-    Py_Initialize();
+    /*
+     * Constructing the module is the only setup needed: the wrapper starts
+     * the embedded interpreter on first use and shuts it down when the module
+     * object goes out of scope.
+     */
+    PythonModule module("MIATest");
+
+    if (!module.isLoaded())
+    {
+        std::cerr << "Failed to load module 'MIATest'." << std::endl;
+        return constants::FAILURE;
+    }
+
+    // Prints the result of one call, reporting the error path instead of the
+    // value when the call failed.
+    bool allPassed = true;
+    auto report = [&allPassed](const std::string& label, const PythonResult& result)
+    {
+        if (!result.isValid())
+        {
+            allPassed = false;
+            std::cout << label << " failed: " << result.getError() << std::endl;
+            return;
+        }
+
+        switch (result.getType())
+        {
+            case PythonResult::Type::Integer:
+                std::cout << label << " -> " << result.asInt() << std::endl;
+                break;
+            case PythonResult::Type::Double:
+                std::cout << label << " -> " << result.asDouble() << std::endl;
+                break;
+            case PythonResult::Type::String:
+                std::cout << label << " -> " << result.asString() << std::endl;
+                break;
+            case PythonResult::Type::Void:
+            default:
+                std::cout << label << " -> (void)" << std::endl;
+                break;
+        }
+    };
+
+    // Exercise hasMethod on one present and one missing method.
+    std::cout << "hasMethod('add'): "
+              << (module.hasMethod("add") ? "true" : "false") << std::endl;
+    std::cout << "hasMethod('missingMethod'): "
+              << (module.hasMethod("missingMethod") ? "true" : "false") << std::endl;
 
     /*
-	 * Add the current working directory to Python's module search path.
-     * This allows Python to find MIATest.py when it is in the current directory.
-	 * This is the path relative to where the executable runs.
-	 */
-    PyRun_SimpleString(
-        "import sys\n"
-        "sys.path.insert(0, '.')\n"
-    );
+     * Integer literals use the long suffix so overload resolution picks
+     * the integer overload; plain int literals would be ambiguous between
+     * the (long, long) and (double, double) overloads.
+     */
+    report("main()", module.call("main"));
+    report("add(2, 3)", module.call("add", 2L, 3L));
+    report("multiply(2.5, 4.0)", module.call("multiply", 2.5, 4.0));
+    report("greet('user')", module.call("greet", std::string("user")));
+    report("describe('user', 30)", module.call("describe", std::string("user"), 30L));
+    report("repeat('word', 3)", module.call("repeat", std::string("word"), 3L));
+    report("printSum(10, 5)", module.call("printSum", 10L, 5L));
 
-    // Create a Python string containing the module name.
-    PyObject* moduleName = PyUnicode_FromString("MIATest");
-
-    // Import the MIATest Python module.
-    PyObject* module = PyImport_Import(moduleName);
-    Py_DECREF(moduleName);
-
-    // Verify that the module was imported successfully.
-    if (module == nullptr)
-    {
-        PyErr_Print();
-        Py_Finalize();
-        return 1;
-    }
-
-    // Retrieve the main() function from the Python module.
-    PyObject* function = PyObject_GetAttrString(module, "main");
-
-    // Verify that main() exists and is callable.
-    if (function == nullptr || !PyCallable_Check(function))
-    {
-        PyErr_Print();
-        Py_XDECREF(function);
-        Py_DECREF(module);
-        Py_Finalize();
-        return 1;
-    }
-
-    // Call Python's main() function with no arguments.
-    PyObject* result = PyObject_CallObject(function, nullptr);
-
-    // Verify that the Python function executed successfully.
-    if (result == nullptr)
-    {
-        PyErr_Print();
-        Py_DECREF(function);
-        Py_DECREF(module);
-        Py_Finalize();
-        return 1;
-    }
-
-    // Release the Python objects created above.
-    Py_DECREF(result);
-    Py_DECREF(function);
-    Py_DECREF(module);
-
-    // Shut down the embedded Python interpreter.
-    Py_Finalize();
+    // One call to a missing method to verify the error path reports cleanly.
+    report("missingMethod()", module.call("missingMethod"));
 
     std::cout << "Tests finished!" << std::endl;
-    return constants::SUCCESS;
+    return allPassed ? constants::SUCCESS : constants::FAILURE;
 }
