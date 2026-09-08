@@ -4,7 +4,8 @@ add_subdirectory( template )
 
 # Add various app folders.
 add_subdirectory( maple )
-add_subdirectory( MIASequencer )
+add_subdirectory( mia_sequencer )
+add_subdirectory( mia_test )
 add_subdirectory( mia_original )
 add_subdirectory( old_game_tools )
 add_subdirectory( workout )
