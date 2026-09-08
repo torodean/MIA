@@ -59,9 +59,6 @@ namespace paths
     // Path to the default log file from the repo directory (for testing).
     inline const std::string REPO_LOG = DEFAULT_REPO_LOG;
 
-    // Path to the python module directory in the repo directory (for testing).
-    inline const std::string REPO_PYTHON_DIR = DEFAULT_REPO_PYTHON_DIR;
-
     // Path to the system level installation directory.
     inline const std::string INSTALL_LOCATION = APP_INSTALL_LOCATION;
 
@@ -206,31 +203,29 @@ namespace paths
      * embedded interpreter, based on the runtime context.
      *
      * If the application is running from a system-installed location, this
-     * returns the system python directory. Otherwise, it returns the 'python'
-     * subdirectory of the resources folder next to the executable, falling
-     * back to the git-repository python directory when no local resources
-     * folder exists.
+     * returns the system python directory. If a 'python' subdirectory of the
+     * resources folder next to the executable exists, this returns it (the
+     * release-build layout). Otherwise, it returns the directory of the file
+     * which called into python, since python files sit beside the code which
+     * uses them during development.
      *
+     * @param thisFilesPath should always be "__FILE__". This will always give the
+     *                      filepath of the file it is being called in.
      * @return Path to the appropriate python module directory.
      */
-    inline std::string getPythonDirToUse()
+    inline std::string getPythonDirToUse(const std::string& thisFilesPath)
     {
         if (isInstalled())
         {
             basic_utils::ensureDirectoryExists(SYSTEM_PYTHON_DIR, true);
             return SYSTEM_PYTHON_DIR;
         }
-        else
-        {
-            std::string resourcesFolder = getExecutableDir() + "/resources/python";
-            if (std::filesystem::exists(resourcesFolder))
-                return resourcesFolder;
-            else
-            {
-                basic_utils::ensureDirectoryExists(REPO_PYTHON_DIR, true);
-                return REPO_PYTHON_DIR;
-            }
-        }
+
+        std::string resourcesFolder = getExecutableDir() + "/resources/python";
+        if (std::filesystem::exists(resourcesFolder))
+            return resourcesFolder;
+
+        return getCppFileDirAtCompileTime(thisFilesPath);
     }
 
 } // namespace paths

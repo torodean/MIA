@@ -2,7 +2,7 @@
  * @file PythonModule.hpp
  * @author Antonius Torode
  * @date 09/08/2026
- * @brief Declares a variadic-template variant of the Python module wrapper.
+ * @brief Declares a utility for loading Python modules and calling their methods.
  */
 #pragma once
 
@@ -90,12 +90,20 @@ public:
      * embedded interpreter is initialized by this constructor if no other
      * module is currently alive.
      *
+     * The caller passes __FILE__ so this class knows where it is being
+     * constructed from. During development runs, the python files are
+     * expected to sit in the same directory as the file which constructs
+     * this object, and that directory is added to Python's module search
+     * path. Installed and release runs resolve the python directory the
+     * same way as configuration files instead.
+     *
      * @param moduleName The name of the Python module to import.
+     * @param callerFile The source file constructing this object (__FILE__).
      * @throws error::MIAException with ErrorCode::Python_Module_Load_Failure if
      *     the module could not be imported. An app which prefers to continue
      *     without the module can catch this exception and handle it gracefully.
      */
-    explicit PythonModule(const std::string& moduleName);
+    PythonModule(const std::string& moduleName, const std::string& callerFile);
 
     /**
      * Destructor. Releases the module handle and, if this is the last module
