@@ -11,10 +11,12 @@ if(BUILD_PYTHON_FEATURES)
     # Python files are installed into the system python directory or collected
     # into the release resources folder, depending on the build mode.
     if(SYSTEM_INSTALL)
+        install(TARGETS miatest DESTINATION ${APP_INSTALL_LOCATION})
         install(FILES MIATest.py DESTINATION ${PYTHON_INSTALL_LOCATION})
     endif()
 
     if(RELEASE_BUILD)
+        install(TARGETS miatest DESTINATION ${RELEASE_INSTALL_LOCATION})
         install(FILES MIATest.py DESTINATION ${RELEASE_PYTHON_INSTALL_LOCATION})
     endif()
 endif()
