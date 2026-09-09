@@ -13,6 +13,8 @@
 #include "MIATest.hpp"
 // Used for the Python module wrapper being tested.
 #include "PythonModule.hpp"
+// Used for testing the PythonPlotter.
+#include "PythonPlotter.hpp"
 
 
 MIATest::MIATest()                      
@@ -24,7 +26,8 @@ void MIATest::initialize(int argc, char* argv[])
 	// TODO
 }
 
-int MIATest::run()
+
+int testPythonModule()
 {
     /*
      * Constructing the module is the only setup needed: the wrapper starts
@@ -90,4 +93,23 @@ int MIATest::run()
 
     std::cout << "Tests finished!" << std::endl;
     return allPassed ? constants::SUCCESS : constants::FAILURE;
+}
+
+
+int testPythonPlotter()
+{
+    // Sequence to test plotting with.
+    std::vector<int> x = {0,1,2,3,4,5,6,7};
+    std::vector<int> y = {0,1,3,6,10,15,21,28};
+    
+    python_plotting::PythonPlotter plotter;
+    plotter.setLabels("MIATest Plot", "X-Values", "Y-Values");
+    return plotter.plot(x,y);        
+}
+
+
+int MIATest::run()
+{
+    //return testPythonModule();
+    return testPythonPlotter();
 }

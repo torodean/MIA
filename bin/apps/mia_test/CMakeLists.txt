@@ -6,7 +6,7 @@ if(BUILD_PYTHON_FEATURES)
 
     #  The target name "test" is reserved when CTest testing is enabled.
     add_executable(miatest ${test_SRC} ${test_INC} )
-    target_link_libraries(miatest PRIVATE Framework_CORE Python_UTIL )
+    target_link_libraries(miatest PRIVATE Framework_CORE Python_UTIL Python_Plotting_LIB )
 
     # Python files are installed into the system python directory or collected
     # into the release resources folder, depending on the build mode.
