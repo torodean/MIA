@@ -325,12 +325,12 @@ vk.leftclick();
 
 
 \section{Type Manipulation Utility}
-\label{sec:typeManipulationUtility}
+\label{section:type_utility}
 
 These features are all part of the \texttt{Types\_UTIL}.
 
 
-\subsection{String Utilities}
+\subsection{String Utilities}\label{section:string_utils}
 
 The MIA project contains many helper methods particularly related to string manipulation, parsing, transformation, and formatting. The API for this utility is in the \texttt{StringUtils.hpp} file, where the various helper methods are stored. This file contains the complete documentation for each available function. To use the string utilities, simply include the \texttt{StringUtils.hpp} file and link to the \texttt{Types\_UTIL} in the CMake.
 
@@ -377,6 +377,64 @@ The resulting strings are:
 
 
 
-\subsection{Vector Utilities}
+\subsection{Vector Utilities}\label{section:vector_utils}
 
 The MIA project provides a collection of general-purpose utilities for working with C++ vectors. The API for these utilities is defined in \texttt{VectorUtils.hpp}, where the available functions and their detailed behavior are documented. To use the vector utilities, include the \texttt{VectorUtils.hpp} header and link the application against the \texttt{Types\_UTIL} library in CMake.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Python Utilities}\label{section:python_utils}
+
+The MIA project contains python utilities which allow loading and calling methods from python files from the c++ code. The python related utilities are contained in the \texttt{Python\_UTILS} library in CMake.
+
+The \texttt{PythonModule.hpp} file provides a utility for importing and calling methods from a python file. To import a python module for use in c++ code, the python module (file) should typically be located in the same directory as the c++ code that is using it. The \texttt{PythonModule} is intended to be constructed with the name of the module (python file) and the file location of the calling file (this is used to determine where the python files are located).
+\begin{lstlisting}[style=cppstyle]
+// PythonModule(const std::string& moduleName, const std::string& callerFile);
+PythonModule myModule = ("myPythonFile", __FILE__);
+\end{lstlisting}
+This class is intended to be called with \texttt{\_\_FILE\_\_} as the second parameter - which assumes the python files are located next to the associated c++ files. The \texttt{callerFile} parameter is used to determine the \textit{directory} of the python files, so this can be customized if the files are placed in a different directory (at the time of writing this, that is untested). See section \ref{section:python_file_location} for more information about the python file locations. 
+
+After constructing the module, the python methods can simply be called using the appropriate \texttt{call()} overload:
+\begin{lstlisting}[style=cppstyle]
+myModule.call("pythonMethodName", <appropriate_parameters>);
+\end{lstlisting}
+The appropriate parameters that are fed into the \texttt{PythonModule::call(..)} method are parsed using a \texttt{PyObjectPtr toPython(..)} method. An overload of this method exists for each supported type, and a new overload may need added when adding python methods which do not use parameters of the existing supported types.
+
+
+\subsubsection{Python Results}
+
+The \texttt{PythonModule::call(..)} method returns a special \texttt{PythonResult} object. This objects is used to store the return values of the python methods. This object is essentially a wrapper around all of the various supported types that python methods in the MIA project can return. If a non-supported type is returned, this object will need expanded to include new types. The result object contains a few basic API components which can be seen in the \texttt{PythonResult.hpp} file.
+
+
+
+\subsubsection{Building Python Features}
+
+The MIA project contains a CMake specific flag for building the python features. When building, if the python packages are located successfully, CMake will set the \texttt{BUILD\_PYTHON\_FEATURES} variable to true. This flag is intended to wrap features which require the python components so that they can be optionally built only when python libraries are available. The CMake for an app which requires the python files should therefore look like the following:
+\begin{lstlisting}[style=makestyle]
+# This app currently requires the python features to be available.
+if(BUILD_PYTHON_FEATURES)
+	# App-specific cmake here.
+endif()
+\end{lstlisting}
+
+
+\subsubsection{Python File Location}\label{section:python_file_location}
+
+When building the MIA project, the python install locations are set relative to the application install location (see \ref{section:platform_specific_path_configurations}). These paths are a separate python folder alongside the program files location:
+\begin{lstlisting}[style=makestyle]
+set(PYTHON_INSTALL_LOCATION "${APP_INSTALL_LOCATION}/python")
+\end{lstlisting}
+The \texttt{PythonModule} utility will attempt to locate the associated python modules for various cases. If the application is running from a system-installed location, it will look in the system python directory. Next, if a 'python' subdirectory of the resources folder next to the executable exists (\texttt{<exe\_dir>/resources/python}), this will be used (the release-build layout). Otherwise, the directory of the calling file (or custom path if \texttt{callerFile} is modified) will be used, since python files typically sit beside the code which uses them during development.
