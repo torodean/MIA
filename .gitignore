@@ -60,6 +60,9 @@
 *.mod
 *.smod
 
+# Python temporary files
+__pycache__
+
 # Compiled Static libraries
 *.lai
 *.la

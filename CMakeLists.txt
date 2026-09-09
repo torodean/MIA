@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.082")
+set(MIA_VERSION_VAL "2.083")
 
 message(STATUS "MIA_VERSION_VAL: ${MIA_VERSION_VAL}")
 
@@ -50,6 +50,17 @@ if (MYSQLCPPCONN_INCLUDE_DIR AND MYSQLCPPCONN_LIBRARY)
 else()
     set(BUILD_DATABASE_FEATURES OFF)
     message(STATUS "MySQL Connector/C++ not found. SKIPPING database components!")
+endif()
+
+# Checking if Python development libraries are available to build.
+find_package(Python3 COMPONENTS Development.Embed)
+
+if (Python3_FOUND)
+    set(BUILD_PYTHON_FEATURES ON)
+    message(STATUS "Found Python development libraries. BUILDING Python components!")
+else()
+    set(BUILD_PYTHON_FEATURES OFF)
+    message(STATUS "Python development libraries not found. SKIPPING Python components!")
 endif()
 
 # Create the log directories
