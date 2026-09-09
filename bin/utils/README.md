@@ -25,3 +25,6 @@ This folder contains reusable utility libraries that provide common functionalit
   
 - **security/**  
   This contains utilities related to security such as credential handling, authentication, etc.
+  
+- **python/**  
+  This contains utilities related to loading python modules so that python code can be written and included in the MIA project.

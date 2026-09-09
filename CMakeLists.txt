@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.083")
+set(MIA_VERSION_VAL "2.089")
 
 message(STATUS "MIA_VERSION_VAL: ${MIA_VERSION_VAL}")
 
@@ -28,12 +28,10 @@ endif()
 # OS-Specific Path Configuration
 if(WIN32 OR CYGWIN)
     set(APP_INSTALL_LOCATION "C:/Program Files/mia")
-    set(PYTHON_INSTALL_LOCATION "${APP_INSTALL_LOCATION}/python")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "C:/ProgramData/mia")
     set(DEFAULT_SYSTEM_LOG_DIR "C:/ProgramData/mia/logs")
 elseif(UNIX AND NOT APPLE)
     set(APP_INSTALL_LOCATION "/usr/local/mia")
-    set(PYTHON_INSTALL_LOCATION "${APP_INSTALL_LOCATION}/python")
     set(DEFAULT_SYSTEM_CONFIG_FILE_DIR "/etc/mia")
     set(DEFAULT_SYSTEM_LOG_DIR "/var/log/mia")
 else()
@@ -78,6 +76,7 @@ if(SYSTEM_INSTALL)
 endif()
 
 # Non-OS-specific path configurations.
+set(PYTHON_INSTALL_LOCATION "${APP_INSTALL_LOCATION}/python")
 set(DEFAULT_SYSTEM_CONFIG_FILE "${DEFAULT_SYSTEM_CONFIG_FILE_DIR}/MIAConfig.MIA")
 set(DEFAULT_SYSTEM_LOG "${DEFAULT_SYSTEM_LOG_DIR}/MIALog.log")
 set(DEFAULT_REPO_CONFIG_FILE_DIR "${CMAKE_SOURCE_DIR}/resources")
