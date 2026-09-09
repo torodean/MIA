@@ -14,6 +14,7 @@
 #include <memory>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -210,3 +211,22 @@ TEST_F(PythonModule_T, TwoModulesAlive)
     EXPECT_EQ(fromSecond.asInt(), 4)
         << "The second module should be independently usable.";
 }
+
+
+/**
+ * @brief Verifies a vector of integers is converted to a Python list.
+ */
+TEST_F(PythonModule_T, VectorIntArgument)
+{
+    std::vector<int> vecOfInts = {1, 2, 3, 4, 5};
+
+    PythonResult result = module->call("sumVals", vecOfInts);
+
+    EXPECT_TRUE(result.isValid())
+        << "The sumVals call should succeed. Error: " << result.getError();
+    EXPECT_EQ(result.getType(), PythonResult::Type::String)
+        << "sumVals should return a String result.";
+    EXPECT_EQ(result.asString(), "Values list:[1, 2, 3, 4, 5]; Sum:15")
+        << "sumVals should receive the vector as a Python list and calculate its sum.";
+}
+

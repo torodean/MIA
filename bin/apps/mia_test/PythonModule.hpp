@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 #include <Python.h>
 
@@ -207,6 +208,60 @@ private:
     static PyObjectPtr toPython(const char* value)
     {
         return toPython(std::string(value));
+    }
+    
+    /**
+     * Creates a new Python list from a C++ vector of integers.
+     *
+     * @param value The vector of integers to convert.
+     * @return The Python list, or null if creation failed.
+     */
+    static PyObjectPtr toPython(const std::vector<int>& value)
+    {
+        PyObjectPtr list(PyList_New(value.size()));
+
+        if (!list)
+            return nullptr;
+
+        for (std::size_t i = 0; i < value.size(); ++i)
+        {
+            PyObjectPtr item = toPython(value[i]);
+
+            if (!item)
+                return nullptr;
+
+            // PyList_SetItem steals the reference to item.
+            PyList_SetItem(list.get(), i, item.release());
+        }
+
+        return list;
+    }
+    
+    /**
+     * Creates a new Python list from a C++ vector of doubles.
+     *
+     * @param value The vector of doubles to convert.
+     * @return The Python list, or null if creation failed.
+     */
+    static PyObjectPtr toPython(const std::vector<double>& value)
+    {
+        PyObjectPtr list(PyList_New(value.size()));
+
+        if (!list)
+            return nullptr;
+
+        for (std::size_t i = 0; i < value.size(); ++i)
+        {
+            PyObjectPtr item = toPython(value[i]);
+
+            if (!item)
+                return nullptr;
+
+            // PyList_SetItem steals the reference to item.
+            PyList_SetItem(list.get(), i, item.release());
+        }
+
+        return list;
     }
 
     /**

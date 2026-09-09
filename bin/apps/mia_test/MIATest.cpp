@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 // The associated header file.
 #include "MIATest.hpp"
@@ -81,6 +82,8 @@ int MIATest::run()
     report("describe('user', 30)", module.call("describe", "user", 30));
     report("repeat('word', 3)", module.call("repeat", "word", 3));
     report("printSum(10, 5)", module.call("printSum", 10, 5));
+    report("sumInts({1, 2, 3, 4, 5})", module.call("sumInts", std::vector<int>{1, 2, 3, 4, 5}));
+    report("sumDoubles({1.5, 2.5, 3.5})", module.call("sumDoubles", std::vector<double>{1.5, 2.5, 3.5}));
 
     // One call to a missing method to verify the error path reports cleanly.
     report("missingMethod()", module.call("missingMethod"));

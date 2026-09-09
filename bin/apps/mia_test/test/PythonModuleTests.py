@@ -30,6 +30,11 @@ def describe(name, age):
     return name + " is " + str(age) + " years old."
 
 
+def sumVals(values):
+    """Returns a string containing the values and their sum."""
+    return "Values list:" + str(values) + "; Sum:" + str(sum(values))
+
+    
 def doNothing():
     """Returns None to cover the void return path."""
     return None

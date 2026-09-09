@@ -34,5 +34,17 @@ def printSum(a, b):
     print("Sum: " + str(a + b))
 
 
+def sumInts(values):
+    """Prints the list of integers and their sum."""
+    print("Integer list:", values)
+    print("Sum:", sum(values))
+
+
+def sumDoubles(values):
+    """Prints the list of doubles and their sum."""
+    print("Double list:", values)
+    print("Sum:", sum(values))
+
+
 if __name__ == "__main__":
     main()
