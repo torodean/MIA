@@ -26,6 +26,11 @@ namespace error
      */
     enum ErrorCode
     {
+        /*
+         * Program and System level errors. These are errors which are specific to
+         * the program flow or system connections. Most of these try to use the same
+         * code values as the system would use.
+         */
         MIA_Success = 0,                      ///< Success - no error!
         Access_denied = 5,                    ///< Access denied when attempting an action.
         Gen_Failure = 31,                     ///< A device attached to the system is not functioning.
@@ -37,6 +42,12 @@ namespace error
         RPC_S_Server_Unavailable = 1722,      ///< The RPC server is unavailable.
         NErr_User_Not_Found = 2221,           ///< The user name could not be found.
         No_Browser_Servers_Found = 6118,      ///< Unavailable list of servers for this workgroup.
+        
+        /*
+         * MIA Program/application specific errors. These are errors specific to MIA's
+         * application design and features which are not fitting in a more specific
+         * category. 31XXX
+         */
         MIAConfig_File_Not_Found = 31403,     ///< The configuration file was not found.
         FATAL_File_Not_Found = 31404,         ///< A needed file was not found.
         Feature_In_Dev = 31415,               ///< This feature is not finished.
@@ -50,23 +61,32 @@ namespace error
         Cannot_Find_Mapped_Value = 31423,     ///< Some map does not contain the map searched for.
         Invalid_Character_Input = 31424,      ///< There was an invalid character input.
         Linux_Only_Feature = 31425,           ///< This feature is only supported on Linux.
-        Database_Features_Not_Built = 31426,  ///< Database is not setup.
-        Database_Connection_Failure = 31427,  ///< Failed to connect to the database.
         Invalid_Argument = 31428,             ///< Invalid application/command argument.
         Missing_Argument = 31429,             ///< The app/command argument was not found.
         Config_File_Not_Set = 31430,          ///< Config File not set.
         Failed_To_Open_File = 31431,          ///< Failed to open a file.
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
         Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.
-        Undefined_RPG_Value = 31434,          ///< A referenced value for the RPG system wasn't defined.
-        Duplicate_RPG_Value = 31435,          ///< A duplicate RPG entry was added.
-        Invalid_RPG_Data = 31436,             ///< An invalid combination/set of RPG data was used. 
+        
+        /*
+         * RPG error codes. 371XX
+         */
+        Undefined_RPG_Value = 37100,          ///< A referenced value for the RPG system wasn't defined.
+        Duplicate_RPG_Value = 37101,          ///< A duplicate RPG entry was added.
+        Invalid_RPG_Data = 37102,             ///< An invalid combination/set of RPG data was used.
+        
+        /*
+         * Database error codes. 38XXX
+         */ 
+        Database_Features_Not_Built = 38000,  ///< Database is not setup.
+        Database_Connection_Failure = 38001,  ///< Failed to connect to the database.
 
         /*
          * Python (embedded interpreter) error codes. 39XXX
          */
         Python_Module_Load_Failure = 39000,   ///< A Python module failed to load in the embedded interpreter.
 
+        // A catch all for any un-programmed errors.
         Catastrophic_Failure = 9001           ///< Some unprogrammed error occured.
     };
 

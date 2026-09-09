@@ -34,21 +34,30 @@ namespace error
         { Cannot_Find_Mapped_Value, "Error finding mapped value." },
         { Invalid_Character_Input, "Invalid character input." },
         { Linux_Only_Feature, "This feature is only implemented for Linux." },
-        { Database_Features_Not_Built, "Database features are not built." },
-        { Database_Connection_Failure, "Failed to connect to the database." },
         { Invalid_Argument, "Invalid application/command argument." },
         { Missing_Argument, "The app/command argument was not found." },
         { Failed_To_Open_File, "Failed to open file." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
+        
+        /*
+         * RPG error codes. 371XX
+         */
         { Undefined_RPG_Value, "A referenced value for the RPG system wasn't defined." },
         { Duplicate_RPG_Value, "A duplicate RPG entry was added." },
         { Invalid_RPG_Data, "An invalid combination/set of RPG data was used." },
+        
+        /*
+         * Database error codes. 38XXX
+         */
+        { Database_Features_Not_Built, "Database features are not built." },
+        { Database_Connection_Failure, "Failed to connect to the database." },
 
         /*
          * Python error codes. 39XXX
          */
         { Python_Module_Load_Failure, "A Python module failed to load in the embedded interpreter." },
-
+        
+        // A catch all for any un-programmed errors.
         { Catastrophic_Failure, "A catastrophic failure occurred." }
     };
 
