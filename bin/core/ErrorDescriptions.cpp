@@ -10,6 +10,10 @@
 namespace error
 {
     const std::unordered_map<ErrorCode, std::string> errorDescriptions = {
+        
+        /*
+         * Program and System level errors. 
+         */
         { MIA_Success, "The operation completed successfully." },
         { Access_denied, "Access denied." },
         { Gen_Failure, "A device attached to the system is not functioning." },
@@ -21,6 +25,11 @@ namespace error
         { RPC_S_Server_Unavailable, "The RPC server is unavailable." },
         { NErr_User_Not_Found, "The user name could not be found." },
         { No_Browser_Servers_Found, "The list of servers for this workgroup is not currently available." },
+        
+        
+        /*
+         * MIA Program/application specific errors.
+         */
         { MIAConfig_File_Not_Found, "MIAConfig file not found." },
         { FATAL_File_Not_Found, "FATAL: File not found." },
         { Feature_In_Dev, "Feature still in development." },
