@@ -1,298 +1,201 @@
 /**
- * @file PythonModule.hpp
+ * @file PythonModule.cpp
  * @author Antonius Torode
- * @date 09/09/2026
- * @brief Declares a utility for loading Python modules and calling their methods.
+ * @date 09/08/2026
+ * @brief Implements loading Python modules and calling their methods.
  */
-#pragma once
 
-#include <memory>
+// The associated header file.
+#include "PythonModule.hpp"
+
+// Used for resolving the python module directory.
+#include "Paths.hpp"
+
 #include <string>
-#include <type_traits>
-#include <vector>
 
 #include <Python.h>
 
-// Used for throwing on module load failure.
-#include "MIAException.hpp"
-// Used for the ErrorCode of the load failure exception.
-#include "Error.hpp"
 
-#include "PythonResult.hpp"
-
-
-/**
- * Python objects are reference-counted instead of deleted directly: every API
- * which returns a PyObject* hands back a "new reference", and the caller is
- * responsible for releasing it later with Py_DECREF. This struct teaches
- * unique_ptr what "delete" means for such a pointer, since the default delete
- * keyword cannot be used on Python objects.
- *
- * It is a callable type (the operator() makes it behave like a function) rather
- * than a class which owns anything. The unique_ptr holds the pointer and calls
- * this deleter exactly where a raw-pointer implementation would call Py_DECREF.
- * Because the struct has no data members, the unique_ptr costs the same as a
- * raw pointer.
- *
- * Only wrap pointers you own (new references from PyImport_Import,
- * PyObject_GetAttrString, PyObject_CallObject, ...). Some Python APIs return
- * "borrowed references" which are NOT decrefed by the caller; wrapping one of
- * these would release an object the caller never owned.
- */
-struct PyObjectDeleter
+namespace
 {
     /**
-     * Releases one reference to the object.
+     * Extracts the pending Python exception into a C++ string.
+     * This clears the Python error indicator, so it is only called when the error
+     * has already been handled (or is about to be reported to the caller).
      *
-     * @param object The object to release. Never null: unique_ptr only calls
-     *     the deleter on a non-null pointer, so Py_DECREF is safe here.
+     * @return The exception message, or a fallback message if one can't be read.
      */
-    void operator()(PyObject* object) const
+    std::string fetchPythonError()
     {
-        Py_DECREF(object);
-    }
-}; // struct PyObjectDeleter
+        PyObject* type = nullptr;
+        PyObject* value = nullptr;
+        PyObject* traceback = nullptr;
 
+        // PyErr_Fetch takes ownership of the exception objects it returns.
+        PyErr_Fetch(&type, &value, &traceback);
+        PyErr_NormalizeException(&type, &value, &traceback);
+        Py_XDECREF(type);
+        Py_XDECREF(traceback);
 
-/**
- * A unique_ptr for owned Python references.
- * Use this anywhere a PyObject* returned as a new reference needs automatic
- * Py_DECREF when it goes out of scope.
- */
-using PyObjectPtr = std::unique_ptr<PyObject, PyObjectDeleter>;
+        if (!value)
+            return "Unknown Python error.";
 
-
-/**
- * A loaded Python module which can be called from C++.
- * This owns both the interpreter lifetime and the imported module handle: the
- * first module constructed initializes the embedded interpreter, and destroying
- * the last module shuts it down. Code using this class never touches the
- * Python C API directly.
- *
- * call() is a variadic template: any mix of supported argument types is
- * converted to the matching Python type and packed into the argument tuple.
- * A new argument type is supported by extending the private toPython()
- * helpers, not by adding another call() overload. All calls return a
- * PythonResult, so expected call failures (missing method, Python exception,
- * conversion failure) surface as values without raw pointers or exceptions.
- * An app which wants to treat a call failure as fatal can check isValid()
- * and throw or exit on its own terms.
- *
- * The interpreter reference count is not thread-safe; constructing and
- * destroying modules is assumed to happen on one thread.
- */
-class PythonModule
-{
-public:
-
-    /**
-     * Constructs and loads a Python module by name.
-     * The module must be reachable on Python's module search path. The
-     * embedded interpreter is initialized by this constructor if no other
-     * module is currently alive.
-     *
-     * The caller passes __FILE__ so this class knows where it is being
-     * constructed from. During development runs, the python files are
-     * expected to sit in the same directory as the file which constructs
-     * this object, and that directory is added to Python's module search
-     * path. Installed and release runs resolve the python directory the
-     * same way as configuration files instead.
-     *
-     * @param moduleName The name of the Python module to import.
-     * @param callerFile The source file constructing this object (__FILE__).
-     * @throws error::MIAException with ErrorCode::Python_Module_Load_Failure if
-     *     the module could not be imported. An app which prefers to continue
-     *     without the module can catch this exception and handle it gracefully.
-     */
-    PythonModule(const std::string& moduleName, const std::string& callerFile);
-
-    /**
-     * Destructor. Releases the module handle and, if this is the last module
-     * alive, shuts down the embedded interpreter.
-     */
-    ~PythonModule();
-
-    /*
-     * Copying is deleted because a PythonModule owns exactly one reference to
-     * a Python module object. If two objects shared that pointer, whichever
-     * was destroyed first would release the reference and leave the other
-     * holding a handle Python has already freed (a use-after-free on the next
-     * call). A copy would also corrupt the interpreter reference count, since
-     * one construction would become two live objects. If a module ever needs
-     * to be shared, share the PythonModule itself through a shared_ptr so
-     * ownership stays with one object.
-     */
-    PythonModule(const PythonModule&) = delete;
-    PythonModule& operator=(const PythonModule&) = delete;
-
-    /**
-     * Checks whether the module defines a callable method with the given name.
-     *
-     * @param name The name of the method to look up.
-     * @return True if the method exists and is callable, false otherwise.
-     */
-    bool hasMethod(const std::string& name) const;
-
-    /**
-     * Calls a Python method with any mix of supported argument types.
-     * C++ integer types become Python ints, floating point types become
-     * Python floats, and std::string or string literals become Python strs.
-     * A std::vector of any supported element type becomes a Python list.
-     * Calling a method with no arguments is done with an empty argument list.
-     * An argument whose C++ type has no converter is a compile error, and a
-     * type mismatch with the Python method's expectations surfaces through
-     * the returned PythonResult as a normal call failure.
-     *
-     * @param name The name of the method to call.
-     * @param args Zero or more arguments, converted per their C++ type.
-     * @return A PythonResult holding the return value of the call.
-     * @tparam ArgTypes The argument types.
-     */
-    template<typename... ArgTypes>
-    PythonResult call(const std::string& name, ArgTypes... args)
-    {
-        return invoke(name, buildArgs(toPython(args)...));
-    }
-
-private:
-
-    /**
-     * Initializes the embedded interpreter if it is not running yet.
-     * This is a no-op while at least one module is alive. Besides starting
-     * the interpreter, it puts the current working directory on Python's
-     * module search path so modules next to the executable are importable.
-     */
-    static void ensureInterpreter();
-
-    /**
-     * Creates a new Python int object from any C++ integer type.
-     * The constraint keeps this template from also matching floating point
-     * types, which have their own overload below.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     * @tparam Type The integer type of the value.
-     */
-    template<typename Type> requires std::is_integral_v<Type>
-    static PyObjectPtr toPython(Type value)
-    {
-        return PyObjectPtr(PyLong_FromLongLong(value));
-    }
-
-    /**
-     * Creates a new Python float object from any C++ floating point type.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     * @tparam Type The floating point type of the value.
-     */
-    template<typename Type> requires std::is_floating_point_v<Type>
-    static PyObjectPtr toPython(Type value)
-    {
-        return PyObjectPtr(PyFloat_FromDouble(value));
-    }
-
-    /**
-     * Creates a new Python str object from a C++ string.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    static PyObjectPtr toPython(const std::string& value)
-    {
-        return PyObjectPtr(PyUnicode_FromString(value.c_str()));
-    }
-
-    /**
-     * Creates a new Python str object from a string literal.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    static PyObjectPtr toPython(const char* value)
-    {
-        return toPython(std::string(value));
-    }
-    
-    /**
-     * Creates a new Python list from a C++ vector of any supported element
-     * type. Each element is converted by its own toPython overload, so the
-     * vector supports any element type which toPython accepts (integers,
-     * floating point types, strings).
-     *
-     * @param values The vector to convert.
-     * @return The Python list, or null if creation failed.
-     * @tparam Type The element type of the vector.
-     */
-    template<typename Type>
-    static PyObjectPtr toPython(const std::vector<Type>& values)
-    {
-        PyObjectPtr list(PyList_New(values.size()));
-
-        if (!list)
-            return nullptr;
-
-        for (std::size_t i = 0; i < values.size(); ++i)
+        PyObjectPtr valuePtr(value);
+        PyObjectPtr message(PyObject_Str(valuePtr.get()));
+        if (!message)
         {
-            PyObjectPtr item = toPython(values[i]);
-
-            if (!item)
-                return nullptr;
-
-            // PyList_SetItem steals the reference to item.
-            PyList_SetItem(list.get(), i, item.release());
+            PyErr_Clear();
+            return "Unknown Python error.";
         }
 
-        return list;
+        const char* text = PyUnicode_AsUTF8(message.get());
+        if (!text)
+        {
+            PyErr_Clear();
+            return "Unknown Python error.";
+        }
+
+        return std::string(text);
     }
 
+
     /**
-     * Packs converted arguments into a Python tuple for a method call.
-     * Each argument is a PyObjectPtr. The tuple takes its own reference to
-     * every argument, so the arguments passed in keep their references and
-     * release them as usual when they go out of scope.
+     * Converts a PyObject returned by a Python method call into a PythonResult.
+     * The type of the Python object decides which PythonResult constructor fits.
+     * Any object which is not an int, float, or str (including None) becomes a
+     * void result, since the C++ side has no representation for it.
      *
-     * If any argument is null (its creation failed) or the tuple cannot be
-     * created, the returned pointer is null, which invoke() reports as an
-     * error. A call with no arguments produces an empty tuple.
-     *
-     * @param args Zero or more PyObjectPtr arguments to pack.
-     * @return The argument tuple, or null on failure.
-     * @tparam ArgTypes The argument types.
+     * @param result The Python object to convert. Must be a new reference owned
+     *     by the caller; this function does not release it.
+     * @return A PythonResult describing the object.
      */
-    template<typename... ArgTypes>
-    static PyObjectPtr buildArgs(const ArgTypes&... args)
+    PythonResult toResult(PyObject* result)
     {
-        // The fold expression is true when at least one argument is null.
-        if ((!args || ...))
-            return nullptr;
+        if (PyLong_Check(result))
+        {
+            long value = PyLong_AsLong(result);
+            if (PyErr_Occurred())
+            {
+                PyErr_Clear();
+                return PythonResult::error("Python integer result does not fit in a long.");
+            }
+            return PythonResult(value);
+        }
 
-        return PyObjectPtr(PyTuple_Pack(sizeof...(args), args.get()...));
+        if (PyFloat_Check(result))
+        {
+            double value = PyFloat_AsDouble(result);
+            if (PyErr_Occurred())
+            {
+                PyErr_Clear();
+                return PythonResult::error("Python float result could not be converted.");
+            }
+            return PythonResult(value);
+        }
+
+        if (PyUnicode_Check(result))
+        {
+            const char* text = PyUnicode_AsUTF8(result);
+            if (!text)
+            {
+                PyErr_Clear();
+                return PythonResult::error("Python string result could not be converted.");
+            }
+            return PythonResult(text);
+        }
+
+        return PythonResult();
     }
+} // namespace
 
-    /**
-     * Calls a method with a pre-built argument tuple.
-     * This is the shared implementation behind the public call() template.
-     *
-     * @param name The name of the method to call.
-     * @param args The argument tuple. An empty tuple calls the method with no
-     *     arguments; a null tuple reports a failed argument build.
-     * @return A PythonResult holding the return value of the call.
+
+// The interpreter does not run until the first module is constructed.
+int PythonModule::interpreterCount = 0;
+
+
+void PythonModule::ensureInterpreter()
+{
+    if (interpreterCount > 0)
+        return;
+
+    Py_Initialize();
+}
+
+
+PythonModule::PythonModule(const std::string& moduleName, const std::string& callerFile)
+    : name(moduleName)
+{
+    // The interpreter must exist before the module can be imported, and the
+    // count must rise before any call can observe it.
+    ensureInterpreter();
+    ++interpreterCount;
+
+    /*
+     * Add the python directory for this construction to Python's module
+     * search path. Doing it per construction lets callers in different
+     * directories coexist: each one adds the directory holding its own
+     * python files.
      */
-    PythonResult invoke(const std::string& name, PyObjectPtr args);
+    std::string setPath =
+        "import sys\n"
+        "sys.path.insert(0, r'" + paths::getPythonDirToUse(callerFile) + "')\n";
+    PyRun_SimpleString(setPath.c_str());
 
-    /// The name of the loaded module.
-    std::string name;
+    module.reset(PyImport_ImportModule(moduleName.c_str()));
 
-    /**
-     * The imported module handle. The PyObjectDeleter releases the reference
-     * when this object is destroyed.
+    /*
+     * A failed import is a configuration or deployment problem which every
+     * caller would have to handle the same way, so it throws instead of
+     * returning a usable object with an unusable handle. The Python traceback
+     * is printed first since the exception can only carry the C++-side story.
      */
-    PyObjectPtr module;
+    if (!module)
+    {
+        PyErr_Print();
+        MIA_THROW(error::ErrorCode::Python_Module_Load_Failure,
+                  "Module '" + moduleName + "' could not be imported.");
+    }
+}
 
-    /**
-     * The number of PythonModule objects currently alive. The embedded
-     * interpreter runs while this count is above zero.
-     */
-    static int interpreterCount;
-}; // class PythonModule
+
+PythonModule::~PythonModule()
+{
+    // Release the module handle first so no Python object is destroyed after
+    // the interpreter has shut down.
+    module.reset();
+
+    // Shut the interpreter down only when the last module is gone.
+    if (--interpreterCount == 0)
+        Py_FinalizeEx();
+}
+
+
+bool PythonModule::hasMethod(const std::string& methodName) const
+{
+    if (!module)
+        return false;
+
+    PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
+    return function && PyCallable_Check(function.get());
+}
+
+
+PythonResult PythonModule::invoke(const std::string& methodName, PyObjectPtr args)
+{
+    // A null tuple means the caller's argument building failed.
+    if (!args)
+        return PythonResult::error("Failed to build arguments for '" + methodName + "'.");
+
+    PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
+    if (!function)
+        return PythonResult::error("Method '" + methodName + "' not found: " + fetchPythonError());
+
+    if (!PyCallable_Check(function.get()))
+        return PythonResult::error("Attribute '" + methodName + "' is not callable.");
+
+    PyObjectPtr result(PyObject_CallObject(function.get(), args.get()));
+    if (!result)
+        return PythonResult::error("Call to '" + methodName + "' failed: " + fetchPythonError());
+
+    return toResult(result.get());
+}
