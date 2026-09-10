@@ -29,6 +29,18 @@ namespace python_plotting
     {
         pythonModule.call("setLabels", title, xLabel, yLabel);
     }
+
+
+    void PythonPlotter::setShowGrid(bool val)
+    {
+        pythonModule.call("setShowGrid", val);
+    }
+
+
+    void PythonPlotter::setFigureSize(double widthInches, double heightInches)
+    {
+        pythonModule.call("setFigureSize", widthInches, heightInches);
+    }
     
     
     std::string ColorToString(const Color color)
