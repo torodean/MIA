@@ -137,6 +137,7 @@ public:
      * Calls a Python method with any mix of supported argument types.
      * C++ integer types become Python ints, floating point types become
      * Python floats, and std::string or string literals become Python strs.
+     * A std::vector of any supported element type becomes a Python list.
      * Calling a method with no arguments is done with an empty argument list.
      * An argument whose C++ type has no converter is a compile error, and a
      * type mismatch with the Python method's expectations surfaces through
@@ -145,9 +146,10 @@ public:
      * @param name The name of the method to call.
      * @param args Zero or more arguments, converted per their C++ type.
      * @return A PythonResult holding the return value of the call.
+     * @tparam ArgTypes The argument types.
      */
-    template<typename... Args>
-    PythonResult call(const std::string& name, Args... args)
+    template<typename... ArgTypes>
+    PythonResult call(const std::string& name, ArgTypes... args)
     {
         return invoke(name, buildArgs(toPython(args)...));
     }
@@ -169,9 +171,10 @@ private:
      *
      * @param value The value to convert.
      * @return The Python object, or null if creation failed.
+     * @tparam Type The integer type of the value.
      */
-    template<typename T> requires std::is_integral_v<T>
-    static PyObjectPtr toPython(T value)
+    template<typename Type> requires std::is_integral_v<Type>
+    static PyObjectPtr toPython(Type value)
     {
         return PyObjectPtr(PyLong_FromLongLong(value));
     }
@@ -181,9 +184,10 @@ private:
      *
      * @param value The value to convert.
      * @return The Python object, or null if creation failed.
+     * @tparam Type The floating point type of the value.
      */
-    template<typename T> requires std::is_floating_point_v<T>
-    static PyObjectPtr toPython(T value)
+    template<typename Type> requires std::is_floating_point_v<Type>
+    static PyObjectPtr toPython(Type value)
     {
         return PyObjectPtr(PyFloat_FromDouble(value));
     }
@@ -211,48 +215,26 @@ private:
     }
     
     /**
-     * Creates a new Python list from a C++ vector of integers.
+     * Creates a new Python list from a C++ vector of any supported element
+     * type. Each element is converted by its own toPython overload, so the
+     * vector supports any element type which toPython accepts (integers,
+     * floating point types, strings).
      *
-     * @param value The vector of integers to convert.
+     * @param values The vector to convert.
      * @return The Python list, or null if creation failed.
+     * @tparam Type The element type of the vector.
      */
-    static PyObjectPtr toPython(const std::vector<int>& value)
+    template<typename Type>
+    static PyObjectPtr toPython(const std::vector<Type>& values)
     {
-        PyObjectPtr list(PyList_New(value.size()));
+        PyObjectPtr list(PyList_New(values.size()));
 
         if (!list)
             return nullptr;
 
-        for (std::size_t i = 0; i < value.size(); ++i)
+        for (std::size_t i = 0; i < values.size(); ++i)
         {
-            PyObjectPtr item = toPython(value[i]);
-
-            if (!item)
-                return nullptr;
-
-            // PyList_SetItem steals the reference to item.
-            PyList_SetItem(list.get(), i, item.release());
-        }
-
-        return list;
-    }
-    
-    /**
-     * Creates a new Python list from a C++ vector of doubles.
-     *
-     * @param value The vector of doubles to convert.
-     * @return The Python list, or null if creation failed.
-     */
-    static PyObjectPtr toPython(const std::vector<double>& value)
-    {
-        PyObjectPtr list(PyList_New(value.size()));
-
-        if (!list)
-            return nullptr;
-
-        for (std::size_t i = 0; i < value.size(); ++i)
-        {
-            PyObjectPtr item = toPython(value[i]);
+            PyObjectPtr item = toPython(values[i]);
 
             if (!item)
                 return nullptr;
@@ -276,9 +258,10 @@ private:
      *
      * @param args Zero or more PyObjectPtr arguments to pack.
      * @return The argument tuple, or null on failure.
+     * @tparam ArgTypes The argument types.
      */
-    template<typename... Args>
-    static PyObjectPtr buildArgs(const Args&... args)
+    template<typename... ArgTypes>
+    static PyObjectPtr buildArgs(const ArgTypes&... args)
     {
         // The fold expression is true when at least one argument is null.
         if ((!args || ...))
