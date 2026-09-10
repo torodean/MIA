@@ -4,7 +4,10 @@
 @author  Antonius Torode
 @date    09/09/2026
 
-Python methods used for plotting.
+Python methods used for line plotting, called from the PythonPlotter C++
+library. The module holds the plotting state (the accumulated lines, the
+shared x-axis, and the labels) between calls; see the comments on those
+variables for the state lifecycle.
 """
 
 import matplotlib.pyplot as plt
