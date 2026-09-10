@@ -25,6 +25,10 @@ plotTitle = None
 # The data to plot when plotting multiple lines using the plotData method.
 linesToPlot = []
 
+# The x-axis values to plot the lines against. When unset, the lines are
+# plotted against their index (matplotlib's default for single-array plots).
+xAxis = None
+
 #####################
 # GETTERS AND SETTERS
 #####################
@@ -49,14 +53,24 @@ def setShowPlots(val):
 def setLabels(title, xLabel, yLabel):
     """
     Setter for the title and axis labels.
-    """    
+    """
     global plotTitle, xAxisLabel, yAxisLabel
     plotTitle = title
     xAxisLabel = xLabel
     yAxisLabel = yLabel
-    
+
     if verboseMode:
         print(f"Plot labels set: title='{title}', x='{xLabel}', y='{yLabel}'")
+
+def setXAxis(x):
+    """
+    Setter for the x-axis values used by the plotData method.
+    """
+    global xAxis
+    xAxis = x
+
+    if verboseMode:
+        print(f"X-axis set with {len(x)} data points.")
 
 #########################
 # INTERNAL HELPER METHODS
@@ -126,12 +140,23 @@ def plotData():
     """
     if verboseMode:
         print(f"Creating multi-line plot with {len(linesToPlot)} lines.")
-        
+
+    # Fall back to matplotlib's index default when no x-axis was provided.
+    xAxisPoints = np.array(xAxis) if xAxis is not None else None
+
     for line in linesToPlot:
-        plt.plot(np.array(line["values"]),
-                 linestyle=line["lineStyle"],
-                 color=line["color"],
-                 linewidth=line["lineWidth"])
+        values = np.array(line["values"])
+        if xAxisPoints is None:
+            plt.plot(values,
+                     linestyle=line["lineStyle"],
+                     color=line["color"],
+                     linewidth=line["lineWidth"])
+        else:
+            plt.plot(xAxisPoints,
+                     values,
+                     linestyle=line["lineStyle"],
+                     color=line["color"],
+                     linewidth=line["lineWidth"])
 
     applyLabels()
     displayPlot()
@@ -139,10 +164,12 @@ def plotData():
 
 def clearData():
     """
-    Clears the current plotting data. This will only clear the data 
+    Clears the current plotting data. This will only clear the data
     (x axis and y axis values) and not labels.
     """
     if verboseMode:
         print(f"Clearing {len(linesToPlot)} plot lines.")
-        
+
     linesToPlot.clear()
+    global xAxis
+    xAxis = None
