@@ -4,12 +4,7 @@ set(MIATemplate_INC MIATemplate.hpp )
 add_executable(MIATemplate ${MIATemplate_SRC} ${MIATemplate_INC} )
 target_link_libraries(MIATemplate PRIVATE Framework_CORE System_UTIL )
 
-if(SYSTEM_INSTALL)
-    install(TARGETS MIATemplate DESTINATION ${APP_INSTALL_LOCATION})
-endif()
-
-if(RELEASE_BUILD)
-    install(TARGETS MIATemplate DESTINATION ${RELEASE_INSTALL_LOCATION})
-endif()
+# Install the app.
+install_app( MIATemplate )
 
 add_subdirectory( test )

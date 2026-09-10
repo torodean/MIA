@@ -13,18 +13,32 @@
 #include "MIATest.hpp"
 // Used for the Python module wrapper being tested.
 #include "PythonModule.hpp"
+// Used for testing the PythonPlotter.
+#include "PythonPlotter.hpp"
 
 
 MIATest::MIATest()                      
 { };
 
 
+/*
+ * This method currently does what the base class does... It is only here
+ * so that I do not need to re-add it when adding test options that need parsed.
+ */
 void MIATest::initialize(int argc, char* argv[])
 {
-	// TODO
+    try
+    {    
+        MIAApplication::initialize(argc, argv);
+    }
+    catch (const error::MIAException& ex)
+    {
+        std::cerr << "Error during MIATest::initialize: " << ex.what() << std::endl;
+    }
 }
 
-int MIATest::run()
+
+int testPythonModule()
 {
     /*
      * Constructing the module is the only setup needed: the wrapper starts
@@ -90,4 +104,59 @@ int MIATest::run()
 
     std::cout << "Tests finished!" << std::endl;
     return allPassed ? constants::SUCCESS : constants::FAILURE;
+}
+
+
+int testPythonPlotter(bool verboseMode)
+{
+    // Sequence to test plotting with.
+    std::vector<int> x = {0,1,2,3,4,5,6,7};
+    std::vector<int> y = {0,1,3,6,10,15,21,28};
+    
+    python_plotting::PythonPlotter plotter;
+    if (verboseMode)
+        plotter.setVerboseOutput(true);
+    plotter.setLabels("MIATest Plot", "X-Values", "Y-Values");
+    return plotter.plot(x,y);        
+}
+
+
+/**
+ * @brief Tests the PythonPlotter multi-line plotting method.
+ * @return The result of the plot operation.
+ */
+int testPythonPlotterMultiLine(bool verboseMode)
+{
+    // Sequence to test plotting with.
+    std::vector<int> x = {0,1,2,3,4,5,6,7};
+    
+    python_plotting::LinesToPlot<int> data = {
+        {
+            {0,1,3,6,10,15,21,28},
+            python_plotting::LineStyle::solid,
+            4.0,
+            python_plotting::Color::blue
+        },
+        {
+            {0,1,2,4,8,16,32,64},
+            python_plotting::LineStyle::dashed,
+            1.0,
+            python_plotting::Color::red
+        }
+    };
+    
+    python_plotting::PythonPlotter plotter;
+    if (verboseMode)
+        plotter.setVerboseOutput(true);
+    plotter.setLabels("MIATest Plot", "X-Values", "Y-Values");
+    
+    return plotter.plot(x, data);
+}
+
+
+int MIATest::run()
+{
+    //return testPythonModule();
+    //return testPythonPlotter(getVerboseMode());
+    return testPythonPlotterMultiLine(getVerboseMode());
 }

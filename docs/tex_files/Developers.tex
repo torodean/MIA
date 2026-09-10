@@ -6,8 +6,7 @@ This chapter provides an overview of the core features, architectural design, an
 
 
 
-\section{Project Dependency Structure}
-\label{section:dependancy_structure}
+\section{Project Dependency Structure}\label{section:dependancy_structure}
 
 The project is organized into layers to manage dependencies clearly:
 \begin{itemize}\itemsep0em
@@ -25,8 +24,7 @@ Modules within the same layer may depend on each other as needed. The key rule i
 
 
 
-\section{Build Script Overview}
-\label{section:build_script}
+\section{Build Script Overview}\label{section:build_script}
 
 The build process for MIA is orchestrated through a Bash script, \texttt{build.sh}, located in the root directory of the project. This script automates common tasks involved in building, installing, and managing the application.
 
@@ -34,7 +32,7 @@ The build process for MIA is orchestrated through a Bash script, \texttt{build.s
 
 The build script serves as a centralized interface for developers and users to:
 \begin{itemize}\itemsep0em
-	\item Configure and build the MIA project using cmake.
+	\item Configure and build the MIA project using CMake.
 	\item Install the application on the system.
 	\item Manage dependencies for supported platforms.
 	\item Generate release builds.
@@ -61,7 +59,7 @@ Options:
 	-R    Update the release files. Use a clean build if errors occur.
 	-U    Uninstall all MIA files. This will uninstall then quit without other actions.
 	-T    Run all tests.
-	-d    Add flags to cmake for a debug build (useful if gdb is needed).
+	-d    Add flags to CMake for a debug build (useful if gdb is needed).
 \end{lstlisting}
 This build script is continually evolving and new options are added.
 
@@ -96,14 +94,14 @@ The script contains conditional logic to perform platform-specific setup, with s
 
 \subsection{CMake Integration}
 
-The build is managed via cmake, which is invoked with appropriate flags based on script options. A separate \texttt{build} directory is used to isolate generated files, and Make is used to compile the project with support for parallel jobs. See section \ref{section:cmake_setup} for more details. The build script handles adding flags to the cmake configuration via the \texttt{cmakeArgs}. To add a flag to be used during the cmake build, add the appropriate flag to the \texttt{cmakeArgs} via the following:
+The build is managed via CMake, which is invoked with appropriate flags based on script options. A separate \texttt{build} directory is used to isolate generated files, and Make is used to compile the project with support for parallel jobs. See section \ref{section:cmake_setup} for more details. The build script handles adding flags to the CMake configuration via the \texttt{cmakeArgs}. To add a flag to be used during the CMake build, add the appropriate flag to the \texttt{cmakeArgs} via the following:
 \begin{lstlisting}[style=shellstyle]
 cmakeArgs = "$cmakeArgs -DNEW_FLAG_HERE"
 \end{lstlisting}
 
 \subsection{Installation and Uninstallation}
 
-Installation is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstalling is handled early in the script flow via a dedicated script and bypasses other operations. Although installation is handled via cmake, there are also separate install and uninstall scripts which are located in the scripts folder. These are setup to be called during the build script and are meant to implement additional install or uninstall steps. these are called via the following
+Installation is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstalling is handled early in the script flow via a dedicated script and bypasses other operations. Although installation is handled via CMake, there are also separate install and uninstall scripts which are located in the scripts folder. These are setup to be called during the build script and are meant to implement additional install or uninstall steps. these are called via the following
 
 \begin{lstlisting}[style=shellstyle]
 $rootDirectory/scripts/install.sh
@@ -120,6 +118,8 @@ $rootDirectory/scripts/uninstall.sh
 
 
 \section{C++ Macros}\label{section:cpp_macros}
+
+
 Macros are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve the ability to debug. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
 \begin{itemize}\itemsep0em
     \item \textbf{Code Reusability:} Encapsulate repetitive code patterns, reducing duplication and the chance for errors.
@@ -148,7 +148,7 @@ While macros can have drawbacks such as reduced type safety and debugging comple
 
 The \texttt{MIA} project is designed to be cross-platform, with support for both Windows and Linux systems (and maybe more at later dates). This portability is achieved in part through the use of preprocessor macros that enable platform-specific compilation paths where necessary.
 
-A key component of this system is the use of centralized platform detection macros defined in the \texttt{constants.hpp} file, which is included in the \texttt{Framework\_CORE} cmake library. These macros simplify platform checks throughout the codebase by abstracting away verbose compiler-defined flags. This code (which will look something like the example below) defines platform-specific macros, \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX}, based on standard compiler-defined macros. The purpose is to centralize platform detection logic in one place for easier maintenance and extension when supporting additional platforms.
+A key component of this system is the use of centralized platform detection macros defined in the \texttt{constants.hpp} file, which is included in the \texttt{Framework\_CORE} CMake library. These macros simplify platform checks throughout the codebase by abstracting away verbose compiler-defined flags. This code (which will look something like the example below) defines platform-specific macros, \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX}, based on standard compiler-defined macros. The purpose is to centralize platform detection logic in one place for easier maintenance and extension when supporting additional platforms.
 
 By defining \texttt{IS\_WINDOWS} when any common Windows-related macros are detected, and \texttt{IS\_LINUX} when the Linux macro \texttt{\_\_linux\_\_} is detected, the code enables simpler conditional compilation. Developers can then write platform-specific code using straightforward checks like \texttt{\#ifdef IS\_WINDOWS} or \texttt{\#if defined(IS\_LINUX)} rather than repeating complex or lengthy preprocessor conditionals throughout the codebase.
 
@@ -176,14 +176,13 @@ By defining \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX} in a single, shared head
 
 
 
-\section{CMake Setup}
-\label{section:cmake_setup}
+\section{CMake Setup}\label{section:cmake_setup}
 
-The MIA project utilizes cmake to manage the build configuration, compilation, and installation processes. The setup is designed to be flexible and portable across supported platforms while allowing customization for release or system installation builds.
+The MIA project utilizes CMake to manage the build configuration, compilation, and installation processes. The setup is designed to be flexible and portable across supported platforms while allowing customization for release or system installation builds.
 
 \subsection{Project Definition, Standards and Versioning}
 
-The cmake configuration begins by specifying a minimum required cmake version and defining the project name \texttt{MIA} along with its version. The version is also passed as a preprocessor definition (\texttt{MIA\_VERSION\_VAL}) for use in the codebase. At the time of writing this, C++20 is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
+The CMake configuration begins by specifying a minimum required CMake version and defining the project name \texttt{MIA} along with its version. The version is also passed as a preprocessor definition (\texttt{MIA\_VERSION\_VAL}) for use in the code base. At the time of writing this, C++20 is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
 
 \subsection{Build Options}
 
@@ -202,8 +201,8 @@ Installation paths and default directories for configuration files and logs are 
 	\item \textbf{Linux/Unix:} Uses \texttt{/usr/local} for the install, \texttt{/etc} for supporting resource files, and \texttt{/var/log} for logging.
 	\item Unsupported platforms produce a configuration error.
 \end{itemize}
-The cmake section that contains these configurations will give the exact file paths chosen for the various files. The actual cmake file should be used for gathering the current used paths (this documentation may become out-dated) which will be in a section similar to the following:
-\begin{lstlisting}[style=shellstyle]
+The CMake section that contains these configurations will give the exact file paths chosen for the various files. The actual CMake file should be used for gathering the current used paths (this documentation may become out-dated) which will be in a section similar to the following:
+\begin{lstlisting}[style=makestyle]
 # OS-Specific Path Configuration
 if(WIN32)
     set(APP_INSTALL_LOCATION "C:/Program Files/mia")
@@ -220,13 +219,12 @@ endif()
 
 \subsection{Configuration Constants}
 
-Both system-level and repository-level default paths for configuration and log files are defined and exposed to the compiler through compile-time definitions. This centralizes resource location information for consistent access across the codebase. To add a constant value defined in cmake such that it is accessible in the source code (c++), the following method can be used.
+Both system-level and repository-level default paths for configuration and log files are defined and exposed to the compiler through compile-time definitions. This centralizes resource location information for consistent access across the codebase. To add a constant value defined in CMake such that it is accessible in the source code (c++), the following method can be used.
 
-\subsubsection{Defining C++ Accessible CMake Variables}
-\label{section:cmake_setup_cpp}
+\subsubsection{Defining C++ Accessible CMake Variables}\label{section:cmake_setup_cpp}
 
-First, the value needs defined in the cmake using the \texttt{set} and \texttt{add\_definiition} methods:
-\begin{lstlisting}[style=shellstyle]
+First, the value needs defined in the CMake using the \texttt{set} and \texttt{add\_definiition} methods:
+\begin{lstlisting}[style=makestyle]
 # The version of the current MIA code.
 set(MIA_VERSION_VAL "2.001")
 
@@ -235,7 +233,7 @@ add_definitions( -DMIA_VERSION_VAL=\"${MIA_VERSION_VAL}\" )
 \end{lstlisting}
 These values can then be accessed within the source C++ code directly via
 \begin{lstlisting}[style=cppstyle]
-// The MIA Version value gathered from cmake.
+// The MIA Version value gathered from CMake.
 inline const std::string MIA_VERSION = MIA_VERSION_VAL;
 \end{lstlisting}
 These values are typically added within the \texttt{Constants\_LIB} files which contains system related MIA constants. 
@@ -246,7 +244,7 @@ The project is organized into subdirectories for executables, libraries, resourc
 
 \begin{itemize}\itemsep0em
 	\item \textbf{Executables:} Targets like \texttt{MIATemplate} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
-	\begin{lstlisting}[style=shellstyle]
+	\begin{lstlisting}[style=makestyle]
 # Create the MIATemplate executable.
 set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
 set(MIATemplate_INC MIATemplate.hpp )
@@ -261,8 +259,19 @@ if(RELEASE_BUILD)
  install(TARGETS MIATemplate DESTINATION ${RELEASE_INSTALL_LOCATION})
 endif()
 	\end{lstlisting}
+	A custom \texttt{install\_app} CMake function is available to streamline the above checks for the various apps. This allows the above to be simplified to:
+	\begin{lstlisting}[style=makestyle]
+# Create the MIATemplate executable.
+set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
+set(MIATemplate_INC MIATemplate.hpp )
+add_executable(MIATemplate ${MIATemplate_SRC} ${MIATemplate_INC} )
+target_link_libraries(MIATemplate PRIVATE Core_LIB )
+
+# Install the app.
+install_app( MIATemplate )
+	\end{lstlisting}
 	\item \textbf{Libraries:} Utility libraries such as \texttt{Types\_LIB} are created from source files and expose their include directories for dependent targets. Libraries can link to other internal utilities or libraries.
-	\begin{lstlisting}[style=shellstyle]
+	\begin{lstlisting}[style=makestyle]
 # Create the Types_LIB
 set(Types_SRC StringUtils.cpp )
 set(Types_INC StringUtils.hpp )
@@ -278,7 +287,7 @@ target_include_directories(Types_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory( test )
 	\end{lstlisting}
 	\item \textbf{Resources:} Static resources are managed in their own subdirectory. These are primarily for configuration files and other resources. These are installed via the \texttt{FILES} Cmake keyword as follows:
-	\begin{lstlisting}[style=shellstyle]
+	\begin{lstlisting}[style=makestyle]
 set(MIA_Config_Files
     MIATemplate.MIA
 	# Other files here...
@@ -296,7 +305,7 @@ endif()
 
 \subsection{Installation Rules}
 
-Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags (seen in the above shown cmake blocks). This supports flexible deployment workflows for development, testing, and production release. Overall, the cmake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
+Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags (seen in the above shown CMake blocks). This supports flexible deployment workflows for development, testing, and production release. Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
 
 
 
@@ -315,13 +324,12 @@ Conditional install commands allow targets to be installed either to system-wide
 
 
 
-\section{Application Framework}
-\label{section:app_framework}
+\section{Application Framework}\label{section:app_framework}
 
-\subsection*{Overview}
+\subsection{Overview}
 The application framework provides a minimal structure for C++ applications that follow a consistent life cycle. It enforces a standard interface consisting of initialization and execution phases, and offers utilities to streamline application entry point definition. The design leverages C++20 concepts and templates for compile-time enforcement of interface contracts.
 
-\subsection*{Life Cycle Model}
+\subsection{Life Cycle Model}
 Applications using this framework must implement the following life cycle methods:
 \begin{itemize}\itemsep0em
 	\item \texttt{void initialize(int argc, char** argv)} \\
@@ -330,7 +338,7 @@ Applications using this framework must implement the following life cycle method
 	Contains the main execution logic of the application. The return value is propagated as the process exit code. This value should be chosen from one of the valid return codes defined in the \texttt{Constants.hpp} file (see section \ref{section:return_codes}).
 \end{itemize}
 
-\subsection*{Interface Enforcement}
+\subsection{Interface Enforcement}
 The framework uses a C++20 concept, \texttt{AppInterface}, to statically constrain application types. This ensures that any type passed to the launcher function conforms to the expected interface, eliminating runtime errors due to missing methods. Other types can be added to this interface if they are in the future and should conform to the same format as the currently existing ones. 
 
 \begin{lstlisting}[style=cppstyle]
@@ -342,7 +350,7 @@ concept AppInterface = requires(App app, int argc, char** argv)
 };
 \end{lstlisting}
 
-\subsection*{Application Launch}
+\subsection{Application Launch}
 Applications are launched using the \texttt{runApp} template function:
 \begin{itemize}\itemsep0em
 	\item Accepts any type satisfying \texttt{AppInterface}.
@@ -360,7 +368,7 @@ int runApp(int argc, char** argv)
 }
 \end{lstlisting}
 
-\subsection*{Entry Point Definition}
+\subsection{Entry Point Definition}
 To reduce boilerplate (code needing to be implemented by the end user) and unify application entry points, the framework provides an application macro entry point:
 \begin{itemize}\itemsep0em
 	\item \texttt{MIA\_MAIN(AppClass)} defines a \texttt{main()} function that delegates to \texttt{runApp<AppClass>}.
@@ -389,7 +397,7 @@ Some tips and considerations follow:
 	\item Avoid manual \texttt{main()} definitions to preserve uniform life-cycle management.
 \end{enumerate}
 
-\subsection*{Benefits}
+\subsection{Benefits}
 \begin{itemize}\itemsep0em
 	\item Promotes a consistent life-cycle across applications.
 	\item Enables interface enforcement at compile time.
@@ -407,13 +415,12 @@ Some tips and considerations follow:
 
 
 
-\section{Base Application Class: \texttt{MIAApplication}}
-\label{section:base_application}
+\section{Base Application Class: \texttt{MIAApplication}}\label{section:base_application}
 
-\subsection*{Overview and Purpose}
+\subsection{Overview and Purpose}
 The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{section:app_framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose), \texttt{-d} (debug level) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
 
-\subsection*{Initialization and Execution Interface}
+\subsection{Initialization and Execution Interface}
 \begin{itemize}\itemsep0em
 	\item \texttt{virtual void initialize(int argc, char* argv[])} \\
 	Handles initial setup, including parsing common command-line arguments. This method is intended to be overloaded to handle app-specific command line arguments and app loading. Derived classes should override this method to extend parsing logic but should still invoke the base implementation to preserve flag handling.
@@ -424,7 +431,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	A pure virtual function that must be implemented by all derived classes. It defines the main operational logic of the application and must return an integer exit code.
 \end{itemize}
 
-\subsection*{Flag Handling}
+\subsection{Flag Handling}
 \begin{itemize}\itemsep0em
 	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
 	\item Debug level is handled internally and can be queried via \texttt{getDebugLevel()}.
@@ -433,7 +440,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling. See section \ref{section:logging_Framework} for more details.
 \end{itemize}
 
-\subsection*{Runtime Context}
+\subsection{Runtime Context}
 \textbf{RuntimeContext} is a struct designed to encapsulate shared runtime configuration and services used across application components. It holds common data such as a global \texttt{logger} instance for consistent logging, a \texttt{verboseMode} flag to control verbose output, and a \texttt{debugLevel} indicating the debug verbosity. This context struct is intended to be passed by reference or pointer to subsystems and utilities that require uniform access to these application-wide settings during execution.
 \begin{lstlisting}[style=cppstyle]
 struct RuntimeContext
@@ -452,7 +459,7 @@ const RuntimeContext* context{nullptr};
 \end{lstlisting}
 
 
-\subsection*{Protected Members}
+\subsection{Protected Members}
 \begin{itemize}\itemsep0em
 	\item \texttt{RuntimeContext context} \\
 	The runtime context members used by the application.
@@ -462,7 +469,7 @@ const RuntimeContext* context{nullptr};
 	Store the executable name for use in the help message or other areas.
 \end{itemize}
 
-\subsection*{Logging Macros}
+\subsection{Logging Macros}
 To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable macros for standardized logging. These macros improve traceability during debugging, especially when verbose mode is enabled.
 \begin{itemize}\itemsep0em
     \item \texttt{LOG\_METHOD\_CALL(...)} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag. Optional parameters can be entered which allow the caller to specify a string of parameters or context data to include in the log output.
@@ -470,7 +477,7 @@ To promote consistency and reduce boilerplate in logging method entry points, th
 These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \texttt{\_\_func\_\_} identifier for method name capture and rely on the internal \texttt{logger::Logger} instance.
 
 
-\subsection*{Usage Guidelines}
+\subsection{Usage Guidelines}
 An example application exists in \texttt{bin/apps/template} which demonstrates how the base application class is used.
 \begin{enumerate}
 	\item Inherit from \texttt{MIAApplication}.
@@ -557,7 +564,7 @@ void MyClass::computeWithInput(int x)
 	\end{lstlisting}
 \end{enumerate}
 
-\subsection*{Benefits}
+\subsection{Benefits}
 \begin{itemize}\itemsep0em
 	\item Standardizes life cycle structure across applications.
 	\item Centralizes command-line flag logic.
@@ -583,7 +590,7 @@ The command option system provides structured parsing and management of command-
 
 The \texttt{CommandOption} class encapsulates metadata and behavior for individual command-line arguments. It supports a variety of data types and provides a standardized help display format.
 
-\subsubsection*{Key Features}
+\subsubsection{Key Features}
 \begin{itemize}\itemsep0em
 	\item \textbf{Supported Types:} These define the type of command option that is expected. Each command option should only have one expected type which is defined by the \texttt{commandOptionType} enum:
 	\begin{itemize}\itemsep0em
@@ -650,7 +657,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 
 This namespace implements the actual logic for extracting typed values from \texttt{argc}/\texttt{argv}. Each function accepts short and long option names, and a reference to the variable where the parsed value should be stored.
 
-\subsubsection*{Parsing Functions}
+\subsubsection{Parsing Functions}
 \begin{itemize}\itemsep0em
 	\item \texttt{void parseBoolFlag(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, bool\& outValue);}
 	\item \texttt{void parseIntOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, int\& outValue, bool required = false);}
@@ -658,7 +665,7 @@ This namespace implements the actual logic for extracting typed values from \tex
 	\item \texttt{void parseStringOption(int argc, char* argv[], const std::string\& shortArg, const std::string\& longArg, std::string\& outValue, bool required = false);}
 \end{itemize}
 
-\subsubsection*{Behavior and Integration}
+\subsubsection{Behavior and Integration}
 Each parser:
 \begin{itemize}\itemsep0em
 	\item Validates the presence of the option.
@@ -683,10 +690,10 @@ The \texttt{CommandOption} class acts as a high-level interface, while \texttt{c
 \section{Error Handling Framework}
 \label{section:error_handling}
 
-\subsection*{Overview}
+\subsection{Overview}
 The MIA error handling system provides a structured and consistent mechanism for reporting, categorizing, and propagating errors throughout MIA applications. It is centered around a custom exception type (\texttt{MIAException}) and an extensible set of error codes defined via the \texttt{ErrorCode} enumeration.
 
-\subsection*{Error Codes}
+\subsection{Error Codes}
 The \texttt{ErrorCode} enumeration defines a comprehensive list of standardized error values used throughout the MIA framework. These include:
 \begin{itemize}\itemsep0em
 	\item System-aligned codes (e.g., \texttt{Access\_denied = 5})
@@ -699,7 +706,7 @@ Each error code is associated with a human-readable description defined in \text
 const std::string& getErrorDescription(ErrorCode code);
 \end{lstlisting}
 
-\subsection*{MIAException Class}
+\subsection{MIAException Class}
 The primary mechanism for structured error propagation is the \texttt{MIAException} class:
 \begin{itemize}\itemsep0em
 	\item Inherits from \texttt{std::exception}.
@@ -717,7 +724,7 @@ The primary mechanism for structured error propagation is the \texttt{MIAExcepti
 	Retrieves the error code associated with the exception.
 \end{itemize}
 
-\subsection*{Deprecated Legacy Functions}
+\subsection{Deprecated Legacy Functions}
 Several older functions exist but are marked deprecated in favor of \texttt{MIAException}:
 \begin{itemize}\itemsep0em
 	\item \texttt{returnError()}, \texttt{errorInfo()}, and \texttt{errorInfoRun()} are retained for backward compatibility but should be avoided.
@@ -725,7 +732,7 @@ Several older functions exist but are marked deprecated in favor of \texttt{MIAE
 \end{itemize}
 
 
-\subsection*{Exception Throwing Macro}
+\subsection{Exception Throwing Macro}
 To streamline exception throwing and ensure consistent inclusion of contextual metadata, the framework defines a macro \texttt{MIA\_THROW(code, ...)}. This macro reduces boilerplate when throwing exceptions while ensuring that the error message includes file, line, and function information. This contextual data is critical for debugging and tracing issues during runtime. Instead of manually constructing exception messages with source location details, developers can use this macro for clarity and convenience:
 \begin{lstlisting}[style=cppstyle]
 if (!configLoaded)
@@ -743,7 +750,7 @@ This macro enhances code readability, enforces consistent exception formatting, 
 
 
 
-\subsection*{Usage Guidelines}
+\subsection{Usage Guidelines}
 \begin{enumerate}
 	\item Throw \texttt{MIAException} in place of manual error returns. An appropriate error code from \texttt{error::ErrorCodes} should be used. If one does not exist, one should be added.
 	\begin{lstlisting}[style=cppstyle]
@@ -794,7 +801,7 @@ namespace error
 	\end{lstlisting}
 \end{enumerate}
 
-\subsection*{Benefits}
+\subsection{Benefits}
 \begin{itemize}\itemsep0em
 	\item Unifies error handling across the application ecosystem.
 	\item Enables richer debugging and logging through descriptive errors.
@@ -810,22 +817,22 @@ namespace error
 
 \section{Global Constants and Paths}\label{section:global_constants_and_paths}
 
-This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version. See section \ref{section:cmake_setup_cpp} for some related information on adding global paths and compile time through cmake.
+This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version. See section \ref{section:cmake_setup_cpp} for some related information on adding global paths and compile time through CMake.
 
 \subsection{constants Namespace}
 
 The \texttt{constants} namespace provides globally accessible constant values compiled into the application.
 
-\subsubsection*{Defined Constant}
+\subsubsection{Defined Constant}
 \begin{itemize}\itemsep0em
-	\item \texttt{MIA\_VERSION}: A \texttt{std::string} representing the version of the MIA application, injected from cmake via the \texttt{MIA\_VERSION\_VAL} macro.
+	\item \texttt{MIA\_VERSION}: A \texttt{std::string} representing the version of the MIA application, injected from CMake via the \texttt{MIA\_VERSION\_VAL} macro.
 \end{itemize}
 
 \subsection{paths Namespace}
 
 The \texttt{paths} namespace offers a centralized interface for accessing directory and file paths used by the system. These include installation-specific and repository-relative locations, as well as runtime-determined paths.
 
-\subsubsection*{Static Path Constants}
+\subsubsection{Static Path Constants}
 \begin{itemize}\itemsep0em
 	\item \texttt{SYSTEM\_CONFIG\_FILE\_DIR}, \texttt{SYSTEM\_CONFIG\_FILE}: Paths to the configuration directory and file for system installations.
 	\item \texttt{REPO\_CONFIG\_FILE\_DIR}, \texttt{REPO\_CONFIG\_FILE}: Paths used during development and testing.
@@ -834,7 +841,7 @@ The \texttt{paths} namespace offers a centralized interface for accessing direct
 	\item \texttt{INSTALL\_LOCATION}: The root directory of the system installation.
 \end{itemize}
 
-\subsubsection*{Runtime Utilities} \label{section:global_constants_utilities}
+\subsubsection{Runtime Utilities} \label{section:global_constants_utilities}
 \begin{itemize}\itemsep0em
 	\item \texttt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
 	
@@ -870,8 +877,7 @@ This design ensures portability and flexibility across different environments (d
 
 
 
-\section{Configuration System}
-\label{section:configuration_system}
+\section{Configuration System}\label{section:configuration_system}
 
 The \texttt{MIAConfig} class provides a flexible and extensible interface for managing configuration data in the MIA system. It replaces the legacy \texttt{Configurator} from the previous MIA project. The system is designed using the PIMPL (Pointer to IMPLementation) idiom, encapsulating implementation details and allowing for multiple configuration types such as key-value pairs or raw-line formats (with the flexibility to add more later).
 
@@ -1033,8 +1039,7 @@ New configuration formats can be supported by deriving new classes from \texttt{
 
 
 
-\section{Logging Framework}
-\label{section:logging_Framework}
+\section{Logging Framework}\label{section:logging_Framework}
 
 \subsection{Overview}
 The \texttt{Logger} component provides centralized logging functionality for all MIA applications. It supports simple log message recording to either a default or user-defined log file, with optional verbosity to print messages to \texttt{stdout}.
@@ -1115,8 +1120,7 @@ This logging framework simplifies and unifies log message handling across MIA to
 
 
 
-\section{Return Codes}
-\label{section:return_codes}
+\section{Return Codes}\label{section:return_codes}
 
 To standardize and simplify status reporting across the framework, the \texttt{ReturnCode} enumeration defines a consistent set of return values that functions and applications can use to indicate the outcome of their execution. This allows for clearer control flow, easier debugging, and predictable integration behavior.
 
@@ -1148,7 +1152,7 @@ Use of the \texttt{ReturnCode} enum improves type clarity and encourages consist
 
 
 
-\section*{Threading: BackgroundTask Class}
+\section{Threading: BackgroundTask Class}
 
 The \texttt{BackgroundTask} class defines an abstract base for executing background operations on a separate thread, enabling asynchronous processing within an application framework. Derived classes must implement the \texttt{run()} method, which contains the task-specific logic. This method is repeatedly called in the internal \texttt{threadLoop()} until a stop is requested.
 
@@ -1172,3 +1176,34 @@ Developers implementing subclasses should ensure that \texttt{run()} periodicall
 
 
 
+
+
+
+
+
+
+
+
+
+
+\section{Python Modules}\label{section:python_modules}
+
+The MIA project provides the ability to write code in python and call it from the c++ files. This is primarily done through the python interpreter utility class (see section \ref{section:python_utils}). The \texttt{python.cmake} file handles finding the python development packages and setting the \texttt{BUILD\_PYTHON\_FEATURES} flag. For any feature which requires the python capabilities, the CMake should be wrapped in this flag to ensure that it is only built in environments where python is available. A \texttt{install\_python\_files} method is available to make installing python files during a system install easy. The following example wraps an application so that it will only build when python is found and will install the needed python modiles along with the application install:
+\begin{lstlisting}[style=makestyle]
+# This app currently requires the python features to be available.
+if(BUILD_PYTHON_FEATURES)
+	# Create the test executable.
+	set(test_SRC MIATest.cpp MIATest_main.cpp )
+	set(test_INC MIATest.hpp )
+	
+	#  The target name "test" is reserved when CTest testing is enabled.
+	add_executable(miatest ${test_SRC} ${test_INC} )
+	target_link_libraries(miatest PRIVATE Framework_CORE Python_UTIL Python_Plotting_LIB )
+	
+	# Install the app.
+	install_app( miatest )
+	
+	# Install the python files if needed.
+	install_python_files( MIATest.py )
+endif()
+\end{lstlisting}

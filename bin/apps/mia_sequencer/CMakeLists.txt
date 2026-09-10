@@ -11,12 +11,7 @@ set(MIASequencer_INC
 add_executable(MIASequencer ${MIASequencer_SRC} ${MIASequencer_INC} )
 target_link_libraries(MIASequencer PRIVATE Framework_CORE System_UTIL Types_UTIL Math_UTIL )
 
-if(SYSTEM_INSTALL)
-    install(TARGETS MIASequencer DESTINATION ${APP_INSTALL_LOCATION})
-endif()
-
-if(RELEASE_BUILD)
-    install(TARGETS MIASequencer DESTINATION ${RELEASE_INSTALL_LOCATION})
-endif()
+# Install the app.
+install_app( MIASequencer )
 
 add_subdirectory( test )

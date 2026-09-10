@@ -11,3 +11,7 @@ if(WIN32 OR CYGWIN)
 elseif(UNIX AND NOT APPLE)
     add_subdirectory( rpg )
 endif()
+
+if ( BUILD_PYTHON_FEATURES )
+    add_subdirectory( python_plotting )
+endif()
