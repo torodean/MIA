@@ -13,16 +13,31 @@ import numpy as np
 #########################
 # CONFIGURATION VARIABLES
 #########################
+# Enables verbose output.
+verboseMode = False
+
 # Defines whether or not to show any plots after creating them.
 showPlots = True
 xAxisLabel = None
 yAxisLabel = None
 plotTitle = None
 
+# The data to plot when plotting multiple lines using the plotData method.
+linesToPlot = []
 
 #####################
 # GETTERS AND SETTERS
 #####################
+
+def setVerbose(val):
+    """
+    Setter for the verboseMode variable.
+    """
+    global verboseMode
+    verboseMode = val
+
+    if verboseMode:
+        print(f"Verbose mode enabled for PythonPlotter (python module).")
 
 def setShowPlots(val):
     """
@@ -36,12 +51,38 @@ def setLabels(title, xLabel, yLabel):
     Setter for the title and axis labels.
     """    
     global plotTitle, xAxisLabel, yAxisLabel
-    print("Setting labels")
     plotTitle = title
     xAxisLabel = xLabel
     yAxisLabel = yLabel
+    
+    if verboseMode:
+        print(f"Plot labels set: title='{title}', x='{xLabel}', y='{yLabel}'")
 
+#########################
+# INTERNAL HELPER METHODS
+#########################
 
+def applyLabels():
+    """
+    Applies the configured plot title and axis labels.
+    """
+    if plotTitle is not None:
+        plt.title(plotTitle)
+    if xAxisLabel is not None:
+        plt.xlabel(xAxisLabel)
+    if yAxisLabel is not None:
+        plt.ylabel(yAxisLabel)
+        
+def displayPlot():
+    """
+    Displays the current plot if plot display is enabled.
+    """
+    if showPlots:
+        if verboseMode:
+            print("Displaying plot.")
+
+        plt.show()
+        
 ##################
 # PLOTTING METHODS
 ##################
@@ -50,19 +91,58 @@ def simplePlot(x, y):
     """
     Creates a simple plot of x values vs y values.
     """
+    if verboseMode:
+        print(f"Creating simple plot with {len(x)} data points.")
+        
     xpoints = np.array(x)
     ypoints = np.array(y)
     
     plt.plot(xpoints, ypoints)
     
-    print(f"plotTitle:{plotTitle}")
-    
-    if (plotTitle is not None):
-        plt.title(plotTitle)
-    if (xAxisLabel is not None):
-        plt.xlabel(xAxisLabel)
-    if (yAxisLabel is not None):
-        plt.ylabel(yAxisLabel)
-    
-    if showPlots:
-        plt.show()
+    applyLabels()    
+    displayPlot()
+
+
+def buildPlotData(values, lineStyle, color, lineWidth):
+    """
+    Adds a line and its metadata to the current plot.
+    """
+    linesToPlot.append({
+        "values": values,
+        "lineStyle": lineStyle,
+        "color": color,
+        "lineWidth": lineWidth
+    })
+
+    if verboseMode:
+        print(f"Added plot line: {len(values)} points, "
+              f"style='{lineStyle}', color='{color}', "
+              f"width={lineWidth}")
+
+
+def plotData():
+    """
+    Plots all lines currently stored in linesToPlot.
+    """
+    if verboseMode:
+        print(f"Creating multi-line plot with {len(linesToPlot)} lines.")
+        
+    for line in linesToPlot:
+        plt.plot(np.array(line["values"]),
+                 linestyle=line["lineStyle"],
+                 color=line["color"],
+                 linewidth=line["lineWidth"])
+
+    applyLabels()
+    displayPlot()
+
+
+def clearData():
+    """
+    Clears the current plotting data. This will only clear the data 
+    (x axis and y axis values) and not labels.
+    """
+    if verboseMode:
+        print(f"Clearing {len(linesToPlot)} plot lines.")
+        
+    linesToPlot.clear()
