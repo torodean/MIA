@@ -7,6 +7,8 @@
 Python methods used by PythonModule_T.cpp to exercise the PythonModule wrapper.
 Each method covers one argument signature or return type. This file is copied
 next to the test binary so the wrapper can import it from the working directory.
+The sumVals, repeatVals, and joinVals methods cover the vector conversions:
+the C++ tests call them with vectors of every supported element type.
 """
 
 
@@ -38,6 +40,11 @@ def sumVals(values):
 def repeatVals(values, count):
     """Returns the list with every value multiplied by count."""
     return [value * count for value in values]
+
+
+def joinVals(values):
+    """Returns the strings joined together with no separator."""
+    return "".join(values)
 
 
 def doNothing():
