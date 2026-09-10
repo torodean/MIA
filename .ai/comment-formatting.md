@@ -10,7 +10,7 @@ When editing a file, bring its comments toward these forms; do not replicate the
 
 ## Authority and references
 
-- The canonical code-level standard is [docs/TeX_files/CodingStandards.tex](../docs/TeX_files/CodingStandards.tex), section "Comments and Documentation".
+- The canonical code-level standard is [docs/tex_files/CodingStandards.tex](../docs/tex_files/CodingStandards.tex), section "Comments and Documentation".
   Where this file and the .tex disagree, the .tex wins; treat this file as a quick reference and raise the discrepancy rather than guessing.
 - `scripts/comment_checker.py` enforces a *legacy* param/return format (`@param name[type] - ...`).
   It is out of date with the Doxygen-standard direction below.
