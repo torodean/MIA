@@ -130,7 +130,8 @@ namespace python_plotting
     /**
      * When plotting via the PythonPlotter module, each data vector must be the
      * same size as its own x-axis vector. This overload checks this for plots
-     * without a shared x-axis.
+     * without a shared x-axis; every line must carry its own xValues, so an
+     * empty xValues is also rejected.
      * @param data The list of lines to plot.
      * @tparam Type Numerical type of the data vectors.
      */
@@ -138,8 +139,10 @@ namespace python_plotting
     bool validateDataSizesMatch(const LinesToPlot<Type>& data)
     {
         for (const auto& dat : data)
-            if (dat.yValues.size() != dat.xValues.size())
+        {
+            if (dat.xValues.empty() || dat.yValues.size() != dat.xValues.size())
                 return false;
+        }
 
         return true;
     }
@@ -232,14 +235,15 @@ namespace python_plotting
 
         /**
          * @brief Plots one or more lines, each against its own x-axis values.
-         * @note Every line must have its own xValues; there is no shared
+         * @note Every line must have non-empty xValues; there is no shared
          *       x-axis in this overload.
          * @note Each line may specify its own line style, line width, and color.
          * @note This will also use any labels set in the setLabels() method.
          * @note The lines are appended to the module's accumulated plot data;
          *       see the class comment for the state lifecycle.
          * @param data The lines and associated metadata to plot.
-         * @return true if the plotting was successful, false if the data sizes do not match.
+         * @return true if the plotting was successful, false if any line has
+         *         empty xValues or the data sizes do not match.
          * @tparam Type Numerical type of the line data vectors.
          */
         template <typename Type>
