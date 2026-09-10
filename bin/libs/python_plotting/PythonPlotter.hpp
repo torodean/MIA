@@ -266,7 +266,13 @@ namespace python_plotting
         
         
         /**
-         * Sets the labeles to be added to the produced plots.
+         * @brief Sets the labels to be added to the produced plots.
+         *
+         * The labels persist across plots until replaced by a later call.
+         *
+         * @param title The plot title.
+         * @param xLabel The label of the x-axis.
+         * @param yLabel The label of the y-axis.
          */
         void setLabels(const std::string& title,
                        const std::string& xLabel,
