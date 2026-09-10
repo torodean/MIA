@@ -1,298 +1,313 @@
 /**
- * @file PythonModule.hpp
+ * @file PythonPlotter.hpp
  * @author Antonius Torode
- * @date 09/09/2026
- * @brief Declares a utility for loading Python modules and calling their methods.
+ * @date 09/08/2026
+ * @brief Declares a library for performing various plotting capabilities
+ *        using python plotting calls.
  */
 #pragma once
 
-#include <memory>
-#include <string>
-#include <type_traits>
 #include <vector>
+#include <type_traits>
+#include <variant>
 
-#include <Python.h>
-
-// Used for throwing on module load failure.
-#include "MIAException.hpp"
-// Used for the ErrorCode of the load failure exception.
-#include "Error.hpp"
-
-#include "PythonResult.hpp"
+// The interpreter for loading python modules and methods.
+#include "PythonModule.hpp"
 
 
-/**
- * Python objects are reference-counted instead of deleted directly: every API
- * which returns a PyObject* hands back a "new reference", and the caller is
- * responsible for releasing it later with Py_DECREF. This struct teaches
- * unique_ptr what "delete" means for such a pointer, since the default delete
- * keyword cannot be used on Python objects.
- *
- * It is a callable type (the operator() makes it behave like a function) rather
- * than a class which owns anything. The unique_ptr holds the pointer and calls
- * this deleter exactly where a raw-pointer implementation would call Py_DECREF.
- * Because the struct has no data members, the unique_ptr costs the same as a
- * raw pointer.
- *
- * Only wrap pointers you own (new references from PyImport_Import,
- * PyObject_GetAttrString, PyObject_CallObject, ...). Some Python APIs return
- * "borrowed references" which are NOT decrefed by the caller; wrapping one of
- * these would release an object the caller never owned.
- */
-struct PyObjectDeleter
+namespace python_plotting
 {
     /**
-     * Releases one reference to the object.
-     *
-     * @param object The object to release. Never null: unique_ptr only calls
-     *     the deleter on a non-null pointer, so Py_DECREF is safe here.
+     * @brief Defines the predefined colors available for plot lines.
      */
-    void operator()(PyObject* object) const
+    enum Color
     {
-        Py_DECREF(object);
-    }
-}; // struct PyObjectDeleter
-
-
-/**
- * A unique_ptr for owned Python references.
- * Use this anywhere a PyObject* returned as a new reference needs automatic
- * Py_DECREF when it goes out of scope.
- */
-using PyObjectPtr = std::unique_ptr<PyObject, PyObjectDeleter>;
-
-
-/**
- * A loaded Python module which can be called from C++.
- * This owns both the interpreter lifetime and the imported module handle: the
- * first module constructed initializes the embedded interpreter, and destroying
- * the last module shuts it down. Code using this class never touches the
- * Python C API directly.
- *
- * call() is a variadic template: any mix of supported argument types is
- * converted to the matching Python type and packed into the argument tuple.
- * A new argument type is supported by extending the private toPython()
- * helpers, not by adding another call() overload. All calls return a
- * PythonResult, so expected call failures (missing method, Python exception,
- * conversion failure) surface as values without raw pointers or exceptions.
- * An app which wants to treat a call failure as fatal can check isValid()
- * and throw or exit on its own terms.
- *
- * The interpreter reference count is not thread-safe; constructing and
- * destroying modules is assumed to happen on one thread.
- */
-class PythonModule
-{
-public:
-
-    /**
-     * Constructs and loads a Python module by name.
-     * The module must be reachable on Python's module search path. The
-     * embedded interpreter is initialized by this constructor if no other
-     * module is currently alive.
-     *
-     * The caller passes __FILE__ so this class knows where it is being
-     * constructed from. During development runs, the python files are
-     * expected to sit in the same directory as the file which constructs
-     * this object, and that directory is added to Python's module search
-     * path. Installed and release runs resolve the python directory the
-     * same way as configuration files instead.
-     *
-     * @param moduleName The name of the Python module to import.
-     * @param callerFile The source file constructing this object (__FILE__).
-     * @throws error::MIAException with ErrorCode::Python_Module_Load_Failure if
-     *     the module could not be imported. An app which prefers to continue
-     *     without the module can catch this exception and handle it gracefully.
-     */
-    PythonModule(const std::string& moduleName, const std::string& callerFile);
-
-    /**
-     * Destructor. Releases the module handle and, if this is the last module
-     * alive, shuts down the embedded interpreter.
-     */
-    ~PythonModule();
-
-    /*
-     * Copying is deleted because a PythonModule owns exactly one reference to
-     * a Python module object. If two objects shared that pointer, whichever
-     * was destroyed first would release the reference and leave the other
-     * holding a handle Python has already freed (a use-after-free on the next
-     * call). A copy would also corrupt the interpreter reference count, since
-     * one construction would become two live objects. If a module ever needs
-     * to be shared, share the PythonModule itself through a shared_ptr so
-     * ownership stays with one object.
-     */
-    PythonModule(const PythonModule&) = delete;
-    PythonModule& operator=(const PythonModule&) = delete;
-
-    /**
-     * Checks whether the module defines a callable method with the given name.
-     *
-     * @param name The name of the method to look up.
-     * @return True if the method exists and is callable, false otherwise.
-     */
-    bool hasMethod(const std::string& name) const;
-
-    /**
-     * Calls a Python method with any mix of supported argument types.
-     * C++ integer types become Python ints, floating point types become
-     * Python floats, and std::string or string literals become Python strs.
-     * A std::vector of any supported element type becomes a Python list.
-     * Calling a method with no arguments is done with an empty argument list.
-     * An argument whose C++ type has no converter is a compile error, and a
-     * type mismatch with the Python method's expectations surfaces through
-     * the returned PythonResult as a normal call failure.
-     *
-     * @param name The name of the method to call.
-     * @param args Zero or more arguments, converted per their C++ type.
-     * @return A PythonResult holding the return value of the call.
-     * @tparam ArgTypes The argument types.
-     */
-    template<typename... ArgTypes>
-    PythonResult call(const std::string& name, ArgTypes... args)
-    {
-        return invoke(name, buildArgs(toPython(args)...));
-    }
-
-private:
-
-    /**
-     * Initializes the embedded interpreter if it is not running yet.
-     * This is a no-op while at least one module is alive. Besides starting
-     * the interpreter, it puts the current working directory on Python's
-     * module search path so modules next to the executable are importable.
-     */
-    static void ensureInterpreter();
-
-    /**
-     * Creates a new Python int object from any C++ integer type.
-     * The constraint keeps this template from also matching floating point
-     * types, which have their own overload below.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     * @tparam Type The integer type of the value.
-     */
-    template<typename Type> requires std::is_integral_v<Type>
-    static PyObjectPtr toPython(Type value)
-    {
-        return PyObjectPtr(PyLong_FromLongLong(value));
-    }
-
-    /**
-     * Creates a new Python float object from any C++ floating point type.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     * @tparam Type The floating point type of the value.
-     */
-    template<typename Type> requires std::is_floating_point_v<Type>
-    static PyObjectPtr toPython(Type value)
-    {
-        return PyObjectPtr(PyFloat_FromDouble(value));
-    }
-
-    /**
-     * Creates a new Python str object from a C++ string.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    static PyObjectPtr toPython(const std::string& value)
-    {
-        return PyObjectPtr(PyUnicode_FromString(value.c_str()));
-    }
-
-    /**
-     * Creates a new Python str object from a string literal.
-     *
-     * @param value The value to convert.
-     * @return The Python object, or null if creation failed.
-     */
-    static PyObjectPtr toPython(const char* value)
-    {
-        return toPython(std::string(value));
-    }
+        black,
+        red,
+        green,
+        blue,
+        yellow,
+        orange,
+        purple,
+        white,
+        gray
+    };
     
     /**
-     * Creates a new Python list from a C++ vector of any supported element
-     * type. Each element is converted by its own toPython overload, so the
-     * vector supports any element type which toPython accepts (integers,
-     * floating point types, strings).
-     *
-     * @param values The vector to convert.
-     * @return The Python list, or null if creation failed.
-     * @tparam Type The element type of the vector.
+     * @brief Converts a predefined Color to its string representation.
+     * @note Returns "Unknown" if an unsupported color is entered.
+     * @param color The predefined color to convert.
+     * @return The color name as a string.
      */
-    template<typename Type>
-    static PyObjectPtr toPython(const std::vector<Type>& values)
+    std::string ColorToString(const Color color);
+    
+    /**
+     * The python plots can take a color by name or a hex-color code (string).
+     * This variant will hold one or the other of those.
+     */
+    using PlotColor = std::variant<Color, std::string>;
+    
+    /**
+     * @brief Validates a hexadecimal color string.
+     * @note Valid colors must begin with '#' and contain 3, 4, 6, or 8
+     *       (hexadecimal digits, corresponding to RGB, RGBA, RRGGBB, or RRGGBBAA).
+     * @param color The color string to validate.
+     * @return true if the string is a valid hexadecimal color, false otherwise.
+     */
+    bool validateColorString(const std::string& color);
+    
+    /**
+     * @brief Converts a plot color to the format expected by the Python plotting module.
+     * @param color The plot color, either a predefined Color or a custom hexadecimal
+     *              color string beginning with '#'.
+     * @return The color formatted as a string for use by the Python plotting module.
+     */
+    std::string getPythonFormattedColor(const PlotColor& color);
+    
+    /**
+     * The valid line styles of the python plots.
+     */
+    enum LineStyle
     {
-        PyObjectPtr list(PyList_New(values.size()));
+        solid,    ///< Corresponds to python's '-' line style. Default.
+        dotted,   ///< Corresponds to python's ':' line style.
+        dashed,   ///< Corresponds to python's '--' line style.
+        dashdot   ///< Corresponds to python's '-.' line style.
+    };
+    
+    /**
+     * @brief Converts a LineStyle to the corresponding Python line style string.
+     * @note Returns "Unknown" if an unsupported type is entered.
+     * @param style The line style to convert.
+     * @return The Python-formatted line style string.
+     */
+    std::string getPythonFormattedLineStyle(const LineStyle style);
+    
+    /**
+     * Storage for metadata relevant for a line being plotted.
+     * @tparam Type Numerical type of the data vectors.
+     */
+    template <typename Type>
+    struct LineMetaData
+    {
+        std::vector<Type> xValues;         ///< The x-axis values for this data. When empty, the x-axis passed to plot() is used instead.
+        std::vector<Type> yValues;         ///< The data to plot.
+        LineStyle style{LineStyle::solid}; ///< The line style to use for this data.
+        double lineWidth{1.5};             ///< The line width to use for this data.
+        PlotColor color{Color::black};     ///< The color to use for this data.
+        std::string label{};               ///< The label for this line in the plot legend.
+    };
 
-        if (!list)
-            return nullptr;
+    /**
+     * Defines a container which will hold all lines to be plotted.
+     * @tparam Type Numerical type of the data vectors.
+     */
+    template <typename Type>
+    using LinesToPlot = std::vector<LineMetaData<Type>>;
 
-        for (std::size_t i = 0; i < values.size(); ++i)
+    /**
+     * When plotting via the PythonPlotter module, each data vector must be the
+     * same size as the x-axis vector it will be plotted against: the shared
+     * x-axis for lines without their own xValues, or the line's xValues
+     * otherwise. This method checks this.
+     * @param x The shared x-axis data.
+     * @param data The list of lines to plot.
+     * @tparam Type Numerical type of the data vectors.
+     */
+    template <typename Type>
+    bool validateDataSizesMatch(const std::vector<Type>& x,
+                                const LinesToPlot<Type>& data)
+    {
+        for (const auto& dat : data)
         {
-            PyObjectPtr item = toPython(values[i]);
-
-            if (!item)
-                return nullptr;
-
-            // PyList_SetItem steals the reference to item.
-            PyList_SetItem(list.get(), i, item.release());
+            const auto& xToUse = dat.xValues.empty() ? x : dat.xValues;
+            if (dat.yValues.size() != xToUse.size())
+                return false;
         }
 
-        return list;
+        return true;
     }
 
     /**
-     * Packs converted arguments into a Python tuple for a method call.
-     * Each argument is a PyObjectPtr. The tuple takes its own reference to
-     * every argument, so the arguments passed in keep their references and
-     * release them as usual when they go out of scope.
-     *
-     * If any argument is null (its creation failed) or the tuple cannot be
-     * created, the returned pointer is null, which invoke() reports as an
-     * error. A call with no arguments produces an empty tuple.
-     *
-     * @param args Zero or more PyObjectPtr arguments to pack.
-     * @return The argument tuple, or null on failure.
-     * @tparam ArgTypes The argument types.
+     * When plotting via the PythonPlotter module, each data vector must be the
+     * same size as its own x-axis vector. This overload checks this for plots
+     * without a shared x-axis; every line must carry its own xValues, so an
+     * empty xValues is also rejected.
+     * @param data The list of lines to plot.
+     * @tparam Type Numerical type of the data vectors.
      */
-    template<typename... ArgTypes>
-    static PyObjectPtr buildArgs(const ArgTypes&... args)
+    template <typename Type>
+    bool validateDataSizesMatch(const LinesToPlot<Type>& data)
     {
-        // The fold expression is true when at least one argument is null.
-        if ((!args || ...))
-            return nullptr;
+        for (const auto& dat : data)
+        {
+            if (dat.xValues.empty() || dat.yValues.size() != dat.xValues.size())
+                return false;
+        }
 
-        return PyObjectPtr(PyTuple_Pack(sizeof...(args), args.get()...));
+        return true;
     }
 
     /**
-     * Calls a method with a pre-built argument tuple.
-     * This is the shared implementation behind the public call() template.
+     * A plotter which creates plots through the Python plotting module.
      *
-     * @param name The name of the method to call.
-     * @param args The argument tuple. An empty tuple calls the method with no
-     *     arguments; a null tuple reports a failed argument build.
-     * @return A PythonResult holding the return value of the call.
+     * The module accumulates plotting state across calls: every multi-line
+     * plot() call appends its lines to the module's stored data, and each
+     * produced plot contains every line added since the last clear. Lines
+     * accumulate until the module data is cleared, so a caller which wants
+     * each plot drawn fresh must clear the data between plots.
+     *
+     * The module also holds the plot labels and x-axis values, which persist
+     * across plots until replaced (labels) or cleared (x-axis).
      */
-    PythonResult invoke(const std::string& name, PyObjectPtr args);
+    class PythonPlotter
+    {
+    public:
+        /**
+         * @brief Constructs a PythonPlotter and loads the Python plotting module.
+         *
+         * Initializes the PythonModule using the configured module name and the
+         * current source file path.
+         */
+        PythonPlotter();
+        ~PythonPlotter() = default;
+        
+        /**
+         * @brief A simple method that just plots x vs y.
+         * @note The vectors must be equal in size for this method to work.
+         * @note This will also use any labels set in the setLabels() method.
+         * @param x The x-axis values to plot.
+         * @param y The y-axis values to plot.
+         * @return true if the plotting was successful, false otherwise.
+         * @tparam Type Numerical type of the data vector.
+         */
+        template <typename Type>
+        bool plot(const std::vector<Type>& x, const std::vector<Type>& y)
+        {
+            static_assert(std::is_arithmetic_v<Type>, 
+                "Data vector must contain a numerical type.");
+                
+            if (x.size() != y.size())
+                return false;
 
-    /// The name of the loaded module.
-    std::string name;
+            pythonModule.call("simplePlot", x, y);
+            return true;
+        }
+        
+        /**
+         * @brief Plots one or more lines.
+         * @note Each line is plotted against its own xValues, or against the
+         *       provided shared x-axis when its xValues is empty.
+         * @note Each line may specify its own line style, line width, and color.
+         * @note This will also use any labels set in the setLabels() method.
+         * @note The lines are appended to the module's accumulated plot data;
+         *       see the class comment for the state lifecycle.
+         * @param x The shared x-axis values for lines without their own xValues.
+         * @param data The lines and associated metadata to plot.
+         * @return true if the plotting was successful, false if the data sizes do not match.
+         * @tparam Type Numerical type of the x-axis and line data vectors.
+         */
+        template <typename Type>
+        bool plot(const std::vector<Type>& x, const LinesToPlot<Type>& data)
+        {
+            if (!validateDataSizesMatch(x, data))
+                return false;
 
-    /**
-     * The imported module handle. The PyObjectDeleter releases the reference
-     * when this object is destroyed.
-     */
-    PyObjectPtr module;
+            for (const auto& dat : data)
+            {
+                std::string color = getPythonFormattedColor(dat.color);
+                std::string lineStyle = getPythonFormattedLineStyle(dat.style);
 
-    /**
-     * The number of PythonModule objects currently alive. The embedded
-     * interpreter runs while this count is above zero.
-     */
-    static int interpreterCount;
-}; // class PythonModule
+                if (dat.xValues.empty())
+                {
+                    pythonModule.call("buildPlotData", std::vector<Type>{}, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                }
+                else
+                {
+                    pythonModule.call("buildPlotData", dat.xValues, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                }
+            }
+
+            pythonModule.call("setXAxis", x);
+            pythonModule.call("plotData");
+
+            return true;
+        }
+
+        /**
+         * @brief Plots one or more lines, each against its own x-axis values.
+         * @note Every line must have non-empty xValues; there is no shared
+         *       x-axis in this overload.
+         * @note Each line may specify its own line style, line width, and color.
+         * @note This will also use any labels set in the setLabels() method.
+         * @note The lines are appended to the module's accumulated plot data;
+         *       see the class comment for the state lifecycle.
+         * @param data The lines and associated metadata to plot.
+         * @return true if the plotting was successful, false if any line has
+         *         empty xValues or the data sizes do not match.
+         * @tparam Type Numerical type of the line data vectors.
+         */
+        template <typename Type>
+        bool plot(const LinesToPlot<Type>& data)
+        {
+            if (!validateDataSizesMatch(data))
+                return false;
+
+            for (const auto& dat : data)
+            {
+                std::string color = getPythonFormattedColor(dat.color);
+                std::string lineStyle = getPythonFormattedLineStyle(dat.style);
+                pythonModule.call("buildPlotData", dat.xValues, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+            }
+
+            pythonModule.call("plotData");
+
+            return true;
+        }
+        
+        
+        /**
+         * @brief Sets the labels to be added to the produced plots.
+         *
+         * The labels persist across plots until replaced by a later call.
+         *
+         * @param title The plot title.
+         * @param xLabel The label of the x-axis.
+         * @param yLabel The label of the y-axis.
+         */
+        void setLabels(const std::string& title,
+                       const std::string& xLabel,
+                       const std::string& yLabel);
+
+        /// Sets whether a grid is drawn behind the plotted data (off by default).
+        void setShowGrid(bool val);
+
+        /**
+         * Sets whether the produced multi-line plots include a legend built
+         * from the labeled lines (off by default).
+         */
+        void enableLegend(bool val);
+
+        /**
+         * Sets the figure size in inches. Only sizes set before the plot calls
+         * take effect, since the Python module applies the size when creating
+         * the figure.
+         */
+        void setFigureSize(double widthInches, double heightInches);
+
+
+        /// Enables verbose output in the python modules.
+        void setVerboseOutput(bool val);           
+        
+    private:
+        /// The name of the python module which contains the plotting methods.
+        std::string moduleName{"PythonPlotter"};
+        
+        /**
+         * The python module loader. This is constructed using the moduleName
+         * set directly above and using the __FILE__ caller location since the
+         * python modules are contained in the same code folder as this file.
+         */
+        PythonModule pythonModule;
+    }; // class PythonPlotter
+} // namespace python_plotting
