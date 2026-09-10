@@ -7,6 +7,8 @@
  */
 #pragma once
 
+#include <iostream>
+#include <string>
 #include <vector>
 #include <type_traits>
 #include <variant>
@@ -95,6 +97,7 @@ namespace python_plotting
         LineStyle style{LineStyle::solid}; ///< The line style to use for this data.
         double lineWidth{1.5};             ///< The line width to use for this data.
         PlotColor color{Color::black};     ///< The color to use for this data.
+        std::string label{};               ///< The label for this line in the plot legend.
     };
 
     /**
@@ -148,6 +151,20 @@ namespace python_plotting
     }
 
     /**
+     * Reports a failed module call to standard error.
+     * @param callName The name of the module method which failed.
+     * @param result The failed result carrying the error description.
+     * @return false, for use as the enclosing plot method's return value.
+     */
+    inline bool reportCallError(const std::string& callName,
+                                const PythonResult& result)
+    {
+        std::cerr << "WARNING: Python module call '" << callName
+                  << "' failed: " << result.getError() << std::endl;
+        return false;
+    }
+
+    /**
      * A plotter which creates plots through the Python plotting module.
      *
      * The module accumulates plotting state across calls: every multi-line
@@ -158,6 +175,10 @@ namespace python_plotting
      *
      * The module also holds the plot labels and x-axis values, which persist
      * across plots until replaced (labels) or cleared (x-axis).
+     *
+     * A module call which fails (a missing method, a python exception, a
+     * conversion failure) reports its error message to standard error. The
+     * plot() methods return false on a failed call.
      */
     class PythonPlotter
     {
@@ -177,7 +198,8 @@ namespace python_plotting
          * @note This will also use any labels set in the setLabels() method.
          * @param x The x-axis values to plot.
          * @param y The y-axis values to plot.
-         * @return true if the plotting was successful, false otherwise.
+         * @return true if the plotting was successful, false if the vector
+         *         sizes do not match or the module call failed.
          * @tparam Type Numerical type of the data vector.
          */
         template <typename Type>
@@ -189,7 +211,10 @@ namespace python_plotting
             if (x.size() != y.size())
                 return false;
 
-            pythonModule.call("simplePlot", x, y);
+            PythonResult result = pythonModule.call("simplePlot", x, y);
+            if (!result.isValid())
+                return reportCallError("simplePlot", result);
+
             return true;
         }
         
@@ -203,7 +228,8 @@ namespace python_plotting
          *       see the class comment for the state lifecycle.
          * @param x The shared x-axis values for lines without their own xValues.
          * @param data The lines and associated metadata to plot.
-         * @return true if the plotting was successful, false if the data sizes do not match.
+         * @return true if the plotting was successful, false if the data sizes
+         *         do not match or a module call failed.
          * @tparam Type Numerical type of the x-axis and line data vectors.
          */
         template <typename Type>
@@ -219,16 +245,25 @@ namespace python_plotting
 
                 if (dat.xValues.empty())
                 {
-                    pythonModule.call("buildPlotData", dat.yValues, lineStyle, color, dat.lineWidth);
+                    PythonResult result = pythonModule.call("buildPlotData", std::vector<Type>{}, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                    if (!result.isValid())
+                        return reportCallError("buildPlotData", result);
                 }
                 else
                 {
-                    pythonModule.call("buildPlotData", dat.yValues, lineStyle, color, dat.lineWidth, dat.xValues);
+                    PythonResult result = pythonModule.call("buildPlotData", dat.xValues, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                    if (!result.isValid())
+                        return reportCallError("buildPlotData", result);
                 }
             }
 
-            pythonModule.call("setXAxis", x);
-            pythonModule.call("plotData");
+            PythonResult result = pythonModule.call("setXAxis", x);
+            if (!result.isValid())
+                return reportCallError("setXAxis", result);
+
+            result = pythonModule.call("plotData");
+            if (!result.isValid())
+                return reportCallError("plotData", result);
 
             return true;
         }
@@ -243,7 +278,8 @@ namespace python_plotting
          *       see the class comment for the state lifecycle.
          * @param data The lines and associated metadata to plot.
          * @return true if the plotting was successful, false if any line has
-         *         empty xValues or the data sizes do not match.
+         *         empty xValues, the data sizes do not match, or a module
+         *         call failed.
          * @tparam Type Numerical type of the line data vectors.
          */
         template <typename Type>
@@ -256,15 +292,19 @@ namespace python_plotting
             {
                 std::string color = getPythonFormattedColor(dat.color);
                 std::string lineStyle = getPythonFormattedLineStyle(dat.style);
-                pythonModule.call("buildPlotData", dat.yValues, lineStyle, color, dat.lineWidth, dat.xValues);
+                PythonResult result = pythonModule.call("buildPlotData", dat.xValues, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                if (!result.isValid())
+                    return reportCallError("buildPlotData", result);
             }
 
-            pythonModule.call("plotData");
+            PythonResult result = pythonModule.call("plotData");
+            if (!result.isValid())
+                return reportCallError("plotData", result);
 
             return true;
         }
-        
-        
+
+
         /**
          * @brief Sets the labels to be added to the produced plots.
          *
@@ -280,6 +320,12 @@ namespace python_plotting
 
         /// Sets whether a grid is drawn behind the plotted data (off by default).
         void setShowGrid(bool val);
+
+        /**
+         * Sets whether the produced multi-line plots include a legend built
+         * from the labeled lines (off by default).
+         */
+        void enableLegend(bool val);
 
         /**
          * Sets the figure size in inches. Only sizes set before the plot calls
