@@ -37,6 +37,12 @@ namespace python_plotting
     }
 
 
+    void PythonPlotter::enableLegend(bool val)
+    {
+        pythonModule.call("enableLegend", val);
+    }
+
+
     void PythonPlotter::setFigureSize(double widthInches, double heightInches)
     {
         pythonModule.call("setFigureSize", widthInches, heightInches);
