@@ -34,7 +34,12 @@ def sumVals(values):
     """Returns a string containing the values and their sum."""
     return "Values list:" + str(values) + "; Sum:" + str(sum(values))
 
-    
+
+def repeatVals(values, count):
+    """Returns the list with every value multiplied by count."""
+    return [value * count for value in values]
+
+
 def doNothing():
     """Returns None to cover the void return path."""
     return None
