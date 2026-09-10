@@ -5,12 +5,7 @@ if(WIN32 OR CYGWIN)
 	add_executable(WoWFishbot ${WoWFishbot_SRC} ${WoWFishbot_INC} )
 	target_link_libraries(WoWFishbot PRIVATE Framework_CORE System_UTIL gdi32 )
 	
-	if(SYSTEM_INSTALL)
-		install(TARGETS WoWFishbot DESTINATION ${APP_INSTALL_LOCATION})
-	endif()
-
-	if(RELEASE_BUILD)
-		install(TARGETS WoWFishbot DESTINATION ${RELEASE_INSTALL_LOCATION})
-	endif()
+    # Install the app.
+    install_app( WoWFishbot )
 endif()
 

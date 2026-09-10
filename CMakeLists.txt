@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.091")
+set(MIA_VERSION_VAL "2.092")
 
 message(STATUS "MIA_VERSION_VAL: ${MIA_VERSION_VAL}")
 
@@ -38,28 +38,11 @@ else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
 
-# Checking if SQL database libraries are available to build.
-find_path(MYSQLCPPCONN_INCLUDE_DIR mysql_connection.h)
-find_library(MYSQLCPPCONN_LIBRARY NAMES mysqlcppconn)
+# Setup database specifics.
+include( cmake/database.cmake )
 
-if (MYSQLCPPCONN_INCLUDE_DIR AND MYSQLCPPCONN_LIBRARY)
-    set(BUILD_DATABASE_FEATURES ON)
-    message(STATUS "Found MySQL Connector/C++. BUILDING database components!")
-else()
-    set(BUILD_DATABASE_FEATURES OFF)
-    message(STATUS "MySQL Connector/C++ not found. SKIPPING database components!")
-endif()
-
-# Checking if Python development libraries are available to build.
-find_package(Python3 COMPONENTS Development.Embed)
-
-if (Python3_FOUND)
-    set(BUILD_PYTHON_FEATURES ON)
-    message(STATUS "Found Python development libraries. BUILDING Python components!")
-else()
-    set(BUILD_PYTHON_FEATURES OFF)
-    message(STATUS "Python development libraries not found. SKIPPING Python components!")
-endif()
+# Setup python specifics.
+include( cmake/python.cmake )
 
 # Create the log directories
 if(UNIX AND NOT APPLE)
@@ -76,7 +59,6 @@ if(SYSTEM_INSTALL)
 endif()
 
 # Non-OS-specific path configurations.
-set(PYTHON_INSTALL_LOCATION "${APP_INSTALL_LOCATION}/python")
 set(DEFAULT_SYSTEM_CONFIG_FILE "${DEFAULT_SYSTEM_CONFIG_FILE_DIR}/MIAConfig.MIA")
 set(DEFAULT_SYSTEM_LOG "${DEFAULT_SYSTEM_LOG_DIR}/MIALog.log")
 set(DEFAULT_REPO_CONFIG_FILE_DIR "${CMAKE_SOURCE_DIR}/resources")
@@ -113,6 +95,9 @@ message(STATUS "DEFAULT_REPO_LOG: ${DEFAULT_REPO_LOG}")
 
 find_package(GTest REQUIRED)
 enable_testing()
+
+# Include application specifics.
+include( cmake/apps.cmake )
 
 add_subdirectory( bin )
 #add_subdirectory( documentation )
