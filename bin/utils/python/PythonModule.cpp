@@ -1,201 +1,126 @@
 /**
- * @file PythonModule.cpp
+ * @file PythonPlotter.cpp
  * @author Antonius Torode
- * @date 09/08/2026
- * @brief Implements loading Python modules and calling their methods.
+ * @date 09/09/2026
+ * @brief Implements the PythonPlotter methods.
  */
 
-// The associated header file.
-#include "PythonModule.hpp"
+// Includes the associated header file.
+#include "PythonPlotter.hpp"
+ 
+#include <iostream>
 
-// Used for resolving the python module directory.
-#include "Paths.hpp"
-
-#include <string>
-
-#include <Python.h>
-
-
-namespace
+namespace python_plotting
 {
-    /**
-     * Extracts the pending Python exception into a C++ string.
-     * This clears the Python error indicator, so it is only called when the error
-     * has already been handled (or is about to be reported to the caller).
-     *
-     * @return The exception message, or a fallback message if one can't be read.
-     */
-    std::string fetchPythonError()
+    PythonPlotter::PythonPlotter() :
+        pythonModule(moduleName, __FILE__)
+    {}
+    
+    
+    void PythonPlotter::setVerboseOutput(bool val)
     {
-        PyObject* type = nullptr;
-        PyObject* value = nullptr;
-        PyObject* traceback = nullptr;
-
-        // PyErr_Fetch takes ownership of the exception objects it returns.
-        PyErr_Fetch(&type, &value, &traceback);
-        PyErr_NormalizeException(&type, &value, &traceback);
-        Py_XDECREF(type);
-        Py_XDECREF(traceback);
-
-        if (!value)
-            return "Unknown Python error.";
-
-        PyObjectPtr valuePtr(value);
-        PyObjectPtr message(PyObject_Str(valuePtr.get()));
-        if (!message)
-        {
-            PyErr_Clear();
-            return "Unknown Python error.";
-        }
-
-        const char* text = PyUnicode_AsUTF8(message.get());
-        if (!text)
-        {
-            PyErr_Clear();
-            return "Unknown Python error.";
-        }
-
-        return std::string(text);
+        pythonModule.call("setVerbose", val);
+    }
+    
+    
+    void PythonPlotter::setLabels(const std::string& title,
+                                  const std::string& xLabel,
+                                  const std::string& yLabel)
+    {
+        pythonModule.call("setLabels", title, xLabel, yLabel);
     }
 
 
-    /**
-     * Converts a PyObject returned by a Python method call into a PythonResult.
-     * The type of the Python object decides which PythonResult constructor fits.
-     * Any object which is not an int, float, or str (including None) becomes a
-     * void result, since the C++ side has no representation for it.
-     *
-     * @param result The Python object to convert. Must be a new reference owned
-     *     by the caller; this function does not release it.
-     * @return A PythonResult describing the object.
-     */
-    PythonResult toResult(PyObject* result)
+    void PythonPlotter::setShowGrid(bool val)
     {
-        if (PyLong_Check(result))
-        {
-            long value = PyLong_AsLong(result);
-            if (PyErr_Occurred())
-            {
-                PyErr_Clear();
-                return PythonResult::error("Python integer result does not fit in a long.");
-            }
-            return PythonResult(value);
-        }
-
-        if (PyFloat_Check(result))
-        {
-            double value = PyFloat_AsDouble(result);
-            if (PyErr_Occurred())
-            {
-                PyErr_Clear();
-                return PythonResult::error("Python float result could not be converted.");
-            }
-            return PythonResult(value);
-        }
-
-        if (PyUnicode_Check(result))
-        {
-            const char* text = PyUnicode_AsUTF8(result);
-            if (!text)
-            {
-                PyErr_Clear();
-                return PythonResult::error("Python string result could not be converted.");
-            }
-            return PythonResult(text);
-        }
-
-        return PythonResult();
+        pythonModule.call("setShowGrid", val);
     }
-} // namespace
 
 
-// The interpreter does not run until the first module is constructed.
-int PythonModule::interpreterCount = 0;
-
-
-void PythonModule::ensureInterpreter()
-{
-    if (interpreterCount > 0)
-        return;
-
-    Py_Initialize();
-}
-
-
-PythonModule::PythonModule(const std::string& moduleName, const std::string& callerFile)
-    : name(moduleName)
-{
-    // The interpreter must exist before the module can be imported, and the
-    // count must rise before any call can observe it.
-    ensureInterpreter();
-    ++interpreterCount;
-
-    /*
-     * Add the python directory for this construction to Python's module
-     * search path. Doing it per construction lets callers in different
-     * directories coexist: each one adds the directory holding its own
-     * python files.
-     */
-    std::string setPath =
-        "import sys\n"
-        "sys.path.insert(0, r'" + paths::getPythonDirToUse(callerFile) + "')\n";
-    PyRun_SimpleString(setPath.c_str());
-
-    module.reset(PyImport_ImportModule(moduleName.c_str()));
-
-    /*
-     * A failed import is a configuration or deployment problem which every
-     * caller would have to handle the same way, so it throws instead of
-     * returning a usable object with an unusable handle. The Python traceback
-     * is printed first since the exception can only carry the C++-side story.
-     */
-    if (!module)
+    void PythonPlotter::enableLegend(bool val)
     {
-        PyErr_Print();
-        MIA_THROW(error::ErrorCode::Python_Module_Load_Failure,
-                  "Module '" + moduleName + "' could not be imported.");
+        pythonModule.call("enableLegend", val);
     }
-}
 
 
-PythonModule::~PythonModule()
-{
-    // Release the module handle first so no Python object is destroyed after
-    // the interpreter has shut down.
-    module.reset();
+    void PythonPlotter::setFigureSize(double widthInches, double heightInches)
+    {
+        pythonModule.call("setFigureSize", widthInches, heightInches);
+    }
+    
+    
+    std::string ColorToString(const Color color)
+    {
+        switch(color)
+        {
+            case Color::black:  return "black";
+            case Color::red:    return "red";
+            case Color::green:  return "green";
+            case Color::blue:   return "blue";
+            case Color::yellow: return "yellow";
+            case Color::orange: return "orange";
+            case Color::purple: return "purple";
+            case Color::white:  return "white";
+            case Color::gray:   return "gray";
+            default:            return "Unknown";
+        }
+    }
+    
+    
+    std::string getPythonFormattedLineStyle(const LineStyle style)
+    {
+        switch (style)
+        {
+            case LineStyle::solid:   return "-";
+            case LineStyle::dotted:  return ":";
+            case LineStyle::dashed:  return "--";
+            case LineStyle::dashdot: return "-.";
+            default:                 return "Unknown";
+        }
+    }
+    
+    
+    bool validateColorString(const std::string& color)
+    {
+        if (color.empty() || color[0] != '#')
+            return false;
 
-    // Shut the interpreter down only when the last module is gone.
-    if (--interpreterCount == 0)
-        Py_FinalizeEx();
-}
+        const std::size_t length = color.size();
 
+        if (length != 4 && length != 5 && length != 7 && length != 9)
+            return false;
 
-bool PythonModule::hasMethod(const std::string& methodName) const
-{
-    if (!module)
-        return false;
+        for (std::size_t i = 1; i < length; ++i)
+        {
+            if (!std::isxdigit(static_cast<unsigned char>(color[i])))
+                return false;
+        }
 
-    PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
-    return function && PyCallable_Check(function.get());
-}
+        return true;
+    }
 
-
-PythonResult PythonModule::invoke(const std::string& methodName, PyObjectPtr args)
-{
-    // A null tuple means the caller's argument building failed.
-    if (!args)
-        return PythonResult::error("Failed to build arguments for '" + methodName + "'.");
-
-    PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
-    if (!function)
-        return PythonResult::error("Method '" + methodName + "' not found: " + fetchPythonError());
-
-    if (!PyCallable_Check(function.get()))
-        return PythonResult::error("Attribute '" + methodName + "' is not callable.");
-
-    PyObjectPtr result(PyObject_CallObject(function.get(), args.get()));
-    if (!result)
-        return PythonResult::error("Call to '" + methodName + "' failed: " + fetchPythonError());
-
-    return toResult(result.get());
-}
+    
+    
+    std::string getPythonFormattedColor(const PlotColor& color)
+    {
+        if (std::holds_alternative<Color>(color))
+        { // color is stored as a Color enum.
+            return ColorToString(std::get<Color>(color));
+        }
+        else
+        { // color is stored as a string.
+            std::string colorString = std::get<std::string>(color);
+            if (validateColorString(colorString))
+            { // color is valid.
+                return colorString;
+            }
+            else
+            { // color is not valid. Fallback to black as default.
+                // TODO - maybe handle this error case differently.
+                std::cerr << "WARNING: Invalid python color entered, defaulting to black." 
+                          << std::endl;
+                return ColorToString(Color::black);
+            }
+        }
+    }
+} // namespace python_plotting
