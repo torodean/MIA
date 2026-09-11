@@ -63,11 +63,11 @@ using PyObjectPtr = std::unique_ptr<PyObject, PyObjectDeleter>;
 
 
 /**
- * A loaded Python module which can be called from C++.
- * This owns both the interpreter lifetime and the imported module handle: the
- * first module constructed initializes the embedded interpreter, and destroying
- * the last module shuts it down. Code using this class never touches the
- * Python C API directly.
+ * This class defines an interface to load a Python module from C++. 
+ * This owns the imported module handle. The embedded interpreter is initialized
+ * when needed and remains initialized independently of individual
+ * PythonModule objects. Code using this class never touches the Python C API
+ * directly.
  *
  * call() is a variadic template: any mix of supported argument types is
  * converted to the matching Python type and packed into the argument tuple.
@@ -78,8 +78,8 @@ using PyObjectPtr = std::unique_ptr<PyObject, PyObjectDeleter>;
  * An app which wants to treat a call failure as fatal can check isValid()
  * and throw or exit on its own terms.
  *
- * The interpreter reference count is not thread-safe; constructing and
- * destroying modules is assumed to happen on one thread.
+ * The interpreter is not thread-safe; use of this class is assumed to happen
+ * on one thread.
  */
 class PythonModule
 {
@@ -88,8 +88,8 @@ public:
     /**
      * Constructs and loads a Python module by name.
      * The module must be reachable on Python's module search path. The
-     * embedded interpreter is initialized by this constructor if no other
-     * module is currently alive.
+     * embedded interpreter is initialized by this constructor if it is
+     * not already initialized.
      *
      * The caller passes __FILE__ so this class knows where it is being
      * constructed from. During development runs, the python files are
@@ -107,20 +107,15 @@ public:
     PythonModule(const std::string& moduleName, const std::string& callerFile);
 
     /**
-     * Destructor. Releases the module handle and, if this is the last module
-     * alive, shuts down the embedded interpreter.
+     * Destructor. Releases the imported module handle.
      */
     ~PythonModule();
 
     /*
-     * Copying is deleted because a PythonModule owns exactly one reference to
-     * a Python module object. If two objects shared that pointer, whichever
-     * was destroyed first would release the reference and leave the other
-     * holding a handle Python has already freed (a use-after-free on the next
-     * call). A copy would also corrupt the interpreter reference count, since
-     * one construction would become two live objects. If a module ever needs
-     * to be shared, share the PythonModule itself through a shared_ptr so
-     * ownership stays with one object.
+     * Copying is deleted because a PythonModule uniquely owns its imported module
+     * handle. Copying would require defining how ownership of that Python object
+     * is shared or duplicated. If a module ever needs to be shared, share the
+     * PythonModule itself through a shared_ptr so ownership stays with one object.
      */
     PythonModule(const PythonModule&) = delete;
     PythonModule& operator=(const PythonModule&) = delete;
@@ -158,9 +153,9 @@ private:
 
     /**
      * Initializes the embedded interpreter if it is not running yet.
-     * This is a no-op while at least one module is alive. Besides starting
-     * the interpreter, it puts the current working directory on Python's
-     * module search path so modules next to the executable are importable.
+     * This is a no-op when the interpreter is already initialized. Besides starting
+     * the interpreter, it puts the current working directory on Python's module
+     * search path so modules next to the executable are importable.
      */
     static void ensureInterpreter();
 
@@ -289,10 +284,4 @@ private:
      * when this object is destroyed.
      */
     PyObjectPtr module;
-
-    /**
-     * The number of PythonModule objects currently alive. The embedded
-     * interpreter runs while this count is above zero.
-     */
-    static int interpreterCount;
 }; // class PythonModule
