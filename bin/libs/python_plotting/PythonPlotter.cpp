@@ -10,7 +10,7 @@
  
 #include <iostream>
 
-namespace python_plotting
+namespace py_plotting
 {
     PythonPlotter::PythonPlotter() :
         pythonModule(moduleName, __FILE__)
@@ -19,15 +19,43 @@ namespace python_plotting
     
     void PythonPlotter::setVerboseOutput(bool val)
     {
-        pythonModule.call("setVerbose", val);
+        PythonResult result = pythonModule.call("setVerbose", val);
+        if (!result.isValid())
+            (void)reportCallError("setVerbose", result);
     }
-    
-    
+
+
     void PythonPlotter::setLabels(const std::string& title,
                                   const std::string& xLabel,
                                   const std::string& yLabel)
     {
-        pythonModule.call("setLabels", title, xLabel, yLabel);
+        PythonResult result = pythonModule.call("setLabels", title, xLabel, yLabel);
+        if (!result.isValid())
+            (void)reportCallError("setLabels", result);
+    }
+
+
+    void PythonPlotter::setShowGrid(bool val)
+    {
+        PythonResult result = pythonModule.call("setShowGrid", val);
+        if (!result.isValid())
+            (void)reportCallError("setShowGrid", result);
+    }
+
+
+    void PythonPlotter::enableLegend(bool val)
+    {
+        PythonResult result = pythonModule.call("enableLegend", val);
+        if (!result.isValid())
+            (void)reportCallError("enableLegend", result);
+    }
+
+
+    void PythonPlotter::setFigureSize(double widthInches, double heightInches)
+    {
+        PythonResult result = pythonModule.call("setFigureSize", widthInches, heightInches);
+        if (!result.isValid())
+            (void)reportCallError("setFigureSize", result);
     }
     
     
@@ -105,4 +133,4 @@ namespace python_plotting
             }
         }
     }
-} // namespace python_plotting
+} // namespace py_plotting

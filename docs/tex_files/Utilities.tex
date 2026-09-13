@@ -398,12 +398,12 @@ The MIA project provides a collection of general-purpose utilities for working w
 
 \subsection{Python Utilities}\label{section:python_utils}
 
-The MIA project contains python utilities which allow loading and calling methods from python files from the c++ code. The python related utilities are contained in the \texttt{Python\_UTILS} library in CMake.
+The MIA project contains python utilities which allow loading and calling methods from python files from the c++ code. The python related utilities are contained in the \texttt{Python\_UTIL} library in CMake.
 
 The \texttt{PythonModule.hpp} file provides a utility for importing and calling methods from a python file. To import a python module for use in c++ code, the python module (file) should typically be located in the same directory as the c++ code that is using it. The \texttt{PythonModule} is intended to be constructed with the name of the module (python file) and the file location of the calling file (this is used to determine where the python files are located).
 \begin{lstlisting}[style=cppstyle]
 // PythonModule(const std::string& moduleName, const std::string& callerFile);
-PythonModule myModule = ("myPythonFile", __FILE__);
+PythonModule myModule("myPythonFile", __FILE__);
 \end{lstlisting}
 This class is intended to be called with \texttt{\_\_FILE\_\_} as the second parameter - which assumes the python files are located next to the associated c++ files. The \texttt{callerFile} parameter is used to determine the \textit{directory} of the python files, so this can be customized if the files are placed in a different directory (at the time of writing this, that is untested). See section \ref{section:python_file_location} for more information about the python file locations. 
 
@@ -416,7 +416,7 @@ The appropriate parameters that are fed into the \texttt{PythonModule::call(..)}
 
 \subsubsection{Python Results}
 
-The \texttt{PythonModule::call(..)} method returns a special \texttt{PythonResult} object. This objects is used to store the return values of the python methods. This object is essentially a wrapper around all of the various supported types that python methods in the MIA project can return. If a non-supported type is returned, this object will need expanded to include new types. The result object contains a few basic API components which can be seen in the \texttt{PythonResult.hpp} file.
+The \texttt{PythonModule::call(..)} method returns a special \texttt{PythonResult} object. This object is used to store the return values of the python methods. This object is essentially a wrapper around all of the various supported types that python methods in the MIA project can return. If a non-supported type is returned, this object will need expanded to include new types. A failed call (a missing method, a python exception, or a conversion failure) does not throw; it returns an invalid result whose description is available through \texttt{getError()}, so callers should check \texttt{isValid()} before reading a value. The value is read through the \texttt{asInt()}, \texttt{asDouble()}, or \texttt{asString()} accessor matching the \texttt{getType()} of the result. The full result object API can be seen in the \texttt{PythonResult.hpp} file. Only module construction throws, when the module fails to import; a constructed module is always usable.
 
 
 
