@@ -8,12 +8,12 @@
 // The associated header file.
 #include "PythonModule.hpp"
 
-// Used for resolving the python module directory.
-#include "Paths.hpp"
-
 #include <string>
 
 #include <Python.h>
+
+// Used for resolving the python module directory.
+#include "Paths.hpp"
 
 
 namespace
@@ -103,6 +103,37 @@ namespace
             }
             return PythonResult(text);
         }
+        
+        if (PyList_Check(result))
+        {
+            std::vector<std::string> values;
+
+            Py_ssize_t size = PyList_Size(result);
+            values.reserve(size);
+
+            for (Py_ssize_t i = 0; i < size; ++i)
+            {
+                PyObject* item = PyList_GetItem(result, i);
+
+                if (!PyUnicode_Check(item))
+                {
+                    return PythonResult::error(
+                        "Python list result contains a non-string value.");
+                }
+
+                const char* text = PyUnicode_AsUTF8(item);
+                if (!text)
+                {
+                    PyErr_Clear();
+                    return PythonResult::error(
+                        "Python string in list result could not be converted.");
+                }
+
+                values.emplace_back(text);
+            }
+
+            return PythonResult(values);
+        }
 
         return PythonResult();
     }
@@ -144,7 +175,7 @@ PythonModule::PythonModule(const std::string& moduleName, const std::string& cal
     if (!module)
     {
         PyErr_Print();
-        MIA_THROW(error::ErrorCode::Python_Module_Load_Failure,
+        MIA_THROW(error::ErrorCode::Py_Module_Load_Failure,
                   "Module '" + moduleName + "' could not be imported.");
     }
 }

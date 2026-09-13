@@ -80,7 +80,7 @@ TEST_F(PythonModule_T, MissingModuleErrorCode)
     }
     catch (const error::MIAException& e)
     {
-        EXPECT_EQ(e.getCode(), error::ErrorCode::Python_Module_Load_Failure)
+        EXPECT_EQ(e.getCode(), error::ErrorCode::Py_Module_Load_Failure)
             << "The thrown exception should carry Python_Module_Load_Failure.";
     }
 }
@@ -151,6 +151,21 @@ TEST_F(PythonModule_T, StringReturn)
     EXPECT_EQ(result.getType(), PythonResult::Type::String)
         << "A str return should produce a String result.";
     EXPECT_EQ(result.asString(), "Hello, Antonius!");
+}
+
+/**
+ * @brief Verifies a list of strings return value comes back through asStrings.
+ */
+TEST_F(PythonModule_T, StringsReturn)
+{
+    PythonResult result = module->call("returnList");
+    std::vector<std::string> expectedStrings = {"string1", "string2", "string3"};
+
+    EXPECT_TRUE(result.isValid())
+        << "The returnList call should succeed.";
+    EXPECT_EQ(result.getType(), PythonResult::Type::Strings)
+        << "A [str] return should produce a Strings result.";
+    EXPECT_EQ(result.asStrings(), expectedStrings);
 }
 
 /**

@@ -1,7 +1,7 @@
 # PythonResult tests need no interpreter; PythonModule tests link Python and
 # need PythonModuleTests.py next to the test binary.
 add_executable(PythonResult_T PythonResult_T.cpp ../PythonResult.cpp ../PythonResult.hpp )
-target_link_libraries(PythonResult_T PRIVATE GTest::gtest_main)
+target_link_libraries(PythonResult_T PRIVATE Framework_CORE GTest::gtest_main)
 target_include_directories(PythonResult_T PRIVATE ../)
 add_test(NAME PythonResult_T COMMAND PythonResult_T )
 
