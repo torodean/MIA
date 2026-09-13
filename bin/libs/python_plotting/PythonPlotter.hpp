@@ -7,6 +7,8 @@
  */
 #pragma once
 
+#include <iostream>
+#include <string>
 #include <vector>
 #include <type_traits>
 #include <variant>
@@ -15,7 +17,7 @@
 #include "PythonModule.hpp"
 
 
-namespace python_plotting
+namespace py_plotting
 {
     /**
      * @brief Defines the predefined colors available for plot lines.
@@ -85,46 +87,98 @@ namespace python_plotting
     
     /**
      * Storage for metadata relevant for a line being plotted.
-     * @tparam Type Numerical type of the data vector.
+     * @tparam Type Numerical type of the data vectors.
      */
     template <typename Type>
     struct LineMetaData
     {
-        std::vector<Type> values;          ///< The data to plot. 
+        std::vector<Type> xValues;         ///< The x-axis values for this data. When empty, the x-axis passed to plot() is used instead.
+        std::vector<Type> yValues;         ///< The data to plot.
         LineStyle style{LineStyle::solid}; ///< The line style to use for this data.
         double lineWidth{1.5};             ///< The line width to use for this data.
         PlotColor color{Color::black};     ///< The color to use for this data.
-    };        
-    
+        std::string label{};               ///< The label for this line in the plot legend.
+    };
+
     /**
      * Defines a container which will hold all lines to be plotted.
-     * @tparam Type Numerical type of the data vector.
-     */
-    template <typename Type>
-    using LinesToPlot = std::vector<LineMetaData<Type>>;
-    
-    /**
-     * When plotting via the PythonPlotter module, the x axis vector must be
-     * the same size as all of the data vectors. This method checks this.
-     * @param x The x-axis data.
-     * @param data The list of y-axis data(s) to plot.
      * @tparam Type Numerical type of the data vectors.
      */
     template <typename Type>
-    bool validateDataSizesMatch(const std::vector<Type>& x, 
+    using LinesToPlot = std::vector<LineMetaData<Type>>;
+
+    /**
+     * When plotting via the PythonPlotter module, each data vector must be the
+     * same size as the x-axis vector it will be plotted against: the shared
+     * x-axis for lines without their own xValues, or the line's xValues
+     * otherwise. This method checks this.
+     * @param x The shared x-axis data.
+     * @param data The list of lines to plot.
+     * @tparam Type Numerical type of the data vectors.
+     */
+    template <typename Type>
+    bool validateDataSizesMatch(const std::vector<Type>& x,
                                 const LinesToPlot<Type>& data)
     {
-        size_t xSize = x.size();
-        
         for (const auto& dat : data)
-            if (dat.values.size() != xSize)
+        {
+            const auto& xToUse = dat.xValues.empty() ? x : dat.xValues;
+            if (dat.yValues.size() != xToUse.size())
                 return false;
-                
+        }
+
         return true;
     }
 
     /**
-     * TODO
+     * When plotting via the PythonPlotter module, each data vector must be the
+     * same size as its own x-axis vector. This overload checks this for plots
+     * without a shared x-axis; every line must carry its own xValues, so an
+     * empty xValues is also rejected.
+     * @param data The list of lines to plot.
+     * @tparam Type Numerical type of the data vectors.
+     */
+    template <typename Type>
+    bool validateDataSizesMatch(const LinesToPlot<Type>& data)
+    {
+        for (const auto& dat : data)
+        {
+            if (dat.xValues.empty() || dat.yValues.size() != dat.xValues.size())
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Reports a failed module call to standard error.
+     * @param callName The name of the module method which failed.
+     * @param result The failed result carrying the error description.
+     * @return false, for use as the enclosing plot method's return value.
+     */
+    inline bool reportCallError(const std::string& callName,
+                                const PythonResult& result)
+    {
+        std::cerr << "WARNING: Python module call '" << callName
+                  << "' failed: " << result.getError() << std::endl;
+        return false;
+    }
+
+    /**
+     * A plotter which creates plots through the Python plotting module.
+     *
+     * The module accumulates plotting state across calls: every multi-line
+     * plot() call appends its lines to the module's stored data, and each
+     * produced plot contains every line added since the last clear. Lines
+     * accumulate until the module data is cleared, so a caller which wants
+     * each plot drawn fresh must clear the data between plots.
+     *
+     * The module also holds the plot labels and x-axis values, which persist
+     * across plots until replaced (labels) or cleared (x-axis).
+     *
+     * A module call which fails (a missing method, a python exception, a
+     * conversion failure) reports its error message to standard error. The
+     * plot() methods return false on a failed call.
      */
     class PythonPlotter
     {
@@ -144,7 +198,8 @@ namespace python_plotting
          * @note This will also use any labels set in the setLabels() method.
          * @param x The x-axis values to plot.
          * @param y The y-axis values to plot.
-         * @return true if the plotting was successful, false otherwise.
+         * @return true if the plotting was successful, false if the vector
+         *         sizes do not match or the module call failed.
          * @tparam Type Numerical type of the data vector.
          */
         template <typename Type>
@@ -156,18 +211,25 @@ namespace python_plotting
             if (x.size() != y.size())
                 return false;
 
-            pythonModule.call("simplePlot", x, y);
+            PythonResult result = pythonModule.call("simplePlot", x, y);
+            if (!result.isValid())
+                return reportCallError("simplePlot", result);
+
             return true;
         }
         
         /**
-         * @brief Plots one or more lines against the provided x-axis data.
-         * @note The x-axis vector must be equal in size to every data vector.
+         * @brief Plots one or more lines.
+         * @note Each line is plotted against its own xValues, or against the
+         *       provided shared x-axis when its xValues is empty.
          * @note Each line may specify its own line style, line width, and color.
          * @note This will also use any labels set in the setLabels() method.
-         * @param x The x-axis values to plot.
+         * @note The lines are appended to the module's accumulated plot data;
+         *       see the class comment for the state lifecycle.
+         * @param x The shared x-axis values for lines without their own xValues.
          * @param data The lines and associated metadata to plot.
-         * @return true if the plotting was successful, false if the data sizes do not match.
+         * @return true if the plotting was successful, false if the data sizes
+         *         do not match or a module call failed.
          * @tparam Type Numerical type of the x-axis and line data vectors.
          */
         template <typename Type>
@@ -175,30 +237,104 @@ namespace python_plotting
         {
             if (!validateDataSizesMatch(x, data))
                 return false;
-                
 
             for (const auto& dat : data)
             {
                 std::string color = getPythonFormattedColor(dat.color);
                 std::string lineStyle = getPythonFormattedLineStyle(dat.style);
-                pythonModule.call("buildPlotData", dat.values, lineStyle, color, dat.lineWidth);
+
+                if (dat.xValues.empty())
+                {
+                    PythonResult result = pythonModule.call("buildPlotData", std::vector<Type>{}, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                    if (!result.isValid())
+                        return reportCallError("buildPlotData", result);
+                }
+                else
+                {
+                    PythonResult result = pythonModule.call("buildPlotData", dat.xValues, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                    if (!result.isValid())
+                        return reportCallError("buildPlotData", result);
+                }
             }
-            
-            pythonModule.call("setXAxis", x);
-            pythonModule.call("plotData");
-            
+
+            PythonResult result = pythonModule.call("setXAxis", x);
+            if (!result.isValid())
+                return reportCallError("setXAxis", result);
+
+            result = pythonModule.call("plotData");
+            if (!result.isValid())
+                return reportCallError("plotData", result);
+
             return true;
         }
-        
-        
+
         /**
-         * Sets the labeles to be added to the produced plots.
+         * @brief Plots one or more lines, each against its own x-axis values.
+         * @note Every line must have non-empty xValues; there is no shared
+         *       x-axis in this overload.
+         * @note Each line may specify its own line style, line width, and color.
+         * @note This will also use any labels set in the setLabels() method.
+         * @note The lines are appended to the module's accumulated plot data;
+         *       see the class comment for the state lifecycle.
+         * @param data The lines and associated metadata to plot.
+         * @return true if the plotting was successful, false if any line has
+         *         empty xValues, the data sizes do not match, or a module
+         *         call failed.
+         * @tparam Type Numerical type of the line data vectors.
+         */
+        template <typename Type>
+        bool plot(const LinesToPlot<Type>& data)
+        {
+            if (!validateDataSizesMatch(data))
+                return false;
+
+            for (const auto& dat : data)
+            {
+                std::string color = getPythonFormattedColor(dat.color);
+                std::string lineStyle = getPythonFormattedLineStyle(dat.style);
+                PythonResult result = pythonModule.call("buildPlotData", dat.xValues, dat.yValues, lineStyle, color, dat.lineWidth, dat.label);
+                if (!result.isValid())
+                    return reportCallError("buildPlotData", result);
+            }
+
+            PythonResult result = pythonModule.call("plotData");
+            if (!result.isValid())
+                return reportCallError("plotData", result);
+
+            return true;
+        }
+
+
+        /**
+         * @brief Sets the labels to be added to the produced plots.
+         *
+         * The labels persist across plots until replaced by a later call.
+         *
+         * @param title The plot title.
+         * @param xLabel The label of the x-axis.
+         * @param yLabel The label of the y-axis.
          */
         void setLabels(const std::string& title,
                        const std::string& xLabel,
                        const std::string& yLabel);
-                       
-        
+
+        /// Sets whether a grid is drawn behind the plotted data (off by default).
+        void setShowGrid(bool val);
+
+        /**
+         * Sets whether the produced multi-line plots include a legend built
+         * from the labeled lines (off by default).
+         */
+        void enableLegend(bool val);
+
+        /**
+         * Sets the figure size in inches. Only sizes set before the plot calls
+         * take effect, since the Python module applies the size when creating
+         * the figure.
+         */
+        void setFigureSize(double widthInches, double heightInches);
+
+
         /// Enables verbose output in the python modules.
         void setVerboseOutput(bool val);           
         
@@ -213,4 +349,4 @@ namespace python_plotting
          */
         PythonModule pythonModule;
     }; // class PythonPlotter
-} // namespace python_plotting
+} // namespace py_plotting

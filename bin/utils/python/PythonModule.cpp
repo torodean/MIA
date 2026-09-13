@@ -109,26 +109,18 @@ namespace
 } // namespace
 
 
-// The interpreter does not run until the first module is constructed.
-int PythonModule::interpreterCount = 0;
-
-
 void PythonModule::ensureInterpreter()
 {
-    if (interpreterCount > 0)
-        return;
-
-    Py_Initialize();
+    if (!Py_IsInitialized())
+        Py_Initialize();
 }
 
 
 PythonModule::PythonModule(const std::string& moduleName, const std::string& callerFile)
     : name(moduleName)
 {
-    // The interpreter must exist before the module can be imported, and the
-    // count must rise before any call can observe it.
+    // The interpreter must exist before the module can be imported.
     ensureInterpreter();
-    ++interpreterCount;
 
     /*
      * Add the python directory for this construction to Python's module
@@ -163,10 +155,6 @@ PythonModule::~PythonModule()
     // Release the module handle first so no Python object is destroyed after
     // the interpreter has shut down.
     module.reset();
-
-    // Shut the interpreter down only when the last module is gone.
-    if (--interpreterCount == 0)
-        Py_FinalizeEx();
 }
 
 

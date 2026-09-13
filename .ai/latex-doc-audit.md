@@ -1,7 +1,7 @@
 # LaTeX Doc Audit
 
 This is a task file.
-The MIA manual is built from [../docs/MIAManual.tex](../docs/MIAManual.tex), which includes the chapter fragments in [../docs/TeX_files/](../docs/TeX_files/).
+The MIA manual is built from [../docs/MIAManual.tex](../docs/MIAManual.tex), which includes the chapter fragments in [../docs/tex_files/](../docs/tex_files/).
 Those fragments make factual claims about the code, commands, configuration, behavior, and the build, and they drift as the code changes.
 This file directs an AI to parse the LaTeX docs and find inaccuracies, deficiencies, and other things worth fixing.
 
@@ -31,13 +31,13 @@ Flag any claim that no longer holds.
 
 Common kinds and examples:
 
-- A command listed in [MIAcommands.tex](../docs/TeX_files/MIAcommands.tex) that no longer exists in `MIAOriginal`, or a command that exists in code but is missing from the list.
+- A command listed in [MIAcommands.tex](../docs/tex_files/MIAcommands.tex) that no longer exists in `MIAOriginal`, or a command that exists in code but is missing from the list.
 - A command's described behavior, syntax, flags, or accepted limits (e.g. the `2147483647` cap, the `XXdYY` dice format) that differ from what the code actually does.
-- A config key, default value, or access method in [MIAConfig.tex](../docs/TeX_files/MIAConfig.tex) that does not match the `MIAConfig` class or the example `MIAConfig.MIA` file.
-- A sequencer action, input type, or enum value in [MIASequencer.tex](../docs/TeX_files/MIASequencer.tex) that does not match the sequencer code or its `SpecialButton` enum.
-- A library name, `*_LIB` target, or linking example in [Libraries.tex](../docs/TeX_files/Libraries.tex) that does not match the CMake library definitions.
-- A utility or library described in [Utilities.tex](../docs/TeX_files/Utilities.tex) or [Developers.tex](../docs/TeX_files/Developers.tex) that has been moved, renamed, or removed.
-- A build step, flag, or script behavior in [Developers.tex](../docs/TeX_files/Developers.tex) that does not match `build.sh` or the CMake setup.
+- A config key, default value, or access method in [MIAConfig.tex](../docs/tex_files/MIAConfig.tex) that does not match the `MIAConfig` class or the example `MIAConfig.MIA` file.
+- A sequencer action, input type, or enum value in [MIASequencer.tex](../docs/tex_files/MIASequencer.tex) that does not match the sequencer code or its `SpecialButton` enum.
+- A library name, `*_LIB` target, or linking example in [Libraries.tex](../docs/tex_files/Libraries.tex) that does not match the CMake library definitions.
+- A utility or library described in [Utilities.tex](../docs/tex_files/Utilities.tex) or [Developers.tex](../docs/tex_files/Developers.tex) that has been moved, renamed, or removed.
+- A build step, flag, or script behavior in [Developers.tex](../docs/tex_files/Developers.tex) that does not match `build.sh` or the CMake setup.
 - Version numbers, dates, or "at the time of writing" statements that are now stale or false.
 - A class, function, namespace, or file name in the doc that no longer matches the code (check the actual header or source rather than guessing from the name).
 
@@ -51,7 +51,7 @@ Flag content gaps where the manual is silent about something a user or contribut
 Common kinds:
 
 - A new app, command, config key, sequencer action, utility, or library that was added to the code but has no doc entry.
-- A chapter that exists as a stub or design note (e.g. [Maple.tex](../docs/TeX_files/Maple.tex) says no code is implemented yet) where code has since landed; flag that the doc should describe the real implementation.
+- A chapter that exists as a stub or design note (e.g. [Maple.tex](../docs/tex_files/Maple.tex) says no code is implemented yet) where code has since landed; flag that the doc should describe the real implementation.
 - A flag, option, or edge case of an existing feature that the doc omits.
 - A figure or screenshot referenced in prose but never included, or an image file in [../docs/images/](../docs/images/) that is never referenced.
 - A section the table of contents or a cross-reference points to but that does not exist.
@@ -111,7 +111,7 @@ Let the user decide whether to write it now, wait, or leave it.
 
 ## Cross-references and authority
 
-- [CodingStandards.tex](../docs/TeX_files/CodingStandards.tex) is the canonical code-level standard.
+- [CodingStandards.tex](../docs/tex_files/CodingStandards.tex) is the canonical code-level standard.
   Where a doc fragment and the coding standard disagree, the standard wins; raise the discrepancy.
 - [comment-formatting.md](comment-formatting.md) covers how to write comments in `.tex` source (`%` line comments, no Doxygen headers).
 - [writing-style.md](writing-style.md) covers the wording of any prose you propose (plain, terse, no em dashes, no signposting).

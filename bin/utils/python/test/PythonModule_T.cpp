@@ -212,7 +212,6 @@ TEST_F(PythonModule_T, TwoModulesAlive)
         << "The second module should be independently usable.";
 }
 
-
 /**
  * @brief Verifies a vector of integers is converted to a Python list.
  */
@@ -230,3 +229,86 @@ TEST_F(PythonModule_T, VectorIntArgument)
         << "sumVals should receive the vector as a Python list and calculate its sum.";
 }
 
+/**
+ * @brief Verifies a vector of doubles is converted to a Python list.
+ */
+TEST_F(PythonModule_T, VectorDoubleArgument)
+{
+    std::vector<double> vecOfDoubles = {1.5, 2.5, 3.5};
+
+    PythonResult result = module->call("sumVals", vecOfDoubles);
+
+    EXPECT_TRUE(result.isValid())
+        << "The sumVals call should succeed. Error: " << result.getError();
+    EXPECT_EQ(result.asString(), "Values list:[1.5, 2.5, 3.5]; Sum:7.5")
+        << "sumVals should receive the doubles and calculate their sum.";
+}
+
+/**
+ * @brief Verifies a vector of floats converts through the templated list converter.
+ */
+TEST_F(PythonModule_T, VectorFloatArgument)
+{
+    std::vector<float> vecOfFloats = {1.5f, 2.5f, 3.5f};
+
+    PythonResult result = module->call("sumVals", vecOfFloats);
+
+    EXPECT_TRUE(result.isValid())
+        << "The sumVals call should succeed. Error: " << result.getError();
+    EXPECT_EQ(result.asString(), "Values list:[1.5, 2.5, 3.5]; Sum:7.5")
+        << "sumVals should receive the floats and calculate their sum.";
+}
+
+/**
+ * @brief Verifies a vector of longs converts through the templated list converter.
+ */
+TEST_F(PythonModule_T, VectorLongArgument)
+{
+    std::vector<long> vecOfLongs = {10, 20, 30};
+
+    PythonResult result = module->call("sumVals", vecOfLongs);
+
+    EXPECT_TRUE(result.isValid())
+        << "The sumVals call should succeed. Error: " << result.getError();
+    EXPECT_EQ(result.asString(), "Values list:[10, 20, 30]; Sum:60")
+        << "sumVals should receive the longs and calculate their sum.";
+}
+
+/**
+ * @brief Verifies narrower integer vector types convert through the same template.
+ */
+TEST_F(PythonModule_T, VectorNarrowIntArguments)
+{
+    PythonResult shorts = module->call("sumVals", std::vector<short>{1, 2, 3});
+    PythonResult unsigneds = module->call("sumVals", std::vector<unsigned>{4, 5, 6});
+    PythonResult longLongs = module->call("sumVals", std::vector<long long>{7, 8, 9});
+
+    ASSERT_TRUE(shorts.isValid())
+        << "The vector<short> call should succeed. Error: " << shorts.getError();
+    ASSERT_TRUE(unsigneds.isValid())
+        << "The vector<unsigned> call should succeed. Error: " << unsigneds.getError();
+    ASSERT_TRUE(longLongs.isValid())
+        << "The vector<long long> call should succeed. Error: " << longLongs.getError();
+
+    EXPECT_EQ(shorts.asString(), "Values list:[1, 2, 3]; Sum:6")
+        << "vector<short> should convert element by element.";
+    EXPECT_EQ(unsigneds.asString(), "Values list:[4, 5, 6]; Sum:15")
+        << "vector<unsigned> should convert element by element.";
+    EXPECT_EQ(longLongs.asString(), "Values list:[7, 8, 9]; Sum:24")
+        << "vector<long long> should convert element by element.";
+}
+
+/**
+ * @brief Verifies a vector of strings converts through the templated list converter.
+ */
+TEST_F(PythonModule_T, VectorStringArgument)
+{
+    std::vector<std::string> vecOfStrings = {"a", "b", "c"};
+
+    PythonResult result = module->call("joinVals", vecOfStrings);
+
+    EXPECT_TRUE(result.isValid())
+        << "The joinVals call should succeed. Error: " << result.getError();
+    EXPECT_EQ(result.asString(), "abc")
+        << "joinVals should receive the strings as a Python list.";
+}

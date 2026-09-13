@@ -10,3 +10,6 @@ This folder contains reusable libraries that provide common functionality to sup
 
 - **rpg/**  
   This is a library containing a set of tools used for the development of an RPG. This entire folder is mostly just for fun/experimentation.
+  
+- **python_plotting/**  
+  This is a library for creating plots from c++ code. Plotting is performed by calling python plotting methods through the embedded python interpreter, with the python side contained in this folder.
