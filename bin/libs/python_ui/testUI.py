@@ -182,4 +182,9 @@ def createUI():
         command=increment
     )
     plusButton.pack(side=tk.LEFT, padx=5)
+    
+    root.mainloop()
 
+
+if __name__ == "__main__":
+    createUI()
