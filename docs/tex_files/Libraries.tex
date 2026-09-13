@@ -54,9 +54,9 @@ The RPG library (\texttt{bin/libs/rpg/}) is an in-development RPG system, writte
 
 
 
-\section{Python Plotting Library}\label{section:python_plotting}
+\section{Python Plotting Library}\label{section:py_plotting}
 
-The \texttt{Python\_Plotting\_LIB} library provides plotting capabilities for c++ code through the Python plotting module \texttt{PythonPlotter.py}. The library contains the following APIs:
+The \texttt{Py\_Plotting\_LIB} library provides plotting capabilities for c++ code through the Python plotting module \texttt{PythonPlotter.py}. The library contains the following APIs:
 \begin{itemize}
 	\item \texttt{PythonPlotter.hpp}, with the Python plotting implementation contained in \texttt{PythonPlotter.py}.
 \end{itemize}
@@ -77,7 +77,7 @@ The \texttt{PythonPlotter} class provides methods for creating plots. A simple p
 std::vector<int> x = {0,1,2,3,4,5,6,7};
 std::vector<int> y = {0,1,3,6,10,15,21,28};
 
-python_plotting::PythonPlotter plotter;
+py_plotting::PythonPlotter plotter;
 plotter.plot(x,y);  
 \end{lstlisting}
 The two vectors must contain the same number of elements. The plotting method supports vectors of any numerical type. Plot titles and axis labels can be configured using the \texttt{setLabels()} method:
@@ -91,26 +91,26 @@ The \texttt{PythonPlotter} class can also plot multiple lines using the \texttt{
 // Sequence to test plotting with.
 std::vector<int> x = {0,1,2,3,4,5,6,7};
 
-python_plotting::LinesToPlot<int> data = {
+py_plotting::LinesToPlot<int> data = {
 	{
 		{}, // Empty xValues: use the shared x-axis.
 		{0,1,3,6,10,15,21,28},
-		python_plotting::LineStyle::solid,
+		py_plotting::LineStyle::solid,
 		4.0,
-		python_plotting::Color::blue,
+		py_plotting::Color::blue,
 		"Triangular numbers"
 	},
 	{
 		{0,1,2,4,8,16,32,64}, // This line's own x-axis values.
 		{0,1,2,4,8,16,32,64},
-		python_plotting::LineStyle::dashed,
+		py_plotting::LineStyle::dashed,
 		1.0,
-		python_plotting::Color::red,
+		py_plotting::Color::red,
 		"Powers of two"
 	}
 };
 
-python_plotting::PythonPlotter plotter;
+py_plotting::PythonPlotter plotter;
 plotter.setLabels("MIATest Plot", "X-Values", "Y-Values");
 plotter.enableLegend(true);
 plotter.plot(x, data);
@@ -128,21 +128,21 @@ Each \texttt{LineMetaData} contains the following properties:
 	\item \texttt{color} -- The color of the line.
 	\item \texttt{label} -- The label for this line in the plot legend. An empty label leaves the line out of the legend.
 \end{itemize}
-The available line styles are \texttt{solid}, \texttt{dotted}, \texttt{dashed}, and \texttt{dashdot}. Colors can be specified using one of the predefined \texttt{python\_plotting::Color} values:
+The available line styles are \texttt{solid}, \texttt{dotted}, \texttt{dashed}, and \texttt{dashdot}. Colors can be specified using one of the predefined \texttt{py\_plotting::Color} values:
 \begin{lstlisting}[style=cppstyle]
-python_plotting::Color::black
-python_plotting::Color::red
-python_plotting::Color::green
-python_plotting::Color::blue
-python_plotting::Color::yellow
-python_plotting::Color::orange
-python_plotting::Color::purple
-python_plotting::Color::white
-python_plotting::Color::gray
+py_plotting::Color::black
+py_plotting::Color::red
+py_plotting::Color::green
+py_plotting::Color::blue
+py_plotting::Color::yellow
+py_plotting::Color::orange
+py_plotting::Color::purple
+py_plotting::Color::white
+py_plotting::Color::gray
 \end{lstlisting}
 A hexadecimal color string can also be provided through the \texttt{PlotColor} type:
 \begin{lstlisting}[style=cppstyle]
-python_plotting::PlotColor color = "#336699";
+py_plotting::PlotColor color = "#336699";
 \end{lstlisting}
 The \texttt{PlotColor} type is a variant containing either a predefined \texttt{Color} or a hexadecimal color string.
 

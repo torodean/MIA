@@ -10,7 +10,7 @@
  
 #include <iostream>
 
-namespace python_plotting
+namespace py_plotting
 {
     PythonPlotter::PythonPlotter() :
         pythonModule(moduleName, __FILE__)
@@ -133,4 +133,4 @@ namespace python_plotting
             }
         }
     }
-} // namespace python_plotting
+} // namespace py_plotting

@@ -113,7 +113,7 @@ int testPythonPlotter(bool verboseMode)
     std::vector<int> x = {0,1,2,3,4,5,6,7};
     std::vector<int> y = {0,1,3,6,10,15,21,28};
     
-    python_plotting::PythonPlotter plotter;
+    py_plotting::PythonPlotter plotter;
     if (verboseMode)
         plotter.setVerboseOutput(true);
     plotter.setLabels("MIATest Plot", "X-Values", "Y-Values");
@@ -130,26 +130,26 @@ int testPythonPlotterMultiLine(bool verboseMode)
     // Sequence to test plotting with.
     std::vector<int> x = {0,1,2,3,4,5,6,7};
 
-    python_plotting::LinesToPlot<int> data = {
+    py_plotting::LinesToPlot<int> data = {
         {
             {}, // Empty xValues: use the shared x-axis.
             {0,1,3,6,10,15,21,28},
-            python_plotting::LineStyle::solid,
+            py_plotting::LineStyle::solid,
             4.0,
-            python_plotting::Color::blue,
+            py_plotting::Color::blue,
             "Triangular numbers"
         },
         {
             {}, // Empty xValues: use the shared x-axis.
             {0,1,2,4,8,16,32,64},
-            python_plotting::LineStyle::dashed,
+            py_plotting::LineStyle::dashed,
             1.0,
-            python_plotting::Color::red,
+            py_plotting::Color::red,
             "Powers of two"
         }
     };
 
-    python_plotting::PythonPlotter plotter;
+    py_plotting::PythonPlotter plotter;
     if (verboseMode)
         plotter.setVerboseOutput(true);
     plotter.setLabels("MIATest Plot", "X-Values", "Y-Values");
@@ -170,26 +170,26 @@ int testPythonPlotterMultiLine(bool verboseMode)
  */
 int testPythonPlotterPerLineX(bool verboseMode)
 {
-    python_plotting::LinesToPlot<int> data = {
+    py_plotting::LinesToPlot<int> data = {
         {
             {0,1,2,4,8,16,32,64}, // This line's own x-axis values.
             {0,1,3,6,10,15,21,28},
-            python_plotting::LineStyle::solid,
+            py_plotting::LineStyle::solid,
             3.0,
-            python_plotting::Color::blue,
+            py_plotting::Color::blue,
             "Triangular (own x)"
         },
         {
             {0,1,2,3,4,5,6,7}, // This line's own x-axis values.
             {0,1,2,4,8,16,32,64},
-            python_plotting::LineStyle::dashed,
+            py_plotting::LineStyle::dashed,
             1.5,
-            python_plotting::Color::red,
+            py_plotting::Color::red,
             "" // No label: left out of the legend.
         }
     };
 
-    python_plotting::PythonPlotter plotter;
+    py_plotting::PythonPlotter plotter;
     if (verboseMode)
         plotter.setVerboseOutput(true);
     plotter.setLabels("MIATest Per-Line X Plot", "X-Values", "Y-Values");
@@ -210,17 +210,17 @@ int testPythonPlotterValidation()
 
     {
         // A line whose yValues do not match the shared x-axis size.
-        python_plotting::LinesToPlot<int> badSize = {
+        py_plotting::LinesToPlot<int> badSize = {
             {
                 {},
                 {0,1,2},
-                python_plotting::LineStyle::solid,
+                py_plotting::LineStyle::solid,
                 1.0,
-                python_plotting::Color::blue,
+                py_plotting::Color::blue,
                 "bad size"
             }
         };
-        python_plotting::PythonPlotter plotter;
+        py_plotting::PythonPlotter plotter;
         bool result = plotter.plot(x, badSize);
         std::cout << "shared-axis size mismatch rejected: "
                   << (result ? "false" : "true") << std::endl;
@@ -230,17 +230,17 @@ int testPythonPlotterValidation()
     {
         // A line with empty xValues in the single-argument overload, which
         // requires every line to carry its own x-axis.
-        python_plotting::LinesToPlot<int> noX = {
+        py_plotting::LinesToPlot<int> noX = {
             {
                 {},
                 {0,1,2,3},
-                python_plotting::LineStyle::solid,
+                py_plotting::LineStyle::solid,
                 1.0,
-                python_plotting::Color::blue,
+                py_plotting::Color::blue,
                 "no x"
             }
         };
-        python_plotting::PythonPlotter plotter;
+        py_plotting::PythonPlotter plotter;
         bool result = plotter.plot(noX);
         std::cout << "empty xValues rejected in plot(data): "
                   << (result ? "false" : "true") << std::endl;
@@ -249,7 +249,7 @@ int testPythonPlotterValidation()
 
     {
         // Mismatched x/y sizes in the simple plot.
-        python_plotting::PythonPlotter plotter;
+        py_plotting::PythonPlotter plotter;
         bool result = plotter.plot(std::vector<int>{0,1,2}, std::vector<int>{0,1});
         std::cout << "simple plot size mismatch rejected: "
                   << (result ? "false" : "true") << std::endl;

@@ -17,7 +17,7 @@
 #include "PythonModule.hpp"
 
 
-namespace python_plotting
+namespace py_plotting
 {
     /**
      * @brief Defines the predefined colors available for plot lines.
@@ -349,4 +349,4 @@ namespace python_plotting
          */
         PythonModule pythonModule;
     }; // class PythonPlotter
-} // namespace python_plotting
+} // namespace py_plotting
