@@ -17,7 +17,11 @@
 #include "PythonPlotter.hpp"
 
 
-MIATest::MIATest()                      
+MIATest::MIATest() :
+    testHelpOpt("-H", "--testHelp", "Prints the various test cases available.",
+                CommandOption::commandOptionType::BOOL_OPTION),
+    testIndexOpt("-i", "--index", "The index of the test to run.",
+                 CommandOption::commandOptionType::INT_OPTION)
 { };
 
 
@@ -30,11 +34,43 @@ void MIATest::initialize(int argc, char* argv[])
     try
     {    
         MIAApplication::initialize(argc, argv);
+        
+        bool testHelp = false;
+        testHelpOpt.getOptionVal<bool>(argc, argv, testHelp);
+        if (testHelp)
+        {
+            printTestHelp();
+            std::exit(constants::SUCCESS);
+        }
+        testIndexOpt.getOptionVal<int>(argc, argv, testIndexToRun);
     }
     catch (const error::MIAException& ex)
     {
         std::cerr << "Error during MIATest::initialize: " << ex.what() << std::endl;
     }
+}
+
+
+void MIATest::printTestHelp()
+{
+    std::cout << "Valid test options are:" << std::endl
+              << "  0: Test PythonModule" << std::endl
+              << "  1: Test PythonPlotter basic plotting" << std::endl
+              << "  2: Test PythonPlotter multi-line plotting" << std::endl
+              << "  3: Test PythonPlotter per-line x-axis values" << std::endl
+              << "  4: Test PythonPlotter input validation" << std::endl;
+}
+
+
+void MIATest::printHelp() const
+{
+    MIAApplication::printHelp();
+    
+    // This is a dump of the help messages used by the various command options.
+    std::cout << "MIATest specific options:" << std::endl
+              << testHelpOpt.getHelp() << std::endl
+              << testIndexOpt.getHelp() << std::endl
+              << std::endl;
 }
 
 
@@ -263,9 +299,17 @@ int testPythonPlotterValidation()
 
 int MIATest::run()
 {
-    //return testPythonModule();
-    //return testPythonPlotter(getVerboseMode());
-    //return testPythonPlotterMultiLine(getVerboseMode());
-    //return testPythonPlotterPerLineX(getVerboseMode());
-    return testPythonPlotterValidation();
+    bool verboseMode = getVerboseMode();
+    switch (testIndexToRun)
+    {
+        case 0: return testPythonModule();
+        case 1: return testPythonPlotter(verboseMode);
+        case 2: return testPythonPlotterMultiLine(verboseMode);
+        case 3: return testPythonPlotterPerLineX(verboseMode);
+        case 4: return testPythonPlotterValidation();
+        default:
+            std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
+            printTestHelp();
+            return constants::FAILURE;
+    }
 }
