@@ -143,7 +143,10 @@ namespace
 void PythonModule::ensureInterpreter()
 {
     if (!Py_IsInitialized())
+    {
         Py_Initialize();
+        PyEval_SaveThread();
+    }
 }
 
 
@@ -152,6 +155,8 @@ PythonModule::PythonModule(const std::string& moduleName, const std::string& cal
 {
     // The interpreter must exist before the module can be imported.
     ensureInterpreter();
+    
+    PyGILState_STATE state = PyGILState_Ensure();
 
     /*
      * Add the python directory for this construction to Python's module
@@ -178,6 +183,8 @@ PythonModule::PythonModule(const std::string& moduleName, const std::string& cal
         MIA_THROW(error::ErrorCode::Py_Module_Load_Failure,
                   "Module '" + moduleName + "' could not be imported.");
     }
+    
+    PyGILState_Release(state);
 }
 
 
@@ -191,11 +198,26 @@ PythonModule::~PythonModule()
 
 bool PythonModule::hasMethod(const std::string& methodName) const
 {
+    // Ensure the GIL state.
+    PyGILState_STATE state = PyGILState_Ensure();
+    
     if (!module)
+    {
+        PyGILState_Release(state);
         return false;
-
-    PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
-    return function && PyCallable_Check(function.get());
+    }
+    
+    bool result = false;
+    
+    {
+        PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
+        result = function && PyCallable_Check(function.get());      
+    } // function decref happens while GIL is held.
+    
+    // Release the GIL state.
+    PyGILState_Release(state);
+    
+    return result;
 }
 
 
@@ -206,6 +228,7 @@ PythonResult PythonModule::invoke(const std::string& methodName, PyObjectPtr arg
         return PythonResult::error("Failed to build arguments for '" + methodName + "'.");
 
     PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
+    
     if (!function)
         return PythonResult::error("Method '" + methodName + "' not found: " + fetchPythonError());
 

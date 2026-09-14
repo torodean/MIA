@@ -62,7 +62,7 @@ def increment():
     The C++ backend is responsible for changing the value. This only reports
     the button click to the C++ backend.
     """
-    addEvent("button:+1")
+    addEvent("increment")
 
 
 def decrement():
@@ -72,7 +72,11 @@ def decrement():
     The C++ backend is responsible for changing the value. This only reports
     the button click to the C++ backend.
     """
-    addEvent("button:-1")
+    addEvent("decrement")
+    
+def closeUI():
+    addEvent("stop")
+    root.destroy()
 
 
 ###############
@@ -81,7 +85,7 @@ def decrement():
 
 def setValue(newValue):
     """
-    Sets the value displayed by the UI.
+    Sets the value displayed by the UI. Also updates the UI.
 
     The value is owned and maintained by the C++ backend. This method only
     updates its representation in the Python UI.
@@ -89,6 +93,7 @@ def setValue(newValue):
     @param newValue The value supplied by the C++ backend.
     """
     valueLabel.config(text=str(newValue))
+    root.update()
 
     if verboseMode:
         print(f"UI value updated to {newValue}")
@@ -183,7 +188,8 @@ def createUI():
     )
     plusButton.pack(side=tk.LEFT, padx=5)
     
-    root.mainloop()
+    # Handles when the window is deleted.
+    root.protocol("WM_DELETE_WINDOW", closeUI)
 
 
 if __name__ == "__main__":
