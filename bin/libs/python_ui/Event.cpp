@@ -11,12 +11,15 @@
 #include <utility>
 
 
-Event::Event(std::string eventName)
-    : name(std::move(eventName))
-{ }
+namespace python_ui
+{
+    Event::Event(std::string eventName)
+        : name(std::move(eventName))
+    { }
 
 
-const std::string& Event::getName() const
-{ 
-    return name; 
-}
+    const std::string& Event::getName() const
+    {
+        return name;
+    }
+} // namespace python_ui
