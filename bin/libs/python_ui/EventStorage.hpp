@@ -11,6 +11,8 @@
 
 // The event type stored by this container.
 #include "Event.hpp"
+// The python result type converted into events by this container's helpers.
+#include "PythonResult.hpp"
 
 
 namespace python_ui
@@ -61,4 +63,18 @@ namespace python_ui
         /// The events from one read, in the order they were polled.
         std::vector<Event> events;
     }; // class EventStorage
+
+
+    /**
+     * Converts a python result into events.
+     * A Strings result yields one event per string, and a String result
+     * yields a single event; any other result type (e.g. Void) yields no
+     * events. This is the shared conversion used by handlers when filling
+     * storage from a poll of a python UI, whether the polled method returns
+     * a batch of events or one event per call.
+     *
+     * @param result The python result to convert.
+     * @return The converted events, in the order of the result's strings.
+     */
+    std::vector<Event> toEvents(const PythonResult& result);
 } // namespace python_ui
