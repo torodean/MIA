@@ -14,5 +14,5 @@ This folder contains reusable libraries that provide common functionality to sup
 - **python_plotting/**  
   This is a library for creating plots from c++ code. Plotting is performed by calling python plotting methods through the embedded python interpreter, with the python side contained in this folder.
 
-  - **python_ui/**  
+- **python_ui/**  
   This is a library for providing graphical UIs for c++ applications, built with python (Tkinter) and driven through the embedded python interpreter. The python UI side is contained in this folder. See the folder's README for the current (untested) state.
