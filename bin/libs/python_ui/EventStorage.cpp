@@ -9,19 +9,22 @@
 #include "EventStorage.hpp"
 
 
-void EventStorage::append(const std::vector<Event>& newEvents)
+namespace python_ui
 {
-    events.insert(events.end(), newEvents.begin(), newEvents.end());
-}
+    void EventStorage::append(const std::vector<Event>& newEvents)
+    {
+        events.insert(events.end(), newEvents.begin(), newEvents.end());
+    }
 
 
-bool EventStorage::hasEvents() const
-{
-    return !events.empty();
-}
+    bool EventStorage::hasEvents() const
+    {
+        return !events.empty();
+    }
 
 
-const std::vector<Event>& EventStorage::getEvents() const
-{
-    return events;
-}
+    const std::vector<Event>& EventStorage::getEvents() const
+    {
+        return events;
+    }
+} // namespace python_ui
