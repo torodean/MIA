@@ -44,6 +44,26 @@ public:
     void initialize(int argc, char* argv[]) override;
     
     /// Runs the MIATest application.
-    int run() override;    
+    int run() override;
+    
+protected:
+
+    /**
+     * Prints help info for optional config file.
+     */
+    void printHelp() const override;
+    
+private:
+
+    /// Prints a list of the test cases.
+    void printTestHelp();
+    
+    /// A command option to print the various test cases.
+    CommandOption testHelpOpt;
+    /// A command option to optionally run a specific test.
+    CommandOption testIndexOpt;
+    
+    /// Storage for the command line index entered.
+    int testIndexToRun{-1};
 
 }; // class MIATest

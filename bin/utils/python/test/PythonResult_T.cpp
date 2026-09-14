@@ -13,6 +13,8 @@
 
 // Associated header to test.
 #include "PythonResult.hpp"
+// Used for MIAException checks.
+#include "MIAException.hpp"
 
 
 /**
@@ -101,14 +103,16 @@ TEST(PythonResultError, ValidResultHasEmptyError)
 }
 
 /**
- * @brief Verifies typed getters fall back safely on the wrong type.
+ * @brief Verifies typed getters throw on the wrong type.
  */
 TEST(PythonResultError, GettersOnWrongType)
 {
     PythonResult integer(5L);
 
-    EXPECT_EQ(integer.asDouble(), 0.0)
-        << "asDouble on an Integer result should return 0.0.";
-    EXPECT_EQ(integer.asString(), "")
-        << "asString on an Integer result should return an empty string.";
+    EXPECT_THROW(integer.asDouble(), error::MIAException)
+        << "asDouble on an Integer result should throw";
+    EXPECT_THROW(integer.asString(), error::MIAException)
+        << "asString on an Integer result should throw";
+    EXPECT_THROW(integer.asStrings(), error::MIAException)
+        << "asStrings on an Integer result should throw";
 }

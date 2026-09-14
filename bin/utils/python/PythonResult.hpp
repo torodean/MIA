@@ -7,6 +7,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 
 /**
@@ -24,7 +25,8 @@ public:
         Void,       ///< The method returned None (or nothing usable).
         Integer,    ///< The method returned a Python int.
         Double,     ///< The method returned a Python float.
-        String      ///< The method returned a Python str.
+        String,     ///< The method returned a Python str.
+        Strings     ///< The method returned a list of Python str values.
     }; // enum class Type
 
     /**
@@ -53,6 +55,13 @@ public:
      * @param value The string returned by the Python method.
      */
     explicit PythonResult(const std::string& value);
+
+    /**
+     * Constructs a successful result holding a list of string value.
+     *
+     * @param values The strings returned by the Python method.
+     */
+    explicit PythonResult(const std::vector<std::string>& values);
 
     /**
      * Constructs a successful result holding a string value.
@@ -93,23 +102,34 @@ public:
     /**
      * Gets the result as an integer.
      *
-     * @return The integer value, or 0 if the result is not an Integer.
+     * @return The integer value.
+     * @throws MIAException if the type is not an integer.
      */
     long asInt() const;
 
     /**
      * Gets the result as a double.
      *
-     * @return The double value, or 0.0 if the result is not a Double.
+     * @return The double value.
+     * @throws MIAException if the type is not a double.
      */
     double asDouble() const;
 
     /**
      * Gets the result as a string.
      *
-     * @return The string value, or an empty string if the result is not a String.
+     * @return The string value.
+     * @throws MIAException if the type is not a string.
      */
     const std::string& asString() const;
+
+    /**
+     * Gets the result as a vector of string.
+     *
+     * @return The string values.
+     * @throws MIAException if the type is not a vector of string.
+     */
+    const std::vector<std::string>& asStrings() const;
 
     /**
      * Gets the error description of a failed result.
@@ -131,6 +151,9 @@ private:
 
     /// The string value, when type is String.
     std::string stringValue;
+    
+    /// The vector of string values, when the type is a list of strings.
+    std::vector<std::string> stringValues;
 
     /// The error message, when the result is not valid. Named errorMessage to
     /// avoid shadowing the error() factory within member functions.

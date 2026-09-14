@@ -64,7 +64,8 @@ namespace error
         /*
          * Python error codes. 39XXX
          */
-        { Python_Module_Load_Failure, "A Python module failed to load in the embedded interpreter." },
+        { Py_Module_Load_Failure, "A Python module failed to load in the embedded interpreter." },
+        { Py_Unexp_Return_Type_Request, "The expected return value requested for a python call does not match." },
         
         // A catch all for any un-programmed errors.
         { Catastrophic_Failure, "A catastrophic failure occurred." }

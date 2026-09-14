@@ -15,9 +15,15 @@
 #include "PythonModule.hpp"
 // Used for testing the PythonPlotter.
 #include "PythonPlotter.hpp"
+// Used for testing threaded tasks.
+#include "BackgroundTask.hpp"
 
 
-MIATest::MIATest()                      
+MIATest::MIATest() :
+    testHelpOpt("-H", "--testHelp", "Prints the various test cases available.",
+                CommandOption::commandOptionType::BOOL_OPTION),
+    testIndexOpt("-i", "--index", "The index of the test to run.",
+                 CommandOption::commandOptionType::INT_OPTION)
 { };
 
 
@@ -30,6 +36,15 @@ void MIATest::initialize(int argc, char* argv[])
     try
     {    
         MIAApplication::initialize(argc, argv);
+        
+        bool testHelp = false;
+        testHelpOpt.getOptionVal<bool>(argc, argv, testHelp);
+        if (testHelp)
+        {
+            printTestHelp();
+            std::exit(constants::SUCCESS);
+        }
+        testIndexOpt.getOptionVal<int>(argc, argv, testIndexToRun);
     }
     catch (const error::MIAException& ex)
     {
@@ -38,6 +53,33 @@ void MIATest::initialize(int argc, char* argv[])
 }
 
 
+void MIATest::printTestHelp()
+{
+    std::cout << "Valid test options are:" << std::endl
+              << "  0: Test PythonModule" << std::endl
+              << "  1: Test PythonPlotter basic plotting" << std::endl
+              << "  2: Test PythonPlotter multi-line plotting" << std::endl
+              << "  3: Test PythonPlotter per-line x-axis values" << std::endl
+              << "  4: Test PythonPlotter input validation" << std::endl
+              << "  5: Test basic PythonUI interactions" << std::endl;
+}
+
+
+void MIATest::printHelp() const
+{
+    MIAApplication::printHelp();
+    
+    // This is a dump of the help messages used by the various command options.
+    std::cout << "MIATest specific options:" << std::endl
+              << testHelpOpt.getHelp() << std::endl
+              << testIndexOpt.getHelp() << std::endl
+              << std::endl;
+}
+
+
+/**
+ * @brief This method is for testing loading a python module and calling methods from it.
+ */
 int testPythonModule()
 {
     /*
@@ -261,11 +303,142 @@ int testPythonPlotterValidation()
 }
 
 
+// Events that are available in the python test UI.
+enum TestUIEvents
+{
+    increment, ///< Represents the +1 button click event.
+    decrement  ///< Represents the -1 button click event.
+};
+
+
+TestUIEvents stringToTestUIEvents(const std::string& event)
+{
+    if (event == "increment")
+        return TestUIEvents::increment;
+    else if (event == "decrement")
+        return TestUIEvents::decrement;
+        
+    // Should never happen...
+    std::cerr << "The UI event is not valid!!!" << std::endl;
+    std::exit(constants::FAILURE);
+}
+
+
+/*
+ * This class is designed to 'listen' to a python UI in a background thread and collect 
+ * events that it sends to then be processed by the c++ backend.
+ */
+class PythonUIListener : public threading::BackgroundTask
+{
+public:
+    PythonUIListener(PythonModule& module) :
+        uiModule(module)
+    { };
+    
+    std::vector<std::string> getEvents()
+    {
+        std::lock_guard<std::mutex> lock(eventsMutex);
+
+        std::vector<std::string> result;
+        result.swap(events);
+
+        return result;
+    }    
+    
+protected:
+
+    void run() override
+    {
+        // Get all events from the python module.
+        PythonResult result = uiModule.call("getAllEvents");
+        
+        // Append all events to the stored events queue.
+        std::vector<std::string> strings = result.asStrings();
+        for (size_t i=0; i<strings.size(); i++)
+        {
+            addEvent(strings[i]);
+        }   
+    }
+private:
+
+    void addEvent(const std::string& event)
+    {
+        std::lock_guard<std::mutex> lock(eventsMutex);
+        events.push_back(event);
+    }
+
+    /// The UI module that is loaded with this listener.
+    PythonModule& uiModule;
+    
+    /// Storage for the events received from the UI.
+    std::vector<std::string> events;
+    std::mutex eventsMutex;
+    
+}; // class PythonUIListener
+
+
+/**
+ * This method is for testing python UI interactions while they are being developed.
+ */
+int testPythonUI()
+{
+    // Load the test python UI module.
+    PythonModule module("testUI", __FILE__);
+    PythonUIListener listener(module);
+    
+    // Setup a listener which monitors events.
+    listener.start();
+    
+    // Show the UI.
+    module.call("createUI");
+    
+    // 8 bits should be plenty to store events between polls.
+    uint8_t increments = 0;
+    uint8_t decrements = 0;
+    int currentDisplayVal = 0;
+    
+    while (listener.isRunning())
+    {
+        std::vector<std::string> events = listener.getEvents();
+        for (size_t i=0; i<events.size(); i++)
+        {
+            if (events[i] == "increment")
+                increments++;
+            else if (events[i] == "decrement")
+                decrements++;
+            else if (events[i] == "stop")
+            {
+                listener.stop();
+                break;
+            }
+        }
+        
+        // Update the value based on events.
+        currentDisplayVal += increments - decrements;
+        increments = decrements = 0;
+        
+        // Update the UI.
+        module.call("setValue", currentDisplayVal);
+    }
+    
+    return constants::SUCCESS;
+}
+
+
 int MIATest::run()
 {
-    //return testPythonModule();
-    //return testPythonPlotter(getVerboseMode());
-    //return testPythonPlotterMultiLine(getVerboseMode());
-    //return testPythonPlotterPerLineX(getVerboseMode());
-    return testPythonPlotterValidation();
+    bool verboseMode = getVerboseMode();
+    switch (testIndexToRun)
+    {
+        case 0: return testPythonModule();
+        case 1: return testPythonPlotter(verboseMode);
+        case 2: return testPythonPlotterMultiLine(verboseMode);
+        case 3: return testPythonPlotterPerLineX(verboseMode);
+        case 4: return testPythonPlotterValidation();
+        case 5: return testPythonUI();
+        default:
+            std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
+            printTestHelp();
+            return constants::FAILURE;
+    }
 }

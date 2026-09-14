@@ -8,12 +8,12 @@
 // The associated header file.
 #include "PythonModule.hpp"
 
-// Used for resolving the python module directory.
-#include "Paths.hpp"
-
 #include <string>
 
 #include <Python.h>
+
+// Used for resolving the python module directory.
+#include "Paths.hpp"
 
 
 namespace
@@ -103,6 +103,37 @@ namespace
             }
             return PythonResult(text);
         }
+        
+        if (PyList_Check(result))
+        {
+            std::vector<std::string> values;
+
+            Py_ssize_t size = PyList_Size(result);
+            values.reserve(size);
+
+            for (Py_ssize_t i = 0; i < size; ++i)
+            {
+                PyObject* item = PyList_GetItem(result, i);
+
+                if (!PyUnicode_Check(item))
+                {
+                    return PythonResult::error(
+                        "Python list result contains a non-string value.");
+                }
+
+                const char* text = PyUnicode_AsUTF8(item);
+                if (!text)
+                {
+                    PyErr_Clear();
+                    return PythonResult::error(
+                        "Python string in list result could not be converted.");
+                }
+
+                values.emplace_back(text);
+            }
+
+            return PythonResult(values);
+        }
 
         return PythonResult();
     }
@@ -112,7 +143,10 @@ namespace
 void PythonModule::ensureInterpreter()
 {
     if (!Py_IsInitialized())
+    {
         Py_Initialize();
+        PyEval_SaveThread();
+    }
 }
 
 
@@ -121,6 +155,8 @@ PythonModule::PythonModule(const std::string& moduleName, const std::string& cal
 {
     // The interpreter must exist before the module can be imported.
     ensureInterpreter();
+    
+    PyGILState_STATE state = PyGILState_Ensure();
 
     /*
      * Add the python directory for this construction to Python's module
@@ -144,9 +180,11 @@ PythonModule::PythonModule(const std::string& moduleName, const std::string& cal
     if (!module)
     {
         PyErr_Print();
-        MIA_THROW(error::ErrorCode::Python_Module_Load_Failure,
+        MIA_THROW(error::ErrorCode::Py_Module_Load_Failure,
                   "Module '" + moduleName + "' could not be imported.");
     }
+    
+    PyGILState_Release(state);
 }
 
 
@@ -160,11 +198,26 @@ PythonModule::~PythonModule()
 
 bool PythonModule::hasMethod(const std::string& methodName) const
 {
+    // Ensure the GIL state.
+    PyGILState_STATE state = PyGILState_Ensure();
+    
     if (!module)
+    {
+        PyGILState_Release(state);
         return false;
-
-    PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
-    return function && PyCallable_Check(function.get());
+    }
+    
+    bool result = false;
+    
+    {
+        PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
+        result = function && PyCallable_Check(function.get());      
+    } // function decref happens while GIL is held.
+    
+    // Release the GIL state.
+    PyGILState_Release(state);
+    
+    return result;
 }
 
 
@@ -175,6 +228,7 @@ PythonResult PythonModule::invoke(const std::string& methodName, PyObjectPtr arg
         return PythonResult::error("Failed to build arguments for '" + methodName + "'.");
 
     PyObjectPtr function(PyObject_GetAttrString(module.get(), methodName.c_str()));
+    
     if (!function)
         return PythonResult::error("Method '" + methodName + "' not found: " + fetchPythonError());
 

@@ -146,7 +146,17 @@ public:
     template<typename... ArgTypes>
     PythonResult call(const std::string& name, ArgTypes... args)
     {
-        return invoke(name, buildArgs(toPython(args)...));
+        PyGILState_STATE state = PyGILState_Ensure();
+
+        PythonResult result;
+
+        {
+            result = invoke(name, buildArgs(toPython(args)...));
+        } // Ensure Python object references are released before releasing the GIL.
+
+        PyGILState_Release(state);
+
+        return result;
     }
 
 private:
