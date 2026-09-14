@@ -324,6 +324,10 @@ TestUIEvents stringToTestUIEvents(const std::string& event)
 }
 
 
+/*
+ * This class is designed to 'listen' to a python UI in a background thread and collect 
+ * events that it sends to then be processed by the c++ backend.
+ */
 class PythonUIListener : public threading::BackgroundTask
 {
 public:
