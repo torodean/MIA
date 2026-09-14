@@ -27,4 +27,24 @@ namespace python_ui
     {
         return events;
     }
+
+
+    std::vector<Event> toEvents(const PythonResult& result)
+    {
+        std::vector<Event> events;
+
+        if (result.getType() == PythonResult::Type::Strings)
+        {
+            const std::vector<std::string>& strings = result.asStrings();
+            events.reserve(strings.size());
+            for (const std::string& value : strings)
+                events.emplace_back(value);
+        }        
+        else if (result.getType() == PythonResult::Type::String)
+        {
+            events.emplace_back(result.asString());
+        }
+
+        return events;
+    }
 } // namespace python_ui
