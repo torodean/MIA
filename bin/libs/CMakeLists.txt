@@ -14,4 +14,5 @@ endif()
 
 if ( BUILD_PYTHON_FEATURES )
     add_subdirectory( python_plotting )
+	add_subdirectory( python_UI )
 endif()
