@@ -78,8 +78,11 @@ using PyObjectPtr = std::unique_ptr<PyObject, PyObjectDeleter>;
  * An app which wants to treat a call failure as fatal can check isValid()
  * and throw or exit on its own terms.
  *
- * The interpreter is not thread-safe; use of this class is assumed to happen
- * on one thread.
+ * Every entry point (the constructor, call(), and hasMethod()) wraps its
+ * python work in PyGILState_Ensure()/PyGILState_Release(), so a single
+ * PythonModule can be used from multiple threads; the GIL serializes the
+ * actual python work. State held outside the interpreter (e.g. a c++ event
+ * queue fed by calls from several threads) still needs its own locking.
  */
 class PythonModule
 {
