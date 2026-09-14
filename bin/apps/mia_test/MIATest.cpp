@@ -15,6 +15,8 @@
 #include "PythonModule.hpp"
 // Used for testing the PythonPlotter.
 #include "PythonPlotter.hpp"
+// Used for testing the python UI library.
+#include "PythonUIListener.hpp"
 // Used for testing threaded tasks.
 #include "BackgroundTask.hpp"
 
@@ -61,7 +63,8 @@ void MIATest::printTestHelp()
               << "  2: Test PythonPlotter multi-line plotting" << std::endl
               << "  3: Test PythonPlotter per-line x-axis values" << std::endl
               << "  4: Test PythonPlotter input validation" << std::endl
-              << "  5: Test basic PythonUI interactions" << std::endl;
+              << "  5: Test basic PythonUI interactions" << std::endl
+              << "  6: Test the python UI library listener" << std::endl;
 }
 
 
@@ -385,18 +388,18 @@ int testPythonUI()
     // Load the test python UI module.
     PythonModule module("testUI", __FILE__);
     PythonUIListener listener(module);
-    
+
     // Setup a listener which monitors events.
     listener.start();
-    
+
     // Show the UI.
     module.call("createUI");
-    
+
     // 8 bits should be plenty to store events between polls.
     uint8_t increments = 0;
     uint8_t decrements = 0;
     int currentDisplayVal = 0;
-    
+
     while (listener.isRunning())
     {
         std::vector<std::string> events = listener.getEvents();
@@ -412,15 +415,67 @@ int testPythonUI()
                 break;
             }
         }
-        
+
         // Update the value based on events.
         currentDisplayVal += increments - decrements;
         increments = decrements = 0;
-        
+
         // Update the UI.
         module.call("setValue", currentDisplayVal);
     }
-    
+
+    return constants::SUCCESS;
+}
+
+
+/**
+ * This method tests the python UI library's PythonUIListener. It behaves the
+ * same as testPythonUI() except that the listener comes from the library and
+ * the events are read through the EventStorage API.
+ */
+int testPythonUILibrary()
+{
+    // Load the test python UI module.
+    PythonModule module("testUI", __FILE__);
+    python_ui::PythonUIListener listener(module);
+
+    // Setup a listener which monitors events.
+    listener.start();
+
+    // Show the UI.
+    module.call("createUI");
+
+    // 8 bits should be plenty to store events between polls.
+    uint8_t increments = 0;
+    uint8_t decrements = 0;
+    int currentDisplayVal = 0;
+
+    while (listener.isRunning())
+    {
+        // Drain whatever events the listener has polled so far.
+        python_ui::EventStorage storage = listener.getEvents();
+
+        for (const python_ui::Event& event : storage.getEvents())
+        {
+            if (event.getName() == "increment")
+                increments++;
+            else if (event.getName() == "decrement")
+                decrements++;
+            else if (event.getName() == "stop")
+            {
+                listener.stop();
+                break;
+            }
+        }
+
+        // Update the value based on events.
+        currentDisplayVal += increments - decrements;
+        increments = decrements = 0;
+
+        // Update the UI.
+        module.call("setValue", currentDisplayVal);
+    }
+
     return constants::SUCCESS;
 }
 
@@ -436,6 +491,7 @@ int MIATest::run()
         case 3: return testPythonPlotterPerLineX(verboseMode);
         case 4: return testPythonPlotterValidation();
         case 5: return testPythonUI();
+        case 6: return testPythonUILibrary();
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();
