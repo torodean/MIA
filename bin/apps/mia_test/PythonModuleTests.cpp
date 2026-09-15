@@ -17,8 +17,6 @@
 #include "Constants.hpp"
 
 
-
-
 /**
  * @brief This method is for testing loading a python module and calling methods from it.
  */
