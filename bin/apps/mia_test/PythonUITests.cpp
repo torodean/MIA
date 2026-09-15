@@ -16,6 +16,7 @@
 // Used for the Python module wrapper being tested.
 #include "PythonModule.hpp"
 // Used for testing the python UI library.
+#include "EventQueue.hpp"
 #include "PythonUIListener.hpp"
 // Used for the in-file test listener.
 #include "BackgroundTask.hpp"
@@ -125,7 +126,10 @@ int testPythonUILibrary()
 {
     // Load the test python UI module.
     PythonModule module("testUI", __FILE__);
-    python_ui::PythonUIListener listener(module);
+
+    // The queue the listener pushes events into and this test reads from.
+    python_ui::EventQueue queue;
+    python_ui::PythonUIListener listener(module, queue);
 
     // Setup a listener which monitors events.
     listener.start();
@@ -140,8 +144,8 @@ int testPythonUILibrary()
 
     while (listener.isRunning())
     {
-        // Drain whatever events the listener has polled so far.
-        python_ui::EventStorage storage = listener.getEvents();
+        // Read whatever events the listener has polled so far.
+        python_ui::EventStorage storage = queue.getAllEvents();
 
         for (const python_ui::Event& event : storage.getEvents())
         {
