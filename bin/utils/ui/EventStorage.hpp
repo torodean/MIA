@@ -16,9 +16,9 @@
 namespace ui
 {
     /**
-     * The events returned by one read from a UI listener.
-     * A listener returns this from getEvents() and waitForEvents().
-     * The listener fills new storage through append(); a caller reads the
+     * The events returned by one read from an event queue.
+     * An EventQueue returns this from getAllEvents() and waitForEvents().
+     * The queue fills new storage through append(); a caller reads the
      * events through hasEvents() and getEvents(). Default construction always
      * starts empty, so the only way to obtain non-empty EventStorage is
      * through a listener read.
