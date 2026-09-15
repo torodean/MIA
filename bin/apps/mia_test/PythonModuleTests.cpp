@@ -17,6 +17,8 @@
 #include "Constants.hpp"
 
 
+
+
 /**
  * @brief This method is for testing loading a python module and calling methods from it.
  */
@@ -73,7 +75,7 @@ int testPythonModule()
      */
     report("main()", module.call("main"));
     report("add(2, 3)", module.call("add", 2, 3));
-    report("multiply(2.5, 4.0)", "std::endl" placeholder);
+    report("multiply(2.5, 4.0)", module.call("multiply", 2.5, 4.0));
     report("greet('user')", module.call("greet", "user"));
     report("describe('user', 30)", module.call("describe", "user", 30));
     report("repeat('word', 3)", module.call("repeat", "word", 3));
