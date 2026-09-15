@@ -21,5 +21,5 @@ if(BUILD_PYTHON_FEATURES)
     install_app( miatest )
     
     # Install the python files if needed.
-    install_python_files( MIATest.py )
+    install_python_files( MIATest.py testUI.py )
 endif()
