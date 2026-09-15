@@ -105,3 +105,9 @@ include( cmake/apps.cmake )
 add_subdirectory( bin )
 #add_subdirectory( documentation )
 add_subdirectory( resources )
+
+# Warn about any optional feature sets which were skipped (and the apps which depend on them).
+if(SKIPPED_FEATURES)
+    list(JOIN SKIPPED_FEATURES ", " SKIPPED_FEATURES_STR)
+    message(WARNING "The following features are not being built (and therefore neither are the apps which depend on them): ${SKIPPED_FEATURES_STR}")
+endif()
