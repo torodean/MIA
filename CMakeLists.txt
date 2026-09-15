@@ -44,6 +44,9 @@ include( cmake/database.cmake )
 # Setup python specifics.
 include( cmake/python.cmake )
 
+# Setup xdo specifics.
+include( cmake/xdo.cmake )
+
 # Create the log directories
 if(UNIX AND NOT APPLE)
     install(CODE "execute_process(COMMAND mkdir -p ${DEFAULT_SYSTEM_LOG_DIR})")
