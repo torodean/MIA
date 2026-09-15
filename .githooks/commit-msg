@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# commit-msg hook: when a commit changes MIA_VERSION_VAL, prefix the commit
+# message with the new version in "[vX.YYY]" form so version bump commits are
+# identifiable in git history.
+#
+# This hook is enabled by pointing core.hooksPath at this directory
+# (scripts/setup.sh does this).
+
+msg_file="$1"
+
+version_line='s/.*MIA_VERSION_VAL[[:space:]]*"\([0-9]\+\.[0-9]\+\)".*/\1/p'
+
+# The version currently committed (HEAD) and the version staged for this commit.
+old_version="$(git show "HEAD:CMakeLists.txt" 2>/dev/null | sed -n "$version_line")"
+new_version="$(git show ":CMakeLists.txt" 2>/dev/null | sed -n "$version_line")"
+
+# Only stamp commits that actually change the version.
+if [ -z "$new_version" ] || [ "$old_version" = "$new_version" ]; then
+    exit 0
+fi
+
+# Do not add a second prefix if the message already names this version.
+if head -n 1 "$msg_file" | grep -q "\[v$new_version\]"; then
+    exit 0
+fi
+
+# Prefix the first line of the message; git strips leading blank lines from
+# the original message, so "[vX.YYY] subject" becomes the new subject.
+printf '[v%s] ' "$new_version" | cat - "$msg_file" > "$msg_file.tmp" && mv "$msg_file.tmp" "$msg_file"
+exit 0
