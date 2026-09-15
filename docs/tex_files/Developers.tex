@@ -114,6 +114,31 @@ $rootDirectory/scripts/uninstall.sh
 
 
 
+\section{Git Hooks}\label{section:git_hooks}
+
+The repository includes git hooks in the \texttt{.githooks/} directory at the top level. Git only reads hooks from \texttt{.git/hooks} by default, so the repository path is activated by pointing \texttt{core.hooksPath} at the folder, which \texttt{scripts/setup.sh} does automatically. After cloning (or if the setup script is not run), enable the hooks manually with:
+\begin{lstlisting}[style=shellstyle]
+git config core.hooksPath .githooks
+\end{lstlisting}
+The setting is stored per-clone, so it needs re-running once per repository checkout.
+
+\subsection{The commit-msg Hook}
+
+The \texttt{commit-msg} hook runs after a commit message is entered and before the commit is created. When a commit changes \texttt{MIA\_VERSION\_VAL} in the top-level \texttt{CMakeLists.txt}, the hook prefixes the commit message with the new version in \texttt{[vX.YYY]} form:
+\begin{lstlisting}[style=terminalstyle]
+[v2.099] Adding a new feature to the sequencer.
+\end{lstlisting}
+Commits which do not change the version are left untouched, and a message which already carries the version prefix is not stamped twice. Because \texttt{commitAll.sh} increments the version before committing, version bump commits made through that script are stamped automatically.
+
+The prefix makes version bumps identifiable in the commit history and in changelog tooling which reads commit messages:
+\begin{lstlisting}[style=terminalstyle]
+$ git log --grep="\[v"
+\end{lstlisting}
+
+
+
+
+
 
 
 
