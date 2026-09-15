@@ -1,14 +1,16 @@
 # This app currently requires the python features to be available.
 if(BUILD_PYTHON_FEATURES)
     # Create the test executable.
-    set(test_SRC 
-        MIATest.cpp 
-        MIATest_main.cpp 
-        PythonPlotterTests.cpp 
+    set(test_SRC
+        MIATest.cpp
+        MIATest_main.cpp
+        PythonModuleTests.cpp
+        PythonPlotterTests.cpp
         PythonUITests.cpp )
-    set(test_INC 
-        MIATest.hpp 
-        PythonPlotterTests.hpp 
+    set(test_INC
+        MIATest.hpp
+        PythonModuleTests.hpp
+        PythonPlotterTests.hpp
         PythonUITests.hpp )
 
     #  The target name "test" is reserved when CTest testing is enabled.
