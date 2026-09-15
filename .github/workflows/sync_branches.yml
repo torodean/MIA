@@ -1,0 +1,63 @@
+name: Sync Branches To Main
+
+# Only run this workflow when main changes.
+on:
+  push:
+    branches:
+      - main
+
+# Allow the workflow's GITHUB_TOKEN to push changes to repository branches.
+permissions:
+  contents: write
+
+# Prevent multiple branch-sync workflows from running simultaneously.
+concurrency:
+  # All runs of this workflow use the same concurrency group.
+  group: sync-branches
+
+  # If a new run starts while an older one is running, cancel the older run.
+  # The new run will synchronize against the latest version of main.
+  cancel-in-progress: true
+
+jobs:
+  sync-outdated-branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Update branches
+        shell: bash
+        run: |
+          set -e
+
+          git fetch origin
+
+          # Check every remote branch except main.
+          for ref in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+              | grep '^origin/' | grep -v '^origin/HEAD$' | grep -v '^origin/main$'); do
+
+            branch="${ref#origin/}"
+
+            echo "Checking $branch..."
+
+            # If branch is an ancestor of main, it contains no commits
+            # of its own and can safely be moved to main.
+            if git merge-base --is-ancestor "$ref" origin/main; then
+              echo "$branch contains no commits ahead of main."
+              echo "Updating $branch to main..."
+
+              git push origin "origin/main:refs/heads/$branch" --force
+
+              echo "$branch updated."
+            else
+              # Branch is either ahead of main or has diverged.
+              echo "$branch contains commits not in main. Leaving it unchanged."
+            fi
+
+            echo
+          done
+

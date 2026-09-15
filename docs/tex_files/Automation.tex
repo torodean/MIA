@@ -1,24 +1,25 @@
-\chapter{Automated Features and CI/CD Pipeline}
-\label{ch:ci-cd}
+\chapter{Automated Features and CI/CD Pipeline}\label{chapter:ci_cd_pipeline}
 \pagestyle{fancy}
 
-This chapter documents the automation and continuous integration mechanisms used in the project. The goal is to ensure consistent, reproducible builds and automated testing during development.
+This chapter documents the automation and continuous integration mechanisms used in the project. The goal is to ensure consistent, reproducible builds and automated testing during development. The project uses GitHub Actions for continuous integration. 
 
-\section{GitHub Actions: Build and Test Pipeline}
-\label{sec:github-actions}
 
-The project uses GitHub Actions for continuous integration. The primary workflow is defined in the file \texttt{.github/workflows/tests.yml}. This workflow is configured to automatically build the project and run tests when changes are pushed to the \texttt{main} branch or when a pull request is opened, but only if the \texttt{bin/} directory is modified.
 
-\subsection*{Trigger Conditions}
+
+\section{Build and Test Pipeline}\label{section:github_actions}
+
+The primary workflow is defined in the file \texttt{.github/workflows/tests.yml}. This workflow automatically checks whether changes affect the \texttt{bin/} directory when commits are pushed to the \texttt{main} branch or when a pull request is opened. The project is built and tested only when files inside the \texttt{bin/} directory have been modified.
+
+\subsection{Trigger Conditions}
 
 The workflow is triggered on:
 \begin{itemize}\itemsep0em
 	\item \textbf{Push} events to the \texttt{main} branch.
 	\item \textbf{Pull requests} targeting \texttt{main}.
 \end{itemize}
-However, it only runs if files inside the \texttt{bin/} directory have been modified. This is specified using the \texttt{paths} filter in the workflow configuration.
+The workflow checks for changes inside the \texttt{bin/} directory after it starts. The build and test job only runs when such changes are found.
 
-\subsection*{Workflow Steps}
+\subsection{Workflow Steps}
 
 The workflow consists of the following steps:
 \begin{enumerate}
@@ -27,4 +28,33 @@ The workflow consists of the following steps:
 	\item \textbf{Configure and build.} Executes the \texttt{build.sh -v} script to configure and compile the project using CMake.
 	\item \textbf{Run tests.} Runs \texttt{ctest} on the \texttt{build/} directory and prints test output on failure.
 \end{enumerate}
-This automation ensures that every relevant code change is verified through build and test steps without manual intervention, improving code reliability and reducing regressions.
+When no files inside \texttt{bin/} have changed, the build and test job is skipped. The workflow still reports its status, allowing it to be used as a required status check for protected branches. This automation ensures that every relevant code change is verified through build and test steps without manual intervention, improving code reliability and reducing regressions. 
+
+
+
+
+
+
+
+
+
+\section{Automated Branch Synchronization}\label{section:branch_synchronization}
+
+The workflow defined in \texttt{.github/workflows/sync-branches.yml} updates branches that contain no commits of their own when \texttt{main} changes.
+
+At the time of creating this synchronization (and writing this), the MIA project is primarily being developed by a single person. This development happens in different locations and therefore a few branches exist solely for the purpose of working at one of these locations while not conflicting with uncommitted work done at another. The work at one location is typically finished before moving to another, and therefore the branches are regularly and often all updated to main before work begins. This synchronization exists as a convenience to automate that process.
+
+\subsection{Trigger Conditions}
+
+The workflow runs whenever a commit is pushed to \texttt{main}.
+
+\subsection{Branch Synchronization}
+
+The workflow checks every branch other than \texttt{main}. It compares each branch with \texttt{main} using Git commit ancestry. If a branch is an ancestor of \texttt{main}, the workflow updates the branch to the current \texttt{main} commit. This means the branch contains no commits that are not already in \texttt{main}. If a branch contains commits that are not in \texttt{main}, the workflow leaves it unchanged. This prevents the workflow from replacing branches that contain independent changes.
+
+The workflow grants the GitHub Actions token permission to write repository contents:
+\begin{verbatim}
+permissions:
+	contents: write
+\end{verbatim}
+This permission allows the workflow to push branch updates to the repository. The workflow uses a concurrency group so that only one synchronization run is active at a time. If a new run starts while another run is active, the active run is cancelled and the new run uses the current state of \texttt{main}.
