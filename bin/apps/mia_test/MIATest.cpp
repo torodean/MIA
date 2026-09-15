@@ -13,6 +13,8 @@
 #include "MIATest.hpp"
 // Used for the Python module wrapper being tested.
 #include "PythonModule.hpp"
+// Used for the python module test methods.
+#include "PythonModuleTests.hpp"
 // Used for the python plotting test methods.
 #include "PythonPlotterTests.hpp"
 // Used for the python UI test methods.
