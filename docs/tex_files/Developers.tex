@@ -1251,3 +1251,29 @@ if(BUILD_PYTHON_FEATURES)
 	install_python_files( MIATest.py )
 endif()
 \end{lstlisting}
+
+
+
+
+
+
+
+\section{Optional Feature Flags}\label{section:optional_features}
+
+Some MIA features depend on optional third-party libraries which may not be present on every machine. These are handled with CMake feature flags set in the \texttt{cmake/} folder, which soft-find the needed libraries and set a \texttt{BUILD\_*\_FEATURES} flag. Features which require the missing library are skipped, and the rest of the project still builds. A configure-time status message reports whether each feature set is found or skipped. The current flags are:
+
+\begin{itemize}\itemsep0em
+	\item \texttt{BUILD\_DATABASE\_FEATURES} (\texttt{cmake/database.cmake}) - MySQL Connector/C++.
+	\item \texttt{BUILD\_PYTHON\_FEATURES} (\texttt{cmake/python.cmake}) - Python development libraries.
+	\item \texttt{BUILD\_XDO\_FEATURES} (\texttt{cmake/xdo.cmake}) - libxdo and X11 for the virtual key strokes (Linux only; Windows uses its own input APIs).
+\end{itemize}
+
+When a feature flag is off, the CMake targets which need it should be wrapped in the flag check (as shown in section \ref{section:python_modules}) and the app folders which require the feature should be conditionally added:
+\begin{lstlisting}[style=makestyle]
+# These apps use the virtual key strokes, which use Windows APIs directly; on Linux
+# they need libxdo/X11, so the apps are only built when those are available.
+if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
+    add_subdirectory( mia_sequencer )
+    add_subdirectory( mia_original )
+endif()
+\end{lstlisting}
