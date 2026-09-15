@@ -259,7 +259,7 @@ if(RELEASE_BUILD)
  install(TARGETS MIATemplate DESTINATION ${RELEASE_INSTALL_LOCATION})
 endif()
 	\end{lstlisting}
-	A custom \texttt{install\_app} CMake function is available to streamline the above checks for the various apps. This allows the above to be simplified to:
+	A custom \texttt{install\_app} CMake function is available to streamline the above checks for the various apps. The function (defined in \texttt{cmake/apps.cmake}) takes the app target name as its argument and installs the target into the system install location when \texttt{SYSTEM\_INSTALL} is enabled, or into the release install location when \texttt{RELEASE\_BUILD} is enabled; if neither option is set, no install rule is created. This allows the above to be simplified to:
 	\begin{lstlisting}[style=makestyle]
 # Create the MIATemplate executable.
 set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
@@ -307,7 +307,18 @@ endif()
 
 Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags (seen in the above shown CMake blocks). This supports flexible deployment workflows for development, testing, and production release. Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
 
+\subsection{CMake Modules}\label{section:cmake_modules}
 
+Reusable CMake logic is broken out into modules in the \texttt{cmake/} folder, which are included by the top-level \texttt{CMakeLists.txt} via \texttt{include( cmake/<module>.cmake )}. This keeps the top-level file focused on project definition, paths, and subdirectories. The current modules are:
+
+\begin{itemize}\itemsep0em
+	\item \texttt{apps.cmake} - Defines the \texttt{install\_app} function, which installs app targets into the system install location during a system install, or into the release install location during a release build (see section \ref{section:cmake_setup}).
+	\item \texttt{database.cmake} - Finds MySQL Connector/C++ and sets \texttt{BUILD\_DATABASE\_FEATURES}.
+	\item \texttt{python.cmake} - Finds the Python development libraries, sets \texttt{BUILD\_PYTHON\_FEATURES}, and defines the \texttt{install\_python\_files} function, which installs the given python files into the system python directory during a system install, or into the release python resources directory during a release build.
+	\item \texttt{xdo.cmake} - Finds libxdo and X11 and sets \texttt{BUILD\_XDO\_FEATURES}.
+\end{itemize}
+
+The feature-detection modules share a common shape: each soft-finds its libraries (no \texttt{REQUIRED}), sets its \texttt{BUILD\_*\_FEATURES} flag accordingly, appends its feature name to the \texttt{SKIPPED\_FEATURES} list when the libraries are not found, and prints a configure-time status message. When adding a new optional dependency, create a module following this pattern, include it from the top-level \texttt{CMakeLists.txt}, and guard the targets which need it with the flag (see section \ref{section:optional_features}).
 
 
 
@@ -1260,8 +1271,13 @@ endif()
 
 \section{Optional Feature Flags}\label{section:optional_features}
 
-Some MIA features depend on optional third-party libraries which may not be present on every machine. These are handled with CMake feature flags set in the \texttt{cmake/} folder, which soft-find the needed libraries and set a \texttt{BUILD\_*\_FEATURES} flag. Features which require the missing library are skipped, and the rest of the project still builds. A configure-time status message reports whether each feature set is found or skipped. The current flags are:
-
+Some MIA features depend on optional third-party libraries which may not be present on every machine. These are handled with CMake feature flags set in the \texttt{cmake/} folder, which soft-find the needed libraries and set a \texttt{BUILD\_*\_FEATURES} flag. Features which require the missing library are skipped, and the rest of the project still builds. A configure-time status message reports whether each feature set is found or skipped. When any flags are skipped, a single configure-time warning lists the skipped feature sets at the end of the CMake configure output:
+\begin{lstlisting}[style=makestyle]
+CMake Warning at CMakeLists.txt:112 (message):
+  The following features are not being built (and therefore neither are the
+  apps which depend on them): database, xdo
+\end{lstlisting}
+The current flags are:
 \begin{itemize}\itemsep0em
 	\item \texttt{BUILD\_DATABASE\_FEATURES} (\texttt{cmake/database.cmake}) - MySQL Connector/C++.
 	\item \texttt{BUILD\_PYTHON\_FEATURES} (\texttt{cmake/python.cmake}) - Python development libraries.
