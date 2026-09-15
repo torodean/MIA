@@ -3,6 +3,8 @@
 
 The sequencer is an app contained within MIA for performing key/button simulation sequences. This can be used for Performing mundane tasks automatically and repeatable tasks on a timer while away from the computer. More advanced uses can also be for botting and other repeatable tasks.
 
+On Linux, the sequencer requires the \texttt{xdo} features (libxdo and X11), so it is only built when those libraries are found (see section \ref{section:optional_features}). Windows builds provide the input APIs directly and always get the sequencer.
+
 \section{Using the Sequencer}
 
 The sequencer acquires its programmable sequence functionality from the \texttt{MIASequences.MIA} file. This file will appear similar to the following.
