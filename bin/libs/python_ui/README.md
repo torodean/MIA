@@ -4,9 +4,9 @@ This folder contains a library for providing graphical UIs for c++ applications,
 
 ## Current Contents
 
-- **Event.hpp/.cpp**: A single event produced by a python UI. Currently wraps the string the python UI reports for each user action (e.g., "increment", "stop"), as its own type so the representation can gain structure later without changing the API of the classes which pass events around.
-- **EventStorage.hpp/.cpp**: The batch of events returned by one read from a listener. Provides `append()` (the listener's write interface), `hasEvents()`, and `getEvents()`. Also defines the `toEvents()` free function, the shared conversion from a `PythonResult` (a list of strings or a single string) into events.
-- **PythonUIListener.hpp/.cpp**: A `BackgroundTask` which polls the python UI module's event-retrieval method (`getAllEvents` by default, overridable) and queues the resulting events for the main thread. Reads drain the queue through `getEvents()` (non-blocking) or `waitForEvents()` (blocks on a condition variable until events arrive or the listener stops). Failed polls are reported to stderr when verbose mode is enabled and never kill the listener; an optional consecutive-failure limit can stop the listener after N failures in a row. The poll interval defaults to zero (poll as fast as possible) with an option to sleep between polls.
+- **PythonUIListener.hpp/.cpp**: A `BackgroundTask` which polls the python UI module's event-retrieval method (`getAllEvents` by default, overridable) and pushes the resulting events into a shared `ui::EventQueue` for the main thread. The reader drains that queue itself, through `getAllEvents()` (non-blocking) or `waitForEvents()` (blocks until events arrive or the queue is closed). Failed polls are reported to stderr when verbose mode is enabled and never kill the listener; an optional consecutive-failure limit can stop the listener after N failures in a row. The poll interval defaults to zero (poll as fast as possible) with an option to sleep between polls. Also defines the `toEvents()` free function, the conversion from a `PythonResult` (a list of strings or a single string) into events.
+
+The generic event plumbing this library consumes lives in `bin/utils/ui` (`UI_UTIL`): `Event`, `EventStorage`, and `EventQueue`, in the `ui` namespace. That util is python-free so that non-python UI listeners (e.g. a keyboard listener) can share the same event queue and storage types without depending on python.
 
 The library is built as `Py_UI_LIB`.
 
