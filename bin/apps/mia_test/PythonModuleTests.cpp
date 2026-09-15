@@ -48,10 +48,10 @@ int testPythonModule()
                 std::cout << label << " -> " << result.asInt() << std::endl;
                 break;
             case PythonResult::Type::Double:
-                std::cout << label << " -> " << result.asDouble() << stdendl;
+                std::cout << label << " -> " << result.asDouble() << std::endl;
                 break;
             case PythonResult::Type::String:
-                std::cout << label << " -> " << result.asString() << stdendl;
+                std::cout << label << " -> " << result.asString() << std::endl;
                 break;
             case PythonResult::Type::Void:
             default:
