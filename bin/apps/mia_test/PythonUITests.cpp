@@ -128,7 +128,7 @@ int testPythonUILibrary()
     PythonModule module("testUI", __FILE__);
 
     // The queue the listener pushes events into and this test reads from.
-    python_ui::EventQueue queue;
+    ui::EventQueue queue;
     python_ui::PythonUIListener listener(module, queue);
 
     // Setup a listener which monitors events.
@@ -145,9 +145,9 @@ int testPythonUILibrary()
     while (listener.isRunning())
     {
         // Read whatever events the listener has polled so far.
-        python_ui::EventStorage storage = queue.getAllEvents();
+        ui::EventStorage storage = queue.getAllEvents();
 
-        for (const python_ui::Event& event : storage.getEvents())
+        for (const ui::Event& event : storage.getEvents())
         {
             if (event.getName() == "increment")
                 increments++;
