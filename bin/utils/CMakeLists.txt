@@ -9,6 +9,7 @@ add_subdirectory( encryption )
 add_subdirectory( audio )
 add_subdirectory( ml )
 add_subdirectory( security )
+add_subdirectory( ui )
 
 if ( BUILD_PYTHON_FEATURES )
     add_subdirectory( python )
