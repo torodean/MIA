@@ -1,26 +1,59 @@
 name: CMake Build and Test
 
 on:
+  # Run on every push to main.
   push:
     branches: main
-    paths:
-      - 'bin/**'
+
+  # Run on every pull request.
   pull_request:
-    paths:
-      - 'bin/**'
+
+# Allow the workflow to read repository contents.
+permissions:
+  contents: read
 
 jobs:
+  check-for-testable-changes:
+    runs-on: ubuntu-latest
+
+    # Pass whether bin/ was changed to the build-and-test job.
+    outputs:
+      bin-changed: ${{ steps.filter.outputs.bin }}
+
+    steps:
+      # Retrieve the repository so changed files can be checked.
+      - uses: actions/checkout@v7
+
+      # Check whether any files under bin/ were changed.
+      - name: Check for bin changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            bin:
+              - 'bin/**'
+
   build-and-test:
+    # Wait for the change check before deciding whether to run.
+    needs: check-for-testable-changes
+
+    # Only build and test when bin/ contains changes.
+    if: needs.check-for-testable-changes.outputs.bin-changed == 'true'
+
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v7
+      # Retrieve the repository for the build.
+      - uses: actions/checkout@v7
 
-    - name: Install dependencies
-      run: ./scripts/setup.sh
-      
-    - name: Configure and build
-      run: ./build.sh -v
+      # Install the dependencies required to build and test the project.
+      - name: Install dependencies
+        run: ./scripts/setup.sh
 
-    - name: Run tests
-      run: ctest --test-dir build --output-on-failure
+      # Configure and build the project using CMake.
+      - name: Configure and build
+        run: ./build.sh -v
+
+      # Run the configured tests and print their output if they fail.
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
