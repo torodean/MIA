@@ -14,6 +14,9 @@ echo "Platform: $platform"
 
 original_dir="$(pwd)"
 
+# Enable the repo git hooks (e.g. the commit-msg hook that stamps version bumps).
+git config core.hooksPath .githooks
+
 if [[ "$uname_out" == "Linux" ]]; then
     echo "Running Linux setup..."
 	
