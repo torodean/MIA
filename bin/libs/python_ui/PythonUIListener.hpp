@@ -55,7 +55,7 @@ namespace python_ui
      * the priority. A pollInterval can be set to trade a little latency for
      * less CPU use and less GIL contention.
      *
-     * The listener converts the python result strings into Events in run();
+     * The listener converts the python result strings into ui::Events in run();
      * the python-string representation never leaves the listener, and the
      * EventStorage interface deals only in Events.
      *
@@ -85,7 +85,7 @@ namespace python_ui
          *        means failures are reported but never stop the listener.
          */
         PythonUIListener(PythonModule& module,
-                         EventQueue& queue,
+                         ui::EventQueue& queue,
                          const std::string& getEventsMethod = "getAllEvents",
                          std::chrono::milliseconds pollInterval = std::chrono::milliseconds(0),
                          unsigned int maxConsecutiveFailures = 0);
@@ -134,7 +134,7 @@ namespace python_ui
         PythonModule& uiModule;
 
         /// The event queue shared with the reading thread. Owned by the caller.
-        EventQueue& eventQueue;
+        ui::EventQueue& eventQueue;
 
         /// The name of the module method which returns the pending events.
         std::string getEventsMethod;
@@ -148,4 +148,18 @@ namespace python_ui
         /// The number of failed polls since the last successful one.
         unsigned int consecutiveFailures{0};
     }; // class PythonUIListener
+
+
+    /**
+     * Converts a python result into events.
+     * A Strings result yields one event per string, and a String result
+     * yields a single event; any other result type (e.g. Void) yields no
+     * events. This is the conversion used when filling storage from a poll
+     * of a python UI, whether the polled method returns a batch of events
+     * or one event per call.
+     *
+     * @param result The python result to convert.
+     * @return The converted events, in the order of the result's strings.
+     */
+    std::vector<ui::Event> toEvents(const PythonResult& result);
 } // namespace python_ui
