@@ -15,7 +15,7 @@
 namespace python_ui
 {
     PythonUIListener::PythonUIListener(PythonModule& module,
-                                       EventQueue& queue,
+                                       ui::EventQueue& queue,
                                        const std::string& getEventsMethodName,
                                        std::chrono::milliseconds pollIntervalMs,
                                        unsigned int maxConsecutiveFailuresLimit)
@@ -75,5 +75,25 @@ namespace python_ui
 
         std::cerr << "WARNING: Python UI event poll '" << getEventsMethod
                   << "' failed: " << result.getError() << std::endl;
+    }
+
+
+    std::vector<ui::Event> toEvents(const PythonResult& result)
+    {
+        std::vector<ui::Event> events;
+
+        if (result.getType() == PythonResult::Type::Strings)
+        {
+            const std::vector<std::string>& strings = result.asStrings();
+            events.reserve(strings.size());
+            for (const std::string& value : strings)
+                events.emplace_back(value);
+        }
+        else if (result.getType() == PythonResult::Type::String)
+        {
+            events.emplace_back(result.asString());
+        }
+
+        return events;
     }
 } // namespace python_ui
