@@ -1152,30 +1152,74 @@ Use of the \texttt{ReturnCode} enum improves type clarity and encourages consist
 
 
 
-\section{Threading: BackgroundTask Class}
 
-The \texttt{BackgroundTask} class defines an abstract base for executing background operations on a separate thread, enabling asynchronous processing within an application framework. Derived classes must implement the \texttt{run()} method, which contains the task-specific logic. This method is repeatedly called in the internal \texttt{threadLoop()} until a stop is requested.
 
-Key features include:
+\section{Threading: BackgroundTask Class}\label{section:background_task}
 
-\begin{itemize}
-	\item \textbf{Thread Management:} The class encapsulates a \texttt{std::thread} object that runs the background task. The \texttt{start()} method launches the thread, and \texttt{stop()} signals termination by setting an atomic \texttt{stopRequested} flag, then joins the thread to ensure clean shutdown.
-	
-	\item \textbf{Thread-Safe Stop Signaling:} Uses \texttt{std::atomic<bool>} for the stop flag to allow safe, lock-free communication of stop requests between threads.
-	
-	\item \textbf{Condition Flag:} An additional atomic \texttt{conditionMet} flag allows the background task to track or toggle a condition without stopping the thread, supporting scenarios like toggling state based on external events.
-	
-	\item \textbf{Runtime Context Access:} The task holds a pointer to a shared \texttt{RuntimeContext} instance, providing access to global application settings such as logging facilities and verbosity flags. The context is injected via \texttt{setContext()} to allow flexible runtime configuration without copying.
-	
-	\item \textbf{Safety and Correctness:} Copy and move constructors and assignment operators are deleted to prevent accidental thread object duplication or transfer, which could lead to undefined behavior.
-	
-	\item \textbf{Extensibility:} A protected \texttt{doWhenStopped()} hook can be overridden to perform cleanup or finalization logic after the task stops.
+The \texttt{BackgroundTask} class (see \texttt{bin/core/BackgroundTask.hpp}) is an abstract base class which runs task logic on a background \texttt{std::thread}. To use it, subclass it and implement the \texttt{run()} method with the task's logic. The base class launches the thread and repeatedly calls \texttt{run()} until a stop is requested. An application can then use the subclass as follows:
+\begin{lstlisting}[style=cppstyle]
+MyTask task;
+task.start();    // Launches the thread and begins calling run().
+
+// ...the task runs in the background...
+
+task.stop();     // Sets the stop flag and joins the thread.
+\end{lstlisting}
+
+\subsection{Implementing the Task}
+
+The \texttt{run()} method is invoked repeatedly (not continuously) by an internal loop, so it should contain one \textit{iteration} of the task's work. An implementation which sleeps or busy-waits internally should check \texttt{stopRequested} and return early, so a stop request is observed promptly instead of after the full iteration finishes. The protected \texttt{stopRequested} flag is an \texttt{std::atomic<bool>} which the base class sets when \texttt{stop()} is called.
+\begin{lstlisting}[style=cppstyle]
+class MyTask : public threading::BackgroundTask
+{
+protected:
+    void run() override
+    {
+        if (stopRequested)
+            return;
+
+        // One iteration of the task's work goes here.
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+};
+\end{lstlisting}
+A task can also stop itself by setting \texttt{stopRequested} directly. The thread then exits after the current \texttt{run()} call returns.
+
+\subsection{Lifecycle}
+
+\begin{itemize}\itemsep0em
+	\item \texttt{start()} launches the worker thread. It only has an effect if the thread is not already running, so calling it twice on a live task does nothing.
+	\item \texttt{isRunning()} returns \texttt{true} until a stop has been requested. Note that this reflects the \textit{request}, not the thread's actual state; a stopped thread may still be finishing its final \texttt{run()} iteration until \texttt{stop()} joins it.
+	\item \texttt{stop()} sets \texttt{stopRequested} and joins the thread, so it blocks until the current \texttt{run()} iteration completes. The destructor also calls \texttt{stop()}, so a \texttt{BackgroundTask} which goes out of scope cleans up its thread automatically.
+	\item \texttt{doWhenStopped()} is an optional hook which is called once, on the worker thread, after the loop exits. Override it for cleanup or finalization logic. Note that it does not run if the process exits before the thread does.
 \end{itemize}
+Copy and move operations are deleted. A \texttt{BackgroundTask} owns exactly one thread and two atomic flags, so duplicating it would create two owners of the same thread. If a task must be shared, share the object itself through a \texttt{shared\_ptr}.
 
-Developers implementing subclasses should ensure that \texttt{run()} periodically checks \texttt{stopRequested} to enable responsive shutdown. The class design facilitates robust and reusable background task management suitable for long-running or repeating operations within multi-threaded applications.
+\subsection{The Condition Flag}
 
+Alongside the stop flag, the base class provides an \texttt{std::atomic<bool>} named \texttt{conditionMet} which a task can use to communicate \textit{conditional state} to the calling thread without stopping. This is meant for cases where the background thread watches for some event (e.g., a key press) and the main thread needs to react to it:
+\begin{lstlisting}[style=cppstyle]
+// Main thread: block until the task's condition is met.
+while (listener.isConditionMet())
+{
+    // React to the condition here...
+}
+\end{lstlisting}
+The condition flag is controlled from the main thread with \texttt{setConditionMet()}, read with \texttt{isConditionMet()}, and flipped with \texttt{toggleCondition()} (which is useful for tasks which toggle state on an external event, such as a key-press listener).
 
+\subsection{Runtime Context}
 
+A task can be given the application's \texttt{RuntimeContext} (see section \ref{section:base_application}) via \texttt{setContext()}. The context is stored as a pointer, so the application's context must outlive the task. This is typically done right after construction:
+\begin{lstlisting}[style=cppstyle]
+MyTask task;
+task.setContext(getContext());
+\end{lstlisting}
+With the context set, the task can consult application-wide settings such as \texttt{verboseMode} before producing output.
+
+\subsection{Example}
+
+The key-press listener in \texttt{bin/apps/mia\_sequencer/KeyListenerTask.hpp} is a working example of the class. It overrides \texttt{run()} to poll the platform keyboard API and toggles \texttt{conditionMet} when the configured key is pressed, while the sequencer's main loop waits on \texttt{isConditionMet()} as shown above. The unit tests in \texttt{bin/core/test/BackgroundTask\_T.cpp} exercise the lifecycle and condition flag and demonstrate a minimal subclass.
 
 
 
