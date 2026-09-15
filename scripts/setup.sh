@@ -14,6 +14,9 @@ echo "Platform: $platform"
 
 original_dir="$(pwd)"
 
+# Enable the repo git hooks (e.g. the commit-msg hook that stamps version bumps).
+git config core.hooksPath .githooks
+
 if [[ "$uname_out" == "Linux" ]]; then
     echo "Running Linux setup..."
 	
@@ -24,6 +27,9 @@ if [[ "$uname_out" == "Linux" ]]; then
 	sudo apt-get install libx11-dev libxtst-dev
 	sudo apt install nlohmann-json3-dev
 	sudo apt install python3-dev
+	sudo apt install python3-numpy
+	sudo apt install python3-matplotlib
+	sudo apt install python3-tk
 
 	# Setup gtest for testing
 	echo "Installing gtest..."

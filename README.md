@@ -18,6 +18,13 @@ Contains the documentation for the project, including the MIA manual, usage inst
 ### `scripts/`
 Used for storing various helper scripts to perform tasks. This includes various tasks related to installing files, building files, and more.
 
+### `.githooks/`
+Contains git hooks for the repository (added in v2.098). The `commit-msg` hook prefixes any commit that changes `MIA_VERSION_VAL` in the top-level `CMakeLists.txt` with `[vX.YYY]`, so version bump commits are identifiable in history (`git log --grep="\[v"`). `scripts/setup.sh` enables the hooks by setting `core.hooksPath` to `.githooks`. If you don't want to re-run the setup script, you can enable the hooks manually with:
+
+```
+git config core.hooksPath .githooks
+```
+
 ### `build/` (if applicable)
 Used for build artifacts, scripts, or platform-specific build outputs. This folder may be generated during the build process and is not typically version-controlled.
 

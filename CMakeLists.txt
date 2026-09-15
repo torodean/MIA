@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.098")
+set(MIA_VERSION_VAL "2.100")
 
 message(STATUS "MIA_VERSION_VAL: ${MIA_VERSION_VAL}")
 
@@ -43,6 +43,9 @@ include( cmake/database.cmake )
 
 # Setup python specifics.
 include( cmake/python.cmake )
+
+# Setup xdo specifics.
+include( cmake/xdo.cmake )
 
 # Create the log directories
 if(UNIX AND NOT APPLE)
@@ -102,3 +105,9 @@ include( cmake/apps.cmake )
 add_subdirectory( bin )
 #add_subdirectory( documentation )
 add_subdirectory( resources )
+
+# Warn about any optional feature sets which were skipped (and the apps which depend on them).
+if(SKIPPED_FEATURES)
+    list(JOIN SKIPPED_FEATURES ", " SKIPPED_FEATURES_STR)
+    message(WARNING "The following features are not being built (and therefore neither are the components which depend on them): ${SKIPPED_FEATURES_STR}")
+endif()

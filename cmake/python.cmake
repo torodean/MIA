@@ -7,6 +7,7 @@ if (Python3_FOUND)
     message(STATUS "Found Python development libraries. BUILDING Python components!")
 else()
     set(BUILD_PYTHON_FEATURES OFF)
+    list(APPEND SKIPPED_FEATURES "python")
     message(STATUS "Python development libraries not found. SKIPPING Python components!")
 endif()
 
