@@ -313,6 +313,8 @@ vk.leftclick();
 	\item \textbf{Windows:} Uses the Windows \texttt{SendInput} API for keyboard and mouse simulation.
 
 	\item \textbf{Linux:} Utilizes the \texttt{xdo} library along with X11 functions to emulate input events.
+
+	\item \textbf{Linux (optional):} The \texttt{xdo} and X11 libraries are optional: when they are not found, the key stroke features are not built and \texttt{System\_UTIL} contains only the other system utilities (see section \ref{section:optional_features}).
 \end{itemize}
 
 
