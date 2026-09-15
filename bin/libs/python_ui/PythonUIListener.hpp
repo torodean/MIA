@@ -7,14 +7,14 @@
 #pragma once
 
 #include <chrono>
-#include <condition_variable>
-#include <mutex>
 #include <string>
 #include <vector>
 
-// The event types returned by listener reads.
+// The event types passed between the listener and the reader.
 #include "Event.hpp"
 #include "EventStorage.hpp"
+// The shared queue this listener pushes polled events into.
+#include "EventQueue.hpp"
 // The base class which provides the background thread and stop signaling.
 #include "BackgroundTask.hpp"
 // The python interpreter used to poll the UI module.
@@ -27,12 +27,18 @@ namespace python_ui
      * A background task which listens for events produced by a python UI.
      *
      * The listener repeatedly calls the UI module's event-retrieval method
-     * (getAllEvents by default) and stores the returned events in an internal
-     * queue. The main thread reads them with getEvents() (non-blocking drain)
-     * or waitForEvents() (blocks until events are available or the listener
-     * stops). Each read returns an EventStorage holding the drained events.
-     * The python UI is always polled; waitForEvents() only blocks the c++
-     * side until polled events actually arrive.
+     * (getAllEvents by default) and pushes the returned events into an
+     * EventQueue shared with the reading thread. The reader takes the events
+     * from the queue with getAllEvents() (non-blocking) or waitForEvents()
+     * (blocks until events are available or the queue is closed). Each read
+     * returns an EventStorage holding the read events. The python UI is
+     * always polled; waitForEvents() only blocks the c++ side until polled
+     * events actually arrive.
+     *
+     * The EventQueue is passed in and shared rather than owned so that other
+     * event sources (e.g. an input listener) can push into the same queue,
+     * giving the reader a single place to wait. The queue must outlive this
+     * listener.
      *
      * This class assumes the UI module is shared with other handlers (e.g. a
      * setter for pushing UI updates), so it holds a reference to an
@@ -56,7 +62,7 @@ namespace python_ui
      * The listener and the calling thread use the same PythonModule at the
      * same time (the worker thread polls while the main thread pushes UI
      * updates); PythonModule serializes that python work with the GIL, so it
-     * is safe to share. The event queue needs its own mutex because it is
+     * is safe to share. The EventQueue needs its own mutex because it is
      * c++-side state which the GIL does not cover.
      */
     class PythonUIListener : public threading::BackgroundTask
@@ -68,6 +74,8 @@ namespace python_ui
          *
          * @param module The python module implementing the UI. The referenced
          *        module must outlive this listener.
+         * @param queue The event queue this listener pushes polled events
+         *        into. The referenced queue must outlive this listener.
          * @param getEventsMethod The name of the module method to call each
          *        poll. The method must return a list of strings.
          * @param pollInterval The time to sleep after each poll. The default
@@ -77,6 +85,7 @@ namespace python_ui
          *        means failures are reported but never stop the listener.
          */
         PythonUIListener(PythonModule& module,
+                         EventQueue& queue,
                          const std::string& getEventsMethod = "getAllEvents",
                          std::chrono::milliseconds pollInterval = std::chrono::milliseconds(0),
                          unsigned int maxConsecutiveFailures = 0);
@@ -88,34 +97,13 @@ namespace python_ui
 
         /*
          * Copying is deleted by the BackgroundTask base class; a listener owns
-         * one thread and a mutex-protected queue which cannot be duplicated.
+         * one thread which cannot be duplicated.
          */
 
         /**
-         * Gets all pending events and drains the queue.
-         * This never blocks; when no events are pending it returns empty
-         * storage.
-         *
-         * @return The pending events, in the order they were polled.
-         */
-        EventStorage getEvents();
-
-        /**
-         * Gets all pending events and drains the queue, blocking until at
-         * least one event is available or the listener is stopped.
-         * This lets the calling thread sleep instead of spinning on
-         * getEvents(); the listener wakes it as soon as polled events are
-         * stored. A listener which is stopped while waiting wakes up and
-         * returns whatever was pending (possibly nothing).
-         *
-         * @return The pending events, in order, or empty storage if the
-         *         listener stopped with no pending events.
-         */
-        EventStorage waitForEvents();
-
-        /**
-         * Requests the listener to stop and wakes any thread blocked in
-         * waitForEvents(), then joins the worker thread.
+         * Requests the listener to stop, closes the shared event queue, and
+         * joins the worker thread. Closing the queue wakes any thread blocked
+         * in waitForEvents() so it can observe the shutdown.
          */
         void stop() override;
 
@@ -125,22 +113,14 @@ namespace python_ui
          * Performs one poll of the UI module.
          * Called repeatedly by the BackgroundTask loop. Each call retrieves
          * the module's pending events, converts them from python result
-         * strings into Events, appends them to the internal queue, and wakes
-         * any thread waiting in waitForEvents(). When the consecutive failure
-         * limit is reached, this sets the stop flag directly and wakes any
-         * waiting reader (calling stop() here would join the thread from
-         * itself).
+         * strings into Events, and pushes them into the shared queue. When
+         * the consecutive failure limit is reached, this sets the stop flag
+         * directly and closes the queue to wake any waiting reader (calling
+         * stop() here would join the thread from itself).
          */
         void run() override;
 
     private:
-
-        /**
-         * Appends polled events to the queue and wakes any waiting reader.
-         *
-         * @param newEvents The events returned by the latest poll.
-         */
-        void storeEvents(const std::vector<Event>& newEvents);
 
         /**
          * Reports a failed poll to standard error when verbose mode is
@@ -153,6 +133,9 @@ namespace python_ui
         /// The python module implementing the UI. Owned by the caller.
         PythonModule& uiModule;
 
+        /// The event queue shared with the reading thread. Owned by the caller.
+        EventQueue& eventQueue;
+
         /// The name of the module method which returns the pending events.
         std::string getEventsMethod;
 
@@ -164,19 +147,5 @@ namespace python_ui
 
         /// The number of failed polls since the last successful one.
         unsigned int consecutiveFailures{0};
-
-        /// Guards the event queue, which is shared with the calling thread.
-        mutable std::mutex eventsMutex;
-
-        /**
-         * Wakes threads waiting in waitForEvents() when events arrive or the
-         * listener stops. Always notify while not holding eventsMutex's lock
-         * (after the queue update) to avoid waking a thread which would
-         * immediately block again.
-         */
-        std::condition_variable eventsCv;
-
-        /// The events polled from the UI which have not been read yet.
-        std::vector<Event> events;
     }; // class PythonUIListener
 } // namespace python_ui
