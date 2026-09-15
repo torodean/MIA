@@ -24,6 +24,9 @@ if [[ "$uname_out" == "Linux" ]]; then
 	sudo apt-get install libx11-dev libxtst-dev
 	sudo apt install nlohmann-json3-dev
 	sudo apt install python3-dev
+	sudo apt install python3-numpy
+	sudo apt install python3-matplotlib
+	sudo apt install python3-tk
 
 	# Setup gtest for testing
 	echo "Installing gtest..."
