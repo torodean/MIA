@@ -1255,7 +1255,7 @@ With the context set, the task can consult application-wide settings such as \te
 
 \subsection{Example}
 
-The key-press listener in \texttt{bin/apps/mia\_sequencer/KeyListenerTask.hpp} is a working example of the class. It overrides \texttt{run()} to poll the platform keyboard API and toggles \texttt{conditionMet} when the configured key is pressed, while the sequencer's main loop waits on \texttt{isConditionMet()} as shown above. The unit tests in \texttt{bin/core/test/BackgroundTask\_T.cpp} exercise the lifecycle and condition flag and demonstrate a minimal subclass.
+The key-press listener in \texttt{bin/utils/ui/SingleKeyListener.hpp} is a working example of the class. It overrides \texttt{run()} to poll the platform keyboard API and toggles \texttt{conditionMet} when the configured key is pressed, while the sequencer's main loop waits on \texttt{isConditionMet()} as shown above. The unit tests in \texttt{bin/core/test/BackgroundTask\_T.cpp} exercise the lifecycle and condition flag and demonstrate a minimal subclass.
 
 
 

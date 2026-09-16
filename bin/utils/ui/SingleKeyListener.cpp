@@ -1,5 +1,5 @@
 /**
- * @file KeyListenerTask.cpp
+ * @file SingleKeyListener.cpp
  * @author Antonius Torode
  * @date 06/25/2025
  * Description:
@@ -7,7 +7,7 @@
  */
 
 #include <cstring>
-#include "KeyListenerTask.hpp"
+#include "SingleKeyListener.hpp"
 #include "Timing.hpp"
 
 #if defined(IS_WINDOWS)
@@ -17,7 +17,7 @@
 #endif
 
 
-KeyListenerTask::KeyListenerTask()
+SingleKeyListener::SingleKeyListener()
 #if defined(__linux__)
     : display(XOpenDisplay(nullptr))
     , root(display ? DefaultRootWindow(display) : 0)
@@ -25,7 +25,7 @@ KeyListenerTask::KeyListenerTask()
 { }
 
 
-KeyListenerTask::KeyListenerTask(char keyCode) : 
+SingleKeyListener::SingleKeyListener(char keyCode) : 
 #if defined(IS_WINDOWS)
 	keyCode(std::toupper(keyCode))
 #elif defined(__linux__)
@@ -38,7 +38,7 @@ KeyListenerTask::KeyListenerTask(char keyCode) :
 }
 
 
-KeyListenerTask::~KeyListenerTask()
+SingleKeyListener::~SingleKeyListener()
 {
 #if defined(__linux__)
     if (grabbed) 
@@ -50,7 +50,7 @@ KeyListenerTask::~KeyListenerTask()
 }
 
 
-void KeyListenerTask::initialize()
+void SingleKeyListener::initialize()
 {
 	if (!isActive())
 	{
@@ -71,7 +71,7 @@ void KeyListenerTask::initialize()
 }
 
 
-void KeyListenerTask::setKeyCode(char code)
+void SingleKeyListener::setKeyCode(char code)
 { 
 #if defined(IS_WINDOWS)
 	keyCode = std::toupper(static_cast<unsigned char>(code));
@@ -84,7 +84,7 @@ void KeyListenerTask::setKeyCode(char code)
 
 
 #if defined(__linux__)
-unsigned int KeyListenerTask::charToKeyCode(char c) 
+unsigned int SingleKeyListener::charToKeyCode(char c) 
 {
     char str[2] = {c, '\0'};
     KeySym keysym = XStringToKeysym(str);
@@ -96,7 +96,7 @@ unsigned int KeyListenerTask::charToKeyCode(char c)
 }
 #endif
 
-void KeyListenerTask::run()
+void SingleKeyListener::run()
 {
     if (!isActive())
     {
