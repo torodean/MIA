@@ -67,7 +67,8 @@ void MIATest::printTestHelp()
               << "  4: Test PythonPlotter input validation" << std::endl
               << "  5: Test basic PythonUI interactions" << std::endl
               << "  6: Test the python UI library listener" << std::endl
-              << "  7: Test the keybind listener" << std::endl;
+              << "  7: Test the keybind listener" << std::endl
+              << "  8: Test the keybind listener with global capture" << std::endl;
 }
 
 
@@ -97,6 +98,7 @@ int MIATest::run()
         case 5: return testPythonUI();
         case 6: return testPythonUILibrary();
         case 7: return testKeybindListener(verboseMode);
+        case 8: return testKeybindListenerGlobalCapture(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();
