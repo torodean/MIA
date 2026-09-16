@@ -57,7 +57,18 @@ namespace
 }
 
 
-int testKeybindListener(bool verboseMode)
+/**
+ * Runs the keybind listener loop with the given capture mode.
+ *
+ * Loads the keybinds from the MIATest.MIA config, starts a KeybindListener,
+ * and prints each completed binding once and each held movement key roughly
+ * every 50 milliseconds until interrupted.
+ *
+ * @param verboseMode Enables verbose listener output when true.
+ * @param captureGlobally Whether the listener captures keys globally.
+ * @return SUCCESS when the listener loop completes, FAILURE otherwise.
+ */
+int runKeybindListenerTest(bool verboseMode, bool captureGlobally)
 {
     // Load the keybinds from the shared MIATest config.
     config::MIAConfig config("MIATest.MIA", constants::ConfigType::KEY_VALUE, verboseMode);
@@ -70,14 +81,18 @@ int testKeybindListener(bool verboseMode)
     RuntimeContext context;
     context.verboseMode = verboseMode;
 
-    ui::KeybindListener listener(config, queue);
+    ui::KeybindListener listener(config, queue, "keybind_", 5, captureGlobally);
     listener.setContext(context);
     listener.initialize();
     listener.start();
 
-    std::cout << "Listening for keybinds: wasd = movement (held keys report every "
-              << HOLD_REPORT_INTERVAL_MS << "ms), g/h/j = pushes, alt+t = alt push,"
-              << " alt+shift+s = double-modifier push. Ctrl+C to quit." << std::endl;
+    std::cout << "Listening for keybinds (global capture "
+              << (captureGlobally ? "on" : "off") << "): wasd = movement"
+              << " (held keys report every " << HOLD_REPORT_INTERVAL_MS
+              << "ms), g/h/j = pushes, alt+t = alt push, alt+shift+s ="
+              << " double-modifier push."
+              << (captureGlobally ? "" : " Keys also reach the focused window.")
+              << " Ctrl+C to quit." << std::endl;
 
     while (listener.isRunning())
     {
@@ -96,4 +111,16 @@ int testKeybindListener(bool verboseMode)
 
     listener.stop();
     return constants::SUCCESS;
+}
+
+
+int testKeybindListener(bool verboseMode)
+{
+    return runKeybindListenerTest(verboseMode, false);
+}
+
+
+int testKeybindListenerGlobalCapture(bool verboseMode)
+{
+    return runKeybindListenerTest(verboseMode, true);
 }
