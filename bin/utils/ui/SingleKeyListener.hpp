@@ -1,14 +1,13 @@
 /**
- * @file KeyListenerTask.hpp
+ * @file SingleKeyListener.hpp
  * @author Antonius Torode
  * @date 06/25/2025
- * Description:
- *     TODO
+ * @brief Provides a utility for listening to a keyboard event.
  */
 #pragma once
 
+// Used for creating a threaded task for listening.
 #include "BackgroundTask.hpp"
-
 /// Used for preprocessor definitions.
 #include "Constants.hpp"
 
@@ -20,38 +19,38 @@
  * This class provides a threaded task which will listen for a key-press in order
  * to monitor a conditional state, which is toggled by the key-press.
  */
-class KeyListenerTask : public threading::BackgroundTask
+class SingleKeyListener : public threading::BackgroundTask
 {
 public:
 
     /**
-     * @brief Default constructor for KeyListenerTask.
+     * @brief Default constructor for SingleKeyListener.
      *
      * Constructs an inactive listener with no key bound. Useful when the object is
      * conditionally configured later. The task will be inert unless a keyCode is set
      * and initialize is completed. If this constructor is used, the user must call
      * setKeyCode() then initialize().
      */
-    KeyListenerTask();
+    SingleKeyListener();
 
     /**
-     * @brief Constructs a KeyListenerTask with a specific key binding.
+     * @brief Constructs a SingleKeyListener with a specific key binding.
      *
      * Initializes the listener with the specified key code. When started, the task
      * will monitor for the key press and toggle its internal condition state.
      *
      * @param keyCode[char] - The key code to listen for (platform-specific).
      */
-    KeyListenerTask(char keyCode);
+    SingleKeyListener(char keyCode);
     
     /**
-     * @brief Destructor for KeyListenerTask.
+     * @brief Destructor for SingleKeyListener.
      *
      * Cleans up any platform-specific resources used by the listener. On Linux,
      * this includes ungrabbing the key from the X server (if previously grabbed)
      * and closing the X display connection.
      */
-    ~KeyListenerTask();
+    ~SingleKeyListener();
     
     /**
      * @brief Sets the key code to be monitored by the key listener.
@@ -108,7 +107,7 @@ private:
 
     bool lastPressed{false};
     
-#elif defined(__linux__)   
+#elif defined(__linux__)
     /// Storage for the int key-code used by this listener.
 	unsigned int linuxKeyCode{0};
 	
@@ -127,8 +126,8 @@ private:
      */
     Display *display;
       
-    static constexpr unsigned int modifiers = AnyModifier;    
+    static constexpr unsigned int modifiers = AnyModifier;
     Window root;
     bool grabbed{false}; // To track if key was grabbed
 #endif
-}; // class KeyListenerTask
+}; // class SingleKeyListener

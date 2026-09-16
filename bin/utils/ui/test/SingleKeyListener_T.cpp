@@ -1,15 +1,15 @@
 /**
- * @file KeyListenerTask_T.cpp
+ * @file SingleKeyListener_T.cpp
  * @author Antonius Torode
  * @date 06/25/2025
  * Description:
- *     Tests for KeyListenerTask
+ *     Tests for SingleKeyListener
  */
  
 #include <gtest/gtest.h>
-#include "KeyListenerTask.hpp"
+#include "SingleKeyListener.hpp"
 
-class KeyListenerTaskTest : public ::testing::Test
+class SingleKeyListenerTest : public ::testing::Test
 {
 protected:
     void TearDown() override 
@@ -19,34 +19,34 @@ protected:
     }
 
     // You can set up common objects here
-    KeyListenerTask defaultTask;
-    KeyListenerTask keyedTask{'A'}; // arbitrary key code
+    SingleKeyListener defaultTask;
+    SingleKeyListener keyedTask{'A'}; // arbitrary key code
 };
 
-TEST_F(KeyListenerTaskTest, DefaultConstructorIsInactive)
+TEST_F(SingleKeyListenerTest, DefaultConstructorIsInactive)
 {
     EXPECT_FALSE(defaultTask.isActive());
 }
 
-TEST_F(KeyListenerTaskTest, ConstructorWithKeyIsActive)
+TEST_F(SingleKeyListenerTest, ConstructorWithKeyIsActive)
 {
     EXPECT_TRUE(keyedTask.isActive());
     EXPECT_EQ('A', keyedTask.isActive() ? 'A' : '\0'); // check keyCode indirectly
 }
 
-TEST_F(KeyListenerTaskTest, SetKeyCodeActivatesTask)
+TEST_F(SingleKeyListenerTest, SetKeyCodeActivatesTask)
 {
     defaultTask.setKeyCode('Z');
     EXPECT_TRUE(defaultTask.isActive());
 }
 
-TEST_F(KeyListenerTaskTest, InitializeDoesNotCrashOnInactive)
+TEST_F(SingleKeyListenerTest, InitializeDoesNotCrashOnInactive)
 {
     // Should do nothing or exit early, no exceptions
     EXPECT_NO_THROW(defaultTask.initialize());
 }
 
-TEST_F(KeyListenerTaskTest, StartStopCycle)
+TEST_F(SingleKeyListenerTest, StartStopCycle)
 {
     keyedTask.initialize();
     keyedTask.start();
@@ -58,12 +58,12 @@ TEST_F(KeyListenerTaskTest, StartStopCycle)
     EXPECT_FALSE(keyedTask.isRunning());
 }
 
-TEST_F(KeyListenerTaskTest, ConditionToggleOnRun)
+TEST_F(SingleKeyListenerTest, ConditionToggleOnRun)
 {
-    class TestKeyListener : public KeyListenerTask
+    class TestKeyListener : public SingleKeyListener
     {
     public:
-        TestKeyListener() : KeyListenerTask('2') {}
+        TestKeyListener() : SingleKeyListener('2') {}
 
         // Override run to simulate key press toggling condition once then stop
         void run() override
