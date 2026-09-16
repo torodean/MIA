@@ -468,3 +468,62 @@ The \texttt{SingleKeyListener} class is an older, simpler background task which 
 \subsection{Platform Details}
 
 Both listeners detect presses no matter which window has focus. On Linux, detection polls the physical keyboard state through X11, and the \texttt{KeybindListener} only captures (swallows) its keys when \texttt{captureGlobally} is set; on Windows, the key states are polled with \texttt{GetAsyncKeyState} and never captured. The key listeners are optional: they build on Windows, and on Linux only when the libxdo and X11 development libraries are found (see section \ref{section:optional_features}); the \texttt{Event} classes always build.
+
+\subsubsection{Defining Bindings}
+
+There are two ways to give the listener its bindings.
+
+\paragraph{From a config.} The first constructor reads a KEY\_VALUE config (see section \ref{section:configuration_system}) and binds every pair whose key starts with the keybind prefix (\texttt{keybind\_} by default). The tokens after the prefix name the keys; the pair's value names the event which is pushed when the binding completes:
+\begin{lstlisting}[style=makestyle]
+# The character key w pushes the "up" event.
+keybind_w=up
+
+# '+' joins keys into a combination, held at the same time.
+keybind_a+b=both
+
+# The tokens 'alt', 'ctrl', and 'shift' are modifiers; any number of
+# them may be combined with any number of character keys.
+keybind_alt+t=alt_t
+keybind_alt+shift+s=alt_shift_s
+\end{lstlisting}
+Pairs which do not start with the prefix, or whose tokens are not characters or modifier names, are skipped (reported to standard error when verbose mode is set). The config must be initialized before it is passed in; the constructor only reads from it.
+
+\paragraph{From a map.} The second constructor takes a \texttt{KeybindEventMap}, which maps a \texttt{Keybind} (a set of characters plus a \texttt{Modifier}) directly to the event it pushes. This is for bindings built in code rather than read from a file.
+
+\subsubsection{Using the Listener}
+
+A listener follows the background task lifecycle (see section \ref{section:background_task}): construct it, call \texttt{initialize()}, then \texttt{start()}; call \texttt{stop()} when finished. The completed-binding events are read from the shared queue, either by polling \texttt{getAllEvents()} or by blocking in \texttt{waitForEvents()}:
+\begin{lstlisting}[style=cppstyle]
+ui::EventQueue queue;
+ui::KeybindListener listener(config, queue);
+listener.initialize();
+listener.start();
+
+while (listener.isRunning())
+{
+    ui::EventStorage storage = queue.waitForEvents();
+    for (const ui::Event& event : storage.getEvents())
+        handleEvent(event.getName());
+}
+
+listener.stop();
+\end{lstlisting}
+
+For movement-style input, which lasts as long as the key is held, the reading loop checks the held state each frame instead of waiting for a completion:
+\begin{lstlisting}[style=cppstyle]
+while (listener.isKeyHeld('w'))
+{
+    moveForward();
+    timing::sleepMilliseconds(10);
+}
+
+// A chord: true only while both keys are held together.
+while (listener.isBindingHeld({'a', 'd'}))
+{
+    strafe();
+    timing::sleepMilliseconds(10);
+}
+\end{lstlisting}
+Only keys which appear in a binding are tracked; a key never bound by the listener always reads as not held. Single presses (including ones with a required modifier, e.g. \texttt{ctrl+s}) are simpler as completion bindings, since the queue push already provides the edge.
+
+The constructor parameters (the config key prefix, the poll interval, and global key capture) are documented in \texttt{KeybindListener.hpp}; the class comment there also covers the capture behavior and the re-arm semantics in full.
