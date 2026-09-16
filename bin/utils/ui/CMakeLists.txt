@@ -8,17 +8,23 @@ set(UI_INC
     EventQueue.hpp
     EventStorage.hpp )
 
-# Optionally add the key listeners on environments that can use it
-# (windows or when XDO is available)..
+# Optionally add the key listeners on environments that can use them
+# (windows or when XDO is available).
 if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
-    list(APPEND UI_SRC SingleKeyListener.cpp)
-    list(APPEND UI_INC SingleKeyListener.hpp)
+    list(APPEND UI_SRC SingleKeyListener.cpp KeybindListener.cpp)
+    list(APPEND UI_INC SingleKeyListener.hpp KeybindListener.hpp)
 endif()
 
 add_library(UI_UTIL ${UI_SRC} ${UI_INC})
 
 if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
-    target_link_libraries(UI_UTIL PRIVATE Framework_CORE System_UTIL)
+    target_link_libraries(UI_UTIL PRIVATE Framework_CORE System_UTIL Types_UTIL)
+endif()
+
+# The key listeners use X11 directly on Linux.
+if(BUILD_XDO_FEATURES)
+    target_link_libraries(UI_UTIL PRIVATE ${X11_LIBRARIES})
+    target_include_directories(UI_UTIL PRIVATE ${X11_INCLUDE_DIR})
 endif()
 
 # Expose this library's source directory for #include access by dependent targets
