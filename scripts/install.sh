@@ -3,16 +3,8 @@
 # This script is in charge of performing install options beyong what is done during the
 # cmake build. This can include adding configuration files or changing config values.
 
-uname_out="$(uname -s)"
-case "${uname_out}" in
-    Linux*)     platform="linux";;
-    CYGWIN*)    platform="cygwin";;
-    MINGW*)     platform="mingw";;  # MinGW or Git Bash on Windows
-    *)          platform="unknown";;
-esac
-echo "Platform: $platform"
-
-original_dir="$(pwd)"
+# Load shared platform detection and directory variables.
+source "$(cd "$(dirname "$0")" && pwd)/common.sh"
 
 if [[ "$uname_out" == "Linux" ]]; then
     echo "Running Linux install..."

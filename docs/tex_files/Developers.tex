@@ -1318,3 +1318,40 @@ if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
     add_subdirectory( mia_original )
 endif()
 \end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\section{Testing}\label{section:testing}
+
+Unit tests use the Google Test framework, which the top-level \texttt{CMakeLists.txt} requires via \texttt{find\_package(GTest REQUIRED)}. The \texttt{scripts/setup-gtest.sh} script installs it and can be run on its own or as part of \texttt{scripts/setup.sh}.
+
+\subsection{Writing and Registering Tests}
+
+Each module keeps its tests in a \texttt{test/} subdirectory added to the build by its CMakeLists.txt. A test is a standalone executable which links \texttt{GTest::gtest\_main} and is registered with CTest through \texttt{add\_test}:
+\begin{lstlisting}[style=makestyle]
+# Add tests for the SingleKeyListener.
+add_executable(SingleKeyListener_T SingleKeyListener_T.cpp ../SingleKeyListener.cpp ../SingleKeyListener.hpp )
+target_link_libraries(SingleKeyListener_T PRIVATE Framework_CORE System_UTIL GTest::gtest_main)
+target_include_directories(SingleKeyListener_T PRIVATE ../)
+add_test(NAME SingleKeyListener_T COMMAND SingleKeyListener_T )
+\end{lstlisting}
+Test targets which depend on an optional feature are wrapped in the feature flag (see section \ref{section:optional_features}), so they are only built when the feature's libraries are available.
+
+\subsection{Running Tests}
+
+Tests run through CTest from the build directory:
+\begin{lstlisting}[style=terminalstyle]
+ctest --test-dir build --output-on-failure
+\end{lstlisting}
+The \texttt{-T} option of \texttt{build.sh} also builds and runs the tests.
+
+\subsection{Continuous Integration}
+
+The workflow in \texttt{.github/workflows/tests.yml} builds and tests the project on every pull request and every push to main. It runs only when files under \texttt{bin/} changed. The build-and-test job runs twice through a matrix, once with all optional dependencies installed and once without any of them, so builds which skip the optional feature flags are tested alongside the full build (see section \ref{section:optional_features}).
