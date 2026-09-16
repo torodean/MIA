@@ -24,7 +24,7 @@ if [[ "$uname_out" == "Linux" ]]; then
 	sudo apt install python3-tk
 
 	# Setup gtest for testing
-	"$script_dir/setup-gtest.sh"
+	bash "$script_dir/setup-gtest.sh"
 
 	# Return to the original directory
 	cd "$original_dir" || exit 1
@@ -33,7 +33,7 @@ elif [[ "$uname_out" == CYGWIN* ]]; then
     echo "Running Cygwin setup..."
 
 	# Setup gtest for testing
-	"$script_dir/setup-gtest.sh"
+	bash "$script_dir/setup-gtest.sh"
 
 	# Return to the original directory
 	cd "$original_dir" || exit 1
