@@ -21,3 +21,13 @@
  * @return SUCCESS when the listener loop completes, FAILURE otherwise.
  */
 int testKeybindListener(bool verboseMode);
+
+/**
+ * Tests the KeybindListener the same way as testKeybindListener() but with
+ * global capture enabled, so the bound keys are grabbed system-wide and
+ * swallowed while the test runs.
+ *
+ * @param verboseMode Enables verbose listener output when true.
+ * @return SUCCESS when the listener loop completes, FAILURE otherwise.
+ */
+int testKeybindListenerGlobalCapture(bool verboseMode);
