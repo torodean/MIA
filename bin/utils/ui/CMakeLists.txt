@@ -8,7 +8,7 @@ set(UI_INC
     EventQueue.hpp
     EventStorage.hpp )
 
-# Optionally add the keyListenerTask on environments that can use it
+# Optionally add the key listeners on environments that can use it
 # (windows or when XDO is available)..
 if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
     list(APPEND UI_SRC SingleKeyListener.cpp)
