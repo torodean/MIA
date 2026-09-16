@@ -23,7 +23,7 @@
 // Used for preprocessor definitions.
 #include "Constants.hpp"
 
-#if defined(__linux__)
+#if defined(IS_LINUX)
     #include <X11/Xlib.h>
 #endif
 
@@ -330,7 +330,7 @@ namespace ui
         /// Whether the bound keys are grabbed globally (Linux only).
         bool captureGlobally{false};
 
-#if defined(__linux__)
+#if defined(IS_LINUX)
         /**
          * @brief Rebuilds the held-key and held-modifier state from the
          *        keyboard's physical state.
