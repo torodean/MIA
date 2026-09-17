@@ -19,6 +19,8 @@
 #include "SoundsFromFile.hpp"
 // Used for path detection and file finding.
 #include "Paths.hpp"
+// Used for timing capabilities.
+#include "Timing.hpp"
 
 int testSystemBeeps(bool verboseMode)
 {
@@ -62,10 +64,54 @@ int testPlayingSoundFromFile(bool verboseMode)
 	// Plays the sound from the test file.
 	if (verboseMode)
 		std::cout << "Playing sound from file: " << fullFilePath << std::endl;
-	bool status = sounds::playSoundFromFile(fullFilePath);
+	bool status = audio::playSoundFromFile(fullFilePath);
 	if (verboseMode && !status)
 		std::cout << "FAILED playing sound from file!" << std::endl;
 	
 	// Returns based on the status of the audio library call.
 	return status ? constants::SUCCESS : constants::FAILURE;
+}
+
+
+int testPlayingSoundFromFileWithStops(bool verboseMode)
+{
+	// Constructs the test file location.
+	std::string thisFolder = paths::getCppFileDirAtCompileTime(__FILE__);
+	std::string testFileName = "test_sound_long.wav";
+	std::string fullFilePath = thisFolder + "/" + testFileName;
+
+/*
+ * On a Cygwin system, the file paths are of the form '/cygdrive/s/...',
+ * however, windows expects a windows specific filesystem form of 'S:\...'.
+ * This will convert it before calling the files.
+ */
+#if defined(__CYGWIN__)
+	fullFilePath = paths::cygwinPathToWindowsPath(fullFilePath);
+#endif
+	
+	// Plays the sound from the test file.
+	if (verboseMode)
+		std::cout << "Playing sound from file: " << fullFilePath << std::endl;
+	bool status = audio::playSoundFromFileAsync(fullFilePath);
+	if (!status)
+	{
+		if (verboseMode)
+			std::cout << "FAILED playing sound from file!" << std::endl;
+		return constants::FAILURE;
+	}
+	
+	// Wait 5 seconds then stop the file.
+	if (verboseMode)
+		std::cout << "Sleeping for 5 seconds..." << std::endl;
+	timing::sleepSeconds(5);	
+	status = audio::stopSound();
+	if (!status)
+	{
+		if (verboseMode)
+			std::cout << "FAILED stopping sound from file!" << std::endl;
+		return constants::FAILURE;
+	}
+	
+	// If it made it this far, it's a success.
+	return constants::SUCCESS;
 }

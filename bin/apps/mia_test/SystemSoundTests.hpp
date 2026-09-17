@@ -21,3 +21,11 @@ int testSystemBeeps(bool verboseMode);
  * returns constants::SUCCESS on success, constants::FAILURE on failure.
  */
 int testPlayingSoundFromFile(bool verboseMode);
+
+/**
+ * Tests playing a sound from a file. This tests that an audio file can be 
+ * stopped and can fade out correctly.
+ * @param verboseMode Whether or not to enable verbose output.
+ * returns constants::SUCCESS on success, constants::FAILURE on failure.
+ */
+int testPlayingSoundFromFileWithStops(bool verboseMode);
