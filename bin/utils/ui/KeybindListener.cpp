@@ -40,25 +40,19 @@ namespace ui
          * @return The tokens, in order, or an empty vector if the string is
          *         not a well-formed token list.
          */
-        std::vector<std::string> splitTokens(const std::string& combo)
+        std::vector<std::string> splitTokens(const std::string& combo,
+                                             bool verboseMode = false)
         {
-            std::vector<std::string> tokens;
-            std::size_t start = 0;
+            std::vector<std::string> tokens = 
+                string_utils::delimiterString(combo, "+", verboseMode);
 
-            while (true)
-            {
-                std::size_t end = combo.find('+', start);
-                std::string token = combo.substr(start, end - start);
-
+            for (const std::string& token : tokens)
+            { // Not well-formed strings will contain an empty element.
                 if (token.empty())
                     return {};
-
-                tokens.push_back(token);
-
-                if (end == std::string::npos)
-                    return tokens;
-                start = end + 1;
             }
+
+            return tokens;
         }
 
         /*
@@ -109,13 +103,13 @@ namespace ui
     }
 
     KeybindListener::KeybindListener(const config::MIAConfig& config,
-                                       ui::EventQueue& queue,
-                                       const std::string& keybindPrefix,
-                                       int pollIntervalMilliseconds,
-                                       bool captureGloballyEnabled)
-        : eventQueue(queue),
-          pollIntervalMs(pollIntervalMilliseconds),
-          captureGlobally(captureGloballyEnabled)
+                                     ui::EventQueue& queue,
+                                     const std::string& keybindPrefix,
+                                     int pollIntervalMilliseconds,
+                                     bool captureGloballyEnabled) : 
+        eventQueue(queue),
+        pollIntervalMs(pollIntervalMilliseconds),
+        captureGlobally(captureGloballyEnabled)
     {
 #if defined(IS_LINUX)
         display = XOpenDisplay(nullptr);
@@ -129,7 +123,8 @@ namespace ui
                 continue;
 
             // The binding's tokens are whatever follows the prefix, joined by '+'.
-            std::vector<std::string> tokens = splitTokens(pair.first.substr(keybindPrefix.size()));
+            std::vector<std::string> tokens = 
+                splitTokens(pair.first.substr(keybindPrefix.size()), context->verboseMode);
             if (tokens.empty())
             {
                 if (context != nullptr && context->verboseMode)
@@ -147,9 +142,9 @@ namespace ui
                 Modifier modifier = modifierFromToken(token);
                 if (modifier != Modifier::NONE)
                 {
-                    keybind.modifier =
-                        static_cast<Modifier>(static_cast<unsigned int>(keybind.modifier)
-                                              | static_cast<unsigned int>(modifier));
+                    keybind.modifier = static_cast<Modifier>(
+                        static_cast<unsigned int>(keybind.modifier) | 
+                        static_cast<unsigned int>(modifier));
                 }
                 else if (token.size() == 1)
                 {
@@ -179,13 +174,13 @@ namespace ui
 
 
     KeybindListener::KeybindListener(const KeybindEventMap& eventMappings,
-                                       ui::EventQueue& queue,
-                                       int pollIntervalMilliseconds,
-                                       bool captureGloballyEnabled)
-        : keybinds(eventMappings),
-          eventQueue(queue),
-          pollIntervalMs(pollIntervalMilliseconds),
-          captureGlobally(captureGloballyEnabled)
+                                     ui::EventQueue& queue,
+                                     int pollIntervalMilliseconds,
+                                     bool captureGloballyEnabled) :
+        keybinds(eventMappings),
+        eventQueue(queue),
+        pollIntervalMs(pollIntervalMilliseconds),
+        captureGlobally(captureGloballyEnabled)
     {
 #if defined(IS_LINUX)
         display = XOpenDisplay(nullptr);
