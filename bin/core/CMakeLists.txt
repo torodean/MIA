@@ -19,7 +19,8 @@ set(Core_SRC
     RawLinesData.cpp
     CommandParser.cpp
     MIAApplication.cpp 
-    Logger.cpp )
+    Logger.cpp 
+    BackgroundTask.cpp )
 set(Core_INC 
     Error.hpp
     ErrorDescriptions.hpp
