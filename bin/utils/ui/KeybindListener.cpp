@@ -54,7 +54,8 @@ namespace ui
 
             return tokens;
         }
-
+		
+#if defined(IS_LINUX)
         /*
          * The lock masks (NumLock, CapsLock, ScrollLock) are included in every
          * grab's modifier set. X matches grabs against the exact modifier
@@ -100,6 +101,7 @@ namespace ui
             grabFailed = true;
             return 0;
         }
+#endif
     }
 
     KeybindListener::KeybindListener(const config::MIAConfig& config,
