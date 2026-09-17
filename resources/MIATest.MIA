@@ -1,0 +1,26 @@
+#============================================================================
+# Name        : MIATest.MIA
+# Author      : Antonius Torode
+# Created on  : 09/16/2026
+# Description : MIA config for the MIATest program.
+#============================================================================
+
+# Create a commented line using the '#' character.
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable.
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# Keybinds used by the keybind listener test (test index 7).
+# A single character is an independent key; '+' joins keys into a
+# combination, and the tokens 'alt', 'ctrl', and 'shift' are modifiers.
+keybind_w=up
+keybind_a=left
+keybind_s=down
+keybind_d=right
+keybind_g=push_g
+keybind_h=push_h
+keybind_j=push_j
+keybind_alt+t=alt_t
+keybind_alt+shift+s=alt_shift_s

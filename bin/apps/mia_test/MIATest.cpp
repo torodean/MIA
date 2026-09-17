@@ -19,6 +19,8 @@
 #include "PythonPlotterTests.hpp"
 // Used for the python UI test methods.
 #include "PythonUITests.hpp"
+// Used for the keybind listener test methods.
+#include "KeybindTests.hpp"
 
 
 MIATest::MIATest() :
@@ -64,7 +66,9 @@ void MIATest::printTestHelp()
               << "  3: Test PythonPlotter per-line x-axis values" << std::endl
               << "  4: Test PythonPlotter input validation" << std::endl
               << "  5: Test basic PythonUI interactions" << std::endl
-              << "  6: Test the python UI library listener" << std::endl;
+              << "  6: Test the python UI library listener" << std::endl
+              << "  7: Test the keybind listener" << std::endl
+              << "  8: Test the keybind listener with global capture" << std::endl;
 }
 
 
@@ -93,6 +97,8 @@ int MIATest::run()
         case 4: return testPythonPlotterValidation();
         case 5: return testPythonUI();
         case 6: return testPythonUILibrary();
+        case 7: return testKeybindListener(verboseMode);
+        case 8: return testKeybindListenerGlobalCapture(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();

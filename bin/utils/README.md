@@ -28,3 +28,6 @@ This folder contains reusable utility libraries that provide common functionalit
   
 - **python/**  
   This contains utilities related to loading python modules so that python code can be written and included in the MIA project.
+  
+- **ui/**  
+  This contains utilities for user interface input: event types, a shared event queue, key listeners which detect key presses and key combinations, etc.

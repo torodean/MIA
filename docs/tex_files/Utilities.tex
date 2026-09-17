@@ -14,6 +14,8 @@ Below is a list of available utility modules.
 	\item \textbf{Audio\_UTIL} – This contains utilities related to audio handling.
 	\item \textbf{Encryption\_UTIL} – This contains various encryption utilities.
 	\item \textbf{ML\_UTIL} – This contains various Machine-learning utilities.
+	\item \textbf{Python\_UTIL} – This contains utilities for loading python modules and calling python methods from the c++ code.
+	\item \textbf{UI\_UTIL} – This contains user interface input utilities: event types, a shared event queue, and key listeners.
 \end{itemize}
 
 
@@ -440,3 +442,88 @@ When building the MIA project, the python install locations are set relative to 
 set(PYTHON_INSTALL_LOCATION "${APP_INSTALL_LOCATION}/python")
 \end{lstlisting}
 The \texttt{PythonModule} utility will attempt to locate the associated python modules for various cases. If the application is running from a system-installed location, it will look in the system python directory. Next, if a 'python' subdirectory of the resources folder next to the executable exists (\texttt{<exe\_dir>/resources/python}), this will be used (the release-build layout). Otherwise, the directory of the calling file (or custom path if \texttt{callerFile} is modified) will be used, since python files typically sit beside the code which uses them during development.
+
+
+
+
+
+
+
+section{UI Input Utility}\label{section:ui_utils}
+
+These features are all part of the \texttt{UI\_UTIL}.
+
+The \texttt{UI\_UTIL} library contains the input event classes in \texttt{bin/utils/ui/}. The \texttt{Event} class wraps the plain string (intended to be expanded as needed) which a user interface reports for one user action (e.g. ``increment'' or ``stop''). The \texttt{EventQueue} class is a thread-safe queue which collects events from one or more producers for a single reader (handler); the reader drains it through \texttt{getAllEvents()} (non-blocking) or \texttt{waitForEvents()} (blocks until events arrive or the queue is closed). The \texttt{EventStorage} class is the batch of events returned by one read from the queue. Because all producers share one queue, the handler has a single place to wait for events to arrive, where it can then process them.
+
+\subsection{Keybind Listener}
+
+The \texttt{KeybindListener} class is a background task (see section \ref{section:background_task}) which watches keys and key combinations and pushes an event into an \texttt{EventQueue} when a binding completes. Bindings are read either from a \texttt{MIAConfig} (pairs whose keys start with a prefix, e.g. the pair \texttt{keybind\_a+b} = \texttt{increment}) or from a map of key sets to events. A binding fires when all of its keys are held at the same time, optionally together with a named modifier (\texttt{alt}, \texttt{ctrl}, or \texttt{shift}). A binding fires once per completion and does not repeat until one of its keys is released.
+
+The listener also answers state queries: \texttt{isKeyHeld()} checks one key, and \texttt{isBindingHeld()} checks whether every key of a set (and its modifier, if any) is currently held.
+
+\subsection{Single Key Listener}
+
+The \texttt{SingleKeyListener} class is an older, simpler background task which watches one key and toggles an internal condition each time that key is pressed. The reading loop checks the condition through \texttt{isConditionMet()}; see section \ref{section:background_task} for an example of that pattern. This was first developed for the MIA Sequencer application (see chapter \ref{sequencer}) and later moved to the ui utility location as these types of features began expanding.
+
+\subsection{Platform Details}
+
+Both listeners detect presses no matter which window has focus. On Linux, detection polls the physical keyboard state through X11, and the \texttt{KeybindListener} only captures (swallows) its keys when \texttt{captureGlobally} is set; on Windows, the key states are polled with \texttt{GetAsyncKeyState} and never captured. The key listeners are optional: they build on Windows, and on Linux only when the libxdo and X11 development libraries are found (see section \ref{section:optional_features}); the \texttt{Event} classes always build.
+
+\subsubsection{Defining Bindings}
+
+There are two ways to give the listener its bindings.
+
+\paragraph{From a config.} The first constructor reads a KEY\_VALUE config (see section \ref{section:configuration_system}) and binds every pair whose key starts with the keybind prefix (\texttt{keybind\_} by default). The tokens after the prefix name the keys; the pair's value names the event which is pushed when the binding completes:
+\begin{lstlisting}[style=makestyle]
+# The character key w pushes the "up" event.
+keybind_w=up
+
+# '+' joins keys into a combination, held at the same time.
+keybind_a+b=both
+
+# The tokens 'alt', 'ctrl', and 'shift' are modifiers; any number of
+# them may be combined with any number of character keys.
+keybind_alt+t=alt_t
+keybind_alt+shift+s=alt_shift_s
+\end{lstlisting}
+Pairs which do not start with the prefix, or whose tokens are not characters or modifier names, are skipped (reported to standard error when verbose mode is set). The config must be initialized before it is passed in; the constructor only reads from it.
+
+\paragraph{From a map.} The second constructor takes a \texttt{KeybindEventMap}, which maps a \texttt{Keybind} (a set of characters plus a \texttt{Modifier}) directly to the event it pushes. This is for bindings built in code rather than read from a file.
+
+\subsubsection{Using the Listener}
+
+A listener follows the background task lifecycle (see section \ref{section:background_task}): construct it, call \texttt{initialize()}, then \texttt{start()}; call \texttt{stop()} when finished. The completed-binding events are read from the shared queue, either by polling \texttt{getAllEvents()} or by blocking in \texttt{waitForEvents()}:
+\begin{lstlisting}[style=cppstyle]
+ui::EventQueue queue;
+ui::KeybindListener listener(config, queue);
+listener.initialize();
+listener.start();
+
+while (listener.isRunning())
+{
+    ui::EventStorage storage = queue.waitForEvents();
+    for (const ui::Event& event : storage.getEvents())
+        handleEvent(event.getName());
+}
+
+listener.stop();
+\end{lstlisting}
+
+For movement-style input, which lasts as long as the key is held, the reading loop checks the held state each frame instead of waiting for a completion:
+\begin{lstlisting}[style=cppstyle]
+while (listener.isKeyHeld('w'))
+{
+    moveForward();
+    timing::sleepMilliseconds(10);
+}
+
+// A chord: true only while both keys are held together.
+while (listener.isBindingHeld({'a', 'd'}))
+{
+    strafe();
+    timing::sleepMilliseconds(10);
+}
+\end{lstlisting}
+Only keys which appear in a binding are tracked; a key never bound by the listener always reads as not held. Single presses (including ones with a required modifier, e.g. \texttt{ctrl+s}) are simpler as completion bindings, since the queue push already provides the edge.
+
+The constructor parameters (the config key prefix, the poll interval, and global key capture) are documented in \texttt{KeybindListener.hpp}; the class comment there also covers the capture behavior and the re-arm semantics in full.
