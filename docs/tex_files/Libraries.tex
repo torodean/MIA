@@ -172,4 +172,6 @@ The size only takes effect when set before the plot calls, since the Python modu
 
 The Python plotting module is installed along with the library according to the configured CMake build mode. This allows the \texttt{PythonPlotter} class to locate and load the Python plotting implementation when it is used.
 
+\subsection{Windows Specifics}
 
+If you are using the Python plotting library on Windows through Cygwin, you will need to have Xming running. Matplotlib uses a graphical backend to display plots, and Cygwin does not provide a native Windows display server for X11 applications. Xming provides the X server that Matplotlib can connect to, allowing plots to be displayed normally. There may be other alternative methods of getting this working, but using Xming is the one that was tested.
