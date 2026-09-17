@@ -1,5 +1,5 @@
 # This app currently requires the python and XDO features to be available.
-if(BUILD_PYTHON_FEATURES && BUILD_XDO_FEATURES)
+if(BUILD_PYTHON_FEATURES AND BUILD_XDO_FEATURES)
     # Create the test executable.
     set(test_SRC
         MIATest.cpp
