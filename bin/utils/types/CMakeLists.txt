@@ -1,10 +1,12 @@
 
 # Create the Types_UTIL
-set(Types_SRC StringUtils.cpp )
+set(Types_SRC 
+    StringUtils.cpp 
+	CharUtils.cpp )
 set(Types_INC 
     StringUtils.hpp
     VectorUtils.hpp
-)
+	CharUtils.hpp )
 add_library(Types_UTIL ${Types_SRC} ${Types_INC})
 target_link_libraries( Types_UTIL PUBLIC BasicUtilities_CORE )
 

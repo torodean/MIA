@@ -17,6 +17,7 @@
 
 #if defined(IS_WINDOWS)
     #include <windows.h>
+	#include <CharUtils.hpp>
 #elif defined(IS_LINUX)
     #include <X11/keysym.h>
     // Used for XkbSetDetectableAutoRepeat, which filters keyboard auto-repeat.
@@ -126,15 +127,9 @@ namespace ui
 
             // The binding's tokens are whatever follows the prefix, joined by '+'.
             std::vector<std::string> tokens = 
-                splitTokens(pair.first.substr(keybindPrefix.size()), context->verboseMode);
+                splitTokens(pair.first.substr(keybindPrefix.size()));
             if (tokens.empty())
-            {
-                if (context != nullptr && context->verboseMode)
-                    std::cerr << "WARNING: Skipping config pair '" << pair.first
-                              << "': the part after the prefix is not tokens joined by '+'."
-                              << std::endl;
                 continue;
-            }
 
             Keybind keybind;
             bool valid = true;
@@ -159,13 +154,7 @@ namespace ui
             }
 
             if (!valid || keybind.keys.empty())
-            {
-                if (context != nullptr && context->verboseMode)
-                    std::cerr << "WARNING: Skipping config pair '" << pair.first
-                              << "': the tokens are not characters or modifier names."
-                              << std::endl;
                 continue;
-            }
 
             keybinds.emplace(std::move(keybind), Event(pair.second));
         }
@@ -232,7 +221,7 @@ namespace ui
         for (char key : watchedKeys)
         {
             // Bit 15 of GetAsyncKeyState's result is set while the key is down.
-            if ((GetAsyncKeyState(static_cast<unsigned int>(key)) & 0x8000) != 0)
+            if ((GetAsyncKeyState(static_cast<unsigned int>(char_utils::toUpper(key))) & 0x8000) != 0)
                 heldKeys.insert(key);
         }
 
