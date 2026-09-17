@@ -23,16 +23,20 @@ namespace string_utils
      */
     TEST(StringUtilsTest, ToLowerConvertsAllCharacters) 
     {
-        std::string input1 = "HeLLo";             // Check a simple string with upper-case characters.
-        std::string input2 = "HeLLo WoRld!";      // Check for multi-word strings with puncutation.
-        std::string input3 = "Digits: 1234567";   // Check that numbers don't change.
-        std::string input4 = "SymBoLs: !@#$%^&*"; // Check that symbols don't change.
-
-        // Check expected results.
-        EXPECT_EQ(toLower(input1), "hello");
-        EXPECT_EQ(toLower(input2), "hello world!");
-        EXPECT_EQ(toLower(input3), "digits: 1234567");
-        EXPECT_EQ(toLower(input4), "symbols: !@#$%^&*");
+        EXPECT_EQ(toLower("HeLLo"), "hello") 
+            << "Check a simple string with upper-case characters.";
+            
+        EXPECT_EQ(toLower("HeLLo WoRld!"), "hello world!") 
+            << "Check multi-word strings with punctuation.";
+            
+        EXPECT_EQ(toLower("Digits: 1234567"), "digits: 1234567") 
+            << "Check that numbers don't change.";
+            
+        EXPECT_EQ(toLower("SymBoLs: !@#$%^&*"), "symbols: !@#$%^&*") 
+            << "Check that symbols don't change.";
+            
+        EXPECT_EQ(toLower(""), "") 
+            << "Check an empty string.";
     }
 
     /**
@@ -40,16 +44,20 @@ namespace string_utils
      */
     TEST(StringUtilsTest, ToUpperConvertsAllCharacters) 
     {
-        std::string input1 = "HeLLo";             // Check a simple string with upper-case characters.
-        std::string input2 = "HeLLo WoRld!";      // Check for multi-word strings with puncutation.
-        std::string input3 = "Digits: 1234567";   // Check that numbers don't change.
-        std::string input4 = "SymBoLs: !@#$%^&*"; // Check that symbols don't change.
-
-        // Check expected results.
-        EXPECT_EQ(toUpper(input1), "HELLO");
-        EXPECT_EQ(toUpper(input2), "HELLO WORLD!");
-        EXPECT_EQ(toUpper(input3), "DIGITS: 1234567");
-        EXPECT_EQ(toUpper(input4), "SYMBOLS: !@#$%^&*");
+        EXPECT_EQ(toUpper("HeLLo"), "HELLO") 
+            << "Check a simple string with upper-case characters.";
+            
+        EXPECT_EQ(toUpper("HeLLo WoRld!"), "HELLO WORLD!") 
+            << "Check multi-word strings with punctuation.";
+            
+        EXPECT_EQ(toUpper("Digits: 1234567"), "DIGITS: 1234567") 
+            << "Check that numbers don't change.";
+            
+        EXPECT_EQ(toUpper("SymBoLs: !@#$%^&*"), "SYMBOLS: !@#$%^&*") 
+            << "Check that symbols don't change.";
+            
+        EXPECT_EQ(toUpper(""), "") 
+            << "Check an empty string.";
     }
 
     /**
@@ -57,14 +65,20 @@ namespace string_utils
      */
     TEST(StringUtilsTest, RemoveCharInStringRemovesAllOccurrences) 
     {
-        std::string input1 = "hello world"; // A string with just characters.
-        std::string input2 = "hell0 w0rld"; // A string with some numbers in it.
-        std::string input3 = "he!!o wor!d"; // A string with some symbols in it.
-        
-        // Check expected results.
-        EXPECT_EQ(removeCharInString(input1, 'o'), "hell wrld");
-        EXPECT_EQ(removeCharInString(input2, '0'), "hell wrld");
-        EXPECT_EQ(removeCharInString(input3, '!'), "heo word");
+        EXPECT_EQ(removeCharInString("hello world", 'o'), "hell wrld")
+	        << "Check removing a character from a simple string.";
+	        
+        EXPECT_EQ(removeCharInString("hell0 w0rld", '0'), "hell wrld")
+	        << "Check removing numbers from a string.";
+	        
+        EXPECT_EQ(removeCharInString("he!!o wor!d", '!'), "heo word")
+	        << "Check removing symbols from a string.";
+	        
+        EXPECT_EQ(removeCharInString("fish", '!'), "fish")
+	        << "Check a string with no matching characters.";
+	        
+        EXPECT_EQ(removeCharInString("", '!'), "")
+	        << "Check an empty string.";
     }
 
     /**
@@ -72,16 +86,23 @@ namespace string_utils
      */
     TEST(StringUtilsTest, FindCharInStringReturnsCorrectIndex) 
     {
-        std::string input1 = "hello world"; // A string with just characters.
-        std::string input2 = "hell0 w0rld"; // A string with some numbers in it.
-        std::string input3 = "he!!o wor!d"; // A string with some symbols in it.
-        
-        // Check expected results.
-        EXPECT_EQ(findCharInString(input1, 'e'), 1);
-        EXPECT_EQ(findCharInString(input1, 'o'), 4);
-        EXPECT_EQ(findCharInString(input2, '0'), 4);
-        EXPECT_EQ(findCharInString(input3, '!'), 2);
-        EXPECT_EQ(findCharInString(input1, 'z'), -1);  // Not found returns -1
+        EXPECT_EQ(findCharInString("hello world", 'e'), 1)
+	        << "Check finding a character in a string.";
+
+        EXPECT_EQ(findCharInString("hello world", 'o'), 4)
+	        << "Check finding a character with multiple occurrences.";
+
+        EXPECT_EQ(findCharInString("hell0 w0rld", '0'), 4)
+	        << "Check finding a number in a string.";
+
+        EXPECT_EQ(findCharInString("he!!o wor!d", '!'), 2)
+	        << "Check finding a symbol in a string.";
+
+        EXPECT_EQ(findCharInString("hello world", 'z'), -1)
+	        << "Check that a character not found returns -1.";
+
+        EXPECT_EQ(findCharInString("", 'z'), -1)
+	        << "Check that searching an empty string returns -1.";
     }
 
     /**
@@ -89,46 +110,61 @@ namespace string_utils
      */
     TEST(StringUtilsTest, StringContainsCharDetectsCharacter) 
     {
-        std::string input1 = "hello world"; // A string with just characters.
-        std::string input2 = "hell0 w0rld"; // A string with some numbers in it.
-        std::string input3 = "he!!o wor!d"; // A string with some symbols in it.
-        
-        // Check expected results.
-        EXPECT_TRUE(stringContainsChar(input1, 'e'));
-        EXPECT_TRUE(stringContainsChar(input1, 'l'));
-        EXPECT_TRUE(stringContainsChar(input2, '0'));
-        EXPECT_TRUE(stringContainsChar(input3, '!'));
-        EXPECT_FALSE(stringContainsChar(input1, 'x'));
+        EXPECT_TRUE(stringContainsChar("hello world", 'e'))
+	        << "Check finding a character in a string.";
+
+        EXPECT_TRUE(stringContainsChar("hello world", 'l'))
+	        << "Check finding another character in a string.";
+
+        EXPECT_TRUE(stringContainsChar("hell0 w0rld", '0'))
+	        << "Check finding a number in a string.";
+
+        EXPECT_TRUE(stringContainsChar("he!!o wor!d", '!'))
+	        << "Check finding a symbol in a string.";
+
+        EXPECT_FALSE(stringContainsChar("hello world", 'x'))
+	        << "Check that a character not found returns false.";
+
+        EXPECT_FALSE(stringContainsChar("", 'x'))
+	        << "Check that searching an empty string returns false.";
     }
 
     /**
      * Tests for the delimiterString(..) method.
      */
     TEST(StringUtilsTest, DelimiterStringSplitsCorrectly) 
-    {
-        // Check behavior using a comma delimiter.
-        std::string input1 = "one,two,three";
-        std::vector<std::string> result1 = delimiterString(input1, ",", false);
-        ASSERT_EQ(result1.size(), 3);
-        EXPECT_EQ(result1[0], "one");
-        EXPECT_EQ(result1[1], "two");
-        EXPECT_EQ(result1[2], "three");
-        
-        // Check behavior using a number delimiter.
-        std::string input2 = "one0two0three";
-        std::vector<std::string> result2 = delimiterString(input2, "0", false);
-        ASSERT_EQ(result2.size(), 3);
-        EXPECT_EQ(result2[0], "one");
-        EXPECT_EQ(result2[1], "two");
-        EXPECT_EQ(result2[2], "three");
-        
-        // Check behavior using a symbol delimiter.
-        std::string input3 = "one!two!three";
-        std::vector<std::string> result3 = delimiterString(input3, "!", false);
-        ASSERT_EQ(result3.size(), 3);
-        EXPECT_EQ(result3[0], "one");
-        EXPECT_EQ(result3[1], "two");
-        EXPECT_EQ(result3[2], "three");
+    {        
+        EXPECT_EQ(delimiterString("one,two,three", ",", false),
+            (std::vector<std::string>{"one", "two", "three"}))
+            << "Check behavior using a comma delimiter.";
+
+        EXPECT_EQ(delimiterString("one0two0three", "0", false),
+            (std::vector<std::string>{"one", "two", "three"}))
+            << "Check behavior using a number delimiter.";
+
+        EXPECT_EQ(delimiterString("one!two!three", "!", false),
+            (std::vector<std::string>{"one", "two", "three"}))
+            << "Check behavior using a symbol delimiter.";
+
+        EXPECT_EQ(delimiterString("one!!two", "!", false),
+            (std::vector<std::string>{"one", "", "two"}))
+            << "Check behavior using a malformed string with consecutive delimiters.";
+
+        EXPECT_EQ(delimiterString("one", "!", false),
+            (std::vector<std::string>{"one"}))
+            << "Check behavior when the delimiter is not present.";
+
+        EXPECT_EQ(delimiterString("", "!", false),
+            (std::vector<std::string>{""}))
+            << "Check behavior using an empty string.";
+
+        EXPECT_EQ(delimiterString("!", "!", false),
+            (std::vector<std::string>{"", ""}))
+            << "Check behavior using a string containing only the delimiter.";
+
+        EXPECT_EQ(delimiterString("one!", "!", false),
+            (std::vector<std::string>{"one", ""}))
+            << "Check behavior using a string ending with the delimiter.";
     }
 
     /**
@@ -136,9 +172,17 @@ namespace string_utils
      */
     TEST(StringUtilsTest, IsDigitsReturnsTrueForDigitsOnly) 
     {
-        EXPECT_TRUE(isDigits("123456"));
-        EXPECT_FALSE(isDigits("123a56"));
-        EXPECT_FALSE(isDigits("123!56"));
+        EXPECT_TRUE(isDigits("123456"))
+            << "Check a string containing only digits.";
+
+        EXPECT_FALSE(isDigits("123a56"))
+            << "Check a string containing letters.";
+
+        EXPECT_FALSE(isDigits("123!56"))
+            << "Check a string containing symbols.";
+
+        EXPECT_FALSE(isDigits(""))
+            << "Check an empty string.";
     }
 
     /**
@@ -146,10 +190,20 @@ namespace string_utils
      */
     TEST(StringUtilsTest, InputRollValidFormat) 
     {
-        EXPECT_TRUE(inputRoll("1d20"));
-        EXPECT_TRUE(inputRoll("30d19"));
-        EXPECT_FALSE(inputRoll("1d2x"));
-        EXPECT_FALSE(inputRoll("Potato"));
+        EXPECT_TRUE(inputRoll("1d20"))
+            << "Check a valid dice roll format.";
+
+        EXPECT_TRUE(inputRoll("30d19"))
+            << "Check a valid dice roll format with multi-digit values.";
+
+        EXPECT_FALSE(inputRoll("1d2x"))
+            << "Check an invalid dice roll containing a letter.";
+
+        EXPECT_FALSE(inputRoll("Potato"))
+            << "Check an invalid dice roll containing no dice notation.";
+
+        EXPECT_FALSE(inputRoll(""))
+            << "Check an empty string.";
     }
 
     /**
@@ -164,10 +218,12 @@ namespace string_utils
         EXPECT_TRUE(formOfYes("ok"));
         EXPECT_TRUE(formOfYes("sure"));
         EXPECT_TRUE(formOfYes("indeed"));
+        EXPECT_TRUE(formOfYes("IndEeD"));
         EXPECT_TRUE(formOfYes("affirmative"));
         EXPECT_TRUE(formOfYes("indubitably"));
         
         // Check negative cases.
+        EXPECT_FALSE(formOfYes(""));
         EXPECT_FALSE(formOfYes("no"));
         EXPECT_FALSE(formOfYes("negative"));
         EXPECT_FALSE(formOfYes("hello world!"));
@@ -232,10 +288,17 @@ namespace string_utils
      */
     TEST(StringUtilsTest, GetBeforeCharReturnsCorrectSubstring) 
     {
-        EXPECT_EQ(getBeforeChar("key=value", '='), "key");
-        EXPECT_EQ(getBeforeChar("key0value", '0'), "key");
-        EXPECT_EQ(getBeforeChar("keyEvalue", 'E'), "key");
-        EXPECT_EQ(getBeforeChar("keyEvElue", 'E'), "key");
+        EXPECT_EQ(getBeforeChar("key=value", '='), "key")
+            << "Check substring before a delimiter character.";
+
+        EXPECT_EQ(getBeforeChar("key0value", '0'), "key")
+            << "Check substring before a numeric character.";
+
+        EXPECT_EQ(getBeforeChar("keyEvalue", 'E'), "key")
+            << "Check substring before an uppercase character.";
+
+        EXPECT_EQ(getBeforeChar("keyEvElue", 'E'), "key")
+            << "Check substring before the first occurrence of a character.";
     }
 
     /**
@@ -243,10 +306,17 @@ namespace string_utils
      */
     TEST(StringUtilsTest, GetAfterCharReturnsCorrectSubstring) 
     {
-        EXPECT_EQ(getAfterChar("key=value", '='), "value");
-        EXPECT_EQ(getAfterChar("key0value", '0'), "value");
-        EXPECT_EQ(getAfterChar("keyEvalue", 'E'), "value");
-        EXPECT_EQ(getAfterChar("keyEvElue", 'E'), "vElue");
+        EXPECT_EQ(getAfterChar("key=value", '='), "value")
+            << "Check substring after a delimiter character.";
+
+        EXPECT_EQ(getAfterChar("key0value", '0'), "value")
+            << "Check substring after a numeric character.";
+
+        EXPECT_EQ(getAfterChar("keyEvalue", 'E'), "value")
+            << "Check substring after an uppercase character.";
+
+        EXPECT_EQ(getAfterChar("keyEvElue", 'E'), "vElue")
+            << "Check substring after the first occurrence of a character.";
     }
 
     /**
@@ -261,6 +331,7 @@ namespace string_utils
         EXPECT_EQ(getBetweenXAndY("data", '[', ']'), "");
         EXPECT_EQ(getBetweenXAndY("[data", '[', ']'), "");
         EXPECT_EQ(getBetweenXAndY("data]", '[', ']'), "");
+        EXPECT_EQ(getBetweenXAndY("", '[', ']'), "");
         
         // Duplicate marker characters.    
         EXPECT_EQ(getBetweenXAndY("0data0", '0', '0'), "data");
@@ -284,26 +355,26 @@ namespace string_utils
      */
     TEST(StringUtilsTest, TestStringToIntVector) 
     {
-        // Test empty string.
-        EXPECT_EQ(stringToIntVector(""), std::vector<int>{});
+        EXPECT_EQ(stringToIntVector(""), std::vector<int>{})
+            << "Check an empty string.";
 
-        // Test single uppercase character.
-        EXPECT_EQ(stringToIntVector("A"), std::vector<int>({65}));
+        EXPECT_EQ(stringToIntVector("A"), std::vector<int>({65}))
+            << "Check a single uppercase character.";
 
-        // Test multiple uppercase characters.
-        EXPECT_EQ(stringToIntVector("ABC"), std::vector<int>({65, 66, 67}));
+        EXPECT_EQ(stringToIntVector("ABC"), std::vector<int>({65, 66, 67}))
+            << "Check multiple uppercase characters.";
 
-        // Test lowercase characters.
-        EXPECT_EQ(stringToIntVector("abc"), std::vector<int>({97, 98, 99}));
+        EXPECT_EQ(stringToIntVector("abc"), std::vector<int>({97, 98, 99}))
+            << "Check lowercase characters.";
 
-        // Test numeric characters.
-        EXPECT_EQ(stringToIntVector("0123456789"), std::vector<int>({48, 49, 50, 51, 52, 53, 54, 55, 56, 57}));
+        EXPECT_EQ(stringToIntVector("0123456789"), std::vector<int>({48, 49, 50, 51, 52, 53, 54, 55, 56, 57}))
+            << "Check numeric characters.";
 
-        // Test special characters.
-        EXPECT_EQ(stringToIntVector("!@#"), std::vector<int>({33, 64, 35}));
+        EXPECT_EQ(stringToIntVector("!@#"), std::vector<int>({33, 64, 35}))
+            << "Check special characters.";
 
-        // Test mixed characters.
-        EXPECT_EQ(stringToIntVector("a1B!"), std::vector<int>({97, 49, 66, 33}));
+        EXPECT_EQ(stringToIntVector("a1B!"), std::vector<int>({97, 49, 66, 33}))
+            << "Check mixed characters.";
     }
 
     /**
@@ -311,26 +382,26 @@ namespace string_utils
      */
     TEST(StringUtilsTest, IntVectorToStringCases)
     {
-        // Empty vector.
-        EXPECT_EQ(intVectorToString({}), "");
+        EXPECT_EQ(intVectorToString({}), "")
+	        << "Check an empty vector.";
 
-        // Single character.
-        EXPECT_EQ(intVectorToString({65}), "A");
+        EXPECT_EQ(intVectorToString({65}), "A")
+	        << "Check a single character.";
 
-        // ASCII letters.
-        EXPECT_EQ(intVectorToString({72, 101, 108, 108, 111}), "Hello");
+        EXPECT_EQ(intVectorToString({72, 101, 108, 108, 111}), "Hello")
+	        << "Check ASCII letters.";
 
-        // Digits as characters.
-        EXPECT_EQ(intVectorToString({48, 49, 50, 51, 52}), "01234");
+        EXPECT_EQ(intVectorToString({48, 49, 50, 51, 52}), "01234")
+	        << "Check digits as characters.";
 
-        // Special characters.
-        EXPECT_EQ(intVectorToString({33, 64, 35}), "!@#");
+        EXPECT_EQ(intVectorToString({33, 64, 35}), "!@#")
+	        << "Check special characters.";
 
-        // Mixed content.
-        EXPECT_EQ(intVectorToString({97, 49, 66, 33}), "a1B!");
+        EXPECT_EQ(intVectorToString({97, 49, 66, 33}), "a1B!")
+	        << "Check mixed content.";
 
-        // Non-printable ASCII (e.g., newline).
-        EXPECT_EQ(intVectorToString({72, 10, 87}), "H\nW");
+        EXPECT_EQ(intVectorToString({72, 10, 87}), "H\nW")
+	        << "Check non-printable ASCII (e.g., newline).";
     }
 
     /**
@@ -338,23 +409,23 @@ namespace string_utils
      */
     TEST(StringUtilsTest, InvertStringTests) 
     {
-        // Empty string returns empty string.
-        EXPECT_EQ(invertString(""), "");
+        EXPECT_EQ(invertString(""), "")
+	        << "Check an empty string returns an empty string.";
 
-        // Single character returns same character.
-        EXPECT_EQ(invertString("A"), "A");
+        EXPECT_EQ(invertString("A"), "A")
+	        << "Check a single character returns the same character.";
 
-        // Palindrome string returns same string.
-        EXPECT_EQ(invertString("madam"), "madam");
+        EXPECT_EQ(invertString("madam"), "madam")
+	        << "Check a palindrome string returns the same string.";
 
-        // Normal string reverses correctly.
-        EXPECT_EQ(invertString("hello"), "olleh");
+        EXPECT_EQ(invertString("hello"), "olleh")
+	        << "Check a normal string reverses correctly.";
 
-        // String with spaces and punctuation.
-        EXPECT_EQ(invertString("a b!"), "!b a");
+        EXPECT_EQ(invertString("a b!"), "!b a")
+	        << "Check a string with spaces and punctuation.";
 
-        // String with numbers.
-        EXPECT_EQ(invertString("12345"), "54321");
+        EXPECT_EQ(invertString("12345"), "54321")
+	        << "Check a string with numbers.";
     }
 
     /**

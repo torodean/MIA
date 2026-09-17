@@ -110,8 +110,8 @@ namespace string_utils
     
     
     bool isDigits(const std::string& input)
-    {
-        if(input.find_first_not_of("0123456789") == std::string::npos)
+    {        
+        if(!input.empty() && input.find_first_not_of("0123456789") == std::string::npos)
             return true;
         return false;
     }
