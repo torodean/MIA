@@ -21,6 +21,8 @@
 #include "PythonUITests.hpp"
 // Used for the keybind listener test methods.
 #include "KeybindTests.hpp"
+// Used to test some system sound features.
+#include "SystemSoundTests.hpp"
 
 
 MIATest::MIATest() :
@@ -60,15 +62,17 @@ void MIATest::initialize(int argc, char* argv[])
 void MIATest::printTestHelp()
 {
     std::cout << "Valid test options are:" << std::endl
-              << "  0: Test PythonModule" << std::endl
-              << "  1: Test PythonPlotter basic plotting" << std::endl
-              << "  2: Test PythonPlotter multi-line plotting" << std::endl
-              << "  3: Test PythonPlotter per-line x-axis values" << std::endl
-              << "  4: Test PythonPlotter input validation" << std::endl
-              << "  5: Test basic PythonUI interactions" << std::endl
-              << "  6: Test the python UI library listener" << std::endl
-              << "  7: Test the keybind listener" << std::endl
-              << "  8: Test the keybind listener with global capture" << std::endl;
+              << "  0: Test PythonModule." << std::endl
+              << "  1: Test PythonPlotter basic plotting." << std::endl
+              << "  2: Test PythonPlotter multi-line plotting." << std::endl
+              << "  3: Test PythonPlotter per-line x-axis values." << std::endl
+              << "  4: Test PythonPlotter input validation." << std::endl
+              << "  5: Test basic PythonUI interactions." << std::endl
+              << "  6: Test the python UI library listener." << std::endl
+              << "  7: Test the keybind listener." << std::endl
+              << "  8: Test the keybind listener with global capture." << std::endl
+              << "  9: Test playing system sounds." << std::endl
+              << " 10: Test playing a sound from a file.." << std::endl;
 }
 
 
@@ -90,15 +94,17 @@ int MIATest::run()
     bool verboseMode = getVerboseMode();
     switch (testIndexToRun)
     {
-        case 0: return testPythonModule();
-        case 1: return testPythonPlotter(verboseMode);
-        case 2: return testPythonPlotterMultiLine(verboseMode);
-        case 3: return testPythonPlotterPerLineX(verboseMode);
-        case 4: return testPythonPlotterValidation();
-        case 5: return testPythonUI();
-        case 6: return testPythonUILibrary();
-        case 7: return testKeybindListener(verboseMode);
-        case 8: return testKeybindListenerGlobalCapture(verboseMode);
+        case 0:  return testPythonModule();
+        case 1:  return testPythonPlotter(verboseMode);
+        case 2:  return testPythonPlotterMultiLine(verboseMode);
+        case 3:  return testPythonPlotterPerLineX(verboseMode);
+        case 4:  return testPythonPlotterValidation();
+        case 5:  return testPythonUI();
+        case 6:  return testPythonUILibrary();
+        case 7:  return testKeybindListener(verboseMode);
+        case 8:  return testKeybindListenerGlobalCapture(verboseMode);
+        case 9:  return testSystemBeeps(verboseMode);
+        case 10: return testPlayingSoundFromFile(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();

@@ -8,17 +8,24 @@ if(BUILD_PYTHON_FEATURES AND
         PythonModuleTests.cpp
         PythonPlotterTests.cpp
         PythonUITests.cpp 
-        KeybindTests.cpp )
+        KeybindTests.cpp 
+		SystemSoundTests.cpp )
     set(test_INC
         MIATest.hpp
         PythonModuleTests.hpp
         PythonPlotterTests.hpp
         PythonUITests.hpp 
-        KeybindTests.hpp )
+        KeybindTests.hpp 
+		SystemSoundTests.hpp )
 
     #  The target name "test" is reserved when CTest testing is enabled.
     add_executable(miatest ${test_SRC} ${test_INC} )
-    target_link_libraries(miatest PRIVATE Framework_CORE Python_UTIL Py_Plotting_LIB Py_UI_LIB )
+    target_link_libraries(miatest PRIVATE 
+	                      Framework_CORE 
+						  Python_UTIL 
+						  Py_Plotting_LIB 
+						  Py_UI_LIB 
+						  Audio_UTIL )
 
     # Install the app.
     install_app( miatest )

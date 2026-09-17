@@ -11,10 +11,15 @@
 #pragma once
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-#include <windows.h>  // for GetModuleFileName
+	#include <windows.h>  // for GetModuleFileName
 #elif __linux__
-#include <unistd.h>   // for readlink
-#include <limits.h>   // for PATH_MAX
+	#include <unistd.h>   // for readlink
+	#include <limits.h>   // for PATH_MAX
+#endif
+
+// Needed for cygwin specific pathing conversions on Windows.
+#if defined(__CYGWIN__)
+	#include <sys/cygwin.h>
 #endif
 
 #include <filesystem>
@@ -227,5 +232,32 @@ namespace paths
 
         return getCppFileDirAtCompileTime(thisFilesPath);
     }
+	
+#if defined(__CYGWIN__)
+    /**
+     * @brief Converts a Cygwin path to a Windows path.
+     *
+     * If the provided path begins with the Cygwin "/cygdrive/" prefix, it is
+     * converted to the corresponding Windows path using the Cygwin path
+     * conversion API. Paths which are not Cygwin paths are returned unchanged.
+     *
+     * @param path The path to convert.
+     * @return std::string The corresponding Windows path, or the original path
+     *         if it is not a Cygwin path.
+     */
+	inline std::string cygwinPathToWindowsPath(const std::string& path)
+	{
+		if (path.size() < 10 || path.compare(0, 10, "/cygdrive/") != 0)
+			return path;
+
+		char windowsPath[PATH_MAX];
+		cygwin_conv_path(CCP_POSIX_TO_WIN_A,
+						 path.c_str(),
+						 windowsPath,
+						 sizeof(windowsPath));
+
+		return std::string(windowsPath);
+	}
+#endif
 
 } // namespace paths

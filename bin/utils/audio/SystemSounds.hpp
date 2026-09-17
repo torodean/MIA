@@ -10,11 +10,17 @@
  */
 #pragma once
 
+#include <stdint.h>
+
+
 namespace system_sounds
 {
     /**
      * Sends a beep sound.
+	 * @param frequency The frequency of the beep to use.
+	 * @param time The time to hold the beep sound.
+	 * @return true on success, false otherwise.
      * @throw [MIAException] - Throws an exception when not on a supported OS.
      */
-    void beep();
+    bool beep(uint32_t frequency, uint32_t time);
 } // namespace system_sounds

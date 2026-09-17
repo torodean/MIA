@@ -51,7 +51,6 @@ namespace error
         MIAConfig_File_Not_Found = 31403,     ///< The configuration file was not found.
         FATAL_File_Not_Found = 31404,         ///< A needed file was not found.
         Feature_In_Dev = 31415,               ///< This feature is not finished.
-        Windows_Only_Feature = 31416,         ///< Windows only feature.
         Invalid_MIAConfig_Option = 31417,     ///< Invalid option in MIAConfig.
         Nothing_set_For_Testing = 31418,      ///< Nothing set for testing.
         Issue_Setting_MIA_Variable = 31419,   ///< Issue setting MIA variable.
@@ -60,14 +59,22 @@ namespace error
         Invalid_Sequence_Option = 31422,      ///< Invalid option in MIASequences.
         Cannot_Find_Mapped_Value = 31423,     ///< Some map does not contain the map searched for.
         Invalid_Character_Input = 31424,      ///< There was an invalid character input.
-        Linux_Only_Feature = 31425,           ///< This feature is only supported on Linux.
         Invalid_Argument = 31428,             ///< Invalid application/command argument.
         Missing_Argument = 31429,             ///< The app/command argument was not found.
         Config_File_Not_Set = 31430,          ///< Config File not set.
         Failed_To_Open_File = 31431,          ///< Failed to open a file.
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
-        Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.
-        
+        Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.	
+		
+		/*
+		 * Operating-system-specific related Errors. These define errors which are relevant to 
+		 * the os-specific features, and features being developed differently on different OS's.
+		 * 315XX error codes.
+		 */
+		Linux_Only_Feature = 31500,           ///< This feature is only supported on Linux.
+        Windows_Only_Feature = 31501,         ///< Windows only feature.
+		OS_Not_Supported = 31502,             ///< Unsupported OS for this feature. 
+		
         /*
          * RPG error codes. 371XX
          */

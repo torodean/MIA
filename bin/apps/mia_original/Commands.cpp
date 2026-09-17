@@ -889,7 +889,7 @@ int Commands::rollDice(const string& input)
         std::cout << "...Beeping!" << std::endl;
         for(int i=0;i<10;i++)
         {
-            system_sounds::beep();
+            system_sounds::beep(750, 300);
             timing::sleepMilliseconds(75);
         }
         if(interval % 60 == 0)
