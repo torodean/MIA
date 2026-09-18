@@ -2,10 +2,12 @@
 
 set(Audio_SRC 
     SystemSounds.cpp
-	SoundsFromFile.cpp )
+	SoundsFromFile.cpp
+	Playlist.cpp )
 set(Audio_INC 
     SystemSounds.hpp
-	SoundsFromFile.hpp )
+	SoundsFromFile.hpp
+	Playlist.hpp )
 
 add_library(Audio_UTIL ${Audio_SRC} ${Audio_INC})
 target_link_libraries(Audio_UTIL 
@@ -13,6 +15,7 @@ target_link_libraries(Audio_UTIL
         Framework_CORE
         Types_UTIL
         System_UTIL
+        Math_UTIL
     PUBLIC
         Files_UTIL )
 
@@ -22,3 +25,6 @@ endif()
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(Audio_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Add the unit tests for this utility.
+add_subdirectory( test )
