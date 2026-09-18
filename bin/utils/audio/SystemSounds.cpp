@@ -2,7 +2,7 @@
  * @file SystemSounds.cpp
  * @author Antonius Torode
  * @date 03/09/2021
- * Description:
+ * @brief Implements the methods from the associated header file.
  */
 
 // Include the associated header file.
