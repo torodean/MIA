@@ -13,21 +13,19 @@ if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
 endif()
 
 add_library(System_UTIL ${System_SRC} ${System_INC})
-target_link_libraries(System_UTIL PUBLIC Framework_CORE)
+target_link_libraries(System_UTIL PRIVATE Framework_CORE)
 
 # Math_UTIL is only used by the virtual key strokes (random number presses).
 if(BUILD_XDO_FEATURES)
     target_link_libraries(System_UTIL 
-                          PUBLIC Math_UTIL
-                          PRIVATE ${XDO_LIB} ${X11_LIBRARIES} ${XTST_LIB})
+        PRIVATE  Math_UTIL ${XDO_LIB} ${X11_LIBRARIES} ${XTST_LIB} )
     target_include_directories(System_UTIL PRIVATE ${X11_INCLUDE_DIR})
 
     # Lets dependent targets (and this library) know the xdo features are compiled in.
     target_compile_definitions(System_UTIL PUBLIC BUILD_XDO_FEATURES)
 elseif(WIN32 OR CYGWIN)
 	target_link_libraries(System_UTIL 
-	                      PUBLIC Math_UTIL 
-	                      PRIVATE gdi32 )
+        PRIVATE Math_UTIL gdi32 )
 endif()
 
 # Expose this library's source directory for #include access by dependent targets

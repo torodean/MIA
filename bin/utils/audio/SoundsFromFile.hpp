@@ -9,46 +9,11 @@
 #include <string>
 #include <cstdint>
 
+// Used for file and metadata handling.
+#include "FileUtils.hpp"
+
 namespace audio
 {
-	/**
-	 * Enum representation for different file types.
-	 * TODO - move this to the file utility.
-	 */
-	enum FileType
-	{
-		Unknown, ///< An unknown file type.
-		Mp3,     ///< An mp3 audio file.
-		Wav,     ///< A wav audio file.
-	};
-	
-	/**
-	 * Converts a string to a file type.
-	 * @param input The input string to convert.
-	 * TODO - move this to the file utility.
-	 */
-	FileType stringToFileType(const std::string& input);
-	
-	/**
-	 * Stores metadata for a file. This is used for various audio features.
-	 * TODO - move this to the file utility.
-	 */
-	struct FileMetaData
-	{
-		std::string fullFilePath;
-		std::string fileName;
-		FileType type{Unknown};
-	};
-	
-	/**
-	 * Constructs a FileMetaData object from a file.
-	 * @param fileName The full path to the file to construct metadata from.
-     * @param verboseMode Enables verboseMode output (default = false).
-	 * @return The constructed meta data of the file.
-	 */
-	FileMetaData getFileMetaData(const std::string& fileName,
-	                             bool verboseMode = false);
-	
 	/**
 	 * This method returns if the audio file is a supported type or not.
 	 * This delegates to the isASupportedType(const FileMetaData&) overload.
@@ -68,7 +33,7 @@ namespace audio
      * @param verboseMode Enables verboseMode output (default = false).
 	 * @return true if the type is supported.
 	 */
-	bool isASupportedType(const FileMetaData& data,
+	bool isASupportedType(const files::FileMetaData& data,
 	                      bool verboseMode = false);
 	
 	/**

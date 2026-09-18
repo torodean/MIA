@@ -17,8 +17,6 @@
 // Used for error returns.
 #include "MIAException.hpp"
 #include "Error.hpp"
-// Used for parsing files and file names.
-#include "StringUtils.hpp"
 // Used for thread sleeps.
 #include "Timing.hpp"
 
@@ -29,65 +27,10 @@
 
 namespace audio
 {
-    FileType stringToFileType(const std::string& input)
-    {
-        if (string_utils::toLower(input) == "mp3") return FileType::Mp3;
-        if (string_utils::toLower(input) == "wav") return FileType::Wav;
-        
-        return FileType::Unknown;
-    }
-    
-    
-    FileMetaData getFileMetaData(const std::string& fileName,
-                                 bool verboseMode)
-    {
-        FileMetaData data;
-        data.fullFilePath = fileName;
-        
-        // Find the last '.' in the filename to determine the file Extension.
-        std::vector<std::string> tokens = string_utils::delimiterString(fileName, ".");
-        if (tokens.size() == 1)
-        { // => No ".ext" in the input string.
-            if (verboseMode)
-                std::cerr << "WARNING: No file extension for file " 
-                          << fileName << " detected!" << std::endl;
-        }
-        else
-        { // The text after the last '.' should be the extension.
-            std::string fileExtension = tokens.back();
-            data.type = stringToFileType(fileExtension);
-        }
-        
-        // Get the file name.
-        if (string_utils::stringContainsChar(fileName, '\\'))
-        { // Windows file path.
-            tokens = string_utils::delimiterString(fileName, "\\");
-            data.fileName = string_utils::getBeforeChar(tokens.back(), '.');
-        }
-        else if (string_utils::stringContainsChar(fileName, '/'))
-        { // Linux file path.
-            tokens = string_utils::delimiterString(fileName, "/");
-            data.fileName = string_utils::getBeforeChar(tokens.back(), '.');        
-        }
-        else
-        { // No directory dividers, so assume the entire thing is the path.
-            data.fileName = fileName;
-            
-            if (verboseMode)
-                std::cerr << "WARNING: Full file path for file " 
-                          << fileName << " not known!" << std::endl;
-            data.fullFilePath = ""; // Clear the full path.
-        }
-        
-        return data;
-    }
-
-
-    bool isASupportedType(const FileMetaData& data,
+    bool isASupportedType(const files::FileMetaData& data,
                           bool verboseMode)
     {
-        if (data.type == FileType::Mp3 ||
-            data.type == FileType::Wav )
+        if (data.type == files::FileType::Mp3 || data.type == files::FileType::Wav )
             return true;
         return false;
     }
@@ -96,7 +39,7 @@ namespace audio
     bool isASupportedType(const std::string& fileName,
                           bool verboseMode)
     {
-        FileMetaData data = getFileMetaData(fileName, verboseMode);
+        files::FileMetaData data = files::getFileMetaData(fileName, verboseMode);
         return isASupportedType(data, verboseMode);
     }
 
@@ -104,7 +47,7 @@ namespace audio
     bool playSoundFromFile(const std::string& fileName)
     {
     #if defined(IS_WINDOWS)
-        FileMetaData fileMetaData = getFileMetaData(fileName);
+        files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
         {
             std::cerr << "Unsupported file type specified!" << std::endl;
@@ -113,9 +56,9 @@ namespace audio
 
         // Setup the correct command to run based on the file type.
         std::string command;
-        if (fileMetaData.type == FileType::Mp3)
+        if (fileMetaData.type == files::FileType::Mp3)
             command = "open \"" + fileMetaData.fullFilePath + "\" type mpegvideo alias mp3";
-        else if (fileMetaData.type == FileType::Wav)
+        else if (fileMetaData.type == files::FileType::Wav)
             command = "open \"" + fileMetaData.fullFilePath + "\" type waveaudio alias wav";
         else
         {
@@ -139,9 +82,9 @@ namespace audio
             return false;
         }
         
-        if (fileMetaData.type == FileType::Mp3)
+        if (fileMetaData.type == files::FileType::Mp3)
             error = mciSendString("play mp3 wait", NULL, 0, NULL);
-        else if (fileMetaData.type == FileType::Wav)
+        else if (fileMetaData.type == files::FileType::Wav)
             error = mciSendString("play wav wait", NULL, 0, NULL);
         if (error != 0)
         {
@@ -172,7 +115,7 @@ namespace audio
         std::atomic<bool> soundPlaying = false;
         std::atomic<bool> fadeRequested = false;
         std::atomic<uint32_t> fadeTimeMS = 0;
-        std::atomic<FileType> currentFileType = FileType::Unknown;
+        std::atomic<files::FileType> currentFileType = files::FileType::Unknown;
         
         /**
          * Helper to return an alias based on the file type. Used in various commands.
@@ -180,9 +123,9 @@ namespace audio
         std::string getSoundAlias()
         {
             std::string soundAlias;
-            if (audio_thread::currentFileType == FileType::Mp3)
+            if (audio_thread::currentFileType == files::FileType::Mp3)
                 soundAlias = "mp3";
-            else if (audio_thread::currentFileType == FileType::Wav)
+            else if (audio_thread::currentFileType == files::FileType::Wav)
                 soundAlias = "wav";
             
             return soundAlias;
@@ -194,7 +137,7 @@ namespace audio
     {
     #if defined(IS_WINDOWS)
         // Check if the file is a supported type.
-        FileMetaData fileMetaData = getFileMetaData(fileName);
+        files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
         {
             std::cerr << "Unsupported file type specified!" << std::endl;
@@ -220,9 +163,9 @@ namespace audio
         {
             // Setup the correct command to run based on the file type.
             std::string command;
-            if (fileMetaData.type == FileType::Mp3)
+            if (fileMetaData.type == files::FileType::Mp3)
                 command = "open \"" + fileMetaData.fullFilePath + "\" type mpegvideo alias mp3";
-            else if (fileMetaData.type == FileType::Wav)
+            else if (fileMetaData.type == files::FileType::Wav)
                 command = "open \"" + fileMetaData.fullFilePath + "\" type waveaudio alias wav";
             else
             {
@@ -352,7 +295,7 @@ namespace audio
             audio_thread::soundPlaying = false;
         else
         {
-            if (audio_thread::currentFileType != FileType::Mp3)
+            if (audio_thread::currentFileType != files::FileType::Mp3)
             { // The 'setaudio .. volume to ..' command is not supported for other types.
                 audio_thread::soundPlaying = false;
                 if (verboseMode)

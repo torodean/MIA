@@ -38,7 +38,7 @@ int testSystemBeeps(bool verboseMode)
     soundChecks.push_back(system_sounds::beep(1047, 500));
 	
 	// Return true unless any of the soundChecks is false.
-	if (std::any_of(soundChecks.begin(), soundChecks.end(), 
+	if (std::any_of(soundChecks.begin(), soundChecks.end(),
 	    [](bool success){return !success;}))
 		return constants::FAILURE;
 	return constants::SUCCESS;
