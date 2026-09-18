@@ -121,16 +121,21 @@ namespace audio
 		 * @brief The threaded task that plays the sound.
 		 */
 		void run() override;
-		
+
 	private:
 		/// The audio file to use for this player.
 		std::string fileName;
 		/// Mutex so the fileName can safely change during play.
 		std::mutex fileNameMutex;
-		
+
 		/// Whether or not to repeat/loop the audio file until stop is called.
 		std::atomic<bool> audioLoop{false};
 		/// Tracker of whether or not the audio is currently playing.
 		std::atomic<bool> audioPlaying{false};
+
+		/// Whether or not a fade-out was requested for the current playback.
+		std::atomic<bool> fadeRequested{false};
+		/// The time (in ms) over which the current fade-out should run.
+		std::atomic<uint32_t> fadeTimeMS{0};
 	}; // class AudioPlayer
 } // namespace audio
