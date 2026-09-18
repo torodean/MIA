@@ -6,34 +6,31 @@
  */
 #pragma once
 
-
 /**
- * Plays a system beep with various settings.
+ * @brief Plays a system beep with various settings.
  * @param verboseMode Whether or not to enable verbose output.
  * @return Returns constants::SUCCESS.
  */
 int testSystemBeeps(bool verboseMode);
 
-
 /**
- * Tests playing a sound from a file.
+ * @brief Tests playing a sound from a file.
  * @param verboseMode Whether or not to enable verbose output.
- * returns constants::SUCCESS on success, constants::FAILURE on failure.
+ * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
  */
 int testPlayingSoundFromFile(bool verboseMode);
 
 /**
- * Tests playing a sound from a file. This tests that an audio file can be 
- * stopped.
+ * @brief Tests playing a sound from a file which is stopped after 5 seconds.
  * @param verboseMode Whether or not to enable verbose output.
- * returns constants::SUCCESS on success, constants::FAILURE on failure.
+ * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
  */
 int testPlayingSoundFromFileWithStop(bool verboseMode);
 
 /**
- * Tests playing a sound from a file. This tests that an audio file can be 
- * faded out when stopping.
+ * @brief Tests playing a sound from a file which is faded out over 5 seconds
+ *        when stopping.
  * @param verboseMode Whether or not to enable verbose output.
- * returns constants::SUCCESS on success, constants::FAILURE on failure.
+ * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
  */
 int testPlayingSoundFromFileWithFade(bool verboseMode);
