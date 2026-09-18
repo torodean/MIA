@@ -62,20 +62,19 @@ namespace threading
 
         /**
          * @brief Checks whether the task is still running.
-         * @return [bool] - true if the task has not been requested to stop.
+         * @return true if the task has not been requested to stop.
          */
         bool isRunning() const;
-        
-        
+
         /**
          * @brief Sets the condition met flag.
-         * @param value[bool] - The new value to set for conditionMet.
+         * @param value The new value to set for conditionMet.
          */
         void setConditionMet(bool value);
 
         /**
          * @brief Checks whether the condition has been met.
-         * @return [bool] - true if the conditionMet flag is set; otherwise false.
+         * @return true if the conditionMet flag is set; otherwise false.
          */
         bool isConditionMet() const;
         
@@ -91,7 +90,7 @@ namespace threading
          * Allows this class to update its runtime variables by pointing to another
          * RuntimeContext instance.
          * 
-         * @param otherContext The RuntimeContext to point to.
+         * @param ctx The RuntimeContext to point to.
          */
         void setContext(const RuntimeContext& ctx);
 
