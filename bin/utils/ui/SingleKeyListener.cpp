@@ -6,8 +6,12 @@
  *     TODO
  */
 
-#include <cstring>
+// Associated header file.
 #include "SingleKeyListener.hpp"
+
+#include <cstring>
+#include <iostream>
+
 #include "Timing.hpp"
 
 #if defined(IS_WINDOWS)

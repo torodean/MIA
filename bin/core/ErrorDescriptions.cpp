@@ -33,7 +33,6 @@ namespace error
         { MIAConfig_File_Not_Found, "MIAConfig file not found." },
         { FATAL_File_Not_Found, "FATAL: File not found." },
         { Feature_In_Dev, "Feature still in development." },
-        { Windows_Only_Feature, "This feature is only implemented for Windows." },
         { Invalid_MIAConfig_Option, "Invalid option in MIAConfig." },
         { Nothing_set_For_Testing, "Nothing set for testing." },
         { Issue_Setting_MIA_Variable, "Issue setting MIA variable." },
@@ -42,11 +41,18 @@ namespace error
         { Invalid_Sequence_Option, "Invalid option in MIASequences." },
         { Cannot_Find_Mapped_Value, "Error finding mapped value." },
         { Invalid_Character_Input, "Invalid character input." },
-        { Linux_Only_Feature, "This feature is only implemented for Linux." },
         { Invalid_Argument, "Invalid application/command argument." },
         { Missing_Argument, "The app/command argument was not found." },
         { Failed_To_Open_File, "Failed to open file." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
+		
+		/*
+		 * Operating-system-specific related Errors.
+		 * 315XX error codes.
+		 */        
+		{ Windows_Only_Feature, "This feature is only implemented for Windows." },
+        { Linux_Only_Feature, "This feature is only implemented for Linux." },
+        { OS_Not_Supported, "This feature is not supported on this OS." },
         
         /*
          * RPG error codes. 371XX

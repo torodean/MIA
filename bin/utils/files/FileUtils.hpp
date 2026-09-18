@@ -6,10 +6,46 @@
  */
 #pragma once
 
+#include <vector>
 #include <string>
 
 namespace files
 {
+	/**
+	 * Enum representation for different file types.
+	 */
+	enum FileType
+	{
+		Unknown, ///< An unknown file type.
+		Mp3,     ///< An mp3 audio file.
+		Wav      ///< A wav audio file.
+	};
+	
+	/**
+	 * Converts a string to a file type.
+	 * @param input The input string to convert.
+	 */
+	FileType stringToFileType(const std::string& input);
+	
+	/**
+	 * Stores metadata for a file.
+	 */
+	struct FileMetaData
+	{
+		std::string fullFilePath;
+		std::string fileName;
+		FileType type{Unknown};
+	};
+    
+	/**
+	 * Constructs a FileMetaData object from a file.
+	 * @param fileName The full path to the file to construct metadata from.
+     * @param verboseMode Enables verboseMode output (default = false).
+	 * @return The constructed meta data of the file.
+	 */
+	FileMetaData getFileMetaData(const std::string& fileName,
+	                             bool verboseMode = false);
+    
     /**
      * Returns the random line of a specified text file.
      * @param fileName[std::string] - Input file to parse.

@@ -2,21 +2,21 @@
  * @file FileUtils.cpp
  * @author Antonius Torode
  * @date 03/07/2021
- * Description: Implementation for the FuleUtil methods.
+ * @brief Implementation for the FuleUtil methods.
  */
-
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <random>
-#include <chrono>
-#include <filesystem>  // C++17
-#include <iterator>
-
+ 
 // Include the associated header file.
 #include "FileUtils.hpp"
 
+#include <iostream>
+#include <fstream>
+#include <random>
+#include <chrono>
+#include <filesystem> 
+#include <iterator>
+
+// Used for parsing files and file names.
+#include "StringUtils.hpp"
 // Used for error handling.
 #include "Error.hpp"
 #include "MIAException.hpp"
@@ -27,6 +27,60 @@ using std::endl;
 
 namespace files
 {
+    FileType stringToFileType(const std::string& input)
+    {
+        if (string_utils::toLower(input) == "mp3") return FileType::Mp3;
+        if (string_utils::toLower(input) == "wav") return FileType::Wav;
+        
+        return FileType::Unknown;
+    }
+
+
+    FileMetaData getFileMetaData(const std::string& fileName,
+                                 bool verboseMode)
+    {
+        FileMetaData data;
+        data.fullFilePath = fileName;
+        
+        // Find the last '.' in the filename to determine the file Extension.
+        std::vector<std::string> tokens = string_utils::delimiterString(fileName, ".");
+        if (tokens.size() == 1)
+        { // => No ".ext" in the input string.
+            if (verboseMode)
+                std::cerr << "WARNING: No file extension for file " 
+                          << fileName << " detected!" << std::endl;
+        }
+        else
+        { // The text after the last '.' should be the extension.
+            std::string fileExtension = tokens.back();
+            data.type = stringToFileType(fileExtension);
+        }
+        
+        // Get the file name.
+        if (string_utils::stringContainsChar(fileName, '\\'))
+        { // Windows file path.
+            tokens = string_utils::delimiterString(fileName, "\\");
+            data.fileName = string_utils::getBeforeChar(tokens.back(), '.');
+        }
+        else if (string_utils::stringContainsChar(fileName, '/'))
+        { // Linux file path.
+            tokens = string_utils::delimiterString(fileName, "/");
+            data.fileName = string_utils::getBeforeChar(tokens.back(), '.');        
+        }
+        else
+        { // No directory dividers, so assume the entire thing is the path.
+            data.fileName = fileName;
+            
+            if (verboseMode)
+                std::cerr << "WARNING: Full file path for file " 
+                          << fileName << " not known!" << std::endl;
+            data.fullFilePath = ""; // Clear the full path.
+        }
+        
+        return data;
+    }
+
+
     string getRandomLineOfFile(string& fileName)
     {
         try

@@ -8,6 +8,8 @@
 // The associated header file.
 #include "PythonUIListener.hpp"
 
+#include <iostream>
+
 // Used for the poll interval sleep.
 #include "Timing.hpp"
 

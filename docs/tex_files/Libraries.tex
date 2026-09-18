@@ -172,6 +172,23 @@ The size only takes effect when set before the plot calls, since the Python modu
 
 The Python plotting module is installed along with the library according to the configured CMake build mode. This allows the \texttt{PythonPlotter} class to locate and load the Python plotting implementation when it is used.
 
-\subsection{Windows Specifics}
+\subsection{Cygwin \& Windows Specifics}
 
-If you are using the Python plotting library on Windows through Cygwin, you will need to have Xming running. Matplotlib uses a graphical backend to display plots, and Cygwin does not provide a native Windows display server for X11 applications. Xming provides the X server that Matplotlib can connect to, allowing plots to be displayed normally. There may be other alternative methods of getting this working, but using Xming is the one that was tested.
+If you are using the Python plotting library on Windows through Cygwin, you will need to have Xming running. Matplotlib uses a graphical backend to display plots, and Cygwin does not provide a native Windows display server for X11 applications. Xming provides the X server that Matplotlib can connect to, allowing plots to be displayed normally. There may be other alternative methods of getting this working, but using Xming is the one that was tested. You will also have to configure Cygwin to use Xming by exporting the correct \texttt{DISPLAY} variable as shown below:
+\begin{lstlisting}[style=terminalstyle]
+awtorode@KernalSanders /cygdrive/s/projects/git/MIA
+$ ./bin/apps/mia_test/testGameUI.py
+Traceback (most recent call last):
+  File "/cygdrive/s/projects/git/MIA/./bin/apps/mia_test/testGameUI.py", line 84, in <module>
+    root = tk.Tk()
+  File "/usr/lib/python3.9/tkinter/__init__.py", line 2270, in __init__
+    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)
+_tkinter.TclError: no display name and no $DISPLAY environment variable
+
+awtorode@KernalSanders /cygdrive/s/projects/git/MIA
+$ export DISPLAY=:0.0
+
+awtorode@KernalSanders /cygdrive/s/projects/git/MIA
+$ ./bin/apps/mia_test/testGameUI.py
+# Works now...
+\end{lstlisting}
