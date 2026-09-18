@@ -72,7 +72,9 @@ void MIATest::printTestHelp()
               << "  7: Test the keybind listener." << std::endl
               << "  8: Test the keybind listener with global capture." << std::endl
               << "  9: Test playing system sounds." << std::endl
-              << " 10: Test playing a sound from a file.." << std::endl;
+              << " 10: Test playing an mp3 sound from a file." << std::endl
+              << " 11: Test playing a wav sound from a file for 5s then stopping." << std::endl
+              << " 12: Test playing a wav sound from a file for 5s then fading out over 5s." << std::endl;
 }
 
 
@@ -105,6 +107,8 @@ int MIATest::run()
         case 8:  return testKeybindListenerGlobalCapture(verboseMode);
         case 9:  return testSystemBeeps(verboseMode);
         case 10: return testPlayingSoundFromFile(verboseMode);
+        case 11: return testPlayingSoundFromFileWithStop(verboseMode);
+        case 12: return testPlayingSoundFromFileWithFade(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();

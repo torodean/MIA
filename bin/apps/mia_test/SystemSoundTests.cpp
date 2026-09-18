@@ -73,11 +73,11 @@ int testPlayingSoundFromFile(bool verboseMode)
 }
 
 
-int testPlayingSoundFromFileWithStops(bool verboseMode)
+int testPlayingSoundFromFileWithStop(bool verboseMode)
 {
 	// Constructs the test file location.
 	std::string thisFolder = paths::getCppFileDirAtCompileTime(__FILE__);
-	std::string testFileName = "test_sound_long.wav";
+	std::string testFileName = "test_sound_long.mp3";
 	std::string fullFilePath = thisFolder + "/" + testFileName;
 
 /*
@@ -103,8 +103,63 @@ int testPlayingSoundFromFileWithStops(bool verboseMode)
 	// Wait 5 seconds then stop the file.
 	if (verboseMode)
 		std::cout << "Sleeping for 5 seconds..." << std::endl;
-	timing::sleepSeconds(5);	
-	status = audio::stopSound();
+    for (int i=5; i>0; i--)
+    {
+        if (verboseMode)
+            std::cout << i << "..." << std::endl;
+        timing::sleepSeconds(1);
+    }
+	status = audio::stopSound(0, verboseMode);
+	if (!status)
+	{
+		if (verboseMode)
+			std::cout << "FAILED stopping sound from file!" << std::endl;
+		return constants::FAILURE;
+	}
+	
+	// If it made it this far, it's a success.
+	return constants::SUCCESS;
+}
+
+
+int testPlayingSoundFromFileWithFade(bool verboseMode)
+{
+	// Constructs the test file location.
+	std::string thisFolder = paths::getCppFileDirAtCompileTime(__FILE__);
+	std::string testFileName = "test_sound_long.mp3";
+	std::string fullFilePath = thisFolder + "/" + testFileName;
+
+/*
+ * On a Cygwin system, the file paths are of the form '/cygdrive/s/...',
+ * however, windows expects a windows specific filesystem form of 'S:\...'.
+ * This will convert it before calling the files.
+ */
+#if defined(__CYGWIN__)
+	fullFilePath = paths::cygwinPathToWindowsPath(fullFilePath);
+#endif
+	
+	// Plays the sound from the test file.
+	if (verboseMode)
+		std::cout << "Playing sound from file: " << fullFilePath << std::endl;
+	bool status = audio::playSoundFromFileAsync(fullFilePath);
+	if (!status)
+	{
+		if (verboseMode)
+			std::cout << "FAILED playing sound from file!" << std::endl;
+		return constants::FAILURE;
+	}
+	
+	// Wait 5 seconds then fade out over 5 seconds.
+	if (verboseMode)
+		std::cout << "Sleeping for 5 seconds..." << std::endl;
+    for (int i=5; i>0; i--)
+    {
+        if (verboseMode)
+            std::cout << i << "..." << std::endl;
+        timing::sleepSeconds(1);
+    }
+    
+	status = audio::stopSound(5000, verboseMode);
 	if (!status)
 	{
 		if (verboseMode)

@@ -8,7 +8,7 @@ set(Audio_INC
 	SoundsFromFile.hpp )
 
 add_library(Audio_UTIL ${Audio_SRC} ${Audio_INC})
-target_link_libraries(Audio_UTIL PRIVATE Framework_CORE )
+target_link_libraries(Audio_UTIL PRIVATE Framework_CORE Types_UTIL Files_UTIL System_UTIL)
 
 if(WIN32 OR CYGWIN)
     target_link_libraries(Audio_UTIL PRIVATE winmm)
