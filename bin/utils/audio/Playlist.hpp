@@ -15,12 +15,12 @@
 namespace audio
 {
 	/**
-	 * @brief A playlist of audio tracks with a current-track cursor and a
-	 *        memory of previously played tracks.
+	 * @brief An ordered list of audio tracks with a cursor and shuffle memory.
 	 *
 	 * This class owns the playlist state which the AudioPlayer plays through:
 	 * the ordered tracks, the index of the track which is playing (or is next),
-	 * and the shuffle memory used to go back through previously played tracks.
+	 * and the shuffle memory of previously played track indexes. This class
+	 * only manages that state; it never plays anything itself.
 	 *
 	 * @note This class is not thread-safe. The caller is responsible for
 	 *       synchronizing access while a playlist is being played.
@@ -36,8 +36,8 @@ namespace audio
 		/**
 		 * @brief Constructs this playlist from a list of tracks.
 		 *
-		 * The index is reset to the first entry and the shuffle memory is
-		 * cleared, since the saved indexes would no longer be meaningful.
+		 * The index is set to the first entry and the shuffle memory is
+		 * empty, since the saved indexes would no longer be meaningful.
 		 *
 		 * @param tracks The tracks to store. These are stored as-is, so the
 		 *        caller is responsible for only passing supported types.
@@ -71,44 +71,48 @@ namespace audio
 		/**
 		 * @brief Provides the track at the current index.
 		 *
-		 * @return The current track, or a default (Unknown type) track when
-		 *         the playlist is empty or the index is past the end.
+		 * @return The track at the current index, or a default (Unknown
+		 *         type) track when the playlist is empty or the index is
+		 *         past the end.
 		 */
 		files::FileMetaData current() const;
 
 		/**
-		 * @brief Advances to the next track.
+		 * @brief Moves the index to the next track.
 		 *
-		 * The track being left is recorded in the shuffle memory. With
-		 * shuffle enabled this picks a random track which is not the current
-		 * track; otherwise this is the next sequential track. The playlist
-		 * wraps back to the first track when looping is enabled.
-		 * Calling this on an empty playlist does nothing.
+		 * The current index is recorded in the shuffle memory before it is
+		 * moved. With shuffle enabled the new index is picked at random
+		 * rather than the next sequential one, and the random pick is never
+		 * the index being moved away from. The index wraps around to the
+		 * first track when looping is enabled. Calling this on an empty
+		 * playlist leaves the state unchanged.
 		 *
-		 * @param shuffle Whether or not to pick the next track at random.
-		 * @param loop Whether or not to wrap back around after the last track.
-		 * @return true if the index moved to another track, false when the
-		 *         playlist is finished or empty.
+		 * @param shuffle Whether or not to pick the new index at random.
+		 * @param loop Whether or not the index wraps around after the last track.
+		 * @return true if the index was moved to another track, false when
+		 *         it was left unchanged (empty playlist, or the next index
+		 *         would be past the end with looping disabled).
 		 */
 		bool advance(bool shuffle, bool loop);
 
 		/**
-		 * @brief Goes back to the most recently played track.
+		 * @brief Moves the index to the most recently recorded entry in the
+		 *        shuffle memory and consumes that entry.
 		 *
-		 * The current track is not recorded anywhere; the shuffle memory
-		 * entry which is consumed is the track being returned to.
+		 * The index being moved away from is not recorded anywhere.
 		 *
-		 * @return true if the index moved back to a previously played track,
-		 *         false when the shuffle memory is empty.
+		 * @return true if the index was moved to a previously played track,
+		 *         false when the shuffle memory is empty (the index is left
+		 *         unchanged).
 		 */
 		bool back();
 
 	private:
 		/**
-		 * @brief Selects the index of the next track to play.
+		 * @brief Computes the index of the next track.
 		 *
-		 * @param shuffle Whether or not to pick the next track at random.
-		 * @param loop Whether or not to wrap back around after the last track.
+		 * @param shuffle Whether or not to pick the new index at random.
+		 * @param loop Whether or not the index wraps around after the last track.
 		 * @return The index of the next track, or a value past the end of the
 		 *         playlist when the playlist is finished (no wrap).
 		 */
