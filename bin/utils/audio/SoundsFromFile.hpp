@@ -3,6 +3,9 @@
  * @author Antonius Torode
  * @date 09/17/2026
  * @brief An interface for playing sounds from files.
+ *
+ * @note Many features in this file were somewhat of a proof of concept for 
+ *       the AudioPlayer (see AudioPlayer.hpp) and are superseded by it.
  */
 #pragma once
 

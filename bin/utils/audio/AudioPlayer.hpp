@@ -20,7 +20,7 @@
 
 namespace audio
 {
-	// @TODO - In development!
+    // @TODO - Implement on Linux.
 	/**
 	 * @brief An audio player which is setup to play audio in a separate
 	 *        thread which the caller can manage as needed.
