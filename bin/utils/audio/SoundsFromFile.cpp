@@ -30,7 +30,7 @@ namespace audio
     bool isASupportedType(const files::FileMetaData& data,
                           bool verboseMode)
     {
-        if (data.type == files::FileType::Mp3 || data.type == files::FileType::Wav )
+        if (data.type == files::FileType::Mp3 || data.type == files::FileType::Wav)
             return true;
         return false;
     }
@@ -63,8 +63,8 @@ namespace audio
         else
         {
             /*
-             * The isASupportedType(fileMetaData) should catch any types which_open_mode
-             * are not supported, so this should never reach this point. I am including it
+             * The isASupportedType(fileMetaData) should catch any types
+             * which are not supported, so this should never reach this point. I am including it
              * here as a quick-check for if a dev forgets to update isASupportedType() when
              * adding more file support.
              */
@@ -105,9 +105,10 @@ namespace audio
 
 
     /**
-     * This namespace defines threading values used to track which audio
-     * file is currently being played. This allows the stopSound() method
-     * to stop the thread playing the audio.
+     * @brief Defines threading values used to track which audio file is
+     *        currently being played.
+     *
+     * This allows the stopSound() method to stop the thread playing the audio.
      */
     namespace audio_thread
     {
@@ -116,9 +117,9 @@ namespace audio
         std::atomic<bool> fadeRequested = false;
         std::atomic<uint32_t> fadeTimeMS = 0;
         std::atomic<files::FileType> currentFileType = files::FileType::Unknown;
-        
+
         /**
-         * Helper to return an alias based on the file type. Used in various commands.
+         * @brief Returns an alias based on the file type. Used in various commands.
          */
         std::string getSoundAlias()
         {
@@ -170,8 +171,8 @@ namespace audio
             else
             {
                 /*
-                 * The isASupportedType(fileMetaData) should catch any types which_open_mode
-                 * are not supported, so this should never reach this point. I am including it
+                 * The isASupportedType(fileMetaData) should catch any types
+                 * which are not supported, so this should never reach this point. I am including it
                  * here as a quick-check for if a dev forgets to update isASupportedType() when
                  * adding more file support.
                  */
@@ -241,7 +242,7 @@ namespace audio
                     }
                     
                     audio_thread::fadeRequested = false; // Reset value.
-                    audio_thread::fadeTimeMS = 0; // Reset 
+                    audio_thread::fadeTimeMS = 0; // Reset value.
                     audio_thread::soundPlaying = false; // Trigger the stop.
                 } // if (audio_thread::fadeRequested)
                     

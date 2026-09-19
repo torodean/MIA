@@ -8,6 +8,7 @@ Each file is a self-contained set of instructions for one concern.
 - [writing-style.md](writing-style.md) - Tone, wording, grammar, punctuation, and whitespace preferences for everything an AI produces (comments, commit messages, docs, replies).
   These rules constrain AI output, not a human author's own writing.
 - [library-opportunities.md](library-opportunities.md) - When an AI looks at a file for any reason, scan for methods that belong in a utility or library (especially internal-namespace ones) and for logic that duplicates an existing utility, and flag the opportunities to the user rather than making the changes.
+- [include-hygiene.md](include-hygiene.md) - When an AI reads or edits a C++ file, check that it includes the headers it uses (and only those), flag symbols arriving transitively through other headers, unused includes, and targets which only compile because of another target's PUBLIC link.
 - [readme-sync.md](readme-sync.md) - When a folder's files or features change, check whether its README is still in sync and either propose a specific edit for the user to confirm or flag the gap when the change is not clear enough to write.
 - [latex-doc-audit.md](latex-doc-audit.md) - Parse the LaTeX manual fragments in docs/TeX_files/ and find inaccuracies (claims the code contradicts), deficiencies (things missing that should be added), and LaTeX-level problems (broken refs, missing labels, missing images), then propose a specific edit for the user to confirm or flag the gap when the fix is not clear.
 

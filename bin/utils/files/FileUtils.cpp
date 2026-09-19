@@ -2,7 +2,7 @@
  * @file FileUtils.cpp
  * @author Antonius Torode
  * @date 03/07/2021
- * @brief Implementation for the FuleUtil methods.
+ * @brief Implementation for the FileUtils methods.
  */
  
 // Include the associated header file.

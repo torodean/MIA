@@ -12,6 +12,7 @@
 #include <random>
 #include <cmath>
 #include <limits>
+#include <chrono>
 
 // Include the associated header file.
 #include "MathUtils.hpp"
@@ -37,8 +38,17 @@ namespace math
         
         if(verboseMode)
             cout << "...Calculating random value between " << min << " and " << max << "." << endl;
-        
-        std::mt19937 rng(seed);
+
+        /*
+         * The current time is mixed into the seed so consecutive calls produce different
+         * values. The caller-provided seed still perturbs the result when useTime is set.
+         */
+        int effectiveSeed = seed;
+        if (useTime)
+            effectiveSeed += static_cast<int>(
+                std::chrono::steady_clock::now().time_since_epoch().count());
+
+        std::mt19937 rng(effectiveSeed);
         std::uniform_int_distribution<int> dist(min, max);
         int random = dist(rng);
         
