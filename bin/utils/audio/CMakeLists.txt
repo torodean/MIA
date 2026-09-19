@@ -3,11 +3,13 @@
 set(Audio_SRC 
     SystemSounds.cpp
 	SoundsFromFile.cpp
-	Playlist.cpp )
+	Playlist.cpp 
+    AudioPlayer.cpp )
 set(Audio_INC 
     SystemSounds.hpp
 	SoundsFromFile.hpp
-	Playlist.hpp )
+	Playlist.hpp
+    AudioPlayer.hpp )
 
 add_library(Audio_UTIL ${Audio_SRC} ${Audio_INC})
 target_link_libraries(Audio_UTIL 

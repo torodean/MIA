@@ -23,6 +23,8 @@
 #include "KeybindTests.hpp"
 // Used to test some system sound features.
 #include "SystemSoundTests.hpp"
+// Used to test the AudioPlayer features.
+#include "AudioPlayerTests.hpp"
 
 
 MIATest::MIATest() :
@@ -42,7 +44,7 @@ void MIATest::initialize(int argc, char* argv[])
     try
     {    
         MIAApplication::initialize(argc, argv);
-        
+       
         bool testHelp = false;
         testHelpOpt.getOptionVal<bool>(argc, argv, testHelp);
         if (testHelp)
@@ -74,14 +76,24 @@ void MIATest::printTestHelp()
               << "  9: Test playing system sounds." << std::endl
               << " 10: Test playing an mp3 sound from a file." << std::endl
               << " 11: Test playing a wav sound from a file for 5s then stopping." << std::endl
-              << " 12: Test playing a wav sound from a file for 5s then fading out over 5s." << std::endl;
+              << " 12: Test playing a wav sound from a file for 5s then fading out over 5s." << std::endl
+              << " 13: Test basic AudioPlayer playback to completion." << std::endl
+              << " 14: Test the AudioPlayer stopped after 5s." << std::endl
+              << " 15: Test the AudioPlayer faded out over 5s." << std::endl
+              << " 16: Test the AudioPlayer repeating a short file for 20s." << std::endl
+              << " 17: Test the AudioPlayer restartAudio() feature." << std::endl
+              << " 18: Test the AudioPlayer changing the audio file mid-play." << std::endl
+              << " 19: Test the AudioPlayer playing a playlist to the end." << std::endl
+              << " 20: Test the AudioPlayer looping a playlist for 20s." << std::endl
+              << " 21: Test the AudioPlayer shuffling a playlist for 20s." << std::endl
+              << " 22: Test the AudioPlayer skipping forward and back in a playlist." << std::endl;
 }
 
 
 void MIATest::printHelp() const
 {
     MIAApplication::printHelp();
-    
+   
     // This is a dump of the help messages used by the various command options.
     std::cout << "MIATest specific options:" << std::endl
               << testHelpOpt.getHelp() << std::endl
@@ -109,6 +121,16 @@ int MIATest::run()
         case 10: return testPlayingSoundFromFile(verboseMode);
         case 11: return testPlayingSoundFromFileWithStop(verboseMode);
         case 12: return testPlayingSoundFromFileWithFade(verboseMode);
+        case 13: return testAudioPlayerBasicPlayback(verboseMode);
+        case 14: return testAudioPlayerWithStop(verboseMode);
+        case 15: return testAudioPlayerWithFade(verboseMode);
+        case 16: return testAudioPlayerWithRepeat(verboseMode);
+        case 17: return testAudioPlayerRestart(verboseMode);
+        case 18: return testAudioPlayerChangeFileWhilePlaying(verboseMode);
+        case 19: return testAudioPlayerPlaylistSequential(verboseMode);
+        case 20: return testAudioPlayerPlaylistLoop(verboseMode);
+        case 21: return testAudioPlayerPlaylistShuffle(verboseMode);
+        case 22: return testAudioPlayerPlaylistSkip(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();
