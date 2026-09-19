@@ -527,3 +527,104 @@ while (listener.isBindingHeld({'a', 'd'}))
 Only keys which appear in a binding are tracked; a key never bound by the listener always reads as not held. Single presses (including ones with a required modifier, e.g. \texttt{ctrl+s}) are simpler as completion bindings, since the queue push already provides the edge.
 
 The constructor parameters (the config key prefix, the poll interval, and global key capture) are documented in \texttt{KeybindListener.hpp}; the class comment there also covers the capture behavior and the re-arm semantics in full.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Audio Utility}
+\label{section:audio}
+
+These features are all part of the \texttt{Audio\_UTIL}. The \texttt{Audio\_UTIL} utility plays system sounds and audio files. Its API lives in \texttt{bin/utils/audio/} across four headers: \texttt{SystemSounds.hpp} for system-specific sounds (e.g., beeps), \texttt{SoundsFromFile.hpp} for one-shot file playback (primarily used as proof of concept while developing the \texttt{AudioPlayer}), \texttt{AudioPlayer.hpp} for managed playback, and \texttt{Playlist.hpp} for the ordered track list with shuffle memory which backs the player. This section covers these various audio interfaces.
+
+\subsection{System Sounds}
+
+The \texttt{system\_sounds} namespace emits simple system-level cues. 
+
+\subsubsection{System Beeps}
+
+The \texttt{beep()} method plays one beep at a given frequency for a given duration in milliseconds:
+\begin{lstlisting}[style=cppstyle]
+// The Zelda area-unlock jingle.
+system_sounds::beep(784, 100);
+system_sounds::beep(740, 100);
+system_sounds::beep(1047, 500);
+\end{lstlisting}
+On Windows this wraps the \texttt{Beep} API. On Linux the frequency and duration are not yet supported; however, the method opens \texttt{/dev/console} and writes a terminal bell character to create a beep.
+
+\subsection{Playing a Sound File Once}
+
+The \texttt{SoundsFromFile.hpp} free functions play a file and forget it. \texttt{playSoundFromFile()} blocks the calling thread until the file finishes; \texttt{playSoundFromFileAsync()} returns immediately and plays on a background thread, with \texttt{stopSound()} stopping whatever is playing:
+\begin{lstlisting}[style=cppstyle]
+#include "SoundsFromFile.hpp"
+
+// Blocks until the sound finishes.
+audio::playSoundFromFile("alarm.mp3");
+
+// Plays in the background; stop after 5 seconds.
+audio::playSoundFromFileAsync("music.mp3");
+audio::stopSound(0);
+\end{lstlisting}
+\texttt{stopSound()} takes an optional fade-out length in milliseconds which ramps the volume down before stopping. The fade uses MCI volume commands which only support mp3 files, so a fade requested for a wav file stops immediately and prints a warning. These functions track a single playing sound globally; for anything more, use the \texttt{AudioPlayer} class.
+
+\begin{note}
+The entire free-function API was essentially a proof of concept exploration of playing audio files through code. After getting it to work, it was decided that a class object is a much cleaner way of approaching the interface and the \texttt{AudioPlayer} (see section \ref{section:audio_player}) was then developed using much of the same code with some added features.
+\end{note}
+
+\subsection{The AudioPlayer Class}\label{section:audio_player}
+
+The \texttt{AudioPlayer} class is a background task (see section \ref{section:background_task}) which plays audio through its own worker thread, so the calling thread stays free. It reports state through \texttt{isAudioPlaying()} and is controlled with \texttt{startAudio()}, \texttt{restartAudio()}, and \texttt{stopAudio()}:
+\begin{lstlisting}[style=cppstyle]
+#include "AudioPlayer.hpp"
+
+audio::AudioPlayer player("alarm.mp3");
+player.startAudio();
+
+// ...the audio plays in the background...
+
+// Stop immediately, or fade out over three seconds.
+player.stopAudio(0);
+player.stopAudio(3000);
+\end{lstlisting}
+\texttt{startAudio()} does nothing when the audio is already playing, and \texttt{restartAudio()} starts the current track over. A fade-out length only takes effect on mp3 files for the same MCI reason as above.
+
+The player always holds a playlist. Constructing it from a file name or calling \texttt{setAudioFile()} is just a one-track playlist; the playlist methods manage the full list instead:
+\begin{lstlisting}[style=cppstyle]
+audio::AudioPlayer player;
+player.setPlaylist({"track1.mp3", "track2.mp3", "track3.wav"});
+player.addToPlaylist("bonus.mp3");
+player.startAudio();
+\end{lstlisting}
+When a track finishes, the player moves to the next one and keeps going until the playlist is exhausted; only then does it stop on its own. Three independent settings shape that behavior:
+\begin{itemize}\itemsep0em
+	\item \texttt{setRepeatAudioTrack(bool)} repeats the current track instead of advancing.
+	\item \texttt{setPlaylistLoop(bool)} wraps the playlist back to the first track after the last one ends.
+	\item \texttt{setPlaylistShuffle(bool)} picks the next track at random rather than in order. The pick is never the track being left, so shuffle never plays the same track twice in a row.
+\end{itemize}
+The playlist state survives edits made during playback: \texttt{setPlaylist()}, \texttt{addToPlaylist()}, and \texttt{setAudioFile()} take effect on the next track rather than interrupting the current one. \texttt{nextAudio()} and \texttt{previousAudio()} skip manually mid-play. The player keeps a memory of previously played tracks, so \texttt{previousAudio()} returns to the track which played before the current one, shuffle or not; with no memory yet, it prints a warning and leaves playback running.
+
+\subsection{Supported File Types}
+
+Currently, the following types are supported, with a few limitations:
+\begin{itemize}
+	\item \texttt{MP3}: The MP3 file type has full support for all features on Windows.
+	\item \texttt{WAV}: The WAV file type supports all features except the optional fade-out when stopping the audio. The limitation exists because the current Windows MCI implementation uses the \texttt{setaudio ... volume to} command to gradually reduce volume during a fade-out. MCI supports volume control for MP3 playback, but the volume command is not supported for WAV playback.
+\end{itemize}
+
+\subsection{Platform Details}
+
+\begin{itemize}\itemsep0em
+	\item \textbf{Windows:} All playback goes through the Windows Media Control Interface (MCI, from \texttt{winmm}). Supported file types are mp3 and wav; the supported set is checked through \texttt{audio::isASupportedType()} before any playback starts.
+	\item \textbf{Linux:} The system beep works through \texttt{/dev/console}. The file playback methods are not implemented yet and throw an \texttt{MIAException} when called.
+\end{itemize}
