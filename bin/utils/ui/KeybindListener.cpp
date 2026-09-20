@@ -103,7 +103,8 @@ namespace ui
             return 0;
         }
 #endif
-    }
+    } // namespace
+    
 
     KeybindListener::KeybindListener(const config::MIAConfig& config,
                                      ui::EventQueue& queue,
@@ -114,6 +115,7 @@ namespace ui
         pollIntervalMs(pollIntervalMilliseconds),
         captureGlobally(captureGloballyEnabled)
     {
+        setTaskName("KeybindListener");
 #if defined(IS_LINUX)
         display = XOpenDisplay(nullptr);
         root = display ? DefaultRootWindow(display) : 0;
@@ -173,6 +175,7 @@ namespace ui
         pollIntervalMs(pollIntervalMilliseconds),
         captureGlobally(captureGloballyEnabled)
     {
+        setTaskName("KeybindListener");
 #if defined(IS_LINUX)
         display = XOpenDisplay(nullptr);
         root = display ? DefaultRootWindow(display) : 0;

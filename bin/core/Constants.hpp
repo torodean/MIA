@@ -67,8 +67,9 @@ namespace constants
      */
     enum ReturnCode: int
     {
-        SUCCESS = 0,   ///< Indicates that the operation completed successfully.
-        FAILURE = 1,   ///< Indicates that the operation failed due to a general error.
-        OPTION_ERROR,  ///< Indicates that an issue with command options was detected.
+        SUCCESS = 0,     ///< Indicates that the operation completed successfully.
+        FAILURE = 1,     ///< Indicates that the operation failed due to a general error.
+        OPTION_ERROR,    ///< Indicates that an issue with command options was detected.
+        EXCEPTION_ERROR, ///< Indicates that an exception occured.
     };
 } // namespace constants

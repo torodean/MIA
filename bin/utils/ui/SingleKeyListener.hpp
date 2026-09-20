@@ -39,7 +39,7 @@ public:
      * Initializes the listener with the specified key code. When started, the task
      * will monitor for the key press and toggle its internal condition state.
      *
-     * @param keyCode[char] - The key code to listen for (platform-specific).
+     * @param keyCode The key code to listen for (platform-specific).
      */
     SingleKeyListener(char keyCode);
     
@@ -79,7 +79,7 @@ public:
      * The method requires the listener to be in an active (constructed) state.
      * 
      * @note If the listener is not active (i.e., no key has been set), the method exits early.
-     *       Intended exception handling for this case is marked as a TODO.
+     * @throws MIAException if !isActive() (if setKeyCode() has not been called first).
      */
     void initialize();
     
@@ -95,6 +95,7 @@ protected:
      * If the listener is not active (i.e. keyCode not set), the method returns early.
      *
      * @note This method assumes `initialize()` has been called on Linux to grab the key.
+     * @throws MIAException if !isActive() (if setKeyCode() has not been called first).
      */
     void run() override;
     

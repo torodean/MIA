@@ -64,7 +64,8 @@ namespace error
         Config_File_Not_Set = 31430,          ///< Config File not set.
         Failed_To_Open_File = 31431,          ///< Failed to open a file.
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
-        Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.	
+        Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.
+        Out_Of_Order_Method_Calls = 31434,    ///< A sequence of methods was called out of order.
 		
 		/*
 		 * Operating-system-specific related Errors. These define errors which are relevant to 

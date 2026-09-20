@@ -69,8 +69,15 @@ namespace audio
 #endif
 
 
+    AudioPlayer::AudioPlayer()
+    {
+        setTaskName("AudioPlayer");
+    }
+
+
     AudioPlayer::AudioPlayer(const std::string& fileName)
     {
+        setTaskName("AudioPlayer");
         setAudioFile(fileName);
     }
 
@@ -155,7 +162,6 @@ namespace audio
 
     bool AudioPlayer::playNextTrack()
     {
-    #if defined(IS_WINDOWS)
         {
             std::lock_guard<std::mutex> lock(playlistMutex);
             if (!playlist.advance(playlistShuffle, playlistLoop))
@@ -167,17 +173,12 @@ namespace audio
 
         // Restart playback on the newly selected track.
         return restartAudio();
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
-    #endif
         return false;
     }
 
 
     bool AudioPlayer::playPreviousTrack()
     {
-    #if defined(IS_WINDOWS)
         {
             std::lock_guard<std::mutex> lock(playlistMutex);
             if (!playlist.back())
@@ -190,10 +191,6 @@ namespace audio
 
         // Restart playback on the newly selected track.
         return restartAudio();
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
-    #endif
         return false;
     }
 
@@ -206,7 +203,6 @@ namespace audio
 
     bool AudioPlayer::startAudio()
     {
-    #if defined(IS_WINDOWS)
         // If the audio is already playing, do nothing.
         if (audioPlaying)
             return true;
@@ -229,11 +225,6 @@ namespace audio
         audioPlaying = true;
         start();
         return true;
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
-    #endif
-        return false;
     }
 
 
@@ -248,7 +239,6 @@ namespace audio
 
     bool AudioPlayer::stopAudio(uint32_t fadeOutMS)
     {
-    #if defined(IS_WINDOWS)
         // Nothing to stop when no audio is playing.
         if (!audioPlaying)
             return true;
@@ -265,6 +255,10 @@ namespace audio
         {
             std::lock_guard<std::mutex> lock(playlistMutex);
 
+        /*
+         * Currently, windows only supports the fade out option for mp3 files.
+         */
+        #if defined(IS_WINDOWS)
             // The 'setaudio .. volume to ..' command is not supported for non-mp3 types.
             if (playlist.current().type != files::FileType::Mp3)
             {
@@ -277,16 +271,15 @@ namespace audio
                 fadeRequested = true;
                 fadeTimeMS = fadeOutMS;
             }
+        #else
+            fadeRequested = true;
+            fadeTimeMS = fadeOutMS;
+        #endif
         }
 
         // Stop and join the audio thread for a clean device close.
         stop();
         return true;
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
-    #endif
-        return false;
     }
 
 
@@ -340,7 +333,6 @@ namespace audio
 
     void AudioPlayer::run()
     {
-    #if defined(IS_WINDOWS)
         // Don't start a new playback if a stop was already requested.
         if (stopRequested)
             return;
@@ -363,6 +355,10 @@ namespace audio
         // Mark this playback as active.
         audioPlaying = true;
 
+    /*
+     * Windows uses the MCI APIC to play the audio.
+     */
+    #if defined(IS_WINDOWS)
         // Each playback gets its own MCI device alias to avoid collisions.
         const std::string soundAlias = "MIA_AUDIO_" + std::to_string(audio_player::nextAliasId++);
 
@@ -464,6 +460,9 @@ namespace audio
 
         // Stop and close the audio device for a clean exit.
         closeAudioDevice(soundAlias);
+    #else
+        MIA_THROW(error::ErrorCode::Windows_Only_Feature, "AudioPlayer run() method.");
+    #endif
 
         // The playback is done, so end the task unless there is more to play.
         if (stopRequested)
@@ -486,10 +485,5 @@ namespace audio
         // The playlist is finished, so end the task.
         audioPlaying = false;
         stopRequested = true;
-    #else
-        // This player is currently Windows-only, so end the task right away.
-        audioPlaying = false;
-        stopRequested = true;
-    #endif
     }
 } // namespace audio

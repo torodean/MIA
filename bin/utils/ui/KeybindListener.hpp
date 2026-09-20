@@ -158,7 +158,7 @@ namespace ui
          * @param captureGlobally Whether to grab the keys with XGrabKey (see
          *        the class comment for what that means).
          * @throws error::MIAException If reading the config pairs fails (e.g.,
-         *         the config is not a KEY_VALUE config).
+         *         the config is not a KEY_VALUE config). @TODO
          */
         KeybindListener(const config::MIAConfig& config,
                          ui::EventQueue& queue,

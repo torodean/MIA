@@ -45,6 +45,8 @@ namespace error
         { Missing_Argument, "The app/command argument was not found." },
         { Failed_To_Open_File, "Failed to open file." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
+        { Invalid_Configuration_Call, "Invalid configuration call." },
+        { Out_Of_Order_Method_Calls, "A sequence of methods was called out of order." },
 		
 		/*
 		 * Operating-system-specific related Errors.

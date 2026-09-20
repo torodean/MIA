@@ -2,8 +2,7 @@
  * @file SingleKeyListener.cpp
  * @author Antonius Torode
  * @date 06/25/2025
- * Description:
- *     TODO
+ * @brief Implements the SingleKeyListener methods.
  */
 
 // Associated header file.
@@ -12,7 +11,11 @@
 #include <cstring>
 #include <iostream>
 
+// Used for sleeping.
 #include "Timing.hpp"
+//Used for exception and error handling.
+#include "MIAException.hpp"
+#include "Error.hpp"
 
 #if defined(IS_WINDOWS)
     #include <windows.h>
@@ -23,21 +26,24 @@
 
 SingleKeyListener::SingleKeyListener()
 #if defined(__linux__)
-    : display(XOpenDisplay(nullptr))
-    , root(display ? DefaultRootWindow(display) : 0)
+    : display(XOpenDisplay(nullptr)),
+      root(display ? DefaultRootWindow(display) : 0)
 #endif
-{ }
+{ 
+    setTaskName("SingleKeyListener");
+}
 
 
-SingleKeyListener::SingleKeyListener(char keyCode) : 
+SingleKeyListener::SingleKeyListener(char keyCode)
 #if defined(IS_WINDOWS)
-	keyCode(std::toupper(keyCode))
+	: keyCode(std::toupper(keyCode))
 #elif defined(__linux__)
-	keyCode(keyCode)
-    , display(XOpenDisplay(nullptr))
-    , root(display ? DefaultRootWindow(display) : 0)
+	: keyCode(keyCode),
+	  display(XOpenDisplay(nullptr)),
+	  root(display ? DefaultRootWindow(display) : 0)
 #endif
 {
+    setTaskName("SingleKeyListener");
     initialize();
 }
 
@@ -58,7 +64,9 @@ void SingleKeyListener::initialize()
 {
 	if (!isActive())
 	{
-		// TODO - throw MIAException here.
+		// setKeyCode() must be called before initialize.
+		MIA_THROW(error::ErrorCode::Out_Of_Order_Method_Calls, 
+		          "SingleKeyListener: setKeyCode() must be called before initialize()!");
 		return;
 	}
 
@@ -104,7 +112,9 @@ void SingleKeyListener::run()
 {
     if (!isActive())
     {
-        // TODO - throw MIAException here.
+		// setKeyCode() must be called before run.
+		MIA_THROW(error::ErrorCode::Out_Of_Order_Method_Calls, 
+		          "SingleKeyListener: setKeyCode() must be called before run()!");
         return;
     }
 

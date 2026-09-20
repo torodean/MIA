@@ -321,6 +321,10 @@ int MIASequencer::run()
                 listener.initialize();
                 listener.start();
                 
+                // Make sure the listener did not throw any failures.
+                if (listener.hasFailed())
+                    listener.rethrowExceptionIfAny();
+                
                 do // Perform the sequence (and loop if needed). 
                 {
                     // Start with the sequence off until the condition is met.

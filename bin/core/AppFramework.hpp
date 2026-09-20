@@ -13,6 +13,12 @@
 #pragma once
 
 #include <concepts>
+#include <iostream>
+
+// Used for exception handling.
+#include "MIAException.hpp"
+// Used for return codes.
+#include "Constants.hpp"
 
 /**
  * @concept AppInterface
@@ -44,9 +50,17 @@ concept AppInterface = requires(App app, int argc, char** argv)
 template<AppInterface App>
 int runApp(int argc, char** argv)
 {
-    App app;
-    app.initialize(argc, argv);
-    return app.run();
+    try
+    {
+        App app;
+        app.initialize(argc, argv);
+        return app.run();
+    }
+    catch (const error::MIAException& ex)
+    {
+        std::cerr << ex.what() << std::endl;
+        return constants::ReturnCode::EXCEPTION_ERROR;
+    }
 }
 
 /**

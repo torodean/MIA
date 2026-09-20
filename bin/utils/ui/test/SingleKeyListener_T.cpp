@@ -7,7 +7,10 @@
  */
  
 #include <gtest/gtest.h>
+
 #include "SingleKeyListener.hpp"
+#include "MIAException.hpp"
+
 
 class SingleKeyListenerTest : public ::testing::Test
 {
@@ -23,10 +26,12 @@ protected:
     SingleKeyListener keyedTask{'A'}; // arbitrary key code
 };
 
+
 TEST_F(SingleKeyListenerTest, DefaultConstructorIsInactive)
 {
     EXPECT_FALSE(defaultTask.isActive());
 }
+
 
 TEST_F(SingleKeyListenerTest, ConstructorWithKeyIsActive)
 {
@@ -34,17 +39,24 @@ TEST_F(SingleKeyListenerTest, ConstructorWithKeyIsActive)
     EXPECT_EQ('A', keyedTask.isActive() ? 'A' : '\0'); // check keyCode indirectly
 }
 
+
 TEST_F(SingleKeyListenerTest, SetKeyCodeActivatesTask)
 {
     defaultTask.setKeyCode('Z');
     EXPECT_TRUE(defaultTask.isActive());
 }
 
-TEST_F(SingleKeyListenerTest, InitializeDoesNotCrashOnInactive)
+
+TEST_F(SingleKeyListenerTest, InitializeCrashWhenNotCalledCorrectly)
 {
-    // Should do nothing or exit early, no exceptions
+    // Should throw if setKeyCode has not been called yet.
+    EXPECT_THROW(defaultTask.initialize(), error::MIAException);
+
+    // Call setKeyCode and make sure it no longer throws/
+    defaultTask.setKeyCode('2');
     EXPECT_NO_THROW(defaultTask.initialize());
 }
+
 
 TEST_F(SingleKeyListenerTest, StartStopCycle)
 {
@@ -57,6 +69,7 @@ TEST_F(SingleKeyListenerTest, StartStopCycle)
     keyedTask.stop();
     EXPECT_FALSE(keyedTask.isRunning());
 }
+
 
 TEST_F(SingleKeyListenerTest, ConditionToggleOnRun)
 {

@@ -24,6 +24,14 @@ namespace audio
 	/**
 	 * @brief An audio player which is setup to play audio in a separate
 	 *        thread which the caller can manage as needed.
+	 *
+     * @note This class inherits from threading::BackgroundTask. Any exception
+     *       thrown while playing audio is captured in the background thread.
+     *       Callers of this class should periodically check hasFailed() and
+     *       rethrow any exceptions that are thrown. This class is intended to
+     *       be designed in a non-terminating way, where all of the methods can
+     *       signal failure in a recoverable manner. An exception signals a non-
+     *       recoverable pattern that should end the application.
 	 */
 	class AudioPlayer : public threading::BackgroundTask
 	{
@@ -31,7 +39,7 @@ namespace audio
 		/**
 		 * @brief Default constructor.
 		 */
-		AudioPlayer() = default;
+		AudioPlayer();
 
 		/**
 		 * @brief Constructs this object from an audio file.
@@ -206,6 +214,7 @@ namespace audio
 
 		/**
 		 * @brief The threaded task that plays the sound.
+		 * @throws for unsupported operating systems.
 		 */
 		void run() override;
 

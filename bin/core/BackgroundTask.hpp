@@ -13,6 +13,7 @@
 
 #include <thread>
 #include <atomic>
+#include <exception>
 
 #include "RuntimeContext.hpp"
 
@@ -23,6 +24,12 @@ namespace threading
      *
      * Derived classes should override the run() method to implement specific task behavior.
      * The task starts on a separate thread via start(), and can be stopped via stop().
+     *
+     * @note Exceptions thrown from the overridden run() method are captured
+     *       and stored. After calling any method which may throw (in the worker thread),
+     *       the caller should invoke hasFailed() and/or rethrowExceptionIfAny() to check 
+     *       for and propagate any exception that occurred in the background thread back 
+     *       to the calling thread.
      */
     class BackgroundTask 
     {
@@ -93,6 +100,43 @@ namespace threading
          * @param ctx The RuntimeContext to point to.
          */
         void setContext(const RuntimeContext& ctx);
+        
+        /**
+         * @brief Returns true if the background task has failed due to an uncaught exception.
+         *
+         * The flag becomes true as soon as an exception is captured in the worker thread.
+         * Callers (game loops, framework tick functions, etc.) can poll this at any safe
+         * point and then call rethrowExceptionIfAny() to propagate the error onto the
+         * main thread if desired.
+         *
+         * @return true if an exception was stored from the worker thread.
+         */
+        bool hasFailed() const noexcept;
+        
+        /**
+         * @brief Returns any exception that was thrown in the worker thread.
+         *
+         * The returned pointer is empty if no exception occurred. 
+         *
+         * @return std::exception_ptr holding the captured exception, or nullptr.
+         */
+        std::exception_ptr getException() const;
+
+        /**
+         * @brief Rethrows the exception that occurred in the worker thread, if any.
+         *
+         * If the background task has failed (see hasFailed()), this method rethrows
+         * the original exception on the calling thread so it can be handled by normal
+         * exception-handling logic (for example the try/catch in AppFramework's runApp).
+         *
+         * It is safe to call at any time. If no exception has been stored the method
+         * does nothing. Typical usage is to poll hasFailed() from the main thread
+         * (or framework loop) and then call this method at a safe point when you
+         * want the exception to propagate.
+         *
+         * @throws The original exception that was thrown inside run(), if one exists.
+         */
+        void rethrowExceptionIfAny() const;
 
     protected:
         
@@ -119,8 +163,17 @@ namespace threading
          * conditional state or value without having to request the thread to stop.
          */
         std::atomic<bool> conditionMet{false};
+        
+        /**
+         * @brief Sets the taskName for this object.
+         * @param newTaskName The name to set the taskName to. 
+         */
+        void setTaskName(const std::string& newTaskName);
 
     private:
+        /// An optional name to mark this task - used in error and status messages.
+        std::string taskName;
+        
         /**
          * @brief Internal method that repeatedly invokes run() until stopped.
          */
@@ -128,5 +181,8 @@ namespace threading
 
         /// The worker thread that executes the task.
         std::thread worker;
+        
+        /// Stores any exception that were thrown in the worker thread.
+        std::exception_ptr storedException;
     }; // class BackgroundTask 
 } // namespace threading
