@@ -321,7 +321,10 @@ int MIASequencer::run()
                 listener.initialize();
                 listener.start();
                 
-                // Make sure the listener did not throw any failures.
+                /*
+                 * Make sure the listener did not throw any failures. It only does this from
+                 * the above methods.
+                 */
                 if (listener.hasFailed())
                     listener.rethrowExceptionIfAny();
                 
