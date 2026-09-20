@@ -23,15 +23,62 @@
 #if defined(IS_WINDOWS)
     #include <Windows.h>
     #include <mmsystem.h>
+#elif defined(IS_LINUX)
+    #include <vlc/vlc.h>
 #endif
 
 namespace audio
 {
+    namespace
+    {
+        /**
+         * @brief Synchronization state for waiting on VLC media playback completion.
+         *
+         * Used together with libvlc_event_attach() so that a calling thread can
+         * block until the media player reports that playback has finished.
+         */
+        struct PlaybackState
+        {
+            std::mutex mutex;
+            std::condition_variable condition;
+            bool finished = false;
+        };
+
+
+        /**
+         * @brief libVLC event callback that signals playback completion.
+         *
+         * Attached to the @c libvlc_MediaPlayerEndReached event. When that event
+         * fires, the callback sets @c PlaybackState::finished and notifies any
+         * thread waiting on the associated condition variable.
+         *
+         * @param event The libVLC event that was raised.
+         * @param userData Pointer to a @c PlaybackState instance (must not be null).
+         */
+        void mediaPlayerEventCallback(const libvlc_event_t* event, void* userData)
+        {
+            if (event->type != libvlc_MediaPlayerEndReached)
+                return;
+
+            auto* state = static_cast<PlaybackState*>(userData);
+
+            {
+                std::lock_guard<std::mutex> lock(state->mutex);
+                state->finished = true;
+            }
+
+            state->condition.notify_one();
+        }
+    } // namespace
+
+
     bool isASupportedType(const files::FileMetaData& data,
                           bool verboseMode)
     {
-        if (data.type == files::FileType::Mp3 || data.type == files::FileType::Wav)
-            return true;
+        if (data.type == files::FileType::Mp3) return true;
+    #if defined(IS_WINDOWS)
+        if (data.type == files::FileType::Wav) return true;
+    #endif
         return false;
     }
 
@@ -46,13 +93,14 @@ namespace audio
 
     bool playSoundFromFile(const std::string& fileName)
     {
-    #if defined(IS_WINDOWS)
         files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
         {
             std::cerr << "Unsupported file type specified!" << std::endl;
             return false;
         }
+
+    #if defined(IS_WINDOWS)
 
         // Setup the correct command to run based on the file type.
         std::string command;
@@ -96,22 +144,95 @@ namespace audio
 
         // All appeared to have succeeded.
         return true;
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
+        
+    #elif defined(IS_LINUX)
+    
+        // Create an instance of vlc to use.
+        libvlc_instance_t* instance = libvlc_new(0, nullptr);
+        if (!instance)
+        { // Check for errors.
+            std::cerr << "Failed to create VLC instance!" << std::endl;
+            return false;
+        }
+
+        // Create a vlc media object with the sound file loaded.
+        libvlc_media_t* media = libvlc_media_new_path(instance, fileName.c_str());
+        if (!media)
+        { // Check for errors.
+            std::cerr << "Failed to create VLC media!" << std::endl;
+            libvlc_release(instance);
+            return false;
+        }    
+        
+        // Create the player to actually play the media.
+        libvlc_media_player_t* player = libvlc_media_player_new_from_media(media);
+        libvlc_media_release(media);
+        if (!player)
+        {
+            std::cerr << "Failed to create VLC media player!" << std::endl;
+            libvlc_release(instance);
+            return false;
+        }
+
+        // Create an eventManager to listen for events.
+        PlaybackState playbackState;
+        libvlc_event_manager_t* eventManager = libvlc_media_player_event_manager(player);
+        libvlc_event_attach(eventManager,                 // The event manager to use.
+                            libvlc_MediaPlayerEndReached, // The end of the media has been reached.
+                            mediaPlayerEventCallback,     // The callback which sets 'finished.'
+                            &playbackState);              // Storage that holds 'finished.'
+
+        // Start playing the media.
+        if (libvlc_media_player_play(player) == -1)
+        { // Check for errors, then cleanup accordingly.
+            std::cerr << "Failed to start playback!" << std::endl;
+
+            libvlc_event_detach(eventManager,
+                                libvlc_MediaPlayerEndReached,
+                                mediaPlayerEventCallback,
+                                &playbackState);
+
+            libvlc_media_player_release(player);
+            libvlc_release(instance);
+            return false;
+        }
+
+        { // Wait until the audio is finished playing before exiting.
+            std::unique_lock<std::mutex> lock(playbackState.mutex);
+
+            playbackState.condition.wait(lock, [&playbackState]
+            {
+                return playbackState.finished;
+            });
+        }
+
+        // Audio has ended. Detach the event callback and release all VLC objects.
+        libvlc_event_detach(eventManager,
+                            libvlc_MediaPlayerEndReached,
+                            mediaPlayerEventCallback,
+                            &playbackState);
+
+        libvlc_media_player_release(player);
+        libvlc_release(instance);
+
+        return true;
+        
     #endif
+    
         return false;
     }
 
 
     /**
      * @brief Defines threading values used to track which audio file is
-     *        currently being played.
+     *        currently being played and other audio variables.
      *
      * This allows the stopSound() method to stop the thread playing the audio.
      */
     namespace audio_thread
     {
+    #if defined(IS_WINDOWS)
+    
         std::thread soundThread;
         std::atomic<bool> soundPlaying = false;
         std::atomic<bool> fadeRequested = false;
@@ -119,7 +240,8 @@ namespace audio
         std::atomic<files::FileType> currentFileType = files::FileType::Unknown;
 
         /**
-         * @brief Returns an alias based on the file type. Used in various commands.
+         * @brief Returns an alias based on the file type. Used in various commands
+         * for the windows-specific MCI calls.
          */
         std::string getSoundAlias()
         {
@@ -131,12 +253,21 @@ namespace audio
             
             return soundAlias;
         }
+        
+    #elif defined(IS_LINUX)
+        
+        libvlc_instance_t* vlcInstance = nullptr;
+        libvlc_media_player_t* vlcPlayer = nullptr;
+        std::mutex vlcPlayerMutex;   // protect access to the above
+        
+    #endif
     } // namespace audio_thread
 
 
     bool playSoundFromFileAsync(const std::string& fileName)
     {
     #if defined(IS_WINDOWS)
+    
         // Check if the file is a supported type.
         files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
@@ -273,9 +404,51 @@ namespace audio
         });
 
         return true;
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
+        
+    #elif defined(IS_LINUX)
+
+        std::lock_guard<std::mutex> lock(audio_thread::vlcPlayerMutex);
+        
+        // Create an instance of vlc to use.
+        audio_thread::vlcInstance = libvlc_new(0, nullptr);
+        if (!audio_thread::vlcInstance)
+        { // Check for errors.
+            std::cerr << "Failed to create VLC instance!" << std::endl;
+            return false;
+        }
+
+        // Create a vlc media object with the sound file loaded.
+        libvlc_media_t* media = libvlc_media_new_path(audio_thread::vlcInstance, fileName.c_str());
+        if (!media)
+        { // Check for errors.
+            std::cerr << "Failed to create VLC media!" << std::endl;
+            libvlc_release(audio_thread::vlcInstance);
+            return false;
+        }    
+        
+        // Create the player to actually play the media.
+        audio_thread::vlcPlayer = libvlc_media_player_new_from_media(media);
+        libvlc_media_release(media);
+        if (!audio_thread::vlcPlayer)
+        { // Check for errors.
+            std::cerr << "Failed to create VLC media player!" << std::endl;
+            libvlc_release(audio_thread::vlcInstance);
+            return false;
+        }
+
+        // Start playing the media.
+        if (libvlc_media_player_play(audio_thread::vlcPlayer) == -1)
+        { // Check for errors, then cleanup accordingly.
+            std::cerr << "Failed to start playback!" << std::endl;
+
+            libvlc_media_player_release(audio_thread::vlcPlayer);
+            libvlc_release(audio_thread::vlcInstance);
+            return false;
+        }
+
+        // Success. Playback should continue in the background.
+        return true;
+        
     #endif
         return false;
     }
@@ -284,6 +457,7 @@ namespace audio
     bool stopSound(uint32_t fadeOutMs, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
+    
         // Return false if no sound is playing.
         if (!audio_thread::soundPlaying)
             return true;
@@ -311,9 +485,41 @@ namespace audio
             audio_thread::soundThread.join();   // Wait for clean close.
 
         return true;
-    #else
-        MIA_THROW(error::ErrorCode::Windows_Only_Feature,
-                  "This method is not yet supported on Linux.");
+        
+    #elif defined(IS_LINUX)
+
+        std::lock_guard<std::mutex> lock(audio_thread::vlcPlayerMutex);
+        
+        if (!audio_thread::vlcPlayer)
+            return true;   // Nothing playing means automatic success.
+            
+        if (fadeOutMs > 0)
+        {
+            // Simple linear fade-out (volume goes from 100 → 0)
+            const uint32_t steps = std::max(1u, fadeOutMs / 25); // 25ms steps.
+            const uint32_t stepTime = fadeOutMs / steps;
+
+            for (int i = steps; i >= 0; --i)
+            {
+                int volume = (i * 100) / steps;
+                libvlc_audio_set_volume(audio_thread::vlcPlayer, volume);
+                timing::sleepMilliseconds(stepTime);
+            }
+        }
+
+        // Stop playback and release resources
+        libvlc_media_player_stop(audio_thread::vlcPlayer);
+        libvlc_media_player_release(audio_thread::vlcPlayer);
+        libvlc_release(audio_thread::vlcInstance);
+
+        audio_thread::vlcPlayer = nullptr;
+        audio_thread::vlcInstance = nullptr;
+
+        if (verboseMode)
+            std::cout << "Sound stopped." << std::endl;
+
+        return true;
+
     #endif
         return false;
     }
