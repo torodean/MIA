@@ -392,15 +392,24 @@ Applications are launched using the \texttt{runApp} template function:
 	\item Accepts any type satisfying \texttt{AppInterface}.
 	\item Calls \texttt{initialize} followed by \texttt{run}, in that order.
 	\item Returns the result of \texttt{run} as the application's exit code.
+	\item Catches any MIAExceptions thrown in the application and adjusts the return code accordingly.
 	\item Other method calls can be added in this sequence if they are needed in the future.
 \end{itemize}
 \begin{lstlisting}[style=cppstyle]
 template<AppInterface App>
 int runApp(int argc, char** argv)
 {
-    App app;
-    app.initialize(argc, argv);
-    return app.run();
+    try
+	{
+		App app;
+		app.initialize(argc, argv);
+		return app.run();
+	}
+	catch (const error::MIAException& ex)
+	{
+		std::cerr << ex.what() << std::endl;
+		return constants::ReturnCode::EXCEPTION_ERROR;
+	}
 }
 \end{lstlisting}
 
@@ -1165,8 +1174,10 @@ namespace constants
 {
 	enum ReturnCode: int
 	{
-		SUCCESS = 0,   ///< Indicates that the operation completed successfully.
-		FAILURE = 1    ///< Indicates that the operation failed due to a general error.
+		SUCCESS = 0,     ///< Indicates that the operation completed successfully.
+		FAILURE = 1      ///< Indicates that the operation failed due to a general error.
+		OPTION_ERROR,    ///< Indicates that an issue with command options was detected.
+		EXCEPTION_ERROR, ///< Indicates that an exception occured.
 		// Other codes...
 	};
 }
@@ -1220,6 +1231,8 @@ protected:
 \end{lstlisting}
 A task can also stop itself by setting \texttt{stopRequested} directly. The thread then exits after the current \texttt{run()} call returns.
 
+The \texttt{BackgroundClass} also holds an optional \texttt{taskName} string which can be set with \texttt{setTaskName(std::string\&)}. When set, this task name will appear in various error and status messages to help indicate which type of background thread the message is originating from. This should typically be done in the constructor of the child class.
+
 \subsection{Lifecycle}
 
 \begin{itemize}\itemsep0em
@@ -1254,6 +1267,29 @@ With the context set, the task can consult application-wide settings such as \te
 \subsection{Example}
 
 The key-press listener in \texttt{bin/utils/ui/SingleKeyListener.hpp} is a working example of the class. It overrides \texttt{run()} to poll the platform keyboard API and toggles \texttt{conditionMet} when the configured key is pressed, while the sequencer's main loop waits on \texttt{isConditionMet()} as shown above. The unit tests in \texttt{bin/core/test/BackgroundTask\_T.cpp} exercise the lifecycle and condition flag and demonstrate a minimal subclass.
+
+\subsection{Exception Handling}
+Exceptions thrown from the overridden \texttt{run()} method do not propagate automatically to the calling thread. The C++ runtime only calls \texttt{std::terminate()} when an exception escapes a thread, so the base class catches any exception that leaves \texttt{run()}, stores it, and lets the worker thread exit cleanly. The stored exception can be inspected and rethrown on the calling thread:
+\begin{itemize}\itemsep0em
+	\item \texttt{hasFailed()} returns \texttt{true} once an exception has been captured. This is a cheap, non-blocking query intended for use in application loops, game ticks, or any other main-thread code that needs to notice a background failure.
+	\item \texttt{getException()} returns the stored \texttt{std::exception\_ptr} (or an empty pointer if none exists).
+	\item \texttt{rethrowExceptionIfAny()} rethrows the stored exception on the calling thread. If no exception was stored the method does nothing.
+\end{itemize}
+
+Typical usage is to poll \texttt{hasFailed()} at a convenient point and then rethrow when it is safe to do so:
+\begin{lstlisting}[style=cppstyle]
+MyTask task;
+task.start();
+
+// ... main-thread work ...
+
+if (task.hasFailed())
+	task.rethrowExceptionIfAny(); // propagates the original exception here.
+\end{lstlisting}
+Because the exception is rethrown on the calling thread, it can be handled by ordinary \texttt{try}/\texttt{catch} blocks (for example the one in the AppFramework's \texttt{runApp}). This preserves the ability to run framework-level cleanup or shutdown logic that would be skipped if the worker thread simply called \texttt{std::terminate()} or \texttt{std::exit()}.
+
+If the caller never checks \texttt{hasFailed()} or calls \texttt{rethrowExceptionIfAny()}, the exception is simply discarded when the \texttt{BackgroundTask} is destroyed. Callers that care about background failures are therefore expected to query the task at appropriate points in their own control flow.
+
 
 
 

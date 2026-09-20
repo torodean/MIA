@@ -26,7 +26,9 @@ namespace python_ui
           getEventsMethod(getEventsMethodName),
           pollInterval(pollIntervalMs),
           maxConsecutiveFailures(maxConsecutiveFailuresLimit)
-    { }
+    { 
+        setTaskName("PythonUIListener");
+    }
 
 
     void PythonUIListener::stop()

@@ -30,8 +30,8 @@ namespace threading
 	void BackgroundTask::stop() 
 	{     
 		stopRequested = true; // Set the flag unconditionally.
-			if (worker.joinable()) 
-				worker.join(); // Always join if the thread is joinable.
+		if (worker.joinable()) 
+			worker.join(); // Always join if the thread is joinable.
 	}
 
 
@@ -66,16 +66,60 @@ namespace threading
 	{ 
 		context = &ctx; 
 	}
+	
+	
+    bool BackgroundTask::hasFailed() const noexcept
+    {
+        return static_cast<bool>(storedException);
+    }
+    
+    
+    std::exception_ptr BackgroundTask::getException() const
+    {
+        return storedException;
+    }
+
+
+    void BackgroundTask::rethrowExceptionIfAny() const
+    {
+        if (storedException)
+        {
+            std::cerr << "[BackgroundTask"
+	                  << (!taskName.empty() ? ":" + taskName : "" )
+	                  << "] rethrowExceptionIfAny() — rethrowing now!" << std::endl;
+            std::rethrow_exception(storedException);
+        }
+    }
 
 
 	void BackgroundTask::doWhenStopped() 
 	{}
 	
+	
+	
+    void BackgroundTask::setTaskName(const std::string& newTaskName)
+    {
+        taskName = newTaskName;
+    }
+	
 
 	void BackgroundTask::threadLoop() 
-	{ 
-		while (!stopRequested.load()) 
-			run();
+	{
+	    try
+	    { // run() could potentially throw, which is in a separate thread.
+		    while (!stopRequested.load()) 
+			    run();
+	    }
+	    catch (...)
+	    {
+	        std::cerr << "[BackgroundTask" 
+	                  << (!taskName.empty() ? ":" + taskName : "") 
+	                  << "] Caught exception in worker thread!" << std::endl;
+            // Capture whatever was thrown (MIAException, std::exception, or unknown).
+            storedException = std::current_exception();
+            stopRequested.store(true);
+	    }
+	    
 		doWhenStopped();
 	}
 } // namespace threading
