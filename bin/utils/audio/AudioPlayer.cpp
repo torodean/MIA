@@ -31,6 +31,7 @@
 
 namespace audio
 {
+#if defined(IS_WINDOWS)
     /**
      * @brief Defines values used to generate unique MCI aliases for each playback.
      *
@@ -43,7 +44,7 @@ namespace audio
         std::atomic<uint64_t> nextAliasId = 0;
     } // namespace audio_player
 
-#if defined(IS_WINDOWS)
+
     /**
      * @brief Stops and closes the MCI device tied to the given alias.
      *
@@ -72,6 +73,17 @@ namespace audio
     AudioPlayer::AudioPlayer()
     {
         setTaskName("AudioPlayer");
+
+    #if defined(IS_LINUX)
+        std::lock_guard<std::mutex> lock(vlcPlayerMutex);
+        
+        // Create an instance of vlc to use.
+        vlcInstance = libvlc_new(0, nullptr);
+        if (!vlcInstance)
+        { // Check for errors.
+            MIA_THROW(VLC_Failed_To_Create_Instance, "In AudioPlayer Construction.");
+        }
+    #endif
     }
 
 
@@ -79,6 +91,34 @@ namespace audio
     {
         setTaskName("AudioPlayer");
         setAudioFile(fileName);
+
+    #if defined(IS_LINUX)
+        std::lock_guard<std::mutex> lock(vlcPlayerMutex);
+        
+        // Create an instance of vlc to use.
+        vlcInstance = libvlc_new(0, nullptr);
+        if (!vlcInstance)
+        { // Check for errors.
+            MIA_THROW(VLC_Failed_To_Create_Instance, "In AudioPlayer Construction.");
+        }
+        
+        // Create a vlc media object with the sound file loaded.
+        libvlc_media_t* media = libvlc_media_new_path(vlcInstance, fileName.c_str());
+        if (!media)
+        { // Check for errors.
+            libvlc_release(vlcInstance);
+            MIA_THROW(VLC_Failed_To_Create_Media, "In AudioPlayer Construction.");
+        }
+        
+        // Create the player to actually play the media.
+        vlcPlayer = libvlc_media_player_new_from_media(media);
+        libvlc_media_release(media);
+        if (!vlcPlayer)
+        { // Check for errors.
+            libvlc_release(vlcInstance);
+            MIA_THROW(VLC_Failed_To_Create_Media, "In AudioPlayer Construction.");
+        }
+    #endif
     }
 
 
@@ -197,12 +237,18 @@ namespace audio
 
     bool AudioPlayer::isAudioPlaying() const
     {
+    #if defined(IS_WINDOWS)
         return audioPlaying.load();
+    #elif defined(IS_LINUX)
+        return vlcPlayer;
+    #endif
     }
 
 
     bool AudioPlayer::startAudio()
     {
+    #if defined(IS_WINDOWS)
+
         // If the audio is already playing, do nothing.
         if (audioPlaying)
             return true;
@@ -224,25 +270,45 @@ namespace audio
         stopRequested = false;
         audioPlaying = true;
         start();
+    
+    #elif defined(IS_LINUX)
+    
+        std::lock_guard<std::mutex> lock(vlcPlayerMutex);
+    
+        if (vlcPlayer)
+            return true;   // Already playing means automatic success.
+            
+        // Start playing the media.
+        if (libvlc_media_player_play(vlcPlayer) == -1)
+        { // Check for errors, then cleanup accordingly.
+            std::cerr << "ERROR: Failed to start playback!" << std::endl;
+
+            libvlc_media_player_release(vlcPlayer);
+            libvlc_release(vlcInstance);
+            return false;
+        }
+    
+    #endif
+    
         return true;
     }
 
 
     bool AudioPlayer::restartAudio()
-    {
-        // Stop first (this does nothing when not playing), then start from the beginning.
-        if (audioPlaying)
-            stopAudio(0);
+    {        
+        stopAudio();
         return startAudio();
     }
 
 
     bool AudioPlayer::stopAudio(uint32_t fadeOutMS)
     {
+    #if defined(IS_WINDOWS)
+
         // Nothing to stop when no audio is playing.
         if (!audioPlaying)
             return true;
-
+        
         /*
          * For a real fade, set the fade-specific flags and let the audio thread perform
          * the volume ramp + stop. For the zero-fade case just signal the worker.
@@ -255,10 +321,6 @@ namespace audio
         {
             std::lock_guard<std::mutex> lock(playlistMutex);
 
-        /*
-         * Currently, windows only supports the fade out option for mp3 files.
-         */
-        #if defined(IS_WINDOWS)
             // The 'setaudio .. volume to ..' command is not supported for non-mp3 types.
             if (playlist.current().type != files::FileType::Mp3)
             {
@@ -271,14 +333,46 @@ namespace audio
                 fadeRequested = true;
                 fadeTimeMS = fadeOutMS;
             }
-        #else
             fadeRequested = true;
             fadeTimeMS = fadeOutMS;
-        #endif
         }
 
         // Stop and join the audio thread for a clean device close.
         stop();
+        
+    #elif defined(IS_LINUX)
+    
+        std::lock_guard<std::mutex> lock(vlcPlayerMutex);
+        
+        if (!vlcPlayer)
+            return true;   // Nothing playing means automatic success.
+            
+        if (fadeOutMs > 0)
+        {
+            // Simple linear fade-out (volume goes from 100 → 0)
+            const uint32_t steps = std::max(1u, fadeOutMs / 25); // 25ms steps.
+            const uint32_t stepTime = fadeOutMs / steps;
+
+            for (int i = steps; i >= 0; --i)
+            {
+                int volume = (i * 100) / steps;
+                libvlc_audio_set_volume(vlcPlayer, volume);
+                timing::sleepMilliseconds(stepTime);
+            }
+        }
+
+        // Stop playback and release resources
+        libvlc_media_player_stop(vlcPlayer);
+        libvlc_media_player_release(vlcPlayer);
+        libvlc_release(vlcInstance);
+
+        vlcPlayer = nullptr;
+        vlcInstance = nullptr;
+
+        return true;
+        
+    #endif
+    
         return true;
     }
 
@@ -297,7 +391,19 @@ namespace audio
 
     void AudioPlayer::setPlaylistLoop(bool loop)
     {
+    #if defined(IS_LINUX)
+        // Set the playlistloop
+        if (loop)
+        {
+            if (libvlc_media_list_player_set_playback_mode(vlcPlayer, libvlc_playback_mode_loop) == -1)
+            { // Check for errors
+                std::cerr << "ERROR: Failed to enable playlist looping!" << std::endl;
+                return false; // Return and don't update playlistLoop.
+            }
+        }
+    #endif
         playlistLoop = loop;
+        return true;
     }
 
 
@@ -347,18 +453,20 @@ namespace audio
         if (fileMetaData.type == files::FileType::Unknown)
         {
             std::cerr << "No audio file was specified to play!" << std::endl;
+        #if defined(IS_WINDOWS)
             audioPlaying = false;
+        #endif
             stopRequested = true;
             return;
         }
-
-        // Mark this playback as active.
-        audioPlaying = true;
 
     /*
      * Windows uses the MCI APIC to play the audio.
      */
     #if defined(IS_WINDOWS)
+
+        // Mark this playback as active.
+        audioPlaying = true;
         // Each playback gets its own MCI device alias to avoid collisions.
         const std::string soundAlias = "MIA_AUDIO_" + std::to_string(audio_player::nextAliasId++);
 
@@ -460,15 +568,19 @@ namespace audio
 
         // Stop and close the audio device for a clean exit.
         closeAudioDevice(soundAlias);
-    #else
+        
+    #elif defined(IS_LINUX)
+    
         MIA_THROW(error::ErrorCode::Windows_Only_Feature, "AudioPlayer run() method.");
+        
     #endif
 
         // The playback is done, so end the task unless there is more to play.
         if (stopRequested)
         {
+        #if defined(IS_WINDOWS)
             audioPlaying = false;
-            stopRequested = true;
+        #endif
             return;
         }
 
@@ -483,7 +595,9 @@ namespace audio
         }
 
         // The playlist is finished, so end the task.
+    #if defined(IS_WINDOWS)
         audioPlaying = false;
+    #endif
         stopRequested = true;
     }
 } // namespace audio

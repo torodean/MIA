@@ -424,7 +424,7 @@ namespace audio
             std::cerr << "Failed to create VLC media!" << std::endl;
             libvlc_release(audio_thread::vlcInstance);
             return false;
-        }    
+        }
         
         // Create the player to actually play the media.
         audio_thread::vlcPlayer = libvlc_media_player_new_from_media(media);

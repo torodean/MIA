@@ -66,16 +66,23 @@ namespace error
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
         Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.
         Out_Of_Order_Method_Calls = 31434,    ///< A sequence of methods was called out of order.
-		
-		/*
-		 * Operating-system-specific related Errors. These define errors which are relevant to 
-		 * the os-specific features, and features being developed differently on different OS's.
-		 * 315XX error codes.
-		 */
-		Linux_Only_Feature = 31500,           ///< This feature is only supported on Linux.
+        
+        /*
+         * Operating-system-specific related Errors. These define errors which are relevant to 
+         * the os-specific features, and features being developed differently on different OS's.
+         * 315XX error codes.
+         */
+        Linux_Only_Feature = 31500,           ///< This feature is only supported on Linux.
         Windows_Only_Feature = 31501,         ///< Windows only feature.
-		OS_Not_Supported = 31502,             ///< Unsupported OS for this feature. 
-		
+        OS_Not_Supported = 31502,             ///< Unsupported OS for this feature.
+        
+        /*
+         * VLC-related errors. 361XX
+         */
+        VLC_Failed_To_Create_Instance = 36100,///< Failed to create an instance of libvlc.
+        VLC_Failed_To_Create_Media = 36101,   ///< Failed to create media object for libvlc.
+        VLC_Failed_To_Play_Audio = 36102,     ///< Failed to play audio using libvlc.
+        
         /*
          * RPG error codes. 371XX
          */
