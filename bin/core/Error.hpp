@@ -81,7 +81,8 @@ namespace error
          */
         VLC_Failed_To_Create_Instance = 36100,///< Failed to create an instance of libvlc.
         VLC_Failed_To_Create_Media = 36101,   ///< Failed to create media object for libvlc.
-        VLC_Failed_To_Play_Audio = 36102,     ///< Failed to play audio using libvlc.
+        VLC_Failed_To_Create_Player = 36102,  ///< Failed to create player object for libvlc.
+        VLC_Failed_To_Play_Audio = 36103,     ///< Failed to play audio using libvlc.
         
         /*
          * RPG error codes. 371XX

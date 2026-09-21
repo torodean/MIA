@@ -17,6 +17,8 @@
 #include "BackgroundTask.hpp"
 // Used for the playlist this player plays through.
 #include "Playlist.hpp"
+// Used for preprocessor macros.
+#include "Constants.hpp"
 
 // Linux uses vlc.
 #if defined(IS_LINUX)
@@ -54,6 +56,15 @@ namespace audio
          * @throws MIAException if VLC fails to create an instance (Linux only).
          */
         AudioPlayer(const std::string& fileName);
+
+        /**
+         * @brief Destroys the audio player and releases all platform-specific resources.
+         *
+         * On Linux, stops playback and releases the libVLC media list player,
+         * media list, and VLC instance. On Windows, no additional cleanup is
+         * required here.
+         */
+         ~AudioPlayer();
 
         /**
          * @brief Sets the audio file for this player to use.
@@ -159,10 +170,10 @@ namespace audio
          * This will call stop() to also stop the audio player thread that
          * is running.
          *
-         * @param fadeOutMS The time (in ms) over which to fade the audio file out.
+         * @param fadeOutMs The time (in ms) over which to fade the audio file out.
          * @return true if the audio was successfully stopped, false otherwise.
          */
-        bool stopAudio(uint32_t fadeOutMS = 0);
+        bool stopAudio(uint32_t fadeOutMs = 0);
 
         /**
          * @brief Enable or disable the repeatAudioTrack feature which repeats
@@ -181,7 +192,7 @@ namespace audio
          * @param loop Whether or not to loop the playlist (false by default).
          * @return true on success, false otherwise.
          */
-        bool setPlaylistLoop(bool loop);
+        void setPlaylistLoop(bool loop);
 
         /// Getter for the current playlistLoop setting.
         bool getPlaylistLoop() const;
@@ -223,7 +234,8 @@ namespace audio
 
         /**
          * @brief The threaded task that plays the sound.
-         * @throws for unsupported operating systems.
+         * @note On Linux, this method does nothing since the vlc libraries create
+         *       their own asynchronous threads.
          */
         void run() override;
 
@@ -266,10 +278,37 @@ namespace audio
         std::atomic<uint32_t> fadeTimeMS{0};
         
     #elif defined(IS_LINUX)
+    
+        /**
+         * @brief Rebuilds the libVLC media list from the current C++ Playlist.
+         *
+         * Releases the existing media list, creates a new one, and re-adds every
+         * track currently stored in @c playlist. Must be called whenever the
+         * playlist content changes.
+         *
+         * @note The caller must hold both @c vlcMutex and @c playlistMutex
+         *       (or guarantee equivalent exclusive access).
+         */
+        void rebuildVlcMediaList();
+
+        /**
+         * @brief Applies the current repeat / loop settings to the VLC list player.
+         *
+         * Maps the atomic flags @c repeatAudioTrack and @c playlistLoop onto
+         * the corresponding @c libvlc_playback_mode_t value.
+         *
+         * @note Must be called while holding @c vlcMutex.
+         */
+        void applyPlaybackMode();
         
+        /// Top-level libVLC instance (lifetime of this object).
         libvlc_instance_t* vlcInstance = nullptr;
+        /// The media list that VLC plays through.
+        libvlc_media_list_t* vlcPlaylist = nullptr;
+        /// List player that owns playback control.
         libvlc_media_list_player_t* vlcPlayer = nullptr;
-        std::mutex vlcPlayerMutex;   // protect access to the above
+        /// Protects all VLC objects above.
+        mutable std::mutex vlcMutex;
         
     #endif
     }; // class AudioPlayer

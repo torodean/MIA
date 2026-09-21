@@ -61,6 +61,7 @@ namespace error
          */
         {VLC_Failed_To_Create_Instance, "Failed to create an instance of libvlc."},
         {VLC_Failed_To_Create_Media, "Failed to create media object for libvlc."},
+        {VLC_Failed_To_Create_Player, "Failed to create player object for libvlc."},
         {VLC_Failed_To_Play_Audio, "Failed to play audio using libvlc."},
         
         /*
