@@ -314,10 +314,22 @@ namespace audio
     #elif defined(IS_LINUX)
     
         std::lock_guard<std::mutex> lock(vlcMutex);
-
-        // Force VLC to the exact index the Playlist just selected.
+        
         if (libvlc_media_list_player_play_item_at_index(vlcPlayer, static_cast<int>(newIndex)) == -1)
             return false;
+            
+        // Stop current playback cleanly.
+        libvlc_media_list_player_stop(vlcPlayer);
+        timing::sleepMilliseconds(25); // Give VLC time to release the old media.
+    
+        // Play the index our Playlist selected.
+        if (libvlc_media_list_player_play_item_at_index(vlcPlayer, static_cast<int>(newIndex)) == -1)
+            return false;
+
+        // Restore volume
+        libvlc_media_player_t* mediaPlayer = libvlc_media_list_player_get_media_player(vlcPlayer);
+        if (mediaPlayer)
+            libvlc_audio_set_volume(mediaPlayer, 100);
         return true;
         
     #endif
@@ -350,6 +362,19 @@ namespace audio
         
         if (libvlc_media_list_player_play_item_at_index(vlcPlayer, static_cast<int>(newIndex)) == -1)
             return false;
+            
+        // Stop current playback cleanly.
+        libvlc_media_list_player_stop(vlcPlayer);
+        timing::sleepMilliseconds(25); // Give VLC time to release the old media.
+    
+        // Play the index our Playlist selected.
+        if (libvlc_media_list_player_play_item_at_index(vlcPlayer, static_cast<int>(newIndex)) == -1)
+            return false;
+
+        // Restore volume
+        libvlc_media_player_t* mediaPlayer = libvlc_media_list_player_get_media_player(vlcPlayer);
+        if (mediaPlayer)
+            libvlc_audio_set_volume(mediaPlayer, 100);
         return true;
         
     #endif
@@ -379,6 +404,11 @@ namespace audio
             libvlc_media_list_player_set_playback_mode(vlcPlayer, libvlc_playback_mode_loop);
         else
             libvlc_media_list_player_set_playback_mode(vlcPlayer, libvlc_playback_mode_default);
+            
+        // Make sure volume is restored (important when looping).
+        libvlc_media_player_t* mediaPlayer = libvlc_media_list_player_get_media_player(vlcPlayer);
+        if (mediaPlayer)
+            libvlc_audio_set_volume(mediaPlayer, 100);
     #endif
     }
 
@@ -424,10 +454,19 @@ namespace audio
             rebuildVlcMediaList();
         }
 
+        libvlc_media_list_player_play(vlcPlayer);
+        
+        // Give VLC time to catch up...
+        //timing::sleepMilliseconds(50);
+
         // Apply current loop / repeat settings.
         applyPlaybackMode();
-
-        libvlc_media_list_player_play(vlcPlayer);
+        
+        // Force volume to maximum (in case it was left at 0)
+        libvlc_media_player_t* mediaPlayer = libvlc_media_list_player_get_media_player(vlcPlayer);
+        if (mediaPlayer)
+            libvlc_audio_set_volume(mediaPlayer, 100);// Optional debug
+        
         return true;
     
     #endif
@@ -437,8 +476,33 @@ namespace audio
 
     bool AudioPlayer::restartAudio()
     {        
+    #if defined(IS_WINDOWS)
+
         stopAudio();
         return startAudio();
+
+    #elif defined(IS_LINUX)
+
+        std::lock_guard<std::mutex> lock(vlcMutex);
+
+        if (!vlcPlayer)
+            return false;
+
+        // Get the media player that is currently playing.
+        libvlc_media_player_t* mediaPlayer = libvlc_media_list_player_get_media_player(vlcPlayer);
+        if (!mediaPlayer)
+            return false;
+
+        // Seek to the beginning and make sure it’s playing
+        libvlc_media_player_set_time(mediaPlayer, 0); // Go back to the start.
+        libvlc_media_player_play(mediaPlayer); // Make sure it's playing.
+
+        // Restore volume just in case
+        libvlc_audio_set_volume(mediaPlayer, 100);
+
+        return true;
+
+    #endif
     }
 
 
@@ -524,7 +588,8 @@ namespace audio
         
         #if defined(IS_LINUX)
             std::lock_guard<std::mutex> lock(vlcMutex);
-            applyPlaybackMode();
+            if (libvlc_media_list_player_is_playing(vlcPlayer))
+                applyPlaybackMode();
         #endif
     }
 
@@ -541,7 +606,8 @@ namespace audio
         
         #if defined(IS_LINUX)
             std::lock_guard<std::mutex> lock(vlcMutex);
-            applyPlaybackMode();
+            if (libvlc_media_list_player_is_playing(vlcPlayer))
+                applyPlaybackMode();
         #endif
     }
 

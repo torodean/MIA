@@ -209,6 +209,8 @@ namespace audio
 
         /// Getter for the current playlist shuffle setting.
         bool getPlaylistShuffle() const;
+        
+        // TODO - Add volume options.
 
     protected:
 
@@ -300,6 +302,8 @@ namespace audio
          * @note Must be called while holding @c vlcMutex.
          */
         void applyPlaybackMode();
+        
+        bool playTrackAtIndex(size_t index);
         
         /// Top-level libVLC instance (lifetime of this object).
         libvlc_instance_t* vlcInstance = nullptr;

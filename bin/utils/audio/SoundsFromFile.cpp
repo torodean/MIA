@@ -173,6 +173,9 @@ namespace audio
             libvlc_release(instance);
             return false;
         }
+        
+        // Force full volume.
+        libvlc_audio_set_volume(player, 100);
 
         // Create an eventManager to listen for events.
         PlaybackState playbackState;
@@ -435,6 +438,9 @@ namespace audio
             libvlc_release(audio_thread::vlcInstance);
             return false;
         }
+        
+        // Force full volume.
+        libvlc_audio_set_volume(audio_thread::vlcPlayer, 100);
 
         // Start playing the media.
         if (libvlc_media_player_play(audio_thread::vlcPlayer) == -1)
