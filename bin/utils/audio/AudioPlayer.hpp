@@ -259,7 +259,7 @@ namespace audio
     #if defined(IS_WINDOWS)
     
         /// Tracker of whether or not the audio is currently playing.
-        std::atomic<bool> audioPlaying{false};    
+        std::atomic<bool> audioPlaying{false};
         /// Whether or not a fade-out was requested for the current playback.
         std::atomic<bool> fadeRequested{false};
         /// The time (in ms) over which the current fade-out should run.
