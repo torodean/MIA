@@ -597,7 +597,18 @@ player.startAudio();
 player.stopAudio(0);
 player.stopAudio(3000);
 \end{lstlisting}
-\texttt{startAudio()} does nothing when the audio is already playing, and \texttt{restartAudio()} starts the current track over. A fade-out length only takes effect on mp3 files for the same MCI reason as above.
+\texttt{startAudio()} does nothing when the audio is already playing, and \texttt{restartAudio()} starts the current track over. A fade-out length only takes effect on mp3 files on Windows for the same MCI reason as above. On Linux, the fade works for all supported file types. The fade-out runs asynchronously in the player's worker thread, so \texttt{stopAudio()} returns before the fade completes and the player reports \texttt{isAudioPlaying()} as false once the fade has finished.
+
+The playback volume can be set with \texttt{setVolume()}, which takes a value from 0 to 100 (larger values are clamped), and read back with \texttt{getVolume()}:
+\begin{lstlisting}[style=cppstyle]
+audio::AudioPlayer player("music.mp3");
+player.setVolume(50);
+player.startAudio();
+
+// ...after a few seconds...
+player.setVolume(100); // Applies immediately, mid-play.
+\end{lstlisting}
+The volume applies immediately to the current playback and persists across tracks, restarts, and playlists until it is changed again.
 
 The player always holds a playlist. Constructing it from a file name or calling \texttt{setAudioFile()} is just a one-track playlist; the playlist methods manage the full list instead:
 \begin{lstlisting}[style=cppstyle]
@@ -612,19 +623,19 @@ When a track finishes, the player moves to the next one and keeps going until th
 	\item \texttt{setPlaylistLoop(bool)} wraps the playlist back to the first track after the last one ends.
 	\item \texttt{setPlaylistShuffle(bool)} picks the next track at random rather than in order. The pick is never the track being left, so shuffle never plays the same track twice in a row.
 \end{itemize}
-The playlist state survives edits made during playback: \texttt{setPlaylist()}, \texttt{addToPlaylist()}, and \texttt{setAudioFile()} take effect on the next track rather than interrupting the current one. \texttt{nextAudio()} and \texttt{previousAudio()} skip manually mid-play. The player keeps a memory of previously played tracks, so \texttt{previousAudio()} returns to the track which played before the current one, shuffle or not; with no memory yet, it prints a warning and leaves playback running.
+The playlist state survives edits made during playback: \texttt{setPlaylist()}, \texttt{addToPlaylist()}, and \texttt{setAudioFile()} take effect on the next track rather than interrupting the current one. \texttt{nextAudio()} and \texttt{previousAudio()} skip manually mid-play. The player keeps a memory of previously played tracks, so \texttt{previousAudio()} returns to the track which played before the current one, shuffle or not; with no memory yet, it prints a warning and leaves playback running. When the audio file is changed mid-play, the currently playing track is no longer part of the playlist, so \texttt{nextAudio()} plays the track at the playlist cursor (the newly set file) instead of advancing past it.
 
 \subsection{Supported File Types}
 
 Currently, the following types are supported, with a few limitations:
 \begin{itemize}
-	\item \texttt{MP3}: The MP3 file type has full support for all features on Windows.
-	\item \texttt{WAV}: The WAV file type supports all features except the optional fade-out when stopping the audio. The limitation exists because the current Windows MCI implementation uses the \texttt{setaudio ... volume to} command to gradually reduce volume during a fade-out. MCI supports volume control for MP3 playback, but the volume command is not supported for WAV playback.
+	\item \texttt{MP3}: The MP3 file type has full support for all features on all supported platforms.
+	\item \texttt{WAV}: The WAV file type is supported on Windows and supports all features except the optional fade-out when stopping the audio. The limitation exists because the current Windows MCI implementation uses the \texttt{setaudio ... volume to} command to gradually reduce volume during a fade-out. MCI supports volume control for MP3 playback, but the volume command is not supported for WAV playback. On Linux, the fade uses the player's own volume control, so there is no such limitation.
 \end{itemize}
 
 \subsection{Platform Details}
 
 \begin{itemize}\itemsep0em
 	\item \textbf{Windows:} All playback goes through the Windows Media Control Interface (MCI, from \texttt{winmm}). Supported file types are mp3 and wav; the supported set is checked through \texttt{audio::isASupportedType()} before any playback starts.
-	\item \textbf{Linux:} The system beep works through \texttt{/dev/console}. The file playback methods are not implemented yet and throw an \texttt{MIAException} when called.
+	\item \textbf{Linux:} All file playback goes through libVLC (from \texttt{libvlc}). Only mp3 is in the supported set so far. The player creates a fresh VLC media player for each playback and drives the volume through libVLC's audio API, which supports fades for every supported file type. The \texttt{libvlc-dev} package is required to build; the setup script installs it. The system beep works through \texttt{/dev/console}.
 \end{itemize}
