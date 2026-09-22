@@ -27,7 +27,6 @@
 
 namespace audio
 {
-    // @TODO - Implement on Linux.
     /**
      * @brief An audio player which is setup to play audio in a separate
      *        thread which the caller can manage as needed.
@@ -60,9 +59,8 @@ namespace audio
         /**
          * @brief Destroys the audio player and releases all platform-specific resources.
          *
-         * On Linux, stops playback and releases the libVLC media list player,
-         * media list, and VLC instance. On Windows, no additional cleanup is
-         * required here.
+         * On Linux, stops playback and releases the libVLC media player and
+         * VLC instance. On Windows, no additional cleanup is required here.
          */
          ~AudioPlayer();
 
@@ -188,9 +186,7 @@ namespace audio
         /**
          * @brief Enable or disable the playlistLoop feature which loops the
          *        playlist back to the first track after the last track ends.
-         * @note On Linux, this sets the vlc playback mode to libvlc_playback_mode_loop.
          * @param loop Whether or not to loop the playlist (false by default).
-         * @return true on success, false otherwise.
          */
         void setPlaylistLoop(bool loop);
 
@@ -209,8 +205,20 @@ namespace audio
 
         /// Getter for the current playlist shuffle setting.
         bool getPlaylistShuffle() const;
-        
-        // TODO - Add volume options.
+
+        /**
+         * @brief Sets the playback volume for this player.
+         *
+         * The volume applies immediately to the current playback (if any) and
+         * to all future playbacks. The setting persists across tracks, restarts,
+         * and playlists until it is changed again.
+         *
+         * @param volume The volume to use. This is clamped to the 0 - 100 range.
+         */
+        void setVolume(uint32_t volume);
+
+        /// Getter for the current playback volume (0 - 100).
+        uint32_t getVolume() const;
 
     protected:
 
@@ -236,8 +244,10 @@ namespace audio
 
         /**
          * @brief The threaded task that plays the sound.
-         * @note On Linux, this method does nothing since the vlc libraries create
-         *       their own asynchronous threads.
+         *
+         * Each call to this plays the current playlist track through to the end,
+         * then either returns (so the loop in threadLoop() invokes this again for
+         * the next track) or requests a stop when the playlist is finished.
          */
         void run() override;
 
@@ -260,60 +270,31 @@ namespace audio
 
         /// The playlist of audio files this player plays through.
         Playlist playlist;
+        /// The full path of the track which the worker thread is playing.
+        std::string playingFilePath;
         /// Mutex so the playlist can safely change during play.
         std::mutex playlistMutex;
 
+        /// Tracker of whether or not the audio is currently playing.
+        std::atomic<bool> audioPlaying{false};
         /// Whether or not to repeat the current audio track until stop is called.
         std::atomic<bool> repeatAudioTrack{false};
         /// Whether or not to loop the playlist back to the first track after the last.
         std::atomic<bool> playlistLoop{false};
         /// Whether or not to shuffle through the playlist tracks.
         std::atomic<bool> playlistShuffle{false};
-
-    #if defined(IS_WINDOWS)
-    
-        /// Tracker of whether or not the audio is currently playing.
-        std::atomic<bool> audioPlaying{false};
         /// Whether or not a fade-out was requested for the current playback.
         std::atomic<bool> fadeRequested{false};
         /// The time (in ms) over which the current fade-out should run.
         std::atomic<uint32_t> fadeTimeMS{0};
-        
-    #elif defined(IS_LINUX)
-    
-        /**
-         * @brief Rebuilds the libVLC media list from the current C++ Playlist.
-         *
-         * Releases the existing media list, creates a new one, and re-adds every
-         * track currently stored in @c playlist. Must be called whenever the
-         * playlist content changes.
-         *
-         * @note The caller must hold both @c vlcMutex and @c playlistMutex
-         *       (or guarantee equivalent exclusive access).
-         */
-        void rebuildVlcMediaList();
+        /// The playback volume (0 - 100) to use for each playback.
+        std::atomic<uint32_t> volume{100};
 
-        /**
-         * @brief Applies the current repeat / loop settings to the VLC list player.
-         *
-         * Maps the atomic flags @c repeatAudioTrack and @c playlistLoop onto
-         * the corresponding @c libvlc_playback_mode_t value.
-         *
-         * @note Must be called while holding @c vlcMutex.
-         */
-        void applyPlaybackMode();
-        
-        bool playTrackAtIndex(size_t index);
-        
+    #if defined(IS_LINUX)
+
         /// Top-level libVLC instance (lifetime of this object).
         libvlc_instance_t* vlcInstance = nullptr;
-        /// The media list that VLC plays through.
-        libvlc_media_list_t* vlcPlaylist = nullptr;
-        /// List player that owns playback control.
-        libvlc_media_list_player_t* vlcPlayer = nullptr;
-        /// Protects all VLC objects above.
-        mutable std::mutex vlcMutex;
-        
+
     #endif
     }; // class AudioPlayer
 } // namespace audio
