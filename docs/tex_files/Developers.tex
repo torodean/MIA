@@ -482,7 +482,7 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 	\item Debug level is handled internally and can be queried via \texttt{getDebugLevel()}.
 	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
 	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
-	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling. See section \ref{section:logging_Framework} for more details.
+	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling. The base \texttt{initialize()} also sets the logger's application name to the executable name, so log lines are tagged with \texttt{[executableName]} automatically. See section \ref{section:logging_Framework} for more details.
 \end{itemize}
 
 \subsection{Runtime Context}
@@ -1117,12 +1117,15 @@ For more structured applications, the \texttt{Logger} class provides an object-o
 	\item \texttt{log(message, tags, verbose = false)}\\
 	Logs a message to the current file with optional tags. The tags are an optional \texttt{vector<string>} parameter which will attach a string to the front of the message in the form of ``[tag1, tag2, ...].'' If \texttt{verbose} is enabled, also prints to \texttt{stdout}.
 	
-	\item \texttt{logMethodCallToFile(method, params = "", verbose = false)}\\
+	\item \texttt{logMethodCall(method, params = "", verbose = false)}\\
 	Logs a method call to the log file. This is intended to be called with method = \texttt{\_\_func\_\_} in order for automatic method detection. The params are optional parameters which can be included which will automatically appear between parenthesis.
 	
 	\item \texttt{setApplicationName(appName)}\\
-	Adds an optional string application name value to this object. When this is set, the log will always prepend the application name to the log output.
-	
+	Sets an optional application name tag for this object. When set, the name appears after the timestamp in the form of ``[appName]'' and merges with any tags passed to \texttt{log(message, tags, verbose)}.
+
+	\item \texttt{clearApplicationName()}\\
+	Clears the application name so it no longer appears in log output.
+
 	\item \texttt{getLogFile()}\\
 	Returns the current log file name in use.
 \end{itemize}
@@ -1131,7 +1134,7 @@ For more structured applications, the \texttt{Logger} class provides an object-o
 
 To use the Logger class, you simply construct it, and then call an appropriate method from the public API.
 \begin{lstlisting}[style=cppstyle]
-logger::Logger logger(myLog.log);
+logger::Logger logger("myLog.log");
 
 // This will write to myLog.log, and print the following:
 // "<timestamp>: message"
@@ -1139,18 +1142,21 @@ logger.log("test message", true);
 
 // This will write to myLog.log, and print the following:
 // "<timestamp> [myTag]: message"
-logger.log("my log message", "myTag", true);
+logger.log("my log message", {"myTag"}, true);
 
 // This will write to myLog.log, and print the following:
-// "<timestamp> add(1, 2)"
+// "<timestamp> [myApp]: message"
+logger.setApplicationName("myApp");
+logger.log("my log message", true);
+
+// This will write to myLog.log, and print the following:
+// "<timestamp>: add(1, 2)"
 int add(int a, int b)
 { // Defines a trivial method.
 	logger.logMethodCall(__func__, "1, 2", true);
 	return a + b;
 }
 \end{lstlisting}
-
-The Logger class also contains an optional
 
 
 
