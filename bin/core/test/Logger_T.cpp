@@ -222,9 +222,10 @@ TEST(LoggerFreeFunctions, LogToFile_WithTags)
 /**
  * @brief Verifies that the logToDefaultFile tags overload writes to the default log.
  *
- * The test snapshots the default log file, logs a tagged message through the default
- * file free function, and confirms the tagged line appears. The snapshot is restored
- * afterwards so the shared default log file is left untouched.
+ * The test logs a clearly-labeled test message through the default file free function
+ * and confirms the tagged line appears in the default log file. This intentionally
+ * appends to the production log; the UNIT_TEST tag and message text make it clear to
+ * anyone reading the log that the entry came from a unit test.
  */
 TEST(LoggerFreeFunctions, LogToDefaultFile_WithTags)
 {
