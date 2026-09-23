@@ -33,52 +33,52 @@ public:
     /**
      * Get verbose mode flag.
      */
-    bool getVerboseMode() const 
-    { return context.verboseMode; }
+    bool getVerboseMode() const;
 
     /**
      * Get the debugLevel.
      */
-    unsigned int getdebugLevel() const 
-    { return context.debugLevel; }
+    unsigned int getdebugLevel() const;
     
     /**
      * Log a message using the logger object. This will automatically set the verbose
      * mode based on the verbose flag.
-     * @param message[const std::string&] - The message to log.
+     * @param message The message to log.
      */
-    void log(const std::string& message) const
-    { context.logger.log(message, context.verboseMode); }
+    void log(const std::string& message) const;
     
     /**
-     * Log a message using the logger object with an optional verboseMode flag.
-     * @param message[const std::string&] - The message to log.
-     * @param verbose[bool] - Whether to print the message to stdout.
+     * Log a message using the logger object with an optional verboseMode flag. This
+     * overload allows the called to set the verbose flag without using the default
+     * application verbose flag parsed from command line options.
+     * @param message The message to log.
+     * @param verbose Whether to print the message to stdout.
      */
-    void log(const std::string& message, bool verbose) const
-    { context.logger.log(message, verbose); }
+    void log(const std::string& message, bool verbose) const;
     
     /**
      * Logs the name of the calling method and optional parameters using the logger object.
      * This is needed here to be called in the LOG_METHOD_CALL() and LOG_METHOD_CALL_WITH_PARAMS()
      * macros so that logger can stay a private member variable. Verbosity is handled internally
      * within the macros, but can be overloaded by calling this method directly.
-     * @param methodName[const std::string&] - Name of the calling method (typically passed via __func__).
-     * @param params[const std::string&] - Optional string representing parameters to include in the log.
+     *
+     * @param methodName Name of the calling method (typically passed via __func__).
+     * @param params Optional string representing parameters to include in the log.
+     * @param verbose Whether to print the message to stdout.
     */
     void logMethodCall(const std::string& methodName,
                        const std::string& params = "",
-                       bool verbose = false)
-    { context.logger.logMethodCall(methodName, params, verbose); }
+                       bool verbose = false);
     
 protected:
+
     /**
      * Virtual initialize() method. This should be overridden by the inheriting app, but a call
-     * to this method should be included.
-     * Parse command line arguments, handling common flags (-v, -h).
-     * Calls parseAppArguments for app-specific argument parsing.
+     * to this method should be included. Parse command line arguments, handling common flags 
+     * (-v, -h). Calls parseAppArguments for app-specific argument parsing.
+     *
      * @param argc, argv Command line arguments
-     * @throw [MIAException] - Throws an exception if parsing the command line options for base arguments fail.
+     * @throw Throws an exception if parsing the command line options for base arguments fail.
      */
     virtual void initialize(int argc, char* argv[]);
 
@@ -98,8 +98,7 @@ protected:
     /**
      * Returns the executable name if needed. 
      */
-    std::string getExecutableName()
-    { return executableName; } 
+    std::string getExecutableName();
     
     /**
      * @brief Provides read-only access to the runtime context.
@@ -110,10 +109,10 @@ protected:
      * 
      * @return const RuntimeContext& Reference to the runtime context.
      */
-    const RuntimeContext& getContext() const 
-    { return context; }
+    const RuntimeContext& getContext() const;
     
-private:    
+private:
+  
     /// The RuntimeContext for this class - stores common runtime variables.
     RuntimeContext context;
     
@@ -128,7 +127,7 @@ private:
     
     /// Store the executable name for use in the help message.
     std::string executableName;
-};
+}; // class MIAApplication
 
 // TODO: Replace macros with an inline method using C++20 std::source_location
 // to automatically capture the caller function name without needing __func__ or macros.
