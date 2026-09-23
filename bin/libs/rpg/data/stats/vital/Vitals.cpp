@@ -2,7 +2,7 @@
  * @file Vitals.cpp
  * @author Antonius Torode
  * @date 07/07/2025
- * Description: A class representing the vitals for a character.
+ * @brief A class representing the vitals for a character.
  */
 
 #include <iostream>
@@ -115,8 +115,10 @@ namespace stats
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+            // The insert may have rehashed the map, so the iterator must be refreshed.
+            it = dataStore.find(vital.getID());
         }
-        
+
         if (target == VitalDataTarget::CURRENT)
         {
             it->second.setCurrent(value);
@@ -167,9 +169,9 @@ namespace stats
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
         addModifier(*vital, sourceID, sourceType, value, target);
     }
-    void Vitals::addModifier(const Vital& vital, 
-                             uint32_t sourceID, 
-                             rpg::ModifierSourceType sourceType, 
+    void Vitals::addModifier(const Vital& vital,
+                             uint32_t sourceID,
+                             rpg::ModifierSourceType sourceType,
                              int value,
                              VitalDataTarget target)
     {
@@ -179,8 +181,10 @@ namespace stats
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+            // The insert may have rehashed the map, so the iterator must be refreshed.
+            it = dataStore.find(vital.getID());
         }
-        
+
         rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, value);
 
         it->second.addModifier(mod, target);
@@ -199,7 +203,7 @@ namespace stats
         const Vital* vital = helper_methods::getVitalFromRegistry(id);
         addModifier(*vital, mod, target);
     }
-    void Vitals::addModifier(const Vital& vital, 
+    void Vitals::addModifier(const Vital& vital,
                              rpg::Modifier<int>& mod,
                              VitalDataTarget target)
     {
@@ -209,6 +213,8 @@ namespace stats
             // The data is not found so add a default one, then update the current.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
+            // The insert may have rehashed the map, so the iterator must be refreshed.
+            it = dataStore.find(vital.getID());
         }
 
         it->second.addModifier(mod, target);
