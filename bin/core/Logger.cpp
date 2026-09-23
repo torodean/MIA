@@ -102,7 +102,7 @@ namespace logger
     {
         if (logStream.is_open())
             logStream << basic_utils::getCurrentDateTime() 
-                      << (applicationName.empty() ? "" : "[" + applicationName + "]")
+                      << (applicationName.empty() ? "" : " [" + applicationName + "]")
                       << ": " << message 
                       << std::endl;
             
