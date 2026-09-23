@@ -97,10 +97,42 @@ namespace logger
     }
 
 
-    void Logger::log(const std::string& message, bool verbose) const
+    void Logger::log(const std::string& message, 
+                     bool verbose) const
     {
         if (logStream.is_open())
-            logStream << basic_utils::getCurrentDateTime() << ": " << message << std::endl;
+            logStream << basic_utils::getCurrentDateTime() 
+                      << ": " << message 
+                      << std::endl;
+            
+        if (verbose)
+            std::cout << message << std::endl;
+    }
+
+
+    void Logger::log(const std::string& message, 
+                     const std::vector<std::string>& tags,
+                     bool verbose) const
+    {
+        std::string tagString;
+        if (!tags.empty())
+        { // Check if any tags are set.
+            tagString = "[";
+            for (size_t i=0; i<tags.size(); i++)
+            { // Loop over the tags.
+                tagString += tags[i];
+                
+                if (i+1<tags.size())
+                    tagString += ", ";
+            }
+            tagString += "]";
+        }
+    
+        if (logStream.is_open())
+            logStream << basic_utils::getCurrentDateTime()
+                      << (!tags.empty() ? " " : "") << tagString
+                      << ": " << message 
+                      << std::endl;
             
         if (verbose)
             std::cout << message << std::endl;

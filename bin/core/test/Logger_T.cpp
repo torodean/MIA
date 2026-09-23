@@ -7,6 +7,7 @@
 
 #include "Logger.hpp"
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <fstream>
 #include <cstdio>  // For std::remove
 #include <filesystem>
@@ -27,7 +28,6 @@ void cleanupFile(const std::string& filename)
 }
 
 /**
- * @test LoggerFreeFunctions.LogToFile_WritesMessage
  * @brief Verifies that logger::logToFile writes the provided message to the specified file.
  *
  * The test removes any existing test file, calls logger::logToFile with a
@@ -49,7 +49,6 @@ const std::string testFile = std::filesystem::absolute("test_log.log").string();
 }
 
 /**
- * @test LoggerFreeFunctions.LogMethodCallToFile_FormatsCorrectly
  * @brief Verifies that logger::logMethodCallToFile logs a method call entry containing
  *        the method name and parameter string.
  *
@@ -73,7 +72,6 @@ TEST(LoggerFreeFunctions, LogMethodCallToFile_FormatsCorrectly)
 }
 
 /**
- * @test LoggerClass.ConstructorWithFilename_UsesGivenFile
  * @brief Verifies that constructing logger::Logger with a filename sets the active log file.
  *
  * The test constructs a Logger with a specific file path, checks that getLogFile()
@@ -96,7 +94,32 @@ TEST(LoggerClass, ConstructorWithFilename_UsesGivenFile)
 }
 
 /**
- * @test LoggerClass.SetLogFile_ChangesLogFile
+ * @brief Verifies that log with specified tags works.
+ *
+ * The test logs a message with optional tags and makes sure the tags appear in the
+ * log message correctly.
+ */
+TEST(LoggerClass, LogWithTags)
+{
+    const std::string logFile = std::filesystem::absolute("logWithTags.log").string();
+    cleanupFile(logFile);
+
+    logger::Logger log(logFile);
+    std::vector<std::string> tags1 = {"tag1"};
+    log.log("Message with one tag.", tags1);
+
+    std::vector<std::string> tags2 = {"tag1", "tag2"};
+    log.log("Message with two tags.", tags2);
+
+    std::string contents = readFileContents(logFile);
+
+    EXPECT_THAT(contents, ::testing::HasSubstr("[tag1]: Message with one tag"));
+    EXPECT_THAT(contents, ::testing::HasSubstr("[tag1, tag2]: Message with two tags."));
+
+    cleanupFile(logFile);
+}
+
+/**
  * @brief Verifies that setLogFile changes the destination file used for logging.
  *
  * The test logs a message to the initial file, switches the log file using

@@ -8,6 +8,7 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
 
 namespace logger
 {
@@ -17,10 +18,11 @@ namespace logger
     /**
      * Logs a message to the default log file. This calls logToFile().
      * Optionally prints the message to stdout if verbose is true.
-     * @param message[const std::string&] - The message to log.
-     * @param verbose [bool] - Whether to print the message to stdout. Default: false.
+     * @param message The message to log.
+     * @param verbose Whether to print the message to stdout. Default: false.
      */
-    void logToDefaultFile(const std::string& message, bool verbose = false);
+    void logToDefaultFile(const std::string& message, 
+                          bool verbose = false);
 
     /**
      * Logs a message to a specified log file. This will attempt to use a somewhat smart
@@ -28,10 +30,11 @@ namespace logger
      * paths::getDefaultLogDirToUse() to find the full file name. If a "/" is the first
      * character of the filename, a full path is assumed.
      * Optionally prints the message to stdout if verbose is true.
-     * @note - This will assume the log directory for the output file already exists.
-     * @param message[const std::string&] - The message to log.
-     * @param filename[const std::string&] - The log file name to write to.
-     * @param verbose [bool] - Whether to print the message to stdout. Default: false.
+     * 
+     * @note This will assume the log directory for the output file already exists.
+     * @param message The message to log.
+     * @param filename The log file name to write to.
+     * @param verbose Whether to print the message to stdout. Default: false.
      * @see paths::getDefaultLogDirToUse()
      */
     void logToFile(const std::string& message, 
@@ -45,10 +48,10 @@ namespace logger
      * the method name and optionally any parameters. It delegates to the `logToFile()` method.
      * This method is mostly for debugging and tracking method calls.
      * 
-     * @param methodName[const std::string&] - Name of the calling method (typically passed via __func__).
-     * @param filename[const std::string&] - The log file name to write to.
-     * @param params[const std::string&] - Optional string representing parameters to include in the log.
-     * @param verbose [bool] - Whether to print the message to stdout. Default: false.
+     * @param methodName Name of the calling method (typically passed via __func__).
+     * @param filename The log file name to write to.
+     * @param params Optional string representing parameters to include in the log.
+     * @param verbose Whether to print the message to stdout. Default: false.
      */
     void logMethodCallToFile(const std::string& methodName, 
                              const std::string& filename, 
@@ -87,6 +90,7 @@ namespace logger
         /**
          * Change the log file used by this Logger instance.
          * Closes the current stream and opens the new file.
+         * 
          * @param filename The new log file name.
          */
         void setLogFile(const std::string& filename);
@@ -94,21 +98,37 @@ namespace logger
         /**
          * Log a message using the Logger's current log file.
          * Optionally prints the message to stdout if verbose is true.
+         * 
          * @param message The message to log.
          * @param verbose Whether to print the message to stdout. Default: false.
          */
-        void log(const std::string& message, bool verbose = false) const;
+        void log(const std::string& message,
+                 bool verbose = false) const;        
+                 
+        /**
+         * Log a message using the Logger's current log file.
+         * Optionally prints the message to stdout if verbose is true.
+         * 
+         * @param message The message to log.
+         * @param tags Optional tags to prepend to the log messages. These will appear before 
+         *        the log messages between brackets (i.e. [tag1, tag2, tag3, ...]: message).
+         * @param verbose Whether to print the message to stdout. Default: false.
+         */
+        void log(const std::string& message,
+                 const std::vector<std::string>& tags,
+                 bool verbose = false) const;
 
         /**
-         * @brief Logs the name of the calling method and optional parameters using the Logger's current log file.
+         * @brief Logs the name of the calling method and optional parameters using the Logger's 
+         *        current log file.
          * 
          * This function should be called at the start of a method to automatically log
          * the method name and optionally any parameters. It delegates to the `log()` method.
          * This method is mostly for debugging and tracking method calls.
          * 
-         * @param methodName[const std::string&] - Name of the calling method (typically passed via __func__).
-         * @param params[const std::string&] - Optional string representing parameters to include in the log.
-         * @param verbose [bool] - Whether to print the message to stdout. Default: false.
+         * @param methodName Name of the calling method (typically passed via __func__).
+         * @param params Optional string representing parameters to include in the log.
+         * @param verbose Whether to print the message to stdout. Default: false.
          */
         void logMethodCall(const std::string& methodName,
                            const std::string& params = "",
@@ -138,9 +158,8 @@ namespace logger
          * Opens the current log file in append mode. This will attempt to use a somewhat smart
          * lookup to determnine the full file path based on currentLogFileName. This uses
          * paths::getDefaultLogDirToUse() to find the full file name. If a "/" is the first
-         * character of the filename, a full path is assumed.
-         * Called during construction and when the log file is changed.
-         * Ensures logStream is ready for writing.
+         * character of the filename, a full path is assumed. Called during construction and 
+         * when the log file is changed. Ensures logStream is ready for writing.
          * @see paths::getDefaultLogDirToUse()
          */
         void openLogFile();
