@@ -97,7 +97,7 @@ namespace audio
         const std::string logMessage = message;
 
         if (player && player->context)
-            player->context->logger.log(logMessage, tags);
+            player->context->logger.log(logMessage, tags, player->context->verboseMode);
         else if (player)
             logger::logToFile(logMessage, player->fallbackLogFileName, tags);
         else
