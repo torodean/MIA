@@ -6,8 +6,10 @@
  */
 
 #include "Logger.hpp"
+#include "Paths.hpp"
 #include <gtest/gtest.h>
 #include <fstream>
+#include <sstream>
 #include <cstdio>  // For std::remove
 #include <filesystem>
 
@@ -24,6 +26,19 @@ std::string readFileContents(const std::string& filename)
 void cleanupFile(const std::string& filename)
 {
     std::remove(filename.c_str());
+}
+
+// Extract the first line containing the given substring, without the trailing newline.
+std::string findLine(const std::string& contents, const std::string& substring)
+{
+    std::istringstream stream(contents);
+    std::string line;
+    while (std::getline(stream, line))
+    {
+        if (line.find(substring) != std::string::npos)
+            return line;
+    }
+    return "";
 }
 
 /**
@@ -176,10 +191,61 @@ TEST(LoggerClass, LogMethodCall_LogsMethodNameAndParams)
 }
 
 /**
+ * @brief Verifies that the logToFile tags overload writes the tagged format.
+ *
+ * The test logs messages with the tags free function, once with tags and once with
+ * an empty tag list, and checks the full log lines. The timestamp is a fixed 19
+ * character string, so the expected lines are exact; this pins the spacing between
+ * the timestamp, the tag, and the message.
+ */
+TEST(LoggerFreeFunctions, LogToFile_WithTags)
+{
+    const std::string logFile = std::filesystem::absolute("logToFileTags.log").string();
+    cleanupFile(logFile);
+
+    logger::logToFile("tagged message", logFile, {"tag1", "tag2"});
+    logger::logToFile("untagged message", logFile, {});
+
+    std::string contents = readFileContents(logFile);
+
+    const std::string taggedLine = findLine(contents, "tagged message");
+    ASSERT_FALSE(taggedLine.empty());
+    EXPECT_EQ(taggedLine, taggedLine.substr(0, 19) + " [tag1, tag2]: tagged message");
+
+    const std::string untaggedLine = findLine(contents, "untagged message");
+    ASSERT_FALSE(untaggedLine.empty());
+    EXPECT_EQ(untaggedLine, untaggedLine.substr(0, 19) + ": untagged message");
+
+    cleanupFile(logFile);
+}
+
+/**
+ * @brief Verifies that the logToDefaultFile tags overload writes to the default log.
+ *
+ * The test logs a clearly-labeled test message through the default file free function
+ * and confirms the tagged line appears in the default log file. This intentionally
+ * appends to the production log; the UNIT_TEST tag and message text make it clear to
+ * anyone reading the log that the entry came from a unit test.
+ */
+TEST(LoggerFreeFunctions, LogToDefaultFile_WithTags)
+{
+    const std::string defaultLogFile = paths::getDefaultLogDirToUse() + "/" + logger::DEFAULT_LOG_FILE;
+
+    const std::vector<std::string> tags = {"UNIT_TEST"};
+    logger::logToDefaultFile("unit test - logToDefaultFile tags overload", tags);
+
+    std::string contents = readFileContents(defaultLogFile);
+    EXPECT_NE(contents.find("[UNIT_TEST]: unit test - logToDefaultFile tags overload"), std::string::npos)
+        << "The test message was not found in " << defaultLogFile;
+}
+
+/**
  * @brief Verifies that log with an application name set works.
  *
- * The test logs a message with optional application name set and makes sure the app
- * name appears in the log message correctly.
+ * The test logs a message with the application name set, once without tags and once
+ * with tags, and checks the full log lines. The timestamp is a fixed 19 character
+ * string, so the expected lines are exact; this pins the spacing between the
+ * timestamp, the app name tag, and the message.
  */
 TEST(LoggerClass, LogWithAppNameAndTags)
 {
@@ -190,15 +256,26 @@ TEST(LoggerClass, LogWithAppNameAndTags)
     log.setApplicationName("testApp");
     log.log("test log message");
 
+    // An empty tags vector with an app name set still emits the app name tag.
+    log.log("app name only", {});
+
     std::vector<std::string> tags = {"tag1", "tag2"};
     log.log("app name and tags", tags);
 
     std::string contents = readFileContents(logFile);
 
-    EXPECT_NE(contents.find("[testApp]: test log message"), std::string::npos);
-    EXPECT_NE(contents.find("[testApp, tag1, tag2]: app name and tags"), std::string::npos);
+    const std::string appNameLine = findLine(contents, "test log message");
+    ASSERT_FALSE(appNameLine.empty());
+    EXPECT_EQ(appNameLine, appNameLine.substr(0, 19) + " [testApp]: test log message");
+
+    const std::string appNameOnlyLine = findLine(contents, "app name only");
+    ASSERT_FALSE(appNameOnlyLine.empty());
+    EXPECT_EQ(appNameOnlyLine, appNameOnlyLine.substr(0, 19) + " [testApp]: app name only");
+
+    const std::string tagLine = findLine(contents, "app name and tags");
+    ASSERT_FALSE(tagLine.empty());
+    EXPECT_EQ(tagLine, tagLine.substr(0, 19) + " [testApp, tag1, tag2]: app name and tags");
 
     cleanupFile(logFile);
 }
-
 

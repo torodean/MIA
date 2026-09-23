@@ -38,7 +38,7 @@ The configuration data backing types live in private headers used only by `MIACo
 
 ## Logging Framework
 
-The `Logger.hpp` and `Logger.cpp` files provide a logging class and free functions (`logToDefaultFile`, `logToFile`) which enable logging to customizable files, integrated with system paths.
+The `Logger.hpp` and `Logger.cpp` files provide a logging class and free functions (`logToDefaultFile`, `logToFile`) which enable logging to customizable files, integrated with system paths. The class supports optional tags and an application name, which are prepended to log output between brackets.
 
 ## Threaded Background System
 

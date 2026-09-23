@@ -22,6 +22,8 @@
 // Used for error returns.
 #include "MIAException.hpp"
 #include "Error.hpp"
+// Used for logging libVLC diagnostics.
+#include "Logger.hpp"
 // Used for thread sleeps.
 #include "Timing.hpp"
 
@@ -74,22 +76,34 @@ namespace audio
 
 #elif defined(IS_LINUX)
 
-    /**
-     * @brief A no-op libVLC logging callback.
-     *
-     * libVLC writes its internal diagnostics (demux probing errors, etc.)
-     * directly to stderr through its own logging. This callback silences that
-     * output so the audio player does not pollute application output with
-     * messages which do not affect playback.
-     *
-     * @param level The libVLC log level of this message (unused).
-     * @param fmt The printf-style format string (unused).
-     */
-    static void vlcLogCallback(void*, int, const libvlc_log_t*, const char*, va_list)
+    void AudioPlayer::vlcLogCallback(void* data, 
+                                     int level, 
+                                     const libvlc_log_t*, 
+                                     const char* fmt, 
+                                     va_list args)
     {
-        // Intentionally silent.
-    }
+        // Only warnings and errors are worth writing to the log file.
+        if (level < LIBVLC_WARNING)
+            return;
 
+        // Format the libVLC message with its arguments.
+        char message[512];
+        vsnprintf(message, sizeof(message), fmt, args);
+
+        // The player which registered the callback, for reading the context.
+        auto* player = static_cast<AudioPlayer*>(data);
+
+        std::vector<std::string> tags = {"VLC", level == LIBVLC_ERROR ? "ERROR" : "WARNING"};
+        const std::string logMessage = message;
+
+        if (player && player->context)
+            player->context->logger.log(logMessage, tags, player->context->verboseMode);
+        else if (player)
+            logger::logToFile(logMessage, player->fallbackLogFileName, tags);
+        else
+            logger::logToDefaultFile(logMessage, tags);
+    }
+    
 #endif
 
 
@@ -106,7 +120,7 @@ namespace audio
         }
 
         // Silence the libVLC internal logging (e.g. demux probing noise).
-        libvlc_log_set(vlcInstance, vlcLogCallback, nullptr);
+        libvlc_log_set(vlcInstance, vlcLogCallback, this);
     #endif
     }
 
@@ -124,7 +138,7 @@ namespace audio
         }
 
         // Silence the libVLC internal logging (e.g. demux probing noise).
-        libvlc_log_set(vlcInstance, vlcLogCallback, nullptr);
+        libvlc_log_set(vlcInstance, vlcLogCallback, this);
     #endif
 
         setAudioFile(fileName);
