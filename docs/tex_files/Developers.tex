@@ -1120,6 +1120,9 @@ For more structured applications, the \texttt{Logger} class provides an object-o
 	\item \texttt{logMethodCallToFile(method, params = "", verbose = false)}\\
 	Logs a method call to the log file. This is intended to be called with method = \texttt{\_\_func\_\_} in order for automatic method detection. The params are optional parameters which can be included which will automatically appear between parenthesis.
 	
+	\item \texttt{setApplicationName(appName)}\\
+	Adds an optional string application name value to this object. When this is set, the log will always prepend the application name to the log output.
+	
 	\item \texttt{getLogFile()}\\
 	Returns the current log file name in use.
 \end{itemize}
@@ -1147,7 +1150,7 @@ int add(int a, int b)
 }
 \end{lstlisting}
 
-
+The Logger class also contains an optional
 
 
 
