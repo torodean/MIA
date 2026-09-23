@@ -47,14 +47,22 @@ namespace error
         { Invalid_Type_Requested, "Invalid type for template argument." },
         { Invalid_Configuration_Call, "Invalid configuration call." },
         { Out_Of_Order_Method_Calls, "A sequence of methods was called out of order." },
-		
-		/*
-		 * Operating-system-specific related Errors.
-		 * 315XX error codes.
-		 */        
-		{ Windows_Only_Feature, "This feature is only implemented for Windows." },
+        
+        /*
+         * Operating-system-specific related Errors.
+         * 315XX error codes.
+         */        
+        { Windows_Only_Feature, "This feature is only implemented for Windows." },
         { Linux_Only_Feature, "This feature is only implemented for Linux." },
         { OS_Not_Supported, "This feature is not supported on this OS." },
+        
+        /*
+         * VLC-related errors. 361XX
+         */
+        {VLC_Failed_To_Create_Instance, "Failed to create an instance of libvlc."},
+        {VLC_Failed_To_Create_Media, "Failed to create media object for libvlc."},
+        {VLC_Failed_To_Create_Player, "Failed to create player object for libvlc."},
+        {VLC_Failed_To_Play_Audio, "Failed to play audio using libvlc."},
         
         /*
          * RPG error codes. 371XX

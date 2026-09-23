@@ -107,3 +107,25 @@ int testAudioPlayerPlaylistShuffle(bool verboseMode);
  * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
  */
 int testAudioPlayerPlaylistSkip(bool verboseMode);
+
+/**
+ * @brief Tests changing the volume during playback.
+ *
+ * Plays a file at volume 100, lowers the volume to 50 after 3 seconds, raises
+ * it back to 100 after another 3 seconds, then stops after a final 3 seconds.
+ *
+ * @param verboseMode Whether or not to enable verbose output.
+ * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
+ */
+int testAudioPlayerVolumeChange(bool verboseMode);
+
+/**
+ * @brief Tests that a changed audio file plays after the current track ends.
+ *
+ * Starts playing a long file, swaps in the short file mid-play, skips forward
+ * after 5 seconds, and lets the short file audibly play next.
+ *
+ * @param verboseMode Whether or not to enable verbose output.
+ * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
+ */
+int testAudioPlayerChangeFilePlaysNext(bool verboseMode);

@@ -66,6 +66,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake
           sudo apt-get install -y nlohmann-json3-dev
+          sudo apt-get install libvlc-dev
           bash ./scripts/setup-gtest.sh
 
       # Configure and build the project using CMake.
