@@ -101,9 +101,9 @@ namespace logger
                      bool verbose) const
     {
         if (logStream.is_open())
-            logStream << basic_utils::getCurrentDateTime() 
+            logStream << basic_utils::getCurrentDateTime()
                       << (applicationName.empty() ? "" : " [" + applicationName + "]")
-                      << ": " << message 
+                      << ": " << message
                       << std::endl;
             
         if (verbose)
@@ -138,8 +138,8 @@ namespace logger
     
         if (logStream.is_open())
             logStream << basic_utils::getCurrentDateTime()
-                      << (!tags.empty() ? " " : "") << tagString
-                      << ": " << message 
+                      << (!tagString.empty() ? " " : "") << tagString
+                      << ": " << message
                       << std::endl;
             
         if (verbose)
