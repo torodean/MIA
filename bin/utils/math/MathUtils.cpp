@@ -84,4 +84,14 @@ namespace math
         cout << "1d" << xx << ": " << rand << endl;
         return rand;
     }
+
+
+    int saturatingAdd(int base, int delta)
+    {
+        if (delta > 0 && base > std::numeric_limits<int>::max() - delta)
+            return std::numeric_limits<int>::max();
+        if (delta < 0 && base < std::numeric_limits<int>::lowest() - delta)
+            return std::numeric_limits<int>::lowest();
+        return base + delta;
+    }
 } // namespace math
