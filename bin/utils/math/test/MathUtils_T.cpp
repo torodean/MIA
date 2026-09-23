@@ -64,4 +64,37 @@ namespace math
             EXPECT_LE(val, sides);
         }
     }
+
+    /**
+     * @brief Verifies saturatingAdd returns the normal sum for in-range inputs.
+     */
+    TEST(MathUtils, SaturatingAddNormal)
+    {
+        EXPECT_EQ(saturatingAdd(0, 0), 0);
+        EXPECT_EQ(saturatingAdd(100, 20), 120);
+        EXPECT_EQ(saturatingAdd(5, -10), -5);
+        EXPECT_EQ(saturatingAdd(-5, -5), -10);
+    }
+
+    /**
+     * @brief Verifies saturatingAdd caps positive overflow at INT_MAX.
+     */
+    TEST(MathUtils, SaturatingAddOverflow)
+    {
+        int max = std::numeric_limits<int>::max();
+        EXPECT_EQ(saturatingAdd(max, 1), max);
+        EXPECT_EQ(saturatingAdd(max - 5, 10), max);
+        EXPECT_EQ(saturatingAdd(0, max), max);
+    }
+
+    /**
+     * @brief Verifies saturatingAdd caps negative overflow at INT_MIN.
+     */
+    TEST(MathUtils, SaturatingAddUnderflow)
+    {
+        int min = std::numeric_limits<int>::lowest();
+        EXPECT_EQ(saturatingAdd(min, -1), min);
+        EXPECT_EQ(saturatingAdd(min + 5, -10), min);
+        EXPECT_EQ(saturatingAdd(0, min), min);
+    }
 } // namespace math
