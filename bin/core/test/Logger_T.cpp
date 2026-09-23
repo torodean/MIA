@@ -8,6 +8,7 @@
 #include "Logger.hpp"
 #include <gtest/gtest.h>
 #include <fstream>
+#include <sstream>
 #include <cstdio>  // For std::remove
 #include <filesystem>
 
@@ -24,6 +25,19 @@ std::string readFileContents(const std::string& filename)
 void cleanupFile(const std::string& filename)
 {
     std::remove(filename.c_str());
+}
+
+// Extract the first line containing the given substring, without the trailing newline.
+std::string findLine(const std::string& contents, const std::string& substring)
+{
+    std::istringstream stream(contents);
+    std::string line;
+    while (std::getline(stream, line))
+    {
+        if (line.find(substring) != std::string::npos)
+            return line;
+    }
+    return "";
 }
 
 /**
@@ -178,8 +192,10 @@ TEST(LoggerClass, LogMethodCall_LogsMethodNameAndParams)
 /**
  * @brief Verifies that log with an application name set works.
  *
- * The test logs a message with optional application name set and makes sure the app
- * name appears in the log message correctly.
+ * The test logs a message with the application name set, once without tags and once
+ * with tags, and checks the full log lines. The timestamp is a fixed 19 character
+ * string, so the expected lines are exact; this pins the spacing between the
+ * timestamp, the app name tag, and the message.
  */
 TEST(LoggerClass, LogWithAppNameAndTags)
 {
@@ -190,15 +206,26 @@ TEST(LoggerClass, LogWithAppNameAndTags)
     log.setApplicationName("testApp");
     log.log("test log message");
 
+    // An empty tags vector with an app name set still emits the app name tag.
+    log.log("app name only", {});
+
     std::vector<std::string> tags = {"tag1", "tag2"};
     log.log("app name and tags", tags);
 
     std::string contents = readFileContents(logFile);
 
-    EXPECT_NE(contents.find("[testApp]: test log message"), std::string::npos);
-    EXPECT_NE(contents.find("[testApp, tag1, tag2]: app name and tags"), std::string::npos);
+    const std::string appNameLine = findLine(contents, "test log message");
+    ASSERT_FALSE(appNameLine.empty());
+    EXPECT_EQ(appNameLine, appNameLine.substr(0, 19) + " [testApp]: test log message");
+
+    const std::string appNameOnlyLine = findLine(contents, "app name only");
+    ASSERT_FALSE(appNameOnlyLine.empty());
+    EXPECT_EQ(appNameOnlyLine, appNameOnlyLine.substr(0, 19) + " [testApp]: app name only");
+
+    const std::string tagLine = findLine(contents, "app name and tags");
+    ASSERT_FALSE(tagLine.empty());
+    EXPECT_EQ(tagLine, tagLine.substr(0, 19) + " [testApp, tag1, tag2]: app name and tags");
 
     cleanupFile(logFile);
 }
-
 
