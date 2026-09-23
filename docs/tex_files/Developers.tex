@@ -1088,14 +1088,20 @@ New configuration formats can be supported by deriving new classes from \texttt{
 The \texttt{Logger} component provides centralized logging functionality for all MIA applications. It supports simple log message recording to either a default or user-defined log file, with optional verbosity to print messages to \texttt{stdout}.
 
 \subsection{Free Logging Functions}
-Three free-standing functions are provided for lightweight, context-independent logging:
+Various free-standing functions are provided for lightweight, context-independent logging (see \texttt{bin/core/Logger.hpp} for the full API). The functions are summarized below:
 
 \begin{itemize}\itemsep0em
 	\item \texttt{logToDefaultFile(message, verbose = false)}\\
 	Logs a message to a default log file (typically \texttt{MIA.log}). If \texttt{verbose} is \texttt{true}, the message is also printed to \texttt{stdout}.
-	
+
+	\item \texttt{logToDefaultFile(message, tags, verbose = false)}\\
+	Logs a message to the default log file with optional tags, formatted the same way as the \texttt{Logger} class tags overload.
+
 	\item \texttt{logToFile(message, filename, verbose = false)}\\
 	Logs a message to a specified file. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
+
+	\item \texttt{logToFile(message, filename, tags, verbose = false)}\\
+	Logs a message to a specified file with optional tags, formatted the same way as the \texttt{Logger} class tags overload.
 
  	\item \texttt{void logMethodCallToFile(methodName, filename, params = "", verbose = false)}\\
   	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). See section \ref{section:base_application} to see how these macros are (and should be) called. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
@@ -1157,6 +1163,8 @@ int add(int a, int b)
 	return a + b;
 }
 \end{lstlisting}
+
+Note that a two-argument call like \texttt{log("message", \{"tag"\})} binds the braced list to the \texttt{bool verbose} overload rather than the tags overload (a string literal converts to \texttt{bool}); pass a named \texttt{vector<string>} for the tags when not also passing the verbose flag.
 
 
 
