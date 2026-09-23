@@ -2,10 +2,10 @@
  * @file MathUtils_T.cpp
  * @author Antonius Torode
  * @date 05/20/2025
- * Description: Unit tests for MathUtils.hpp using Google Test framework. 
- *     Tests cover the methods in MathUtils.
+ * @brief: Unit tests covering the methods in MathUtils.hpp
  */ 
 
+#include <limits>
 #include <gtest/gtest.h>
 
 // Include the assocuated header file for methods to test.
