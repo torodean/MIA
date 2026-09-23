@@ -230,7 +230,8 @@ TEST(LoggerFreeFunctions, LogToDefaultFile_WithTags)
 {
     const std::string defaultLogFile = paths::getDefaultLogDirToUse() + "/" + logger::DEFAULT_LOG_FILE;
 
-    logger::logToDefaultFile("unit test - logToDefaultFile tags overload", {"UNIT_TEST"});
+    const std::vector<std::string> tags = {"UNIT_TEST"};
+    logger::logToDefaultFile("unit test - logToDefaultFile tags overload", tags);
 
     std::string contents = readFileContents(defaultLogFile);
     EXPECT_NE(contents.find("[UNIT_TEST]: unit test - logToDefaultFile tags overload"), std::string::npos)
