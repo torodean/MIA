@@ -138,8 +138,21 @@ namespace logger
          * Get the current log file name.
          * @return The current log file name.
          */
-        std::string getLogFile() const
-        { return currentLogFileName; }
+        std::string getLogFile() const;
+        
+        /**
+         * Sets the optional applicationName variable to be prepended to logs. When this is
+         * set, the log messages will be prepended with the application name. To disable this
+         * option, call the clearApplicationName() method. When set, the application name will
+         * be treated as a tag, and attached to the front of the log message (after the 
+         * timestamp) surrounded by brackets (i.e., <timestamp> [appName]: logMessage).
+         */
+        void setApplicationName(const std::string& appName);
+        
+        /**
+         * Clears the applicationName.
+         */
+        void clearApplicationName();
 
     private:
     
@@ -147,6 +160,12 @@ namespace logger
         std::string currentLogFileName;
         /// The full path to the log file. This is auto-set in openLogFile()
         std::string currentLogFileFullPath;
+        
+        /**
+         * The optional application name to tag log messages with. When this is set via 
+         * setApplicationName(), the app name will appear attached to the log messages.
+         */
+        std::string applicationName;
         
         /**
          * Output file stream used for writing log messages.

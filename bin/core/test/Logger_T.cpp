@@ -175,3 +175,30 @@ TEST(LoggerClass, LogMethodCall_LogsMethodNameAndParams)
     cleanupFile(testFile);
 }
 
+/**
+ * @brief Verifies that log with an application name set works.
+ *
+ * The test logs a message with optional application name set and makes sure the app
+ * name appears in the log message correctly.
+ */
+TEST(LoggerClass, LogWithAppNameAndTags)
+{
+    const std::string logFile = std::filesystem::absolute("logWithAppName.log").string();
+    cleanupFile(logFile);
+
+    logger::Logger log(logFile);
+    log.setApplicationName("testApp");
+    log.log("test log message");
+
+    std::vector<std::string> tags = {"tag1", "tag2"};
+    log.log("app name and tags", tags);
+
+    std::string contents = readFileContents(logFile);
+
+    EXPECT_NE(contents.find("[testApp]: test log message"), std::string::npos);
+    EXPECT_NE(contents.find("[testApp, tag1, tag2]: app name and tags"), std::string::npos);
+
+    cleanupFile(logFile);
+}
+
+
