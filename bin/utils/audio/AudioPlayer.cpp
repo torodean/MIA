@@ -34,24 +34,6 @@
 
 namespace audio
 {
-#if defined(IS_LINUX)
-    /**
-     * @brief A no-op libVLC logging callback.
-     *
-     * libVLC writes its internal diagnostics (demux probing errors, etc.)
-     * directly to stderr through its own logging. This callback silences that
-     * output so the audio player does not pollute application output with
-     * messages which do not affect playback.
-     *
-     * @param level The libVLC log level of this message (unused).
-     * @param fmt The printf-style format string (unused).
-     */
-    static void vlcLogCallback(void*, int, const libvlc_log_t*, const char*, va_list)
-    {
-        // Intentionally silent.
-    }
-#endif
-
 #if defined(IS_WINDOWS)
 
     /**
@@ -88,6 +70,24 @@ namespace audio
             mciGetErrorString(error, errorText, sizeof(errorText));
             std::cerr << "Failed to close sound file: " << errorText << std::endl;
         }
+    }
+
+#elif defined(IS_LINUX)
+
+    /**
+     * @brief A no-op libVLC logging callback.
+     *
+     * libVLC writes its internal diagnostics (demux probing errors, etc.)
+     * directly to stderr through its own logging. This callback silences that
+     * output so the audio player does not pollute application output with
+     * messages which do not affect playback.
+     *
+     * @param level The libVLC log level of this message (unused).
+     * @param fmt The printf-style format string (unused).
+     */
+    static void vlcLogCallback(void*, int, const libvlc_log_t*, const char*, va_list)
+    {
+        // Intentionally silent.
     }
 
 #endif
@@ -151,7 +151,7 @@ namespace audio
         files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
         {
-            std::cerr << "Unsupported file type specified!" << std::endl;
+            std::cerr << "ERROR: Unsupported file type specified!" << std::endl;
             return false;
         }
 
@@ -171,7 +171,7 @@ namespace audio
             files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
             if (!isASupportedType(fileMetaData))
             {
-                std::cerr << "Skipping unsupported file type: " << fileName << std::endl;
+                std::cerr << "WARNING: Skipping unsupported file type: " << fileName << std::endl;
                 continue;
             }
             newPlaylist.push_back(fileMetaData);
@@ -179,7 +179,7 @@ namespace audio
 
         if (newPlaylist.empty())
         {
-            std::cerr << "No supported files were specified for the playlist!" << std::endl;
+            std::cerr << "ERROR: No supported files were specified for the playlist!" << std::endl;
             return false;
         }
 
@@ -196,7 +196,7 @@ namespace audio
         files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
         {
-            std::cerr << "Unsupported file type specified!" << std::endl;
+            std::cerr << "ERROR: Unsupported file type specified!" << std::endl;
             return false;
         }
 
@@ -241,13 +241,13 @@ namespace audio
             {
                 if (playlist.current().type == files::FileType::Unknown)
                 {
-                    std::cerr << "The playlist is empty or finished!" << std::endl;
+                    std::cerr << "WARNING: The playlist is empty or finished!" << std::endl;
                     return false;
                 }
             }
             else if (!playlist.advance(playlistShuffle, playlistLoop))
             {
-                std::cerr << "The playlist is empty or finished!" << std::endl;
+                std::cerr << "WARNING: The playlist is empty or finished!" << std::endl;
                 return false;
             }
         }
@@ -294,7 +294,7 @@ namespace audio
             std::lock_guard<std::mutex> lock(playlistMutex);
             if (playlist.current().type == files::FileType::Unknown)
             {
-                std::cerr << "No audio file was specified to play!" << std::endl;
+                std::cerr << "ERROR: No audio file was specified to play!" << std::endl;
                 return false;
             }
         }
@@ -594,35 +594,13 @@ namespace audio
         // Stop and close the audio device for a clean exit.
         closeAudioDevice(soundAlias);
 
-        // The playback is done, so end the task unless there is more to play.
-        if (stopRequested)
-        {
-            audioPlaying = false;
-            return;
-        }
-
-        // Repeat the same track when enabled, otherwise advance to the next track.
-        if (repeatAudioTrack)
-            return;
-
-        {
-            std::lock_guard<std::mutex> lock(playlistMutex);
-            if (playlist.advance(playlistShuffle, playlistLoop))
-                return; // There is another track to play.
-        }
-
-        // The playlist is finished, so end the task.
-        audioPlaying = false;
-        stopRequested = true;
-
+    /*
+     * Linux uses the vlc API to play the audio. Each playback gets its own
+     * media player (like the MCI alias on Windows), since a media player
+     * which was stopped cannot reliably play a second track. The Playlist
+     * class tracks everything else.
+     */
     #elif defined(IS_LINUX)
-
-        /*
-         * Linux uses the vlc API to play the audio. Each playback gets its own
-         * media player (like the MCI alias on Windows), since a media player
-         * which was stopped cannot reliably play a second track. The Playlist
-         * class tracks everything else.
-         */
 
         // Load the current track into a new media player.
         libvlc_media_t* media = libvlc_media_new_path(vlcInstance,
@@ -718,6 +696,8 @@ namespace audio
         // This playback is done, so release its media player.
         libvlc_media_player_release(vlcPlayer);
 
+    #endif
+
         // The playback is done, so end the task unless there is more to play.
         if (stopRequested)
         {
@@ -738,6 +718,5 @@ namespace audio
         // The playlist is finished, so end the task.
         audioPlaying = false;
         stopRequested = true;
-    #endif
     }
 } // namespace audio
