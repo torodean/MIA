@@ -102,6 +102,7 @@ namespace logger
     {
         if (logStream.is_open())
             logStream << basic_utils::getCurrentDateTime() 
+                      << (applicationName.empty() ? "" : "[" + applicationName + "]")
                       << ": " << message 
                       << std::endl;
             
@@ -115,9 +116,16 @@ namespace logger
                      bool verbose) const
     {
         std::string tagString;
-        if (!tags.empty())
+        if (!tags.empty() || !applicationName.empty())
         { // Check if any tags are set.
             tagString = "[";
+            if (!applicationName.empty())
+            { // Add the optional app name if enabled.
+                tagString += applicationName;
+                if (!tags.empty())
+                    tagString += ", ";
+            }
+               
             for (size_t i=0; i<tags.size(); i++)
             { // Loop over the tags.
                 tagString += tags[i];
@@ -145,6 +153,24 @@ namespace logger
     {
         std::string msg = methodName + "(" + params + ")";
         log(msg, verbose);
+    }
+
+
+    std::string Logger::getLogFile() const
+    { 
+        return currentLogFileName; 
+    }
+    
+    
+    void Logger::setApplicationName(const std::string& appName)
+    {
+        applicationName = appName;
+    }
+
+
+    void Logger::clearApplicationName()
+    {
+        applicationName.clear();
     }
 
 
