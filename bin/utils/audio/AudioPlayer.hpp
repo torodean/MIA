@@ -9,6 +9,7 @@
 #include <string>
 #include <cstdint>
 #include <cstddef>
+#include <cstdarg>
 #include <mutex>
 #include <atomic>
 #include <vector>
@@ -17,6 +18,8 @@
 #include "BackgroundTask.hpp"
 // Used for the playlist this player plays through.
 #include "Playlist.hpp"
+// Used for DEFAULT_LOG_FILE in the fallback log file name.
+#include "Logger.hpp"
 // Used for preprocessor macros.
 #include "Constants.hpp"
 
@@ -295,6 +298,35 @@ namespace audio
         /// Top-level libVLC instance (lifetime of this object).
         libvlc_instance_t* vlcInstance = nullptr;
 
+        /**
+         * @brief The libVLC logging callback.
+         *
+         * Routes libVLC warnings and errors into the application logger so they
+         * show up in the log file instead of being silenced. The user data
+         * pointer is the AudioPlayer which registered this callback.
+         *
+         * @param data The AudioPlayer which registered the callback.
+         * @param level The libVLC log level of this message.
+         * @param ctx The libVLC context of this message (unused).
+         * @param fmt The printf-style format string of the message.
+         * @param args The arguments for the format string.
+         */
+        static void vlcLogCallback(void* data,
+                                   int level,
+                                   const libvlc_log_t* ctx,
+                                   const char* fmt,
+                                   va_list args);
+
     #endif
+
+        /**
+         * The log file to use when no RuntimeContext is set. This defaults to
+         * the default log file and is only settable by the unit tests.
+         */
+        std::string fallbackLogFileName{logger::DEFAULT_LOG_FILE};
+
+        // Lets the unit tests redirect the fallback log file for isolation.
+        friend class AudioPlayerFallbackLogTestAccess;
+
     }; // class AudioPlayer
 } // namespace audio
