@@ -6,6 +6,7 @@
  */
 
 #include "Logger.hpp"
+#include "Paths.hpp"
 #include <gtest/gtest.h>
 #include <fstream>
 #include <sstream>
@@ -187,6 +188,53 @@ TEST(LoggerClass, LogMethodCall_LogsMethodNameAndParams)
     EXPECT_NE(contents.find(params), std::string::npos);
 
     cleanupFile(testFile);
+}
+
+/**
+ * @brief Verifies that the logToFile tags overload writes the tagged format.
+ *
+ * The test logs messages with the tags free function, once with tags and once with
+ * an empty tag list, and checks the full log lines. The timestamp is a fixed 19
+ * character string, so the expected lines are exact; this pins the spacing between
+ * the timestamp, the tag, and the message.
+ */
+TEST(LoggerFreeFunctions, LogToFile_WithTags)
+{
+    const std::string logFile = std::filesystem::absolute("logToFileTags.log").string();
+    cleanupFile(logFile);
+
+    logger::logToFile("tagged message", logFile, {"tag1", "tag2"});
+    logger::logToFile("untagged message", logFile, {});
+
+    std::string contents = readFileContents(logFile);
+
+    const std::string taggedLine = findLine(contents, "tagged message");
+    ASSERT_FALSE(taggedLine.empty());
+    EXPECT_EQ(taggedLine, taggedLine.substr(0, 19) + " [tag1, tag2]: tagged message");
+
+    const std::string untaggedLine = findLine(contents, "untagged message");
+    ASSERT_FALSE(untaggedLine.empty());
+    EXPECT_EQ(untaggedLine, untaggedLine.substr(0, 19) + ": untagged message");
+
+    cleanupFile(logFile);
+}
+
+/**
+ * @brief Verifies that the logToDefaultFile tags overload writes to the default log.
+ *
+ * The test snapshots the default log file, logs a tagged message through the default
+ * file free function, and confirms the tagged line appears. The snapshot is restored
+ * afterwards so the shared default log file is left untouched.
+ */
+TEST(LoggerFreeFunctions, LogToDefaultFile_WithTags)
+{
+    const std::string defaultLogFile = paths::getDefaultLogDirToUse() + "/" + logger::DEFAULT_LOG_FILE;
+
+    logger::logToDefaultFile("unit test - logToDefaultFile tags overload", {"UNIT_TEST"});
+
+    std::string contents = readFileContents(defaultLogFile);
+    EXPECT_NE(contents.find("[UNIT_TEST]: unit test - logToDefaultFile tags overload"), std::string::npos)
+        << "The test message was not found in " << defaultLogFile;
 }
 
 /**
