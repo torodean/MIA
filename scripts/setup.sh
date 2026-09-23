@@ -17,7 +17,9 @@ if [[ "$uname_out" == "Linux" ]]; then
 	sudo apt-get install -y libxdo-dev
 	sudo apt-get install -y libmysqlcppconn-dev
 	sudo apt-get install libx11-dev libxtst-dev
-	sudo apt-get install libvlc-dev
+	# vlc-plugin-base provides the plugin modules which libvlc_new()
+	# needs at runtime; libvlc-dev only pulls in the core libraries.
+	sudo apt-get install libvlc-dev vlc-plugin-base
 	sudo apt install nlohmann-json3-dev
 	sudo apt install python3-dev
 	sudo apt install python3-numpy
