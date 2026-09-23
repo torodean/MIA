@@ -109,6 +109,10 @@ int testPlayingSoundFromFileWithStop(bool verboseMode)
             std::cout << i << "..." << std::endl;
         timing::sleepSeconds(1);
     }
+
+	// Stop the file.
+	if (verboseMode)
+		std::cout << "Stopping the sound!" << std::endl;
 	status = audio::stopSound(0, verboseMode);
 	if (!status)
 	{
@@ -158,7 +162,10 @@ int testPlayingSoundFromFileWithFade(bool verboseMode)
             std::cout << i << "..." << std::endl;
         timing::sleepSeconds(1);
     }
-    
+
+	// Fade the sound out over 5 seconds.
+	if (verboseMode)
+		std::cout << "Fading out over 5 seconds..." << std::endl;
 	status = audio::stopSound(5000, verboseMode);
 	if (!status)
 	{

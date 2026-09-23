@@ -86,7 +86,9 @@ void MIATest::printTestHelp()
               << " 19: Test the AudioPlayer playing a playlist to the end." << std::endl
               << " 20: Test the AudioPlayer looping a playlist for 20s." << std::endl
               << " 21: Test the AudioPlayer shuffling a playlist for 20s." << std::endl
-              << " 22: Test the AudioPlayer skipping forward and back in a playlist." << std::endl;
+              << " 22: Test the AudioPlayer skipping forward and back in a playlist." << std::endl
+              << " 23: Test the AudioPlayer changing the volume during playback." << std::endl
+              << " 24: Test the AudioPlayer playing a changed file after the current track." << std::endl;
 }
 
 
@@ -131,6 +133,8 @@ int MIATest::run()
         case 20: return testAudioPlayerPlaylistLoop(verboseMode);
         case 21: return testAudioPlayerPlaylistShuffle(verboseMode);
         case 22: return testAudioPlayerPlaylistSkip(verboseMode);
+        case 23: return testAudioPlayerVolumeChange(verboseMode);
+        case 24: return testAudioPlayerChangeFilePlaysNext(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();

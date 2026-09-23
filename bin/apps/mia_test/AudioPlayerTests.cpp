@@ -49,22 +49,26 @@ namespace
     /**
      * @brief Sleeps for a specified number of seconds, optionally displaying a countdown.
      *
+     * The countdown stops early when the audio player reports that it stopped
+     * playing (e.g. when an in-progress fade-out completes before the timer).
+     *
      * @param player Reference to the audio player in order to periodically check for failure.
      * @param seconds The number of seconds to sleep.
      * @param verboseMode Whether to display the countdown.
      */
-    static void sleepWithCountdown(const audio::AudioPlayer& player, 
-                                   int seconds, 
+    static void sleepWithCountdown(const audio::AudioPlayer& player,
+                                   int seconds,
                                    bool verboseMode = false)
     {
-        if (verboseMode)
-            std::cout << "Sleeping for " << seconds << " seconds..." << std::endl;
-
         for (int i=seconds; i>0; i--)
         {
             if (player.hasFailed())
                 player.rethrowExceptionIfAny();
-                
+
+            // The playback finished early (e.g. the fade completed), so stop waiting.
+            if (!player.isAudioPlaying())
+                break;
+
             if (verboseMode)
                 std::cout << i << "..." << std::endl;
 
@@ -183,6 +187,8 @@ int testAudioPlayerBasicPlayback(bool verboseMode)
         return constants::FAILURE;
 
     // Waits for the audio to finish playing on its own.
+    if (verboseMode)
+        std::cout << "Waiting for the audio to finish playing on its own..." << std::endl;
     while (player.isAudioPlaying())
         timing::sleepMilliseconds(50);
 
@@ -217,6 +223,8 @@ int testAudioPlayerWithStop(bool verboseMode)
     sleepWithCountdown(player, 5, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
 
@@ -241,11 +249,28 @@ int testAudioPlayerWithFade(bool verboseMode)
         return constants::FAILURE;
 
     // Wait 5 seconds then fade out over 5 seconds.
+    if (verboseMode)
+        std::cout << "Waiting 5 seconds before the fade out..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
 
     // Stop the audio with a fade.
+    if (verboseMode)
+        std::cout << "Fading out over 5 seconds..." << std::endl;
     if (!stopAudio(player, 5000, verboseMode)) // 5000 ms fade out.
         return constants::FAILURE;
+
+    // Counts down while the fade-out runs.
+    sleepWithCountdown(player, 5, verboseMode);
+
+    /*
+     * The fade runs asynchronously in the worker thread and finishes at about
+     * the same time as the countdown above, so wait for the worker to land
+     * before verifying.
+     */
+    if (verboseMode)
+        std::cout << "Waiting for the fade to finish..." << std::endl;
+    while (player.isAudioPlaying())
+        timing::sleepMilliseconds(50);
 
     // The audio should no longer be playing.
     if (!verifyAudioStopped(player, verboseMode))
@@ -276,9 +301,13 @@ int testAudioPlayerWithRepeat(bool verboseMode)
         return constants::FAILURE;
 
     // Lets the short file repeat a couple of times before stopping.
+    if (verboseMode)
+        std::cout << "Repeating the audio track for 10 seconds..." << std::endl;
     sleepWithCountdown(player, 10, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
 
@@ -303,6 +332,8 @@ int testAudioPlayerRestart(bool verboseMode)
         return constants::FAILURE;
 
     // Wait 5 seconds then restart the audio.
+    if (verboseMode)
+        std::cout << "Waiting 5 seconds before restarting..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
 
     if (verboseMode)
@@ -324,9 +355,13 @@ int testAudioPlayerRestart(bool verboseMode)
     }
     
     // Wait 5 seconds to audibly make sure the audio restarted.
+    if (verboseMode)
+        std::cout << "Waiting 5 seconds to verify the audio restarted..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
 
@@ -348,6 +383,8 @@ int testAudioPlayerChangeFileWhilePlaying(bool verboseMode)
         return constants::FAILURE;
 
     // Waits a bit for the audio to start, then swaps in the short file mid-play.
+    if (verboseMode)
+        std::cout << "Waiting 5 seconds before changing the audio file..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
     if (verboseMode)
         std::cout << "Setting new audio file! Audio should continue..." << std::endl;
@@ -371,9 +408,13 @@ int testAudioPlayerChangeFileWhilePlaying(bool verboseMode)
     }
     
     // Sleep for a couple seconds before cleaning up.
+    if (verboseMode)
+        std::cout << "Playing the original audio for 3 more seconds..." << std::endl;
     sleepWithCountdown(player, 3, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
 
@@ -409,6 +450,8 @@ int testAudioPlayerPlaylistSequential(bool verboseMode)
     sleepWithCountdown(player, 34, verboseMode);
 
     // Waits for the playlist to finish playing on its own.
+    if (verboseMode)
+        std::cout << "Waiting for the playlist to finish playing on its own..." << std::endl;
     while (player.isAudioPlaying())
         timing::sleepMilliseconds(50);
 
@@ -458,9 +501,13 @@ int testAudioPlayerPlaylistLoop(bool verboseMode)
         return constants::FAILURE;
 
     // Lets the playlist wrap around past the end before stopping.
+    if (verboseMode)
+        std::cout << "Looping the playlist for 12 seconds..." << std::endl;
     sleepWithCountdown(player, 12, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
 
@@ -502,9 +549,13 @@ int testAudioPlayerPlaylistShuffle(bool verboseMode)
         return constants::FAILURE;
 
     // Lets the shuffle pick a few tracks before stopping.
+    if (verboseMode)
+        std::cout << "Shuffling through the playlist for 20 seconds..." << std::endl;
     sleepWithCountdown(player, 20, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
 
@@ -538,6 +589,8 @@ int testAudioPlayerPlaylistSkip(bool verboseMode)
         return constants::FAILURE;
 
     // Waits a bit, then skips forward to the next track.
+    if (verboseMode)
+        std::cout << "Playing the first track for 5 seconds..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
     if (verboseMode)
         std::cout << "Skipping to the next audio track." << std::endl;
@@ -552,6 +605,8 @@ int testAudioPlayerPlaylistSkip(bool verboseMode)
     }
 
     // Waits a short time (short audio is very short), then skips back to the previous track.
+    if (verboseMode)
+        std::cout << "Playing the next track for 5 seconds..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
     if (verboseMode)
         std::cout << "Returning to the previous audio track." << std::endl;
@@ -575,11 +630,160 @@ int testAudioPlayerPlaylistSkip(bool verboseMode)
     }
     
     // Waits a few before stopping.
+    if (verboseMode)
+        std::cout << "Playing the restored track for 5 seconds..." << std::endl;
     sleepWithCountdown(player, 5, verboseMode);
 
     // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
     if (!stopAudio(player, 0, verboseMode))
         return constants::FAILURE;
+
+    // If it made it this far, it's a success.
+    return constants::SUCCESS;
+}
+
+
+int testAudioPlayerVolumeChange(bool verboseMode)
+{
+    std::string longFilePath = getTestAudioFilePath("test_sound_long.mp3");
+
+    // Constructs the player from the long test file.
+    audio::AudioPlayer player(longFilePath);
+
+    // The player should start at full volume.
+    if (player.getVolume() != 100)
+    {
+        if (verboseMode)
+            std::cout << "FAILED the player did not start at volume 100!" << std::endl;
+        return constants::FAILURE;
+    }
+
+    // Starts playing the audio file.
+    if (!startAudio(player, longFilePath, verboseMode))
+        return constants::FAILURE;
+
+    // Plays at volume 100 for 3 seconds, then lowers the volume to 50.
+    if (verboseMode)
+        std::cout << "Playing at volume 100 for 3 seconds..." << std::endl;
+    sleepWithCountdown(player, 3, verboseMode);
+    if (verboseMode)
+        std::cout << "Lowering the volume to 50." << std::endl;
+    player.setVolume(50);
+    if (player.getVolume() != 50)
+    {
+        if (verboseMode)
+            std::cout << "FAILED setting the volume to 50!" << std::endl;
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    // Plays at volume 50 for 3 seconds, then raises the volume back to 100.
+    if (verboseMode)
+        std::cout << "Playing at volume 50 for 3 seconds..." << std::endl;
+    sleepWithCountdown(player, 3, verboseMode);
+    if (verboseMode)
+        std::cout << "Raising the volume back to 100." << std::endl;
+    player.setVolume(100);
+    if (player.getVolume() != 100)
+    {
+        if (verboseMode)
+            std::cout << "FAILED setting the volume to 100!" << std::endl;
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    // Waits 3 more seconds at full volume to audibly verify the change.
+    if (verboseMode)
+        std::cout << "Playing at volume 100 for 3 more seconds..." << std::endl;
+    sleepWithCountdown(player, 3, verboseMode);
+
+    // Stop the audio.
+    if (verboseMode)
+        std::cout << "Stopping the audio!" << std::endl;
+    if (!stopAudio(player, 0, verboseMode))
+        return constants::FAILURE;
+
+    // If it made it this far, it's a success.
+    return constants::SUCCESS;
+}
+
+
+int testAudioPlayerChangeFilePlaysNext(bool verboseMode)
+{
+    std::string shortFilePath = getTestAudioFilePath("test_sound_short.mp3");
+    std::string longFilePath = getTestAudioFilePath("test_sound_long.mp3");
+
+    // Constructs the player from the long test file.
+    audio::AudioPlayer player(longFilePath);
+
+    // Starts playing the audio file.
+    if (!startAudio(player, longFilePath, verboseMode))
+        return constants::FAILURE;
+
+    // Waits a bit for the audio to start, then swaps in the short file mid-play.
+    if (verboseMode)
+        std::cout << "Playing the long file for 3 seconds..." << std::endl;
+    sleepWithCountdown(player, 3, verboseMode);
+    if (verboseMode)
+        std::cout << "Setting new audio file! The short file should play next..." << std::endl;
+    if (!player.setAudioFile(shortFilePath))
+    {
+        if (verboseMode)
+            std::cout << "FAILED setting a new audio file mid-play!" << std::endl;
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    // The current playback should be unaffected, so it should still report playing.
+    if (verifyAudioStopped(player, false)) // Silence the error since it's expected here.
+    {
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    /*
+     * Skips forward so the current playback ends and the short file (which is
+     * a couple of seconds long) audibly plays next.
+     */
+    if (verboseMode)
+        std::cout << "Skipping forward so the short file plays..." << std::endl;
+    sleepWithCountdown(player, 5, verboseMode);
+    if (!player.nextAudio())
+    {
+        if (verboseMode)
+            std::cout << "FAILED skipping to the next track!" << std::endl;
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    /*
+     * Waits for the short file to play through (a couple of seconds) plus a
+     * small buffer before verifying the player finished on its own.
+     */
+    if (verboseMode)
+        std::cout << "Waiting for the short file to play through..." << std::endl;
+    sleepWithCountdown(player, 5, verboseMode);
+
+    // The short file should have played through, so the player should be done.
+    if (!verifyAudioStopped(player, verboseMode))
+    {
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
 
     // If it made it this far, it's a success.
     return constants::SUCCESS;

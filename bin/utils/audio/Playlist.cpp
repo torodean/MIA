@@ -79,6 +79,18 @@ namespace audio
     }
 
 
+    const std::vector<files::FileMetaData>& Playlist::getTracks() const
+    { 
+        return tracks;
+    }
+
+
+    size_t Playlist::getCurrentIndex() const
+    { 
+        return index;
+    }
+
+
     size_t Playlist::selectNextIndex(bool shuffle, bool loop) const
     {
         // The playlist is empty, so there is nothing to select.
