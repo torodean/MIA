@@ -21,7 +21,20 @@ namespace logger
      * @param message The message to log.
      * @param verbose Whether to print the message to stdout. Default: false.
      */
-    void logToDefaultFile(const std::string& message, 
+    void logToDefaultFile(const std::string& message,
+                          bool verbose = false);
+
+    /**
+     * Logs a message with optional tags to the default log file. This calls the tags
+     * overload of logToFile(), with the tags formatted the same way as the Logger
+     * class tags overload (i.e. [tag1, tag2, ...]: message).
+     * @param message The message to log.
+     * @param tags Optional tags to prepend to the log messages. These will appear before
+     *        the log messages between brackets (i.e. [tag1, tag2, tag3, ...]: message).
+     * @param verbose Whether to print the message to stdout. Default: false.
+     */
+    void logToDefaultFile(const std::string& message,
+                          const std::vector<std::string>& tags,
                           bool verbose = false);
 
     /**
@@ -37,10 +50,28 @@ namespace logger
      * @param verbose Whether to print the message to stdout. Default: false.
      * @see paths::getDefaultLogDirToUse()
      */
-    void logToFile(const std::string& message, 
-                   const std::string& filename, 
+    void logToFile(const std::string& message,
+                   const std::string& filename,
                    bool verbose = false);
-    
+
+    /**
+     * Logs a message with optional tags to a specified log file. This behaves the same
+     * as logToFile(), with the tags formatted the same way as the Logger class tags
+     * overload (i.e. [tag1, tag2, ...]: message).
+     *
+     * @note This will assume the log directory for the output file already exists.
+     * @param message The message to log.
+     * @param filename The log file name to write to.
+     * @param tags Optional tags to prepend to the log messages. These will appear before
+     *        the log messages between brackets (i.e. [tag1, tag2, tag3, ...]: message).
+     * @param verbose Whether to print the message to stdout. Default: false.
+     * @see paths::getDefaultLogDirToUse()
+     */
+    void logToFile(const std::string& message,
+                   const std::string& filename,
+                   const std::vector<std::string>& tags,
+                   bool verbose = false);
+
     /**
      * @brief Logs the name of the calling method along with optional parameters.
      * 
