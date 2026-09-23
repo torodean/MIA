@@ -66,7 +66,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake
           sudo apt-get install -y nlohmann-json3-dev
-          sudo apt-get install libvlc-dev
+          # vlc-plugin-base provides the plugin modules which libvlc_new()
+          # needs at runtime; libvlc-dev only pulls in the core libraries.
+          sudo apt-get install libvlc-dev vlc-plugin-base
           bash ./scripts/setup-gtest.sh
 
       # Configure and build the project using CMake.
