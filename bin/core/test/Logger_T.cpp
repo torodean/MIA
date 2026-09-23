@@ -7,7 +7,6 @@
 
 #include "Logger.hpp"
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <fstream>
 #include <cstdio>  // For std::remove
 #include <filesystem>
@@ -113,8 +112,8 @@ TEST(LoggerClass, LogWithTags)
 
     std::string contents = readFileContents(logFile);
 
-    EXPECT_THAT(contents, ::testing::HasSubstr("[tag1]: Message with one tag"));
-    EXPECT_THAT(contents, ::testing::HasSubstr("[tag1, tag2]: Message with two tags."));
+    EXPECT_NE(contents.find("[tag1]: Message with one tag."), std::string::npos);
+    EXPECT_NE(contents.find("[tag1, tag2]: Message with two tags"), std::string::npos);
 
     cleanupFile(logFile);
 }
