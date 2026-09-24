@@ -106,9 +106,11 @@ namespace stats
     {
         VitalRegistry& registry = VitalRegistry::getInstance();
         std::string invalidJson = R"({"VITAL": "not_an_array"})";
-        EXPECT_THROW(registry.loadFromString(invalidJson), std::runtime_error) << "Invalid JSON should throw runtime_error";
+        EXPECT_THROW(registry.loadFromString(invalidJson), error::MIAException) 
+            << "Invalid JSON should throw runtime_error";
 
         std::string missingKeyJson = R"({"WRONG_KEY": []})";
-        EXPECT_THROW(registry.loadFromString(missingKeyJson), std::runtime_error) << "Missing VITAL key should throw runtime_error";
+        EXPECT_THROW(registry.loadFromString(missingKeyJson), error::MIAException) 
+            << "Missing VITAL key should throw runtime_error";
     }
 } // namespace stats

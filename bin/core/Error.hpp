@@ -85,6 +85,13 @@ namespace error
         VLC_Failed_To_Play_Audio = 36103,     ///< Failed to play audio using libvlc.
         
         /*
+         * JSON related errors. 362XX
+         */
+        JSON_Failed_To_Parse_String = 36200,  ///< Failed to parse a json string.
+        JSON_Key_Not_Found = 36201,           ///< The json key was not found.
+        JSON_Key_Not_Array_Type = 36202,      ///< The json key was not the expected array type.
+        
+        /*
          * RPG error codes. 371XX
          */
         Undefined_RPG_Value = 37100,          ///< A referenced value for the RPG system wasn't defined.

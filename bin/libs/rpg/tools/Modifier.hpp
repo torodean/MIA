@@ -37,10 +37,10 @@ namespace rpg
         switch (type)
         {
             case ModifierSourceType::ATTRIBUTE: return "ATTRIBUTE";
-            case ModifierSourceType::ITEM:     return "ITEM";
-            case ModifierSourceType::BUFF:     return "BUFF";
-            case ModifierSourceType::DEBUFF:   return "DEBUFF";
-            default:                           return "UNKNOWN";
+            case ModifierSourceType::ITEM:      return "ITEM";
+            case ModifierSourceType::BUFF:      return "BUFF";
+            case ModifierSourceType::DEBUFF:    return "DEBUFF";
+            default:                            return "UNKNOWN";
         }
     }
 
@@ -59,23 +59,23 @@ namespace rpg
         std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 
         if (str == "ATTRIBUTE") return ModifierSourceType::ATTRIBUTE;
-        if (str == "ITEM")     return ModifierSourceType::ITEM;
-        if (str == "BUFF")     return ModifierSourceType::BUFF;
-        if (str == "DEBUFF")   return ModifierSourceType::DEBUFF;
+        if (str == "ITEM")      return ModifierSourceType::ITEM;
+        if (str == "BUFF")      return ModifierSourceType::BUFF;
+        if (str == "DEBUFF")    return ModifierSourceType::DEBUFF;
         return ModifierSourceType::UNKNOWN;
     }
     
     /**
      * A templated struct to represent a modifier to an object's value.
      */
-    template<typename T>
+    template<typename Type>
     struct Modifier
     {
-        uint32_t sourceID;         ///< ID of the source (e.g., attribute ID, item ID).
+        uint32_t sourceID;         ///< ID of the source (e.g., attribute ID, item ID, etc).
         ModifierSourceType source; ///< Type of source (e.g., "attribute", "item", "buff").
-        T value;                   ///< The modifier value (positive or negative, depending on type).
+        Type value;                ///< The modifier value (positive or negative, depending on type).
 
-        Modifier(uint32_t id, ModifierSourceType src, T val)
+        Modifier(uint32_t id, ModifierSourceType src, Type val)
             : sourceID(id), source(src), value(val) {}
             
         /**
@@ -83,16 +83,16 @@ namespace rpg
          *
          * Compares two Modifier objects for equality based on their sourceID and source fields.
          * The value field is intentionally excluded from the comparison.
+         * TODO - I forgot to record the 'why' on that 'intentionally excluded' piece...
          *
          * @param other The Modifier object to compare with.
          * @return true if both sourceID and source are equal; false otherwise.
          */
-        bool operator==(const Modifier<T>& other) const
+        bool operator==(const Modifier<Type>& other) const
         {
             return sourceID == other.sourceID && source == other.source;
         }
-
-    };
+    }; // struct Modifier
             
     /**
      * Stream insertion operator for Modifier.
@@ -102,8 +102,8 @@ namespace rpg
      * @param modifier The Modifier object to serialize.
      * @return The modified output stream.
      */
-    template<typename T>
-    std::ostream& operator<<(std::ostream& os, const Modifier<T>& modifier)
+    template<typename Type>
+    std::ostream& operator<<(std::ostream& os, const Modifier<Type>& modifier)
     {
         os << "Modifier{sourceID=" << modifier.sourceID
            << ", source=" << modifierSourceTypeToString(modifier.source)

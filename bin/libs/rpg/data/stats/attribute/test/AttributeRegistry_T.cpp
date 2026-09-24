@@ -116,9 +116,11 @@ namespace stats
     {
         AttributeRegistry& registry = AttributeRegistry::getInstance();
         std::string invalidJson = R"({"ATTRIBUTE": "not_an_array"})";
-        EXPECT_THROW(registry.loadFromString(invalidJson), std::runtime_error) << "Invalid JSON should throw runtime_error";
+        EXPECT_THROW(registry.loadFromString(invalidJson), error::MIAException) 
+            << "Invalid JSON should throw runtime_error";
 
         std::string missingKeyJson = R"({"WRONG_KEY": []})";
-        EXPECT_THROW(registry.loadFromString(missingKeyJson), std::runtime_error) << "Missing ATTRIBUTE key should throw runtime_error";
+        EXPECT_THROW(registry.loadFromString(missingKeyJson), error::MIAException) 
+            << "Missing ATTRIBUTE key should throw runtime_error";
     }
 } // namespace stats

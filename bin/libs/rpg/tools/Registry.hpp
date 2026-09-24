@@ -10,7 +10,12 @@
 #include <string>
 #include <fstream>
 #include <stdexcept>
+
 #include <nlohmann/json.hpp>
+
+// Used for exception and error handling.
+#include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace rpg
 {
@@ -50,13 +55,13 @@ namespace rpg
         /**
          * Loads objects from a JSON configuration file.
          * @param filename Path to the JSON file.
-         * @throws std::runtime_error if file cannot be read or parsed.
+         * @throws MIAException if file cannot be read or parsed.
          */
         virtual void loadFromFile(const std::string& filename)
         {
             std::ifstream file(filename);
             if (!file.is_open())
-                throw std::runtime_error("Failed to open file: " + filename);
+                MIA_THROW(error::Failed_To_Open_File, filename);
 
             nlohmann::json data;
             file >> data;
@@ -68,7 +73,7 @@ namespace rpg
          * Useful for testing or dynamic configuration without file I/O.
          *
          * @param jsonStr A JSON-formatted string.
-         * @throws std::runtime_error if parsing fails.
+         * @throws MIAException if parsing fails.
          */
         virtual void loadFromString(const std::string& jsonStr)
         {
@@ -79,7 +84,7 @@ namespace rpg
             }
             catch (const nlohmann::json::parse_error& e)
             {
-                throw std::runtime_error("Failed to parse JSON string: " + std::string(e.what()));
+                MIA_THROW(error::JSON_Failed_To_Parse_String, std::string(e.what()));
             }
             loadFromJson(data);
         }
@@ -119,6 +124,10 @@ namespace rpg
         }        
 
     protected:
+    
+        /**
+         * Default constructor. TODO - I forgot why this was protected.
+         */
         Registry() = default;
         
         /**
@@ -145,15 +154,15 @@ namespace rpg
         /**
          * Loads objects from a JSON object by extracting the array for the derived class's key.
          * @param data The JSON object containing the array.
-         * @throws std::runtime_error if the key is missing or not an array.
+         * @throws MIAException if the key is missing or not an array.
          */
         void loadFromJson(const nlohmann::json& data)
         {
             std::string key = getJsonKey();
             if (!data.contains(key))
-                throw std::runtime_error("JSON does not contain key: " + key);
+                MIA_THROW(error::JSON_Key_Not_Found, key);
             if (!data[key].is_array())
-                throw std::runtime_error("JSON key '" + key + "' is not an array");
+                MIA_THROW(error::JSON_Key_Not_Array_Type, key);
 
             objects.clear();
             nameToId.clear();
