@@ -2,7 +2,7 @@
  * @file Modifies.hpp
  * @author Antonius Torode
  * @date 07/12/2025
- * Description: A class for storing and managing modifications to other objects in the RPG system.
+ * @brief: A class for storing/managing modifications to other objects in the RPG system.
  */
 #pragma once
 
@@ -71,7 +71,7 @@ namespace rpg
         rpg::DataType targetType;  ///< The type of the target object (e.g., "VITAL"). 
         std::string targetName;    ///< Name of the target object (e.g., "Health").
         ModifyType modifyType;     ///< Type of modification (e.g., ADD_MAX, MULTIPLY, SET).
-        double modifyValuePer;     ///< Value applied per unit (e.g., 5 per point of attribute).
+        double modifyValuePer;     ///< Value applied. Potentially per unit (e.g., 5 per point of attribute).
         
         /// Default constructor.
         Modifies() = default;

@@ -2,13 +2,13 @@
  * @file Registry_T.cpp
  * @author Antonius Torode
  * @date 07/09/2025
- * Description: Unit tests for the templated Registry base class in the MIA RPG system using Google Test.
+ * @brief: Unit tests for the Registry base class.
  */
 
 #include <gtest/gtest.h>
-#include "Registry.hpp"
 
-using json = nlohmann::json;
+// Include the associated file for testing.
+#include "Registry.hpp"
 
 namespace rpg 
 {
@@ -28,9 +28,12 @@ namespace rpg
         }
 
     protected:
-        std::string getJsonKey() const override { return "dummy"; }
+        std::string getJsonKey() const override 
+        { 
+            return "dummy"; 
+        }
         
-        DummyObject parseJson(const json& j) override 
+        DummyObject parseJson(const nlohmann::json& j) override 
         {
             return DummyObject{ j.at("id").get<uint32_t>(), j.at("name").get<std::string>() };
         }
@@ -42,6 +45,7 @@ namespace rpg
     };
 
 } // namespace rpg
+
 
 class RegistryTest : public ::testing::Test 
 {

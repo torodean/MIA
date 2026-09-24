@@ -2,12 +2,16 @@
  * @file ProgressRegistry_T.cpp
  * @author Antonius Torode
  * @date 07/20/2025
- * @brief Unit tests for the ProgressRegistry class using Google Test.
+ * @brief Unit tests for the ProgressRegistry class.
  */
 
 #include <gtest/gtest.h>
 #include <sstream>
+
+// Include the associated file to test.
 #include "ProgressRegistry.hpp"
+// Used for error handling.
+#include "MIAException.hpp"
 
 namespace progress
 {
@@ -99,10 +103,12 @@ namespace progress
     {
         ProgressRegistry& registry = ProgressRegistry::getInstance();
         std::string invalidJson = R"({"PROGRESS": "not_an_array"})";
-        EXPECT_THROW(registry.loadFromString(invalidJson), std::runtime_error) << "Invalid JSON should throw runtime_error";
+        EXPECT_THROW(registry.loadFromString(invalidJson), error::MIAException) 
+            << "Invalid JSON should throw runtime_error";
 
         std::string missingKeyJson = R"({"WRONG_KEY": []})";
-        EXPECT_THROW(registry.loadFromString(missingKeyJson), std::runtime_error) << "Missing PROGRESS key should throw runtime_error";
+        EXPECT_THROW(registry.loadFromString(missingKeyJson), error::MIAException) 
+            << "Missing PROGRESS key should throw runtime_error";
     }
 
     // Tests loading JSON with missing description field to ensure default handling.
@@ -117,7 +123,8 @@ namespace progress
             ]
         })";
         ProgressRegistry& registry = ProgressRegistry::getInstance();
-        ASSERT_NO_THROW(registry.loadFromString(jsonDataMissingDesc)) << "Loading JSON with missing description should not throw";
+        ASSERT_NO_THROW(registry.loadFromString(jsonDataMissingDesc)) 
+            << "Loading JSON with missing description should not throw";
 
         const ProgressMarker* quest3 = registry.getByName("Quest3");
         ASSERT_NE(quest3, nullptr) << "Quest3 progress marker should be found";

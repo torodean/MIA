@@ -2,12 +2,13 @@
  * @file RegistryHelper.hpp
  * @author Antonius Torode
  * @date 07/07/2025
- * Description: Helper methods for accessing registry objects..
+ * @brief: Helper methods for accessing registry objects.
  */
 #pragma once
 
-#include "Error.hpp"
+// Used for error handling.
 #include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace rpg
 {
@@ -18,7 +19,7 @@ namespace rpg
     namespace helper_methods
     {
         /**
-         * Helper template method to validate and retrieve a Vital object from RegistryType.
+         * Helper template method to validate and retrieve an object from RegistryType.
          *
          * @tparam RegistryType The type of registry (e.g., CurrencyRegistry, VitalRegistry, etc).
          * @tparam ObjType The type of the object (e.g., Currency, Vital, etc).
@@ -31,19 +32,19 @@ namespace rpg
         {
             const ObjType* object = nullptr;
             if constexpr (std::is_same_v<SearchType, std::string>)
-            {
+            { // Searches by name if a string identifier was used.
                 object = RegistryType::getInstance().getByName(identifier);
             }
             else if constexpr (std::is_same_v<SearchType, uint32_t>)
-            {
+            { // Searches by ID if a uint32_t identifier was used.
                 object = RegistryType::getInstance().getByID(identifier);
             }
             else if constexpr (std::is_same_v<SearchType, ObjType>)
-            {
+            { // If the identifier is of a derived type, search for the instance of that object.
                 object = RegistryType::getInstance().getByID(identifier.getID());
             }
             if (!object)
-            {
+            { // Object was never defined.
                 MIA_THROW(error::ErrorCode::Undefined_RPG_Value);
             }
             else

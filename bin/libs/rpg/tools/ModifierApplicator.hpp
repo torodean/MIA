@@ -2,16 +2,18 @@
  * @file ModifierApplicator.hpp
  * @author Antonius Torode
  * @date 07/14/2025
- * Description: Templated utility for applying modifiers from source objects to target objects.
+ * @brief: Utility for applying modifiers from source objects to target objects.
  */
 
 #pragma once
 
 #include <string>
+
 #include "Registry.hpp"
 #include "Modifies.hpp"
-#include "Error.hpp"
+// Used for error handling.
 #include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace rpg::helper_methods
 {
@@ -27,14 +29,16 @@ namespace rpg::helper_methods
      * @tparam TargetStorageType The type of the target object (e.g., VitalData).
      *     This contains the modifiers objects which ultimately need modified.
      * 
-     * @param sourceRegistry[SourceRegistry&] - Reference to the source registry singleton.
-     * @param targetRegistry[TargetRegistry&] - Reference to the target registry singleton.
-     * @param SourceStorageType[SourceStorageType&] - Reference to the source storage.
-     * @param TargetStorageType[TargetStorageType&] - Reference to the target storage.
+     * @param sourceRegistry Reference to the source registry singleton.
+     * @param targetRegistry Reference to the target registry singleton.
+     * @param SourceStorageType Reference to the source storage.
+     * @param TargetStorageType Reference to the target storage.
      * @throws error::MIAException if source or target object is not found.
      */
-    template<typename SourceRegistry, typename TargetRegistry, 
-             typename SourceStorageType, typename TargetStorageType>
+    template<typename SourceRegistry, 
+             typename TargetRegistry, 
+             typename SourceStorageType, 
+             typename TargetStorageType>
     void applyModifiers(SourceRegistry& sourceRegistry, 
                         TargetRegistry& targetRegistry,
                         SourceStorageType& sourceStorage, 
@@ -42,35 +46,50 @@ namespace rpg::helper_methods
     {
         for (auto& sourceData : sourceStorage.getMap())
         {
+            // First, access the singleton instance of the source.
             const auto& source = sourceRegistry.getInstance().getByID(sourceData.first);
             if (!source)
-            {
+            { // Error case.
                 std::string err = "Source object not found.";
                 MIA_THROW(error::ErrorCode::Undefined_RPG_Value, err);
             }
 
+            if (source->getModifies().empty())
+            { // Check if any modifiers exist in the source.
+                return;
+            }
+
             int sourceDataValue = sourceData.second.getCurrent();
-
-            if (!source->getModifies().empty())
-            {
-                for (const auto& modifies : source->getModifies())
+            
+            for (const auto& modifies : source->getModifies())
+            {                
+                switch (modifies.modifyType)
                 {
-                    ModifyType modifyType = modifies.modifyType;
-                    double modifiesValue = modifies.modifyValuePer;
-
-
-                    if (modifyType == ModifyType::ADD_MAX)
+                    case rpg::ModifyType::ADD_MAX:
                     {
-                        int modifyValue = static_cast<int>(modifiesValue * sourceDataValue);
+                        int modifyValue = static_cast<int>(modifies.modifyValuePer * sourceDataValue);
+                        rpg::Modifier mod(source->getID(),
+                                          stringToModifierSourceType(sourceRegistry.getInstance().getJsonKey()),
+                                          modifyValue);
 
-                        Modifier mod(
-                            source->getID(),
-                            stringToModifierSourceType(sourceRegistry.getInstance().getJsonKey()),
-                            modifyValue
-                        );
-
+                        // Apply the modifier to the target.
                         targetStorage.addModifier(modifies.targetName, mod);
+                        break;
                     }
+
+                    case rpg::ModifyType::MULTIPLY:
+                        // TODO - how should multiple work. Should there be multiple multiply options?
+                        break;
+
+                    case rpg::ModifyType::SET:
+                    {
+                        // TODO - think about how setting works. Modifier might need an additional field.
+                        break;
+                    }
+
+                    case rpg::ModifyType::UNKNOWN:
+                    default:
+                        break;
                 }
             }
         }
