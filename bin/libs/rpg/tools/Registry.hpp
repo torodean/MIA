@@ -2,7 +2,7 @@
  * @file Registry.hpp
  * @author Antonius Torode
  * @date 07/08/2025
- * Description: A templated base class for managing registries of game objects in the MIA RPG system.
+ * Description: A base class for managing registries of game objects in the MIA RPG system.
  */
 #pragma once
 
@@ -15,18 +15,18 @@
 namespace rpg
 {
     /**
-     * Templated base class for registries managing game objects (e.g., Currency, Vital).
-     * Uses the Curiously Recurring Template Pattern (CRTP) where:
-     * - Derived is the concrete registry subclass inheriting from this base.
-     * - T is the type of object stored in the registry.
+     * Base class for registries managing game objects (e.g., Currency, Vital).
+     * This uses the Curiously Recurring Template Pattern (CRTP) where:
+     * - Derived is the registry subclass inheriting from this base.
+     * - Type is the type of object stored in the registry.
      *
-     * This pattern enables the base class to provide functionality (like a singleton instance)
-     * for the derived class, while allowing derived classes to implement type-specific behavior.
+     * This pattern allows the base class to provide functionality (like a singleton instance)
+     * for the derived class, while allowing derived classes to have type-specific behavior.
      *
-     * @tparam Derived The concrete registry class inheriting from this base.
-     * @tparam T The type of object stored in the registry.
+     * @tparam Derived The registry class inheriting from this base.
+     * @tparam Type The type of object stored in the registry.
      */
-    template<typename Derived, typename T>
+    template<typename Derived, typename Type>
     class Registry
     {
     public:
@@ -36,8 +36,8 @@ namespace rpg
 
         /**
          * Gets the singleton instance of the derived registry class.
-         * This method ensures only one instance of the registry exists during runtime.
-         * It uses the Curiously Recurring Template Pattern (CRTP) to instantiate the concrete derived class.
+         * This ensures exactly one instance of the registry exists during runtime.
+         * It uses the Curiously Recurring Template Pattern (CRTP) to instantiate the derived class.
          * 
          * @return Reference to the unique singleton instance of the derived registry.
          */
@@ -89,7 +89,7 @@ namespace rpg
          * @param id The unique ID.
          * @return Pointer to the object, or nullptr if not found.
          */
-        const T* getByID(uint32_t id) const
+        const Type* getByID(uint32_t id) const
         {
             auto it = objects.find(id);
             return it != objects.end() ? &it->second : nullptr;
@@ -100,7 +100,7 @@ namespace rpg
          * @param name The name of the object.
          * @return Pointer to the object, or nullptr if not found.
          */
-        const T* getByName(const std::string& name) const
+        const Type* getByName(const std::string& name) const
         {
             auto it = nameToId.find(name);
             return it != nameToId.end() ? getByID(it->second) : nullptr;
@@ -129,18 +129,18 @@ namespace rpg
         virtual std::string getJsonKey() const = 0;
 
         /**
-         * Parses a JSON object into type T. Must be implemented by derived classes.
+         * Parses a JSON object into type Type. Must be implemented by derived classes.
          * @param json The JSON object.
-         * @return The parsed object of type T.
+         * @return The parsed object of type Type.
          */
-        virtual T parseJson(const nlohmann::json& json) = 0;
+        virtual Type parseJson(const nlohmann::json& json) = 0;
 
         /**
          * Converts an object to a string for dumping. Must be implemented by derived classes.
-         * @param obj The object of type T.
+         * @param obj The object of type Type.
          * @return String representation of the object.
          */
-        virtual std::string toString(const T& obj) const = 0;
+        virtual std::string toString(const Type& obj) const = 0;
         
         /**
          * Loads objects from a JSON object by extracting the array for the derived class's key.
@@ -159,14 +159,14 @@ namespace rpg
             nameToId.clear();
             for (const auto& item : data[key])
             {
-                T obj = parseJson(item);
+                Type obj = parseJson(item);
                 uint32_t id = item["id"].get<uint32_t>();
                 objects[id] = std::move(obj);
                 nameToId[item["name"].get<std::string>()] = id;
             }
         }
 
-        std::unordered_map<uint32_t, T> objects; ///< Map of ID to object.
+        std::unordered_map<uint32_t, Type> objects; ///< Map of ID to object.
         std::unordered_map<std::string, uint32_t> nameToId; ///< Map of name to ID.
     };
 } // namespace rpg
