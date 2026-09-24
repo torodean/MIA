@@ -11,7 +11,7 @@ set(RPG_Vitals_INC
     VitalData.hpp
     VitalRegistry.hpp )
 add_library(RPG_Vitals_LIB ${RPG_Vitals_SRC} ${RPG_Vitals_INC})
-target_link_libraries( RPG_Vitals_LIB PUBLIC Framework_CORE RPG_Tools_LIB RPG_Data_LIB )
+target_link_libraries( RPG_Vitals_LIB PUBLIC Framework_CORE RPG_Tools_LIB RPG_Data_LIB Math_UTIL )
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(RPG_Vitals_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

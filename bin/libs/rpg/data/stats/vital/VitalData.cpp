@@ -2,13 +2,14 @@
  * @file VitalData.cpp
  * @author Antonius Torode
  * @date 07/12/2025
- * Description: A class representing configurable vital Data for storing an active vital.
+ * @brief: A class representing configurable vital Data for storing an active vital.
  */
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
+#include "MathUtils.hpp"
 #include "VitalData.hpp"
 
 namespace stats
@@ -141,11 +142,24 @@ namespace stats
 
     void VitalData::recalculate(const rpg::Modifier<int>& mod, VitalDataTarget target)
     {
-
         if (target == VitalDataTarget::CURRENT_MAX)
-            currentMax += mod.value;
+        {
+            currentMax = math::saturatingAdd(currentMax, mod.value);
+
+            // A maximum may never drop below the current minimum.
+            if (currentMax < currentMin)
+                currentMax = currentMin;
+        }
         else if (target == VitalDataTarget::CURRENT_MIN)
-            currentMin += mod.value;
-        // TODO - add sanity checks for values here.
+        {
+            currentMin = math::saturatingAdd(currentMin, mod.value);
+
+            // A minimum may never rise above the current maximum.
+            if (currentMin > currentMax)
+                currentMin = currentMax;
+        }
+
+        // The current value must stay within the recalculated bounds.
+        setCurrent(current);
     }
 } // namespace stats

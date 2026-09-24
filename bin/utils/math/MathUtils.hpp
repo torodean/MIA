@@ -45,4 +45,16 @@ namespace math
      * @return The total.
      */
     int rolldXX(int xx, int seed);
+
+    /**
+     * @brief Adds two integers with saturation at the int type limits.
+     *
+     * Plain addition is undefined behavior on overflow, so the result is
+     * capped at the largest (or smallest) value int can hold.
+     *
+     * @param base The value to add to.
+     * @param delta The value to add.
+     * @return The sum, capped at the int limits if the sum would overflow.
+     */
+    int saturatingAdd(int base, int delta);
 } // namespace math
