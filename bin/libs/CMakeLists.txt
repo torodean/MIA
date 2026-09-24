@@ -5,10 +5,8 @@ if ( BUILD_DATABASE_FEATURES )
 	add_subdirectory( database )
 endif()
 
-# OS-Specific Path Configuration
-if(WIN32 OR CYGWIN)
-    message(STATUS "RPG Libraries not yet supported on Windows!")
-elseif(UNIX AND NOT APPLE)
+# Only build this is the json requirements are met.
+if( BUILD_NLOHMANN_JSON_FEATURES )
     add_subdirectory( rpg )
 endif()
 

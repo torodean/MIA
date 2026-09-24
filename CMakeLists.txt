@@ -50,6 +50,9 @@ include( cmake/xdo.cmake )
 # Setup vlc specifics.
 include( cmake/vlc.cmake )
 
+# Setup nlohmann/json specifics.
+include( cmake/nlohmann.cmake )
+
 # Create the log directories
 if(UNIX AND NOT APPLE)
     install(CODE "execute_process(COMMAND mkdir -p ${DEFAULT_SYSTEM_LOG_DIR})")
