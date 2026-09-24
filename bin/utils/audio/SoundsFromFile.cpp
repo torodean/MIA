@@ -49,12 +49,12 @@ namespace audio
         /**
          * @brief libVLC event callback that signals playback completion.
          *
-         * Attached to the @c libvlc_MediaPlayerEndReached event. When that event
-         * fires, the callback sets @c PlaybackState::finished and notifies any
+         * Attached to the libvlc_MediaPlayerEndReached event. When that event
+         * fires, the callback sets PlaybackState::finished and notifies any
          * thread waiting on the associated condition variable.
          *
          * @param event The libVLC event that was raised.
-         * @param userData Pointer to a @c PlaybackState instance (must not be null).
+         * @param userData Pointer to a PlaybackState instance (must not be null).
          */
         void mediaPlayerEventCallback(const libvlc_event_t* event, void* userData)
         {
