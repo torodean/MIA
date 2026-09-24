@@ -29,6 +29,7 @@
 
 namespace audio
 {
+#if defined(IS_LINUX)
     namespace
     {
         /**
@@ -70,6 +71,7 @@ namespace audio
             state->condition.notify_one();
         }
     } // namespace
+#endif
 
 
     bool isASupportedType(const files::FileMetaData& data,
