@@ -1,5 +1,4 @@
 
-
 set(Audio_SRC 
     SystemSounds.cpp
     SoundsFromFile.cpp
@@ -26,7 +25,7 @@ if(WIN32 OR CYGWIN)
 elseif(BUILD_VLC_FEATURES)
     # The linux implementation uses vlc.
     target_include_directories(Audio_UTIL PRIVATE ${LIBVLC_INCLUDE_DIRS})
-    target_link_libraries(Audio_UTIL PRIVATE ${LIBVLC_LIBRARIES})
+    target_link_libraries(Audio_UTIL PRIVATE ${LIBVLC_LIB})
     target_compile_options(Audio_UTIL PRIVATE ${LIBVLC_CFLAGS_OTHER})
 endif()
 
