@@ -17,12 +17,12 @@ This chapter will cover design ideas for the MIA RPG system. This chapter will b
 
 \section{Goals}
 
-The following goals define the core vision for the MIA RPG system, ensuring it is modular, scalable, and simple to extend for MMO development and game creation tools. Each goal includes its purpose and design considerations to guide implementation.
+The following goals define the core vision for the MIA RPG system, ensuring it is modular (able to work and adapt for different purposes, games, etc), scalable, and simple to extend for MMO development and other game creation tools. Each goal includes its purpose and design considerations to guide implementation.
 
 \begin{enumerate}
     \item \textbf{Fully Configurable Framework}
         \begin{itemize}
-            \item \textbf{Purpose}: Enable dynamic addition or removal of game elements (e.g., vitals, currencies, items, abilities) via configuration files, minimizing code changes and supporting tools like a game editor similar to Warcraft 3’s.
+            \item \textbf{Purpose}: A fully configurable framework means all game-created nodes and in-game connections are configurable. This would be something like item modifiers, or how one item type interacts with another. This enables dynamic addition or removal of game elements (e.g., vitals, currencies, items, abilities) via configuration files, minimizing code changes and supporting tools like a game editor similar to Warcraft III’s.
             \item \textbf{Considerations/Solutions}:
                 \begin{itemize}
                     \item Use JSON/YAML files (e.g., \texttt{vitals.json}, \texttt{items.json}) to define all game elements, including properties like name, type, and behavior.
@@ -34,25 +34,25 @@ The following goals define the core vision for the MIA RPG system, ensuring it i
 
     \item \textbf{Editor-Friendly Design}
         \begin{itemize}
-            \item \textbf{Purpose}: Facilitate a game creation editor by exposing all configurable elements (vitals, items, loot tables) in a user-friendly format, enabling non-programmers to build levels, quests, or mechanics.
+            \item \textbf{Purpose}: To facilitate a game creation editor (or environment) by exposing all configurable elements (vitals, items, loot tables) in a user-friendly format, enabling non-programmers to build levels, quests, or mechanics.
             \item \textbf{Considerations/Solutions}:
                 \begin{itemize}
                     \item Develop a GUI editor that reads/writes config files, with templates for common elements (e.g., health vital, gold currency).
                     \item Provide scripting support (e.g., Lua) for custom behaviors, accessible via editor UI.
                     \item Include validation tools to ensure config integrity (e.g., valid ranges for vital max/min).
-                    \item Example: Editor allows dragging a ``sword'' item into a creature’s loot table, updating \texttt{loot.json}.
+                    \item Example: The editor can allow dragging a ``sword'' item into a creature’s loot table, and automatically update \texttt{loot.json} appropriately.
                 \end{itemize}
         \end{itemize}
 
     \item \textbf{Interconnected Gameplay Elements}
         \begin{itemize}
-            \item \textbf{Purpose}: Create a rich, MMO-like experience where elements like vitals, items, and environments interact dynamically (e.g., temperature vital affected by climate zones, loot tables yielding currencies/items).
+            \item \textbf{Purpose}: Create a rich, MMO-like experience where elements like vitals, items, gear, and environments interact dynamically with each element it can affect (e.g., temperature vital affected by climate zones, loot tables yielding currencies/items).
             \item \textbf{Considerations/Solutions}:
                 \begin{itemize}
                     \item Use an Entity-Component-System (ECS) to manage entities (players, NPCs, zones) with components like vitals, inventory, or stats.
-                    \item Define relationships in config files (e.g., \texttt{climate.json} links zones to temperature effects).
+                    \item Define interactions and relationships between elements in config files (e.g., \texttt{climate.json} could link zones to temperature effects).
                     \item Implement event-driven interactions (e.g., \texttt{onEnterZone} adjusts temperature vital).
-                    \item Example: A ``frozen tundra'' zone reduces the ``temperature'' vital, countered by equipping a ``fur cloak'' item.
+                    \item Example: A `frozen tundra' zone reduces the ``temperature'' vital, countered by equipping a `fur cloak' item.
                 \end{itemize}
         \end{itemize}
 
@@ -61,10 +61,10 @@ The following goals define the core vision for the MIA RPG system, ensuring it i
             \item \textbf{Purpose}: Support MMO-scale features like large player counts, persistent worlds, and networked data access for vitals, inventories, and quests.
             \item \textbf{Considerations/Solutions}:
                 \begin{itemize}
-                    \item Design a server-client architecture with a database backend (e.g., SQLite) for persistent storage of player data.
+                    \item Design a server-client system which uses a database backend (e.g., SQLite) for persistent storage of player and world data.
                     \item Use efficient data structures (e.g., \texttt{std::unordered\_map}) for fast access to vitals/currencies.
                     \item Enable networked updates via events (e.g., \texttt{onVitalChanged} syncs health across clients).
-                    \item Example: Player’s ``gold'' currency updates in real-time across server and clients after looting.
+                    \item Example: A player’s `gold' currency updates in real-time across server and clients after looting.
                 \end{itemize}
         \end{itemize}
 
@@ -74,9 +74,9 @@ The following goals define the core vision for the MIA RPG system, ensuring it i
             \item \textbf{Considerations/Solutions}:
                 \begin{itemize}
                     \item Centralize element management in registries with generic APIs (e.g., \texttt{addVital(name, config)}).
-                    \item Use data-binding to link configs to game systems (e.g., UI, combat) automatically.
+                    \item Use data-binding to link the configuration to a game system (e.g., UI, combat) automatically.
                     \item Support modding via external config files or scripts, validated at load time.
-                    \item Example: Adding a ``morale'' vital via editor updates UI and gameplay without altering codebase.
+                    \item Example: Adding a `morale' vital via the editor would update the UI and gameplay without changing any code.
                 \end{itemize}
         \end{itemize}
 
@@ -85,10 +85,10 @@ The following goals define the core vision for the MIA RPG system, ensuring it i
             \item \textbf{Purpose}: Cover all essential RPG mechanics (combat, progression, crafting, exploration) with configurable parameters to support diverse MMO features.
             \item \textbf{Considerations/Solutions}:
                 \begin{itemize}
-                    \item Define core systems (e.g., combat, inventory, questing) in config files with customizable rules (e.g., damage formulas, drop rates).
+                    \item Define core systems (e.g., combat, inventory, questing) in config files with customizable rules (e.g., damage formulas, drop rates, etc).
                     \item Support loot tables linking items, currencies, and probabilities (e.g., \texttt{loot.json} for creature drops).
                     \item Include environmental effects (e.g., climate impacting vitals like temperature or thirst).
-                    \item Example: A ``dragon'' loot table includes ``gold'' currency and ``dragon scale'' item, with configurable drop chances.
+                    \item Example: A `dragon' loot table could include `gold' currency and a `dragon scale' item, with configurable drop chances to allow for variability.
                 \end{itemize}
         \end{itemize}
 
@@ -100,7 +100,7 @@ The following goals define the core vision for the MIA RPG system, ensuring it i
                     \item Use a UI config file (e.g., \texttt{ui\_layout.json}) to define displays for vitals, inventories, etc.
                     \item Implement data-binding to update UI automatically when elements change (e.g., new vital added).
                     \item Support customizable HUDs via editor for player-specific layouts.
-                    \item Example: A ``health'' progress bar auto-updates when a new vital is added via \texttt{vitals.json}.
+                    \item Example: A `health' progress bar auto-updates when a new vital is added via \texttt{vitals.json}.
                 \end{itemize}
         \end{itemize}
 \end{enumerate}
@@ -120,54 +120,57 @@ The following goals define the core vision for the MIA RPG system, ensuring it i
 
 \section{Configuration}
 
-This section details the configuration strategy for the MIA RPG system, focusing on simplicity for testing, scalability for MMO deployment, and support for a game creation editor. Configuration is designed to allow dynamic addition and removal of game elements (e.g., vitals, items, loot tables) via JSON files during development, with a compressed format for release and robust server-side validation to prevent tampering.
+This section outlines the configuration design for the MIA RPG system. the intention is to aim for a focus on simplicity for testing, scalability for MMO deployment, and support for a game creation editor. Configuration should be designed to allow dynamic additions and removals of game elements (e.g., vitals, items, loot tables) via JSON files during development, with a compressed format for release and robust server-side validation to prevent tampering. This section is not a set-in-stone design. Rather, it is a record of ideas and thoughts as they occur and may change frequently or be entirely replaced later.
+
+For development, JSON is a useful choice because the files are easy to parse and read in a human readable format. They are quick to add and change and widely supported so many tools already exist for working with them. For client-server side operations, JSON is not the most compressed or efficient format, and therefore a more-custom solution should be implemented after proof-of-concept prototyping is done with JSON.
 
 \subsection{Vision}
-The configuration system uses JSON files in code folders to define example items, vitals, loot tables, and other objects for testing and development. These will be compressed into a single, MPQ-like format for game releases, with tools to view and edit the archive, supporting editor-driven game creation. Server-side database features will store character-specific data and save states, with consideration for including item definitions to prevent tampering. A file-based ``saveToFile'' and ``loadFromFile'' system will support player data storage during testing. These files can even be stored locally for the release game, and hased values can be checked against the server-side saves to detect tampering and restore changed or damaged files.
+The configuration system uses JSON files in code folders to define example items, vitals, loot tables, and other objects for testing and development. These will be compressed into a single, MPQ-like format for game releases, with tools to view and edit the archive to support editor-driven game creation and customization. Server-side database features will store character-specific data and player save states, with a potential idea of including item definitions to prevent tampering. A file-based `saveToFile' and `loadFromFile' system will support player data storage during testing. These files can even be stored locally for the release game, and hashed values can be checked against the server-side saves to detect tampering and restore changed or damaged files.
 
-The configuration system will be structured to support the following objectives, ensuring simplicity, editor compatibility, and MMO-scale robustness.
+The configuration system will be structured to support various objectives. The intent is to ensure simplicity, editor compatibility, and MMO-scale robustness. The following are some objectives that could be implemented.
 
 \begin{enumerate}
     \item \textbf{JSON-Based Configuration for Testing}
         \begin{itemize}
-            \item \textbf{Purpose}: Enable rapid iteration during development by using human-readable JSON files to define game elements, facilitating testing and editor integration.
+            \item \textbf{Purpose}: To Enable quick customization and changes during development by using human-readable JSON files to define game elements. This facilitates testing and, eventually, editor integration.
             \item \textbf{Design}:
                 \begin{itemize}
                     \item Store JSON files in relevant folders (e.g., \texttt{data/vitals/vitals.json}, \texttt{data/items/items.json}, \texttt{data/loot/loot.json}).
                     \item Example \texttt{vitals.json}:
                     \begin{lstlisting}[style=htmlstyle]
 [
-  {"id": "health", "name": "Health", "current": 100, "max": 100, "min": 0},
-  {"id": "mana", "name": "Mana", "current": 50, "max": 100, "min": 0}
+  {"id": 0, "name": "Health", "current": 100, "max": 100, "min": 0},
+  {"id": 1, "name": "Mana", "current": 50, "max": 100, "min": 0}
 ]
                     \end{lstlisting}
                     \item Example \texttt{items.json}:
                     \begin{lstlisting}[style=htmlstyle]
 [
-  {"id": "sword_001", "name": "Iron Sword", "type": "weapon", "damage": 10, "tradeable": true},
-  {"id": "potion_001", "name": "Health Potion", "type": "consumable", 
-   "effect": {"vital": "health", "value": 20}}
+  {"id": 0, "name": "Iron Sword", "type": "weapon", "damage": 10, "tradeable": true},
+  {"id": 1, "name": "Health Potion", "type": "consumable", 
+   "effect": {"vital": "health", "value": 20}
+  }
 ]
                     \end{lstlisting}
-                    \item Load files into registries (e.g., \texttt{VitalsRegistry}, \texttt{ItemRegistry}) using a JSON parser (e.g., nlohmann/json in C++).
-                    \item Include validation for required fields (e.g., \texttt{id}, \texttt{max}) and default values for optional fields (e.g., \texttt{min=0}).
+                    \item The system can load files into registries (e.g., \texttt{VitalsRegistry}, \texttt{ItemRegistry}) using a JSON parser (e.g., nlohmann/json in C++), where the item information will be immediately available in code.
+                    \item The system should include validation for required fields (e.g., \texttt{id}, \texttt{max}) and default values for optional fields (e.g., \texttt{min=0}).
                 \end{itemize}
         \end{itemize}
 
     \item \textbf{Compressed Format for Release}
         \begin{itemize}
-            \item \textbf{Purpose}: Optimize game releases by bundling JSON configurations into a single, compressed archive (similar to WoW’s MPQ) to reduce file count and improve load times.
+            \item \textbf{Purpose}: To optimize game releases by bundling JSON configurations into a single, compressed archive (similar to WoW’s MPQ) to reduce file count, improve load times, and make client-server communication more efficient.
             \item \textbf{Design}:
                 \begin{itemize}
-                    \item Use a compression library (e.g., libzip) to create an archive (e.g., \texttt{game\_data.mia}) containing all JSON files.
+                    \item A compression library can be used (e.g., libzip) to create an archive (e.g., \texttt{game\_data.mia}) containing all JSON files.
                     \item Include a manifest file (e.g., \texttt{manifest.json}) listing contents for quick access:
                     \begin{lstlisting}[style=htmlstyle]
 {
   "files": ["vitals.json", "items.json", "loot.json"]
 }
                     \end{lstlisting}
-                    \item Develop tools (e.g., C++ or Python-based editor) to extract, view, and edit the archive, supporting the game creation editor.
-                    \item Example: Editor extracts \texttt{items.json}, allows adding a new item, and recompresses into \texttt{game\_data.mia}.
+                    \item Develop tools (e.g., C++ or Python-based editor) to extract, view, and edit the archive to support the later goal of a game editor.
+                    \item Example: The editor extracts a file (e.g., \texttt{items.json}), and allows adding new objects, and recompresses the changes into \texttt{game\_data.mia}.
                 \end{itemize}
         \end{itemize}
 
@@ -176,7 +179,7 @@ The configuration system will be structured to support the following objectives,
             \item \textbf{Purpose}: Store character-specific data and item definitions server-side to ensure persistence and prevent tampering in MMO environments.
             \item \textbf{Design}:
                 \begin{itemize}
-                    \item Use a database (e.g., SQLite for testing, scalable DBMS for release) to store player data (e.g., vitals, inventory) and static item definitions.
+                    \item Use a database (e.g., SQLite for testing, scalable DBMS for release) to storhealthe player data (e.g., vitals, inventory) and static item definitions.
                     \item Example \texttt{items} table:
                     \begin{lstlisting}[style=htmlstyle]
 CREATE TABLE items (
@@ -187,7 +190,7 @@ CREATE TABLE items (
 );
                     \end{lstlisting}
                     \item Sync \texttt{items.json} with the \texttt{items} table during release to validate client actions (e.g., item usage) against server data.
-                    \item Example: Client sends \texttt{use\_item("potion\_001")}, server checks \texttt{properties} (e.g., heals 20 health) and applies the effect.
+                    \item Example: Client sends \texttt{use\_item(0)}, server checks \texttt{properties} (e.g., heals 20 health) and applies the effect.
                     \item Use checksums (e.g., SHA256) on the compressed archive to detect client-side tampering.
                 \end{itemize}
         \end{itemize}
@@ -200,11 +203,11 @@ CREATE TABLE items (
                     \item Store player state in \texttt{player.json}:
                     \begin{lstlisting}[style=htmlstyle]
 {
-  "player_id": "player_001",
+  "player_id": 0,
   "name": "Hero",
   "vitals": [
-    {"id": "health", "current": 80, "max": 100, "min": 0},
-    {"id": "mana", "current": 30, "max": 100, "min": 0}
+    {"id": 0, "name": "Health", "current": 80, "max": 100, "min": 0},
+    {"id": 1, "name": "Mana", "current": 30, "max": 100, "min": 0}
   ],
   "inventory": [
     {"item_id": "sword_001", "quantity": 1},
@@ -223,7 +226,7 @@ void Player::saveToFile(const std::string& path) const;
 bool Player::loadFromFile(const std::string& path);
                     \end{lstlisting}
                     \item Handle errors with defaults (e.g., new player with 100 health) and log issues to a debug console.
-                    \item Design fields to match future database schema for seamless migration.
+                    \item Design the fields to match whatever the future database schema would be for seamless migration.
                 \end{itemize}
         \end{itemize}
 \end{enumerate}
@@ -244,7 +247,7 @@ bool Player::loadFromFile(const std::string& path);
 
 \subsection{Configuration Design}
 
-The configuration system will begin with defining various objects within a JSON configuration file. Each object will contain a unique ID, name, and description which will serve as an identifier for the object itself. The remaining fields will depend on the object's purpose and function. In order to have multiple defined types within the JSON files, an object type will be declared as well, to separate the various types. 
+The configuration system can begin with defining various objects within a JSON configuration file. Each object will contain a unique ID, name, and description which will serve as an identifier for the object itself. The remaining fields will depend on the object's purpose and function. In order to have multiple defined types within the JSON files, an object type will be declared as well, to separate the various types. 
 \begin{lstlisting}[style=htmlstyle]
 {
 	"OBJECTTYPE": 
