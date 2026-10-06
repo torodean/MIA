@@ -13,6 +13,9 @@ Finds MySQL Connector/C++ and sets `BUILD_DATABASE_FEATURES`.
 ### `python.cmake`
 Finds the Python development libraries, sets `BUILD_PYTHON_FEATURES`, and defines the `install_python_files` function, which installs the given python files into the system python directory during a system install, or into the release python resources directory during a release build.
 
+### `vlc.cmake`
+Finds vlc-related packages and sets `BUILD_VLC_FEATURES`.
+
 ### `xdo.cmake`
 Finds libxdo and X11 and sets `BUILD_XDO_FEATURES`.
 
