@@ -10,6 +10,9 @@ Defines the `install_app` function, which installs app targets into the system o
 ### `database.cmake`
 Finds MySQL Connector/C++ and sets `BUILD_DATABASE_FEATURES`.
 
+### `nlohmann.cmake`
+Finds the nlohmann JSON header and sets `BUILD_NLOHMANN_JSON_FEATURES`.
+
 ### `python.cmake`
 Finds the Python development libraries, sets `BUILD_PYTHON_FEATURES`, and defines the `install_python_files` function, which installs the given python files into the system python directory during a system install, or into the release python resources directory during a release build.
 
