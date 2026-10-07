@@ -18,6 +18,9 @@
 #include "MathUtils.hpp"
 // Used for parsing dice roll strings.
 #include "StringUtils.hpp"
+// Used for error and exception handling.
+#include "Error.hpp"
+#include "MIAException.hpp"
 
 using std::cout;
 using std::endl;
@@ -45,8 +48,7 @@ namespace math
          */
         int effectiveSeed = seed;
         if (useTime)
-            effectiveSeed += static_cast<int>(
-                std::chrono::steady_clock::now().time_since_epoch().count());
+            effectiveSeed += static_cast<int>(std::chrono::steady_clock::now().time_since_epoch().count());
 
         std::mt19937 rng(effectiveSeed);
         std::uniform_int_distribution<int> dist(min, max);
@@ -55,6 +57,22 @@ namespace math
         if(verboseMode)
             cout << "...random value is " << random << "." << endl;
         return random;
+    }
+    
+    
+    bool randomChance(double probability)
+    {
+        if (probability < 0.0 || probability > 1.0)
+            MIA_THROW(error::Invalid_Parameter, 
+                      "Parameter must be between 0.0 and 1.0 in randomChance() method.");
+                      
+        static bool seeded = false;
+        if (!seeded)
+        { // Ensure variability between calls.
+            std::srand(std::time(nullptr));
+            seeded = true;
+        }
+        return (static_cast<double>(std::rand()) / RAND_MAX) < probability;
     }
     
     
@@ -78,10 +96,11 @@ namespace math
     }
     
     
-    int rolldXX(int xx, int seed)
+    int rolldXX(int xx, int seed, bool verboseMode)
     {
         int rand = randomInt(1, xx, seed, true);
-        cout << "1d" << xx << ": " << rand << endl;
+        if (verboseMode)
+            cout << "1d" << xx << ": " << rand << endl;
         return rand;
     }
 

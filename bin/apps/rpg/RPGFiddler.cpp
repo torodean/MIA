@@ -52,9 +52,15 @@ void RPGFiddler::initialize(int argc, char* argv[])
         
         // Load the saved player data or initialize fresh rpg data for testing.
         if (files::fileExists(fullSaveFilePath))
+        {
+            std::cout << "Loading player values from save file: " << fullSaveFilePath << std::endl;
             player.loadFromFile(fullSaveFilePath);
+        }
         else
+        {
+            std::cout << "Save file not found: " << fullSaveFilePath << std::endl;
             rpg_sim::setupSimulator(player);
+        }
     }
     catch (const error::MIAException& ex)
     {
