@@ -2,7 +2,7 @@
  * @file AttributeData.hpp
  * @author Antonius Torode
  * @date 07/13/2025
- * Description: A class representing configurable attribute data for storing an active attribute.
+ * @brief A class representing configurable attribute data for storing an active attribute.
  */
 #pragma once
 
@@ -13,77 +13,76 @@ namespace stats
 {
     /**
      * A struct to hold an attribute's dynamic values.
+     *
+     * The attribute stores its base value along with the modifiers attached to it.
+     * The effective current value is computed from the base and the modifiers whenever
+     * it is read, so adding, removing, or replacing a modifier needs no recalculation
+     * and the value always derives from the stored base.
      */
     struct AttributeData
-    {        
+    {
         /**
-         * Constructs an AttributeData object with an initial current value.
+         * Constructs an AttributeData object with an initial base value.
          *
-         * @param curr[int] - Initial current value.
+         * @param baseValue Initial base value.
          */
-        AttributeData(int curr);
+        AttributeData(int baseValue);
 
         /**
-         * Constructs an AttributeData object with a current value and modifiers.
+         * Constructs an AttributeData object with a base value and modifiers.
          *
-         * @param curr[int] - Initial current value.
-         * @param mods[const std::vector<rpg::Modifier<int>>&] - Modifiers affecting the current value.
+         * @param baseValue Initial base value.
+         * @param mods Modifiers affecting the current value.
          */
-        AttributeData(int curr, const std::vector<rpg::Modifier<int>>& mods);
+        AttributeData(int baseValue, const std::vector<rpg::Modifier>& mods);
 
         /**
-         * Adds a modifier to the current value and updates the current value. If the
-         * modifier already exists, it will skip it.
+         * Adds a modifier to the attribute. A modifier with the same source, source
+         * type, and modify type replaces the existing one rather than stacking.
          *
-         * @param mod[const rpg::Modifier<int>&] - The modifier to add.
+         * @param mod The modifier to add.
          */
-        void addModifier(const rpg::Modifier<int>& mod);
+        void addModifier(const rpg::Modifier& mod);
 
         /**
-         * Removes a modifier from the current value and updates the current value.
+         * Removes every modifier which matches the given modifier's source ID and source
+         * type, regardless of modify type.
          *
-         * @param mod The modifier to remove (matched by sourceId and source only).
+         * @param mod The modifier whose source identifies what to remove.
          */
-        void removeModifier(const rpg::Modifier<int>& mod);
-        
+        void removeModifier(const rpg::Modifier& mod);
+
         /**
-         * Returns the current value of the attribute.
+         * Returns the effective current value: the base value with its modifiers applied.
          *
-         * @return [int] - The current value of the attribute, including modifier effects.
+         * @return The current value of the attribute, including modifier effects.
          */
         int getCurrent() const;
-        
+
         /**
-         * Sets the current value of the attribute.
+         * Sets the base value of the attribute.
          *
-         * @param value[int] - The value to set current to.
+         * @param value The value to set the base to.
          */
-        void setCurrent(int value);
-        
+        void setBaseValue(int value);
+
         /**
-         * Returns the modifiers for the specified target.
+         * Returns the base value before modifiers.
          *
-         * @return [const std::vector<rpg::Modifier<int>>&] - The modifier vector for the specified target.
+         * @return The base value of the attribute.
          */
-        const std::vector<rpg::Modifier<int>>& getModifiers() const;
+        int getBaseValue() const { return baseValue; }
+
+        /**
+         * Returns the modifiers affecting this attribute.
+         *
+         * @return The modifier vector.
+         */
+        const std::vector<rpg::Modifier>& getModifiers() const;
 
     private:
-    
-        int current{0};   ///< Current value of the attribute.
-        std::vector<rpg::Modifier<int>> modifiers; ///< Modifiers affecting the current value.
-        
-        /**
-         * Recalculates the current value after a modifier is added by adding the mod value.
-         *
-         * @param mod[const rpg::Modifier<int>&] - The modifier to add.
-         */
-        void recalculateAdd(const rpg::Modifier<int>& mod);
-        
-        /**
-         * Recalculates the current value after a modifier is removed by removing the mod value.
-         *
-         * @param mod[const rpg::Modifier<int>&] - The modifier to add.
-         */
-        void recalculateRemove(const rpg::Modifier<int>& mod);
+
+        int baseValue{0};   ///< Base value of the attribute before modifiers.
+        std::vector<rpg::Modifier> modifiers; ///< Modifiers affecting the current value.
     };
 } // namespace stats
