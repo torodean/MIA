@@ -64,6 +64,9 @@ namespace paths
     // Path to the default log file from the repo directory (for testing).
     inline const std::string REPO_LOG = DEFAULT_REPO_LOG;
 
+    // Path to the root directory of the repository. This should only be used for dev testing.
+    inline const std::string REPO_DIR = MIA_REPO_DIR;
+
     // Path to the system level installation directory.
     inline const std::string INSTALL_LOCATION = APP_INSTALL_LOCATION;
 
