@@ -8,6 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <cmath>   // for round()
+#include <sstream>
 
 // rpg-related includes.
 #include "RPGSimulator.hpp"
@@ -25,7 +26,7 @@ namespace rpg_sim
     stats::VitalRegistry& vitalRegistry = stats::VitalRegistry::getInstance();
     stats::AttributeRegistry& attributeRegistry = stats::AttributeRegistry::getInstance();
     progress::ProgressRegistry& progressRegistry = progress::ProgressRegistry::getInstance();
-    
+
     // Just so these aren't 'hard-coded' strings throughout the file.
     const std::string level = "Level";
     const std::string xp = "Experience";
@@ -37,23 +38,64 @@ namespace rpg_sim
     const std::string dexterity = "Dexterity";
     const std::string constitution = "Constitution";
     const std::string intelligence = "Intelligence";
-    
-    
-    namespace helper_methods
+
+
+    namespace
     {
+        /// The runtime context used to log simulator diagnostics. This is set by
+        /// setRuntimeContext() and is null until then.
+        const RuntimeContext* runtimeContext{nullptr};
+
         void updateModifiers(rpg::Player& player)
         {
             rpg::helper_methods::applyModifiers
-                <stats::AttributeRegistry, stats::VitalRegistry, 
+                <stats::AttributeRegistry, stats::VitalRegistry,
                  stats::Attributes, stats::Vitals>
                  (attributeRegistry, vitalRegistry, player.getAttributes(), player.getVitals());
         }
-    } // namespace helper_methods
-    
+
+        /**
+         * Logs a simulator message through the runtime context's logger. The message
+         * is always written to the log file. It is printed to stdout when the context's
+         * verbose mode is enabled, or when printToCoutOverride is true. Does nothing
+         * when no runtime context has been set.
+         * @param message The message to log.
+         * @param printToCoutOverride Whether to print the message to stdout regardless
+         *        of the verbose mode.
+         */
+        void log(const std::string& message, bool printToCoutOverride)
+        {
+            if (runtimeContext)
+                runtimeContext->logger.log(message, runtimeContext->verboseMode || printToCoutOverride);
+        }
+
+        /**
+         * Builds a message from a sequence of streamable values and logs it with log().
+         * The values are inserted into a string stream in order, so the message
+         * formatting matches an equivalent std::cout statement.
+         * @param printToCoutOverride Whether to print the message to stdout regardless
+         *        of the verbose mode.
+         * @param args The values to insert into the message.
+         */
+        template <typename... Args>
+        void logStream(bool printToCoutOverride, Args&&... args)
+        {
+            std::ostringstream oss;
+            (oss << ... << std::forward<Args>(args));
+            log(oss.str(), printToCoutOverride);
+        }
+    } // namespace
+
+
+    void setRuntimeContext(const RuntimeContext& context)
+    {
+        runtimeContext = &context;
+    }
+
 
     void setupSimulator(rpg::Player& player)
     {
-        std::cout << "Creating default simulator values!" << std::endl;
+        log("Creating default simulator values!", true);
         int initialHealth = vitalRegistry.getByName(health)->getBaseMax();
         int minHealth = vitalRegistry.getByName(health)->getBaseMin();
         int maxHealth = initialHealth;
@@ -64,66 +106,64 @@ namespace rpg_sim
         // Initialize vitals.
         player.getVitals().add(health, initialHealth, minHealth, maxHealth);
         player.getVitals().add(mana, initialMana, minMana, maxMana);
-        std::cout << "Vitals initialized: " 
-                  << "Health=" << initialHealth
-                  << ", Mana=" << initialMana 
-                  << std::endl;
+        logStream(true, "Vitals initialized: Health=", initialHealth,
+                        ", Mana=", initialMana, ".");
 
         // Initialize wallet.
         player.getWallet().add(copper, 100);
         player.getWallet().add(silver, 10);
-        std::cout << "Wallet initialized: Copper=100, Silver=10" << std::endl;
-        
+        logStream(true, "Wallet initialized: Copper=100, Silver=10.");
+
         // Initialize attributes.
         player.getAttributes().add(strength, 1);
         player.getAttributes().add(dexterity, 1);
         player.getAttributes().add(constitution, 1);
         player.getAttributes().add(intelligence, 1);
-        std::cout << "Attributes initialized: Strength=1, Constitution=1, Intelligence=1." << std::endl;
-        
+        logStream(true, "Attributes initialized: Strength=1, Constitution=1, Intelligence=1.");
+
         // Initialize progress markers.
         player.getProgress().add(level, 1);
         player.getProgress().add(xp, 0);
-        
+
         // Apply stat cross-modifiers.
-        helper_methods::updateModifiers(player);
+        updateModifiers(player);
     }
-    
-    
+
+
     void displayPlayerStatus(rpg::Player& player)
     {
-        std::cout << "Player Status:" << std::endl
-                  << "\tLevel: " << player.getProgress().get(level).get() << std::endl
-                  << "\tXP: " << player.getProgress().get(xp).get() << std::endl
-                  << "\tHealth: " << player.getVitals().get(health).getCurrent() << "/"
-                                   << player.getVitals().get(health).getCurrentMax() << std::endl
-                  << "\tMana: " << player.getVitals().get(mana).getCurrent() << "/"
-                                   << player.getVitals().get(mana).getCurrentMax()<< std::endl
-                  << "\tSilver: " << player.getWallet().get(silver).getQuantity() << std::endl
-                  << "\tCopper: " << player.getWallet().get(copper).getQuantity() << std::endl
-                  << "\tStrength: " << player.getAttributes().get(strength).getCurrent() << std::endl
-                  << "\tDexterity: " << player.getAttributes().get(dexterity).getCurrent() << std::endl
-                  << "\tConstitution: " << player.getAttributes().get(constitution).getCurrent() << std::endl
-                  << "\tIntelligence: " << player.getAttributes().get(intelligence).getCurrent() << std::endl; 
+        logStream(true, "Player Status:\n"
+                        "\tLevel: ", player.getProgress().get(level).get(),
+                        "\n\tXP: ", player.getProgress().get(xp).get(),
+                        "\n\tHealth: ", player.getVitals().get(health).getCurrent(),
+                        "/", player.getVitals().get(health).getCurrentMax(),
+                        "\n\tMana: ", player.getVitals().get(mana).getCurrent(),
+                        "/", player.getVitals().get(mana).getCurrentMax(),
+                        "\n\tSilver: ", player.getWallet().get(silver).getQuantity(),
+                        "\n\tCopper: ", player.getWallet().get(copper).getQuantity(),
+                        "\n\tStrength: ", player.getAttributes().get(strength).getCurrent(),
+                        "\n\tDexterity: ", player.getAttributes().get(dexterity).getCurrent(),
+                        "\n\tConstitution: ", player.getAttributes().get(constitution).getCurrent(),
+                        "\n\tIntelligence: ", player.getAttributes().get(intelligence).getCurrent());
     }
-    
-    
+
+
     void displaySimulatorOptions()
     {
-        std::cout << "Available Actions:" << std::endl
-                  << "0. Revive" << std::endl
-                  << "1. Level up (automated)" << std::endl
-                  << "2. Loot Treasure (automated)" << std::endl
-                  << "5. Spend Currency (automated)" << std::endl
-                  << "20. Fight a Mob (automated)" << std::endl
-                  << "21. Fight a Mob (manual)" << std::endl
-                  << "70. Short Rest (20% recovery)" << std::endl
-                  << "71. Long Rest (100% recovery)" << std::endl
-                  << "98. Save Game State" << std::endl
-                  << "99. Exit" << std::endl
-                  << "Enter integer choice: ";
+        logStream(true, "Available Actions:\n"
+                        "0. Revive\n"
+                        "1. Level up (automated)\n"
+                        "2. Loot Treasure (automated)\n"
+                        "5. Spend Currency (automated)\n"
+                        "20. Fight a Mob (automated)\n"
+                        "21. Fight a Mob (manual)\n"
+                        "70. Short Rest (20% recovery)\n"
+                        "71. Long Rest (100% recovery)\n"
+                        "98. Save Game State\n"
+                        "99. Exit");
+        std::cout << "Enter integer choice: ";
     }
-    
+
 
     void runSimulator(rpg::Player& player, std::string saveFile)
     {
@@ -133,7 +173,7 @@ namespace rpg_sim
             displayPlayerStatus(player);
 
             // Display menu.
-            std::cout << "=================================" << std::endl;
+            logStream(true, "=================================");
             displaySimulatorOptions();
 
             int choice;
@@ -142,16 +182,16 @@ namespace rpg_sim
             // Clear input buffer
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            
+
             // Separator between available actions and action being performed.
-            std::cout << "=================================" << std::endl;
+            logStream(true, "=================================");
 
             if (isDead(player) && choice != 0)
             {
-                std::cout << "Player is dead, must revive before continuing!" << std::endl;
+                logStream(true, "Player is dead, must revive before continuing!");
                 continue;
             }
-            
+
             // Handle choice
             switch (choice)
             {
@@ -183,21 +223,21 @@ namespace rpg_sim
                     savePlayerData(player, saveFile);
                     break;
                 case 99:
-                    std::cout << "Exiting simulator." << std::endl;
+                    logStream(true, "Exiting simulator.");
                     return;
                 default:
-                    std::cout << "Invalid choice. Please enter a valid option." << std::endl;
+                    logStream(true, "Invalid choice. Please enter a valid option.");
             }
         }
     }
-    
+
 
     void fightMobAutomated(rpg::Player& player)
     {
         int currentHealth = player.getVitals().get(health).getCurrent();
         int currentMana = player.getVitals().get(mana).getCurrent();
 
-        std::cout << "Player encounters a hostile mob..." << std::endl;
+        logStream(true, "Player encounters a hostile mob...");
 
         // Loop the rounds until the fight has a reason to end.
         int round = 0;
@@ -208,159 +248,159 @@ namespace rpg_sim
         while (true)
         {
             round++;
-            std::cout << "\n-- Round " << round << " --" << std::endl;
-            
+            logStream(true, "\n-- Round ", round, " --");
+
             int mobDamage = 0;
             if (math::randomChance(0.1))
             { // Random chance (10%) the mob misses an attack.
-                std::cout << "The mobs attack missed!" << std::endl;
+                logStream(true, "The mobs attack missed!");
             }
             else
             {
                 mobDamage = math::randomInt(5, 20);
-                std::cout << "Mob attacks! Player takes " << mobDamage << " damage." << std::endl;
+                logStream(true, "Mob attacks! Player takes ", mobDamage, " damage.");
             }
 
-            if (player.getVitals().has(health, mobDamage)) 
+            if (player.getVitals().has(health, mobDamage))
             {
                 currentHealth -= mobDamage;
                 player.getVitals().update(health, currentHealth);
-                std::cout << "Player survives with " << currentHealth << " health." << std::endl;
-            } 
-            else 
+                logStream(true, "Player survives with ", currentHealth, " health.");
+            }
+            else
             {
                 player.getVitals().update(health, 0);
-                std::cout << "Player takes lethal damage and dies." << std::endl;
+                logStream(true, "Player takes lethal damage and dies.");
                 break; // break the fight immediately.
             }
 
             // 50% chance to cast a spell.
-            if (math::randomChance(0.5)) 
+            if (math::randomChance(0.5))
             {
                 int spellCost = math::randomInt(10, 25);
-                std::cout << "Player attempts to cast a spell (cost " << spellCost << " mana)." << std::endl;
+                logStream(true, "Player attempts to cast a spell (cost ", spellCost, " mana).");
 
-                if (player.getVitals().has(mana, spellCost)) 
+                if (player.getVitals().has(mana, spellCost))
                 {
                     currentMana -= spellCost;
                     player.getVitals().update(mana, currentMana);
-                    std::cout << "Spell cast successfully. Remaining mana: " << currentMana << "." << std::endl;
+                    logStream(true, "Spell cast successfully. Remaining mana: ", currentMana, ".");
 
-                    std::cout << "The spell hits! Mob is damaged!" << std::endl;
+                    logStream(true, "The spell hits! Mob is damaged!");
                     if (math::randomChance(0.5))
                     { // 50% chance the spell kills the mob.
-                        std::cout << "Mob is defeated!" << std::endl;
+                        logStream(true, "Mob is defeated!");
                         player.getProgress().get(xp).add(25); // Gain 25 xp from auto kills.
-                        std::cout << "The player gains 25 xp!" << std::endl;
+                        logStream(true, "The player gains 25 xp!");
                         break;
                     }
                     else
                     {
-                        std::cout << "Mob is still standing!" << std::endl;
-                    }
-                } 
-                else 
-                {
-                    std::cout << "Not enough mana to cast the spell." << std::endl;
-                    std::cout << "The player attempts to flee!" << std::endl;
-                    if (math::randomChance(0.5))
-                    { // 50% chance the player can flee the mob.
-                        std::cout << "The player successfully flees!" << std::endl;
-                        break;
-                    }
-                    else
-                    {
-                        std::cout << "The player was unable to flee!" << std::endl;
+                        logStream(true, "Mob is still standing!");
                     }
                 }
-            } 
-            else 
+                else
+                {
+                    logStream(true, "Not enough mana to cast the spell.");
+                    logStream(true, "The player attempts to flee!");
+                    if (math::randomChance(0.5))
+                    { // 50% chance the player can flee the mob.
+                        logStream(true, "The player successfully flees!");
+                        break;
+                    }
+                    else
+                    {
+                        logStream(true, "The player was unable to flee!");
+                    }
+                }
+            }
+            else
             {
-                std::cout << "Player was unable to cast a spell. Mob moving too fast!" << std::endl;
+                logStream(true, "Player was unable to cast a spell. Mob moving too fast!");
             }
 
             // Random chance (10%) mob flees after any round
             if (math::randomChance(0.1))
             {
-                std::cout << "The mob suddenly flees!" << std::endl;
+                logStream(true, "The mob suddenly flees!");
                 break;
             }
         } // while (true)
 
-        std::cout << "The Fight ends." << std::endl;
+        logStream(true, "The Fight ends.");
     } // fightMobAutomated()
-    
-    
+
+
     void displayMobStatus(rpg::Player& mob)
     {
-        std::cout << "Mob Status:" << std::endl
-                  << "\t Health: " << mob.getVitals().get(health).getCurrent() << "/"
-                                   << mob.getVitals().get(health).getCurrentMax() << std::endl
-                  << "\t Strength: " << mob.getAttributes().get(strength).getCurrent() << std::endl
-                  << "\t Dexterity: " << mob.getAttributes().get(dexterity).getCurrent() << std::endl;
+        logStream(true, "Mob Status:\n"
+                        "\t Health: ", mob.getVitals().get(health).getCurrent(),
+                        "/", mob.getVitals().get(health).getCurrentMax(),
+                        "\n\t Strength: ", mob.getAttributes().get(strength).getCurrent(),
+                        "\n\t Dexterity: ", mob.getAttributes().get(dexterity).getCurrent());
     }
-    
-    
+
+
     void displayFightSimOptions()
     {
-        std::cout << "Available Actions:" << std::endl
-                  << "1. Attack" << std::endl
-                  << "2. Cast Spell" << std::endl
-                  << "3. Heal" << std::endl
-                  << "8. Do nothing" << std::endl
-                  << "9. Flee" << std::endl
-                  << "Enter integer choice: ";
+        logStream(true, "Available Actions:\n"
+                        "1. Attack\n"
+                        "2. Cast Spell\n"
+                        "3. Heal\n"
+                        "8. Do nothing\n"
+                        "9. Flee");
+        std::cout << "Enter integer choice: ";
     }
-    
-    
+
+
     bool playerAttacksMob(rpg::Player& player, rpg::Player& mob)
     {
-        std::cout << "The player attacks the mob!" << std::endl;
-        
+        logStream(true, "The player attacks the mob!");
+
         // Determine if the attack hits.
         double hitChance = 0.95; // 95% hit chance.
         int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
         int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
         if (mobDexterity > playerDexterity)
             hitChance -= 0.1; // If the mob is faster, reduce hit chance by 10%.
-        
-        std::cout << "\tHit chance: " << hitChance << std::endl;
+
+        logStream(true, "\tHit chance: ", hitChance);
 
         if (!math::randomChance(hitChance))
         {
-            std::cout << "The player's attack missed!" << std::endl;
+            logStream(true, "The player's attack missed!");
             return true;
         }
-        
+
         // Determine the attack damage.
         int attackDamage = math::randomInt(5, 20); // Base damage.
         int playerStrength = player.getAttributes().get(strength).getCurrent();
         attackDamage += playerStrength; // Add strength as attack damage.
-        
-        std::cout << "Attacking the mob for " << attackDamage << " damage!" << std::endl;
-        
-        // Update the mob health.        
+
+        logStream(true, "Attacking the mob for ", attackDamage, " damage!");
+
+        // Update the mob health.
         int mobHealth = mob.getVitals().get(health).getCurrent();
         mob.getVitals().update(health, mobHealth - attackDamage);
-        
+
         // Determine if the fight should continue or not.
         if (mobHealth - attackDamage <= 0)
         {
-            std::cout << "The mob has died!" << std::endl;
+            logStream(true, "The mob has died!");
             // Gain xp equal to the max health of the mob killed.
             int xpGained = mob.getVitals().get(health).getCurrentMax();
             player.getProgress().get(xp).add(xpGained);
-            std::cout << "The player gains " << xpGained << " xp!" << std::endl;
+            logStream(true, "The player gains ", xpGained, " xp!");
             return false;
         }
 
         return true;
     } // playerAttacksMob()
-    
+
 
     bool mobAttacksPlayer(rpg::Player& player, rpg::Player& mob)
-    {    
-        std::cout << "The mob attacks the player!" << std::endl;
+    {
+        logStream(true, "The mob attacks the player!");
 
         // Determine if the attack hits.
         double hitChance = 0.95; // 95% hit chance.
@@ -369,21 +409,21 @@ namespace rpg_sim
 
         if (playerDexterity > mobDexterity)
             hitChance -= 0.1; // If the player is faster, reduce the mob's hit chance by 10%.
-            
-        std::cout << "\tHit chance: " << hitChance << std::endl;
+
+        logStream(true, "\tHit chance: ", hitChance);
 
         if (!math::randomChance(hitChance))
         {
-            std::cout << "The mob's attack missed!" << std::endl;
+            logStream(true, "The mob's attack missed!");
             return true;
         }
-        
+
         // Determine the attack damage.
         int attackDamage = math::randomInt(5, 20); // Base damage.
         int mobStrength = mob.getAttributes().get(strength).getCurrent();
         attackDamage += mobStrength;
 
-        std::cout << "The mob hits the player for " << attackDamage << " damage!" << std::endl;
+        logStream(true, "The mob hits the player for ", attackDamage, " damage!");
 
         // Update the player's health.
         int playerHealth = player.getVitals().get(health).getCurrent();
@@ -393,33 +433,33 @@ namespace rpg_sim
         {
             player.getVitals().update(health, 0);
 
-            std::cout << "The player takes lethal damage and dies!" << std::endl;
+            logStream(true, "The player takes lethal damage and dies!");
             return false;
         }
 
         player.getVitals().update(health, remainingHealth);
-        std::cout << "Player survives with " << remainingHealth << " health." << std::endl;
-        
+        logStream(true, "Player survives with ", remainingHealth, " health.");
+
         return true;
     } // mobAttacksPlayer()
-    
+
 
     bool castSpellAgainstMob(rpg::Player& player, rpg::Player& mob)
     {
-        std::cout << "The player casts a spell at the mob!" << std::endl;
-        
+        logStream(true, "The player casts a spell at the mob!");
+
         // Determine if the spell hits.
         double hitChance = 0.75; // 75% hit chance.
         int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
         int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
         if (mobDexterity > playerDexterity)
             hitChance -= 0.1; // If the mob is faster, reduce hit chance by 10%.
-        
-        std::cout << "\tHit chance: " << hitChance << std::endl;
+
+        logStream(true, "\tHit chance: ", hitChance);
 
         if (!math::randomChance(hitChance))
         {
-            std::cout << "The player's spell missed!" << std::endl;
+            logStream(true, "The player's spell missed!");
             return true;
         }
 
@@ -430,24 +470,24 @@ namespace rpg_sim
         int currentIntelleligence = player.getAttributes().get(intelligence).getCurrent();
         if (remainingMana < minSpellCost)
         {
-            std::cout << "Not enough mana to cast spell!" << std::endl;
+            logStream(true, "Not enough mana to cast spell!");
             return true;
         }
         int spellCost = math::randomInt(minSpellCost, maxSpellCost);
         if (remainingMana < spellCost)
             spellCost = remainingMana;
         int spellDamage = 2*spellCost + currentIntelleligence;
-        
-        std::cout << "The spell hits for " << spellDamage << " damage!" << std::endl;
-        
+
+        logStream(true, "The spell hits for ", spellDamage, " damage!");
+
         // Update player and mob values.
         player.getVitals().update(mana, remainingMana - spellCost);
         int currentMobHealth = mob.getVitals().get(health).getCurrent();
         mob.getVitals().update(health, currentMobHealth - spellDamage);
-        
+
         if (currentMobHealth - spellDamage < 0)
         {
-            std::cout << "The mob was killed!" << std::endl;
+            logStream(true, "The mob was killed!");
             return false;
         }
 
@@ -457,8 +497,8 @@ namespace rpg_sim
 
     void heal(rpg::Player& player)
     {
-        std::cout << "Player casts heal!" << std::endl;
-        
+        logStream(true, "Player casts heal!");
+
         int currentHealth = player.getVitals().get(health).getCurrent();
         int maxHealth = player.getVitals().get(health).getCurrentMax();
         int currentMana = player.getVitals().get(mana).getCurrent();
@@ -466,24 +506,24 @@ namespace rpg_sim
 
         if (missingHealth == 0)
         { // Nothing to heal.
-            std::cout << "The player has nothing to heal (already at full health)!" << std::endl;
-            return;  
-        }
-        
-        int healthToRestore = math::randomInt(1, missingHealth);
-        
-        if (currentMana == 0)
-        {
-            std::cout << "The player has no mana to use heal!" << std::endl;
+            logStream(true, "The player has nothing to heal (already at full health)!");
             return;
         }
-        
+
+        int healthToRestore = math::randomInt(1, missingHealth);
+
+        if (currentMana == 0)
+        {
+            logStream(true, "The player has no mana to use heal!");
+            return;
+        }
+
         if (currentMana < healthToRestore)
             healthToRestore = currentMana;
 
         // Update the appropriate values.
-        std::cout << "The player heals for: " << healthToRestore 
-                  << ", using " << healthToRestore << " mana!" << std::endl;
+        logStream(true, "The player heals for: ", healthToRestore,
+                        ", using ", healthToRestore, " mana!");
         player.getVitals().update(health, currentHealth + healthToRestore);
         player.getVitals().update(mana, currentMana - healthToRestore);
     }
@@ -496,21 +536,21 @@ namespace rpg_sim
         int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
         int playerHealth = player.getVitals().get(health).getCurrent();
         int mobHealth = mob.getVitals().get(health).getCurrent();
-        
+
         if (mobDexterity > playerDexterity)
             fleeChance -= 0.2; // If the mob is faster, lower the flee chance by 20%.
-            
+
         if (mobHealth > playerHealth)
             fleeChance -= 0.1; // If the mob has more health, lower the flee chance by 10%.
-            
+
         if (math::randomChance(fleeChance))
         { // Flee success.
-            std::cout << "Player was able to flee!" << std::endl;
+            logStream(true, "Player was able to flee!");
             return false;
         }
         else
-        { // Flee unsuccessful.  
-            std::cout << "Player was unable to flee!" << std::endl;
+        { // Flee unsuccessful.
+            logStream(true, "Player was unable to flee!");
             return true;
         }
     }
@@ -524,24 +564,24 @@ namespace rpg_sim
         int mobHealthMax = std::round(playerMaxHealth * 1.5);
         int mobHealth = math::randomInt(mobHealthMin, mobHealthMax);
         mob.getVitals().add(health, mobHealth, 0, mobHealth);
-        
+
         int playerStrength = player.getAttributes().get(strength).getCurrent();
         int mobStrength = math::randomInt(1, playerStrength);
         mob.getAttributes().add(strength, mobStrength);
-        
+
         int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
         int mobDexterity = math::randomInt(1, playerDexterity*2);
         mob.getAttributes().add(dexterity, mobDexterity);
-        
+
         return mob;
     }
 
-    
+
     void runFightSim(rpg::Player& player)
     {
         // Create a somewhat random mob to fight.
         rpg::Player mob = createMob(player);
-        
+
         // Determine battle order.
         int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
         int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
@@ -556,7 +596,7 @@ namespace rpg_sim
             displayPlayerStatus(player);
 
             // Display menu.
-            std::cout << "---------------------------------" << std::endl;
+            logStream(true, "---------------------------------");
             displayFightSimOptions();
 
             int choice;
@@ -565,21 +605,21 @@ namespace rpg_sim
             // Clear input buffer
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            
+
             // Separator between available actions and action being performed.
-            std::cout << "---------------------------------" << std::endl;
+            logStream(true, "---------------------------------");
 
             if (mobAttacksFirst)
             {
-                std::cout << "The mob is faster than the player, it attacks first!" << std::endl;
+                logStream(true, "The mob is faster than the player, it attacks first!");
                 fightOngoing = mobAttacksPlayer(player, mob);
             }
-            
+
             if (!fightOngoing)
             { // Ensure the mob did not kill the player.
                 continue;
             }
-            
+
             // Handle choice
             switch (choice)
             {
@@ -589,30 +629,30 @@ namespace rpg_sim
                 case 8:                                                  break;
                 case 9: fightOngoing = fleeMob(player, mob);             break;
                 default:
-                    std::cout << "Invalid choice. Please enter a valid option." << std::endl;
+                    logStream(true, "Invalid choice. Please enter a valid option.");
                     break;
             }
 
             if (fightOngoing && !mobAttacksFirst)
             { // The mob attacks next if the fight is not over.
-                std::cout << "The mob is slower than the player, it attacks second!" << std::endl;
+                logStream(true, "The mob is slower than the player, it attacks second!");
                 fightOngoing = mobAttacksPlayer(player, mob);
             }
         } // while (fightOngoing)
 
-        std::cout << "The Fight ends." << std::endl;
+        logStream(true, "The Fight ends.");
     } // runFightSim()
-    
-    
+
+
     void fightMobManual(rpg::Player& player)
     {
-        runFightSim(player);        
+        runFightSim(player);
     } // fightMobManual()
-    
+
 
     void lootTreasure(rpg::Player& player)
     {
-        std::cout << "Player loots a treasure chest..." << std::endl;
+        logStream(true, "Player loots a treasure chest...");
 
         // Random coin amounts
         int copperAmount = math::randomInt(10, 100);
@@ -621,29 +661,31 @@ namespace rpg_sim
         player.getWallet().add(copper, copperAmount);
         player.getWallet().add(silver, silverAmount);
 
-        std::cout << "Player gains " << copperAmount << " Copper Coin" << (copperAmount > 1 ? "s" : "") << " and "
-                  << silverAmount << " Silver Coin" << (silverAmount > 1 ? "s" : "") << "." << std::endl;
+        logStream(true, "Player gains ", copperAmount, " Copper Coin",
+                        (copperAmount > 1 ? "s" : ""), " and ",
+                        silverAmount, " Silver Coin",
+                        (silverAmount > 1 ? "s" : ""), ".");
     }
-    
-    
+
+
     std::string restTypeToString(RestType type)
     {
         switch(type)
         {
             case RestType::longRest:  return "long rest";
-            
+
             // Defaults to a short rest.
-            case RestType::shortRest: 
+            case RestType::shortRest:
             default:                  return "short rest";
         }
     }
-    
+
 
     void rest(rpg::Player& player, RestType restType)
     {
-        std::cout << "Player takes a "
-                  << restTypeToString(restType)
-                  << " to recover vitals..." << std::endl;
+        logStream(true, "Player takes a ",
+                        restTypeToString(restType),
+                        " to recover vitals...");
 
         int currentHealth = player.getVitals().get(health).getCurrent();
         int currentMana = player.getVitals().get(mana).getCurrent();
@@ -652,12 +694,12 @@ namespace rpg_sim
 
         int healthRestore = 0;
         int manaRestore = 0;
-        
+
         if (restType == RestType::shortRest)
         { // short rest restores 20% of vitals.
             int missingHealth = maxHealth - currentHealth;
             int missingMana = maxMana - currentMana;
-            
+
             healthRestore = missingHealth;
             manaRestore = missingMana;
 
@@ -670,7 +712,7 @@ namespace rpg_sim
         else if (restType == RestType::longRest)
         { // long rest restores all vitals.
             healthRestore = maxHealth - currentHealth;
-            manaRestore = maxMana - currentMana; 
+            manaRestore = maxMana - currentMana;
         }
 
         currentHealth += healthRestore;
@@ -682,14 +724,14 @@ namespace rpg_sim
         player.getVitals().update(health, currentHealth);
         player.getVitals().update(mana, currentMana);
 
-        std::cout << "Recovered " << healthRestore << " health (now at " << currentHealth << ")." << std::endl;
-        std::cout << "Recovered " << manaRestore << " mana (now at " << currentMana << ")." << std::endl;
+        logStream(true, "Recovered ", healthRestore, " health (now at ", currentHealth, ").");
+        logStream(true, "Recovered ", manaRestore, " mana (now at ", currentMana, ").");
     } // rest()
-    
+
 
     void spendCurrency(rpg::Player& player)
     {
-        std::cout << "Player spends currency at a vendor..." << std::endl;
+        logStream(true, "Player spends currency at a vendor...");
 
         uint32_t copperOwned = player.getWallet().get(copper).getQuantity();
         uint32_t silverOwned = player.getWallet().get(silver).getQuantity();
@@ -703,47 +745,47 @@ namespace rpg_sim
         if (copperOwned >= copperSpend)
         {
             player.getWallet().update(copper, copperOwned - copperSpend);
-            std::cout << "Spent " << copperSpend << " Copper Coin" 
-                      << (copperSpend > 1 ? "s" : "") << "." << std::endl;
+            logStream(true, "Spent ", copperSpend, " Copper Coin",
+                            (copperSpend > 1 ? "s" : ""), ".");
             spentAnything = true;
         }
         else if (copperOwned > 0)
         {
             player.getWallet().update(copper, copperOwned - copperOwned);
-            std::cout << "Only had " << copperOwned << " Copper Coin" 
-                      << (copperOwned > 1 ? "s" : "") << ", all spent." << std::endl;
+            logStream(true, "Only had ", copperOwned, " Copper Coin",
+                            (copperOwned > 1 ? "s" : ""), ", all spent.");
             spentAnything = true;
         }
 
         if (silverOwned >= silverSpend)
         {
             player.getWallet().update(silver, silverOwned - silverSpend);
-            std::cout << "Spent " << silverSpend << " Silver Coin" 
-                      << (silverSpend > 1 ? "s" : "") << "." << std::endl;
+            logStream(true, "Spent ", silverSpend, " Silver Coin",
+                            (silverSpend > 1 ? "s" : ""), ".");
             spentAnything = true;
         }
         else if (silverOwned > 0)
         {
             player.getWallet().update(silver, silverOwned - silverOwned);
-            std::cout << "Only had " << silverOwned << " Silver Coin" 
-                      << (silverOwned > 1 ? "s" : "") << ", all spent." << std::endl;
+            logStream(true, "Only had ", silverOwned, " Silver Coin",
+                            (silverOwned > 1 ? "s" : ""), ", all spent.");
             spentAnything = true;
         }
 
         if (!spentAnything)
         {
-            std::cout << "Player has no currency to spend." << std::endl;
+            logStream(true, "Player has no currency to spend.");
         }
     } // spendCurrency()
-    
-    
+
+
     void levelUp(rpg::Player& player)
     {
         int strIncrease = 1 + math::randomInt(0, 2);
         int dexIncrease = 1 + math::randomInt(0, 2);
         int intIncrease = 1 + math::randomInt(0, 2);
         int conIncrease = 1 + math::randomInt(0, 2);
-        
+
         // Increment the current level.
         player.getProgress().get(level).add(1);
 
@@ -759,45 +801,45 @@ namespace rpg_sim
         player.getAttributes().update(intelligence, currentInt + intIncrease);
         player.getAttributes().update(constitution, currentCon + conIncrease);
 
-        // Print a status message on attribute changes.
-        std::cout << "Leveled up! " << std::endl
-                  << " - Strength increased by " << strIncrease
-                  << " - Dexterity increased by " << dexIncrease
-                  << " - Intelligence increased by " << intIncrease
-                  << " - Constitution increased by " << conIncrease
-                  << "." << std::endl;
-          
+        // Log a status message on attribute changes.
+        logStream(true, "Leveled up! \n",
+                        " - Strength increased by ", strIncrease,
+                        " - Dexterity increased by ", dexIncrease,
+                        " - Intelligence increased by ", intIncrease,
+                        " - Constitution increased by ", conIncrease,
+                        ".");
+
         // Update cross-modifiers.
-        helper_methods::updateModifiers(player);
+        updateModifiers(player);
     }
-    
-    
+
+
     bool isDead(rpg::Player& player)
     {
         if (player.getVitals().get(health).getCurrent() == 0)
             return true;
         return false;
     }
-    
-    
+
+
     void revive(rpg::Player& player)
     {
         if(isDead(player))
             player.getVitals().update(health, 1);
         else
-            std::cout << "Player is not dead!" << std::endl;
+            logStream(true, "Player is not dead!");
     }
-    
+
 
     void savePlayerData(rpg::Player& player, std::string& saveFile)
     {
         if (saveFile == "")
         {
-            std::cout << "Could not Save game state. No file given." << std::endl;
+            logStream(true, "Could not Save game state. No file given.");
             return;
         }
-        
+
         player.saveToFile(saveFile);
-        std::cout << "Saved game state." << std::endl;
+        logStream(true, "Saved game state.");
     }
 } // namespace rpg_sim
