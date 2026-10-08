@@ -10,7 +10,8 @@ Contains data for representing modifiers to vital values in the RPG system.
 
 - Defines the `ModifierSourceType` enum class to specify sources of modifiers such as attributes, items, buffs, and debuffs.
 - Provides conversion functions between `ModifierSourceType` and string representations.
-- Implements a templated `Modifier<T>` struct representing a modifier with source ID, type, and value.
+- Implements the `Modifier` struct, which holds a source ID, source type, modify type, and a value (an int amount or a double multiplier bonus).
+- Provides `computeModifiedValue`, which applies MULTIPLY, ADD_MAX, and SET modifiers to a base value in that order and clamps the result to the range of int.
 - Overloads the stream insertion operator for easy printing of `Modifier` instances.
 
 ---
