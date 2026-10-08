@@ -2,12 +2,14 @@
  * @file Attributes.cpp
  * @author Antonius Torode
  * @date 07/11/2025
- * Description: Storage for a container of attributes.
+ * @brief Storage for a container of attributes.
  */
  
+#include <cmath>
 #include <sstream>
 #include <stdexcept>
- 
+#include <variant>
+
 #include "Attributes.hpp"
 #include "AttributeRegistry.hpp"
 #include "RegistryHelper.hpp"
@@ -53,34 +55,34 @@ namespace stats
         auto it = dataStore.find(attribute.getID());
         if (it == dataStore.end())
         {
-            // The data is not found so add a default one, then update the current.
+            // The data is not found so add a default one, then return it.
             add(attribute, attribute.getBaseValue());
             it = dataStore.find(attribute.getID());
             return it->second;
         }
-        else 
+        else
             return it->second;
     }
     
     
     // add() methods...
-    void Attributes::add(const std::string& name, int current)
+    void Attributes::add(const std::string& name, int baseValue)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        add(*attribute, current);
+        add(*attribute, baseValue);
     }
-    void Attributes::add(uint32_t id, int current)
+    void Attributes::add(uint32_t id, int baseValue)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        add(*attribute, current);
+        add(*attribute, baseValue);
     }
-    void Attributes::add(const Attribute& attribute, int current)
+    void Attributes::add(const Attribute& attribute, int baseValue)
     {
         auto id = attribute.getID();
         if (dataStore.find(id) != dataStore.end())            
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);
             
-        dataStore.emplace(id, AttributeData(current));
+        dataStore.emplace(id, AttributeData(baseValue));
     }
     
     
@@ -105,42 +107,73 @@ namespace stats
         }
         else
         {
-            it->second.setCurrent(value);
+            it->second.setBaseValue(value);
         }
     }
     
     
     // addModifier() methods...
-    void Attributes::addModifier(const std::string& name, 
-                                 uint32_t sourceID, 
-                                 rpg::ModifierSourceType sourceType, 
-                                 int32_t value)
+    void Attributes::addModifier(const std::string& name,
+                                 uint32_t sourceID,
+                                 rpg::ModifierSourceType sourceType,
+                                 int32_t value,
+                                 rpg::ModifyType modifyType)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
-        addModifier(*attribute, sourceID, sourceType, value);
+        addModifier(*attribute, sourceID, sourceType, value, modifyType);
     }
-    void Attributes::addModifier(uint32_t id, 
-                                 uint32_t sourceID, 
-                                 rpg::ModifierSourceType sourceType, 
-                                 int32_t value)
+    void Attributes::addModifier(uint32_t id,
+                                 uint32_t sourceID,
+                                 rpg::ModifierSourceType sourceType,
+                                 int32_t value,
+                                 rpg::ModifyType modifyType)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
-        addModifier(*attribute, sourceID, sourceType, value);
+        addModifier(*attribute, sourceID, sourceType, value, modifyType);
     }
-    void Attributes::addModifier(const Attribute& attribute, 
-                                 uint32_t sourceID, 
-                                 rpg::ModifierSourceType sourceType, 
-                                 int32_t value)
+    void Attributes::addModifier(const Attribute& attribute,
+                                 uint32_t sourceID,
+                                 rpg::ModifierSourceType sourceType,
+                                 int32_t value,
+                                 rpg::ModifyType modifyType)
     {
         auto it = dataStore.find(attribute.getID());
         if (it == dataStore.end())
         {
-            // The data is not found so add a default one, then update the current.
+            // The data is not found so add a default one, then attach the modifier.
             add(attribute, attribute.getBaseValue());
+            // The insert may have rehashed the map, so the iterator must be refreshed.
+            it = dataStore.find(attribute.getID());
         }
-        
-        rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, value);
-        
+
+        rpg::Modifier mod = rpg::Modifier(sourceID, sourceType, value, modifyType);
+
+        it->second.addModifier(mod);
+    }
+    void Attributes::addModifier(const std::string& name,
+                                 const rpg::Modifier& mod)
+    {
+        const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
+        addModifier(*attribute, mod);
+    }
+    void Attributes::addModifier(uint32_t id,
+                                 const rpg::Modifier& mod)
+    {
+        const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
+        addModifier(*attribute, mod);
+    }
+    void Attributes::addModifier(const Attribute& attribute,
+                                 const rpg::Modifier& mod)
+    {
+        auto it = dataStore.find(attribute.getID());
+        if (it == dataStore.end())
+        {
+            // The data is not found so add a default one, then attach the modifier.
+            add(attribute, attribute.getBaseValue());
+            // The insert may have rehashed the map, so the iterator must be refreshed.
+            it = dataStore.find(attribute.getID());
+        }
+
         it->second.addModifier(mod);
     }
 
@@ -171,9 +204,9 @@ namespace stats
             return;
         }
         
-        // removeModifier() doesn't check the value so setting it to zero here...
-        rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, 0);
-        
+        // removeModifier() matches on source ID and type only, so the value here is a placeholder.
+        rpg::Modifier mod = rpg::Modifier(sourceID, sourceType, 0);
+
         it->second.removeModifier(mod);
     }
 
@@ -221,16 +254,23 @@ namespace stats
                 ss << ";";
             firstAttribute = false;
 
-            // Serialize id and current value
-            ss << id << ":" << attrData.getCurrent();
+            // Serialize id and base value
+            ss << id << ":" << attrData.getBaseValue();
 
             // Serialize modifiers
             const auto& modifiers = attrData.getModifiers();
             for (const auto& mod : modifiers)
             {
+                std::ostringstream valueStream;
+                if (std::holds_alternative<int>(mod.value))
+                    valueStream << std::get<int>(mod.value);
+                else
+                    valueStream << std::get<double>(mod.value);
+
                 ss << "," << mod.sourceID << ","
                    << rpg::modifierSourceTypeToString(mod.source) << ","
-                   << mod.value;
+                   << valueStream.str() << ","
+                   << rpg::modifyTypeToString(mod.modifyType);
             }
         }
 
@@ -297,8 +337,8 @@ namespace stats
                 continue;
             }
 
-            // Create AttributeData with current value
-            std::vector<rpg::Modifier<int>> modifiers;
+            // Create AttributeData with modifiers.
+            std::vector<rpg::Modifier> modifiers;
             while (std::getline(entryStream, segment, ','))
             {
                 uint32_t sourceID;
@@ -308,7 +348,7 @@ namespace stats
                 }
                 catch (const std::exception&)
                 {
-                    // Skip invalid sourceID
+                    // Skip invalid sourceID.
                     continue;
                 }
 
@@ -316,25 +356,33 @@ namespace stats
                 rpg::ModifierSourceType sourceType = rpg::stringToModifierSourceType(segment);
 
                 std::getline(entryStream, segment, ',');
-                int32_t modValue;
+                double parsedValue;
                 try
                 {
-                    modValue = std::stoi(segment);
+                    parsedValue = std::stod(segment);
                 }
                 catch (const std::exception&)
                 {
-                    // Skip invalid modifier value
+                    // Skip invalid modifier value.
                     continue;
                 }
 
-                modifiers.emplace_back(sourceID, sourceType, modValue);
+                std::getline(entryStream, segment, ',');
+                rpg::ModifyType modifyType = rpg::stringToModifyType(segment);
+
+                // Store the value as an int for ADD_MAX and SET, and as a double for MULTIPLY.
+                rpg::Modifier::Value value =
+                    (modifyType == rpg::ModifyType::MULTIPLY)
+                        ? rpg::Modifier::Value(parsedValue)
+                        : rpg::Modifier::Value(static_cast<int>(std::round(parsedValue)));
+
+                modifiers.emplace_back(rpg::Modifier{sourceID, sourceType, value, modifyType});
             }
 
-            // Create and add AttributeData to the map
+            // Create and add AttributeData to the map.
             result.dataStore.emplace(id, AttributeData(current, modifiers));
         }
 
         return result;
     }
 } // namespace stats
-
