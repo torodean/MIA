@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <stdint.h>
 
 #include "Vital.hpp"
 
@@ -15,8 +16,8 @@ namespace stats
           const std::string& name,
           const std::string& description,
           VitalType type,
-          int min,
-          int max) :
+          int32_t min,
+          int32_t max) :
         BaseDataObject(id, name, description),
         type(type),
         baseMin(min),
@@ -25,8 +26,8 @@ namespace stats
 
 
     VitalType Vital::getType() const { return type; }
-    int Vital::getBaseMin() const { return baseMin; }
-    int Vital::getBaseMax() const { return baseMax; }
+    int32_t Vital::getBaseMin() const { return baseMin; }
+    int32_t Vital::getBaseMax() const { return baseMax; }
 
 
     nlohmann::json Vital::toJson() const
@@ -43,8 +44,8 @@ namespace stats
     {
         BaseDataObject base = BaseDataObject::fromJson(json);
         VitalType type = stringToVitalType(json.value("type", "UNKNOWN"));
-        int baseMin = json.value("baseMin", 0);
-        int baseMax = json.value("baseMax", 100);
+        int32_t baseMin = json.value("baseMin", 0);
+        int32_t baseMax = json.value("baseMax", 100);
 
         Vital vital(base.getID(), base.getName(), base.getDescription(), 
                     type, baseMin, baseMax);

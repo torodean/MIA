@@ -12,6 +12,10 @@
 #include "RegistryHelper.hpp"
 #include "ProgressRegistry.hpp"
 
+// Used for error handling.
+#include "Error.hpp"
+#include "MIAException.hpp"
+
 namespace progress
 {
     namespace helper_methods 
@@ -173,8 +177,13 @@ namespace progress
     {
         std::ostringstream oss;
         oss << "[PROGRESS_BEGIN]";
-        for (const auto& [id, progressValue] : dataStore) {
-            oss << id << ':' << progressValue.get() << ';';
+        bool first = true;
+        for (const auto& [id, progressValue] : dataStore) 
+        {
+            if (!first)
+                oss << ";";
+            oss << id << ':' << progressValue.get();
+            first = false;
         }
         oss << "[PROGRESS_END]";
         return oss.str();
@@ -188,7 +197,8 @@ namespace progress
 
         if (start == std::string::npos || end == std::string::npos) 
         {
-            throw std::invalid_argument("ProgressMarkers block not found.");
+            MIA_THROW(error::Serialization_Key_Not_Found, 
+                      "ProgressMarkers block not found during deserialize.");
         }
 
         start += std::string("[PROGRESS_BEGIN]").length();

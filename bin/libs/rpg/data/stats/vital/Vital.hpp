@@ -42,13 +42,13 @@ namespace stats
               const std::string& name,
               const std::string& description,
               VitalType type,
-              int min = 0,
-              int max = 100);
+              int32_t min = 0,
+              int32_t max = 100);
 
         /// Getters for the various data members.
         VitalType getType() const;
-        int getBaseMin() const;
-        int getBaseMax() const;
+        int32_t getBaseMin() const;
+        int32_t getBaseMax() const;
 
         /**
          * Serializes the Vital object to JSON, including base class properties.
@@ -68,8 +68,8 @@ namespace stats
     private:
     
         VitalType type{VitalType::UNKNOWN}; ///< Behavior type of the Vital.
-        int baseMin{0};                     ///< Minimum value of the Vital.
-        int baseMax{100};                   ///< Maximum value of the Vital.
+        int32_t baseMin{0};                     ///< Minimum value of the Vital.
+        int32_t baseMax{100};                   ///< Maximum value of the Vital.
     };
 } // namespace stats
 

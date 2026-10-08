@@ -436,6 +436,13 @@ namespace rpg_sim
         int maxHealth = player.getVitals().get(healthName).getCurrentMax();
         int currentMana = player.getVitals().get(manaName).getCurrent();
         int missingHealth = maxHealth - currentHealth;
+
+        if (missingHealth == 0)
+        { // Nothing to heal.
+            std::cout << "The player has nothing to heal (already at full health)!" << std::endl;
+            return;  
+        }
+        
         int healthToRestore = math::randomInt(1, missingHealth);
         
         if (currentMana == 0)
@@ -444,12 +451,12 @@ namespace rpg_sim
             return;
         }
         
-        if (currentMana > healthToRestore)
+        if (currentMana < healthToRestore)
             healthToRestore = currentMana;
 
         // Update the appropriate values.
         std::cout << "The player heals for: " << healthToRestore 
-                  << ", using " << healthToRestore << "mana!" << std::endl;
+                  << ", using " << healthToRestore << " mana!" << std::endl;
         player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentHealth + healthToRestore);
         player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, currentMana - healthToRestore);
     }
@@ -475,7 +482,7 @@ namespace rpg_sim
             return false;
         }
         else
-        { // Flee unsuccessful.
+        { // Flee unsuccessful.  
             std::cout << "Player was unable to flee!" << std::endl;
             return true;
         }

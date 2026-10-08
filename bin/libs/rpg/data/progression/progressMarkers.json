@@ -11,6 +11,11 @@
             "id": 1,
             "name": "Experience",
             "description": "A core leveling metric."
+        },
+        {
+            "id": 2,
+            "name": "Reputation",
+            "description": "A reputation to progress."
         }
     ]
 }

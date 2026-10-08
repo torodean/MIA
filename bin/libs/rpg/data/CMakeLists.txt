@@ -10,7 +10,12 @@ set(RPG_DataLoader_SRC
 set(RPG_DataLoader_INC 
     DataLoader.hpp)
 add_library(RPG_DataLoader_LIB ${RPG_DataLoader_SRC} ${RPG_DataLoader_INC})
-target_link_libraries(RPG_DataLoader_LIB PUBLIC RPG_Currencies_LIB RPG_Vitals_LIB RPG_Attributes_LIB)
+target_link_libraries(RPG_DataLoader_LIB 
+                      PUBLIC 
+                      RPG_Currencies_LIB 
+                      RPG_Vitals_LIB 
+                      RPG_Attributes_LIB 
+                      RPG_Progression_LIB )
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(RPG_DataLoader_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

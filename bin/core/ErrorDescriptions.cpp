@@ -77,6 +77,7 @@ namespace error
         { Undefined_RPG_Value, "A referenced value for the RPG system wasn't defined." },
         { Duplicate_RPG_Value, "A duplicate RPG entry was added." },
         { Invalid_RPG_Data, "An invalid combination/set of RPG data was used." },
+        { Serialization_Key_Not_Found, "A Serialization key was not found." },
         
         /*
          * Database error codes. 38XXX

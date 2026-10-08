@@ -17,7 +17,7 @@
 
 namespace stats
 {
-    namespace helper_methods 
+    namespace 
     {
         /**
          * Resolves and retrieves a Vital object from the VitalRegistry based on a given identifier.
@@ -38,17 +38,17 @@ namespace stats
             return rpg::helper_methods::getFromRegistry<VitalRegistry, Vital, T>(identifier);
         }
 
-    } // namespace helper_methods
+    } // namespace
 
     // get(..) methods.
     VitalData& Vitals::get(const std::string& name)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);            
+        const Vital* vital = getVitalFromRegistry(name);            
         return get(*vital);
     }
     VitalData& Vitals::get(uint32_t id)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);            
+        const Vital* vital = getVitalFromRegistry(id);            
         return get(*vital);
     }
     VitalData& Vitals::get(const Vital& vital)
@@ -68,17 +68,17 @@ namespace stats
     
     
     // add(..) methods.
-    void Vitals::add(const std::string& name, int current, int min, int max)
+    void Vitals::add(const std::string& name, int32_t current, int32_t min, int32_t max)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);            
+        const Vital* vital = getVitalFromRegistry(name);            
         add(*vital, current, min, max);
     }
-    void Vitals::add(uint32_t id, int current, int min, int max)
+    void Vitals::add(uint32_t id, int32_t current, int32_t min, int32_t max)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);            
+        const Vital* vital = getVitalFromRegistry(id);            
         add(*vital, current, min, max);
     }
-    void Vitals::add(const Vital& vital, int current, int min, int max)
+    void Vitals::add(const Vital& vital, int32_t current, int32_t min, int32_t max)
     {
         if (current < min || current > max || min > max)
         {
@@ -97,17 +97,17 @@ namespace stats
 
 
     // update(..) methods.
-    void Vitals::update(const std::string& name, VitalDataTarget target, int value)
+    void Vitals::update(const std::string& name, VitalDataTarget target, int32_t value)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        const Vital* vital = getVitalFromRegistry(name);
         update(*vital, target, value);
     }
-    void Vitals::update(uint32_t id, VitalDataTarget target, int value)
+    void Vitals::update(uint32_t id, VitalDataTarget target, int32_t value)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        const Vital* vital = getVitalFromRegistry(id);
         update(*vital, target, value);
     }
-    void Vitals::update(const Vital& vital, VitalDataTarget target, int value)
+    void Vitals::update(const Vital& vital, VitalDataTarget target, int32_t value)
     {
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
@@ -154,25 +154,25 @@ namespace stats
     void Vitals::addModifier(const std::string& name, 
                              uint32_t sourceID, 
                              rpg::ModifierSourceType sourceType, 
-                             int value,
+                             int32_t value,
                              VitalDataTarget target)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        const Vital* vital = getVitalFromRegistry(name);
         addModifier(*vital, sourceID, sourceType, value, target);
     }
     void Vitals::addModifier(uint32_t id, 
                              uint32_t sourceID, 
                              rpg::ModifierSourceType sourceType, 
-                             int value,
+                             int32_t value,
                              VitalDataTarget target)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        const Vital* vital = getVitalFromRegistry(id);
         addModifier(*vital, sourceID, sourceType, value, target);
     }
     void Vitals::addModifier(const Vital& vital,
                              uint32_t sourceID,
                              rpg::ModifierSourceType sourceType,
-                             int value,
+                             int32_t value,
                              VitalDataTarget target)
     {
         auto it = dataStore.find(vital.getID());
@@ -185,26 +185,26 @@ namespace stats
             it = dataStore.find(vital.getID());
         }
 
-        rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, value);
+        rpg::Modifier<int32_t> mod = rpg::Modifier<int32_t>(sourceID, sourceType, value);
 
         it->second.addModifier(mod, target);
     }
     void Vitals::addModifier(const std::string& name, 
-                             rpg::Modifier<int>& mod,
+                             rpg::Modifier<int32_t>& mod,
                              VitalDataTarget target)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        const Vital* vital = getVitalFromRegistry(name);
         addModifier(*vital, mod, target);
     }
     void Vitals::addModifier(uint32_t id, 
-                             rpg::Modifier<int>& mod,
+                             rpg::Modifier<int32_t>& mod,
                              VitalDataTarget target)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        const Vital* vital = getVitalFromRegistry(id);
         addModifier(*vital, mod, target);
     }
     void Vitals::addModifier(const Vital& vital,
-                             rpg::Modifier<int>& mod,
+                             rpg::Modifier<int32_t>& mod,
                              VitalDataTarget target)
     {
         auto it = dataStore.find(vital.getID());
@@ -227,7 +227,7 @@ namespace stats
                                 rpg::ModifierSourceType sourceType,
                                 VitalDataTarget target)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        const Vital* vital = getVitalFromRegistry(name);
         removeModifier(*vital, sourceID, sourceType, target);
     }
     void Vitals::removeModifier(uint32_t id, 
@@ -235,7 +235,7 @@ namespace stats
                                 rpg::ModifierSourceType sourceType,
                                 VitalDataTarget target)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        const Vital* vital = getVitalFromRegistry(id);
         removeModifier(*vital, sourceID, sourceType, target);
     }
     void Vitals::removeModifier(const Vital& vital, 
@@ -251,7 +251,7 @@ namespace stats
         }
         
         // removeModifier() doesn't check the value so setting it to zero here...
-        rpg::Modifier<int> mod = rpg::Modifier<int>(sourceID, sourceType, 0);
+        rpg::Modifier<int32_t> mod = rpg::Modifier<int32_t>(sourceID, sourceType, 0);
 
         it->second.removeModifier(mod, target);
     }
@@ -260,12 +260,12 @@ namespace stats
     // remove(..) methods.
     void Vitals::remove(const std::string& name)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        const Vital* vital = getVitalFromRegistry(name);
         remove(*vital);
     }
     void Vitals::remove(uint32_t id)
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        const Vital* vital = getVitalFromRegistry(id);
         remove(*vital);
     }
     void Vitals::remove(const Vital& vital)
@@ -277,17 +277,17 @@ namespace stats
         dataStore.erase(it);
     }
     
-    bool Vitals::has(const std::string& name, int value) const    
+    bool Vitals::has(const std::string& name, int32_t value) const    
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(name);
+        const Vital* vital = getVitalFromRegistry(name);
         return has(*vital, value);
     }
-    bool Vitals::has(uint32_t id, int value) const
+    bool Vitals::has(uint32_t id, int32_t value) const
     {
-        const Vital* vital = helper_methods::getVitalFromRegistry(id);
+        const Vital* vital = getVitalFromRegistry(id);
         return has(*vital, value);
     }
-    bool Vitals::has(const Vital& vital, int value) const
+    bool Vitals::has(const Vital& vital, int32_t value) const
     {
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
@@ -393,12 +393,12 @@ namespace stats
             }
 
             std::stringstream baseStream(baseInfo.substr(colon + 1));
-            int current, min, max;
+            int32_t current, min, max;
             char comma1, comma2;
             if (!(baseStream >> current >> comma1 >> min >> comma2 >> max) || comma1 != ',' || comma2 != ',')
                 throw std::invalid_argument("Invalid vital values format");
 
-            const Vital* vital = helper_methods::getVitalFromRegistry(id);
+            const Vital* vital = getVitalFromRegistry(id);
         
             if (!vital)
                 MIA_THROW(error::ErrorCode::Undefined_RPG_Value);
@@ -419,7 +419,7 @@ namespace stats
 
                 uint32_t sourceID = std::stoul(parts[0]);
                 rpg::ModifierSourceType sourceType = rpg::stringToModifierSourceType(parts[1]);
-                int value = std::stoi(parts[2]);
+                int32_t value = std::stoi(parts[2]);
                 VitalDataTarget target = stringToVitalDataTarget(parts[3]);
 
                 if (target != VitalDataTarget::CURRENT_MIN && target != VitalDataTarget::CURRENT_MAX)
@@ -428,7 +428,7 @@ namespace stats
                 // The vitals are already calculated so this block bypasses the recaclulate() 
                 // call in addModifier().
                 auto& vitalData = vitals.dataStore.at(id);
-                rpg::Modifier<int> mod(sourceID, sourceType, value);                
+                rpg::Modifier<int32_t> mod(sourceID, sourceType, value);                
                 vitalData.addModifier(mod, target, false);
             }
         }
