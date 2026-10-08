@@ -251,6 +251,7 @@ namespace rpg_sim
                     { // 50% chance the spell kills the mob.
                         std::cout << "Mob is defeated!" << std::endl;
                         player.getProgress().get(xp).add(25); // Gain 25 xp from auto kills.
+                        std::cout << "The player gains 25 xp!" << std::endl;
                         break;
                     }
                     else
@@ -343,15 +344,17 @@ namespace rpg_sim
         mob.getVitals().update(health, stats::VitalDataTarget::CURRENT, mobHealth - attackDamage);
         
         // Determine if the fight should continue or not.
-        if (mobHealth - attackDamage > 0)
+        if (mobHealth - attackDamage <= 0)
         {
             std::cout << "The mob has died!" << std::endl;
             // Gain xp equal to the max health of the mob killed.
             int xpGained = mob.getVitals().get(health).getCurrentMax();
             player.getProgress().get(xp).add(xpGained);
-            return true;
+            std::cout << "The player gains " << xpGained << " xp!" << std::endl;
+            return false;
         }
-        return false;
+
+        return true;
     } // playerAttacksMob()
     
 
