@@ -1,6 +1,12 @@
 {
     "PROGRESS": 
     [
+        
+        {
+            "id": 0,
+            "name": "Level",
+            "description": "The level of a unit."
+        },
         {
             "id": 1,
             "name": "Experience",
@@ -8,8 +14,8 @@
         },
         {
             "id": 2,
-            "name": "Defense Skill",
-            "description": "A tracker for the players skill in general defense tactics."
+            "name": "Reputation",
+            "description": "A reputation to progress."
         }
     ]
 }

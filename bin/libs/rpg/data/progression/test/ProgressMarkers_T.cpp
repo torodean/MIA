@@ -14,7 +14,9 @@
 
 namespace progress
 {
-    // Test fixture for ProgressMarkers tests, setting up common data.
+    /*
+     * Test fixture for ProgressMarkers tests, setting up common data.
+     */
     class ProgressMarkers_T : public ::testing::Test
     {
     protected:
@@ -44,7 +46,10 @@ namespace progress
         ProgressMarker marker; ///< Sample ProgressMarker for testing.
     };
 
-    // Tests the default constructor.
+
+    /*
+     * Tests the default constructor.
+     */
     TEST_F(ProgressMarkers_T, DefaultConstructor)
     {
         ProgressMarkers markers;
@@ -53,7 +58,10 @@ namespace progress
         EXPECT_EQ(oss.str(), "") << "Default constructor should create an empty container";
     }
 
-    // Tests the get methods (by name, ID, and ProgressMarker).
+
+    /*
+     * Tests the get methods (by name, ID, and ProgressMarker).
+     */
     TEST_F(ProgressMarkers_T, GetMethods)
     {
         ProgressMarkers markers;
@@ -71,7 +79,10 @@ namespace progress
         EXPECT_THROW(markers.get("NonExistent"), error::MIAException);
     }
 
-    // Tests the add methods (by name, ID, and ProgressMarker).
+
+    /*
+     * Tests the add methods (by name, ID, and ProgressMarker).
+     */
     TEST_F(ProgressMarkers_T, AddMethods)
     {
         ProgressMarkers markers;
@@ -85,7 +96,10 @@ namespace progress
         EXPECT_EQ(markers.get(2).get(), 75) << "add by ID should set initial value";
     }
 
-    // Tests the remove methods (by name, ID, and ProgressMarker).
+
+    /*
+     * Tests the remove methods (by name, ID, and ProgressMarker).
+     */
     TEST_F(ProgressMarkers_T, RemoveMethods)
     {
         ProgressMarkers markers;
@@ -102,7 +116,10 @@ namespace progress
         EXPECT_EQ(markers.get(marker).get(), 0) << "remove by ProgressMarker should clear value";
     }
 
-    // Tests the update methods (by name, ID, and ProgressMarker).
+
+    /*
+     * Tests the update methods (by name, ID, and ProgressMarker).
+     */
     TEST_F(ProgressMarkers_T, UpdateMethods)
     {
         ProgressMarkers markers;
@@ -118,7 +135,10 @@ namespace progress
         EXPECT_EQ(markers.get(marker).get(), 300) << "update by ProgressMarker should set new value";
     }
 
-    // Tests the has methods (by name, ID, and ProgressMarker).
+
+    /*
+     * Tests the has methods (by name, ID, and ProgressMarker).
+     */
     TEST_F(ProgressMarkers_T, HasMethods)
     {
         ProgressMarkers markers;
@@ -136,7 +156,10 @@ namespace progress
         EXPECT_THROW(markers.has("NonExistent", 50), error::MIAException);
     }
 
-    // Tests the dump method.
+
+    /*
+     * Tests the dump method.
+     */
     TEST_F(ProgressMarkers_T, Dump)
     {
         ProgressMarkers markers;
@@ -151,7 +174,10 @@ namespace progress
         EXPECT_TRUE(output.find("Quest2") != std::string::npos) << "Dump should contain Quest2 name";
     }
     
-    // Tests the serialize and deserialize methods.
+    
+    /*
+     * Tests the serialize and deserialize methods.
+     */
     TEST_F(ProgressMarkers_T, SerializeDeserialize)
     {
         ProgressMarkers markers;
@@ -168,4 +194,27 @@ namespace progress
         EXPECT_EQ(deserialized.get("Quest1").get(), 100) << "deserialize should restore Quest1 value";
         EXPECT_EQ(deserialized.get("Quest2").get(), 200) << "deserialize should restore Quest2 value";
     }
+    
+    
+    /*
+     * Tests that the deserialize method fails when the markers are not found.
+     */
+    TEST_F(ProgressMarkers_T, DeserializeInvalidStrings)
+    {
+        // No markers.
+        std::string serialized = "2:200;1:100";
+        ASSERT_THROW(ProgressMarkers::deserialize(serialized), error::MIAException);
+        
+        // Only starting marker.
+        serialized = "[PROGRESS_BEGIN]2:200;1:100";
+        ASSERT_THROW(ProgressMarkers::deserialize(serialized), error::MIAException);
+        
+        // Only ending marker.
+        serialized = "2:200;1:100[PROGRESS_END]";
+        ASSERT_THROW(ProgressMarkers::deserialize(serialized), error::MIAException);
+        
+        // Both markers should succeed.
+        serialized = "[PROGRESS_BEGIN]2:200;1:100[PROGRESS_END]";
+        ASSERT_NO_THROW(ProgressMarkers::deserialize(serialized));
+    }     
 } // namespace progress

@@ -6,6 +6,8 @@
  */
 #pragma once
 
+#include <string>
+
 // Used for error handling.
 #include "MIAException.hpp"
 #include "Error.hpp"
@@ -30,22 +32,27 @@ namespace rpg
         template<typename RegistryType, typename ObjType, typename SearchType>
         const ObjType* getFromRegistry(const SearchType& identifier)
         {
+            std::string identifierStr = "";
             const ObjType* object = nullptr;
             if constexpr (std::is_same_v<SearchType, std::string>)
             { // Searches by name if a string identifier was used.
                 object = RegistryType::getInstance().getByName(identifier);
+                identifierStr = identifier;
             }
             else if constexpr (std::is_same_v<SearchType, uint32_t>)
             { // Searches by ID if a uint32_t identifier was used.
                 object = RegistryType::getInstance().getByID(identifier);
+                identifierStr = std::to_string(identifier);
             }
             else if constexpr (std::is_same_v<SearchType, ObjType>)
             { // If the identifier is of a derived type, search for the instance of that object.
                 object = RegistryType::getInstance().getByID(identifier.getID());
+                identifierStr = identifier.name;
             }
             if (!object)
             { // Object was never defined.
-                MIA_THROW(error::ErrorCode::Undefined_RPG_Value);
+                std::string error = "Reference value identifier: " + identifierStr;
+                MIA_THROW(error::ErrorCode::Undefined_RPG_Value, error);
             }
             else
             {

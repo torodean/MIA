@@ -30,9 +30,9 @@ namespace progress
          * in the objects map, a default constructed data object will be returned.
          * Overloads allow querying by progress marker name, progress marker ID, or ProgressMarker object (by reference).
          *
-         * @param name[const std::string&] - The name of the progress marker (e.g., "experience", "defense skill").
-         *        id[uint32_t] - The ID of the progress marker.
-         *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
+         * @param name The name of the progress marker (e.g., "experience", "defense skill").
+         *        id The ID of the progress marker.
+         *        progressMarker The ProgressMarker object.
          * @return The ProgressMarker associated with the identifier, or a default ProgressMarker if not found.
          */
         ProgressValue& get(const std::string& name) override;
@@ -44,10 +44,10 @@ namespace progress
          * Overloads allow adding by ProgressMarker object, progress marker ID, or progress marker name.
          * If the progress marker is already added, this will increment the value.
          *
-         * @param name[const std::string&] - The name of the progress marker (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the progress marker.
-         *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
-         * @param value[unsigned int] - The value to add.
+         * @param name The name of the progress marker (e.g., "gold", "silver").
+         *        id The ID of the progress marker.
+         *        progressMarker The ProgressMarker object.
+         * @param value The value to add.
          */
         void add(const std::string& name, unsigned int value);
         void add(uint32_t id, unsigned int value);
@@ -57,9 +57,9 @@ namespace progress
          * Removes a specified progress marker from the container.
          * Overloads allow removing by ProgressMarker object, progress marker ID, or progress marker name.
          *
-         * @param name[const std::string&] - The name of the progress marker (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the progress marker.
-         *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
+         * @param name The name of the progress marker (e.g., "gold", "silver").
+         *        id The ID of the progress marker.
+         *        progressMarker The ProgressMarker object.
          */
         void remove(const std::string& name);
         void remove(uint32_t id);
@@ -69,10 +69,10 @@ namespace progress
          * Updates a specified value of a progress marker.
          * Overloads allow updating by ProgressMarker object, progress marker ID, or progress marker name.
          *
-         * @param name[const std::string&] - The name of the progress marker (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the progress marker.
-         *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
-         * @param value[int] - The signed value to update .
+         * @param name The name of the progress marker (e.g., "gold", "silver").
+         *        id The ID of the progress marker.
+         *        progressMarker The ProgressMarker object.
+         * @param value The signed value to update .
          */
         void update(const std::string& name, unsigned int value);
         void update(uint32_t id, unsigned int value);
@@ -82,10 +82,10 @@ namespace progress
          * Checks if the container has at least the specified value of a progress marker.
          * Overloads allow checking by ProgressMarker object, progress marker ID, or progress marker name.
          *
-         * @param name[const std::string&] - The name of the progress marker (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the progress marker.
-         *        progressMarker[const ProgressMarker&] - The ProgressMarker object.
-         * @param value[unsigned int] - The required value.
+         * @param name The name of the progress marker (e.g., "gold", "silver").
+         *        id The ID of the progress marker.
+         *        progressMarker The ProgressMarker object.
+         * @param value The required value.
          * @return True if the container has enough; false otherwise.
          */
         bool has(const std::string& name, unsigned int value) const;
@@ -116,7 +116,7 @@ namespace progress
          *
          * @param data A string containing the serialized container, possibly among other data.
          * @return A reconstructed ProgressMarkers instance.
-         * @throws std::invalid_argument if no valid serialized block is found.
+         * @throws MIAException if no valid serialized block is found.
          */
         static ProgressMarkers deserialize(const std::string& data);
 

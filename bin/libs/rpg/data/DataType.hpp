@@ -21,6 +21,7 @@ namespace rpg
 		CURRENCY,   ///< Represents a Currency object.
 		VITAL,      ///< Represents a Vital object.
 		ATTRIBUTE,  ///< Represnts an Attribute object.
+		PROGRESS,   ///< Represents a progress marker object.
 	};
 	
 	/**
@@ -37,6 +38,7 @@ namespace rpg
 			case DataType::CURRENCY:  return "CURRENCY";
 			case DataType::VITAL:     return "VITAL";
 			case DataType::ATTRIBUTE: return "ATTRIBUTE";
+			case DataType::PROGRESS:  return "PROGRESS";
 			default:                   return "UNKNOWN";
 		}
 	}
@@ -53,6 +55,7 @@ namespace rpg
 		if (str == "CURRENCY")  return DataType::CURRENCY;
 		if (str == "VITAL")     return DataType::VITAL;
 		if (str == "ATTRIBUTE") return DataType::ATTRIBUTE;
+		if (str == "PROGRESS")  return DataType::PROGRESS;
 		return DataType::UNKNOWN;
 	}
 } // namespace rpg

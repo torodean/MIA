@@ -29,6 +29,15 @@ namespace math
                   bool verboseMode = false);
 
     /**
+     * Returns true based on the given probability.
+     *
+     * @param probability The probability of returning true, from 0.0 to 1.0.
+     * @return True if the random chance succeeds; false otherwise.
+     * @throws MIAException if the probability is not within the valid range.
+     */
+    bool randomChance(double probability);
+
+    /**
      * @brief Rolls a dice based on input.
      *
      * @param input Input string. Must be of the form #d#, #d##, ##d##, etc.
@@ -42,9 +51,10 @@ namespace math
      *
      * @param xx Size of dice.
      * @param seed A seed to use for randomization.
+     * @param verboseMode Enables verbose output (default = false).
      * @return The total.
      */
-    int rolldXX(int xx, int seed);
+    int rolldXX(int xx, int seed, bool verboseMode = false);
 
     /**
      * @brief Adds two integers with saturation at the int type limits.

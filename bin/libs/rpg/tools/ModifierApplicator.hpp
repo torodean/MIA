@@ -59,6 +59,7 @@ namespace rpg::helper_methods
                 return;
             }
 
+            // Get the current value of the data being modified.
             int sourceDataValue = sourceData.second.getCurrent();
             
             for (const auto& modifies : source->getModifies())

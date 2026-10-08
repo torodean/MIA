@@ -10,6 +10,7 @@
 #include "CurrencyRegistry.hpp"
 #include "VitalRegistry.hpp"
 #include "AttributeRegistry.hpp"
+#include "ProgressRegistry.hpp"
 
 namespace rpg
 {
@@ -30,6 +31,7 @@ namespace rpg
             currency::CurrencyRegistry::getInstance().loadFromFile(configDir + "currencies/currencies.json");
             stats::VitalRegistry::getInstance().loadFromFile(configDir + "stats/stats.json");
             stats::AttributeRegistry::getInstance().loadFromFile(configDir + "stats/stats.json");
+            progress::ProgressRegistry::getInstance().loadFromFile(configDir + "progression/progressMarkers.json");
         } 
         catch (const std::exception& e) 
         {
@@ -43,16 +45,19 @@ namespace rpg
 
     void DataLoader::dump(std::ostream& os) const
     {
-        os << "=== DataLoader Contents ===\n";
+        os << "=== DataLoader Contents ===" << std::endl;
         
-        os << "CurrencyRegistry:\n";
+        os << "CurrencyRegistry:" << std::endl;
         currency::CurrencyRegistry::getInstance().dump(os);
         
-        os << "VitalRegistry:\n";
+        os << "VitalRegistry:" << std::endl;
         stats::VitalRegistry::getInstance().dump(os);
         
-        os << "AttributeRegistry:\n";
+        os << "AttributeRegistry:" << std::endl;
         stats::AttributeRegistry::getInstance().dump(os);
+        
+        os << "ProgressRegistry:" << std::endl;
+        progress::ProgressRegistry::getInstance().dump(os);
         
         os << "==========================\n";
     }

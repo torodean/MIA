@@ -97,6 +97,7 @@ namespace error
         Undefined_RPG_Value = 37100,          ///< A referenced value for the RPG system wasn't defined.
         Duplicate_RPG_Value = 37101,          ///< A duplicate RPG entry was added.
         Invalid_RPG_Data = 37102,             ///< An invalid combination/set of RPG data was used.
+        Serialization_Key_Not_Found = 37103,  ///< A Serialization key was not found.
         
         /*
          * Database error codes. 38XXX
