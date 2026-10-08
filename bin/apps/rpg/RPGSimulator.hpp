@@ -11,6 +11,7 @@
 #include "CurrencyRegistry.hpp"
 #include "VitalRegistry.hpp"
 #include "AttributeRegistry.hpp"
+#include "ProgressRegistry.hpp"
 
 namespace rpg_sim
 {
@@ -167,6 +168,19 @@ namespace rpg_sim
     void levelUp(rpg::Player& player);
     
     /**
+     * Checks if the player is dead.
+     * @param player The player data.
+     * @return true if the player is dead, false otherwise.
+     */
+    bool isDead(rpg::Player& player);
+    
+    /**
+     * Revives the player with 1 health.
+     * @param player The player data.
+     */
+    void revive(rpg::Player& player);
+    
+    /**
      * Saves the game state and player data to a file..
      * @param player The player data.
      * @param saveFile The file to save the data to.
@@ -177,5 +191,6 @@ namespace rpg_sim
     extern currency::CurrencyRegistry& currencyRegistry;
     extern stats::VitalRegistry& vitalRegistry;
     extern stats::AttributeRegistry& attributeRegistry;
+    extern progress::ProgressRegistry& progressRegistry;
 
 } // namespace rpg_sim

@@ -24,15 +24,19 @@ namespace rpg_sim
     currency::CurrencyRegistry& currencyRegistry = currency::CurrencyRegistry::getInstance();
     stats::VitalRegistry& vitalRegistry = stats::VitalRegistry::getInstance();
     stats::AttributeRegistry& attributeRegistry = stats::AttributeRegistry::getInstance();
+    progress::ProgressRegistry& progressRegistry = progress::ProgressRegistry::getInstance();
     
-    const std::string healthName = "Health";
-    const std::string manaName = "Mana";
+    // Just so these aren't 'hard-coded' strings throughout the file.
+    const std::string level = "Level";
+    const std::string xp = "Experience";
+    const std::string health = "Health";
+    const std::string mana = "Mana";
     const std::string copper = "Copper Coin";
     const std::string silver = "Silver Coin";
-    const std::string strengthName = "Strength";
-    const std::string dexterityName = "Dexterity";
-    const std::string constitutionName = "Constitution";
-    const std::string intelligenceName = "Intelligence";
+    const std::string strength = "Strength";
+    const std::string dexterity = "Dexterity";
+    const std::string constitution = "Constitution";
+    const std::string intelligence = "Intelligence";
     
     
     namespace helper_methods
@@ -50,16 +54,16 @@ namespace rpg_sim
     void setupSimulator(rpg::Player& player)
     {
         std::cout << "Creating default simulator values!" << std::endl;
-        int initialHealth = vitalRegistry.getByName(healthName)->getBaseMax();
-        int minHealth = vitalRegistry.getByName(healthName)->getBaseMin();
+        int initialHealth = vitalRegistry.getByName(health)->getBaseMax();
+        int minHealth = vitalRegistry.getByName(health)->getBaseMin();
         int maxHealth = initialHealth;
-        int initialMana = vitalRegistry.getByName(manaName)->getBaseMax();
-        int minMana = vitalRegistry.getByName(manaName)->getBaseMin();
+        int initialMana = vitalRegistry.getByName(mana)->getBaseMax();
+        int minMana = vitalRegistry.getByName(mana)->getBaseMin();
         int maxMana = initialMana;
 
         // Initialize vitals.
-        player.getVitals().add(healthName, initialHealth, minHealth, maxHealth);
-        player.getVitals().add(manaName, initialMana, minMana, maxMana);
+        player.getVitals().add(health, initialHealth, minHealth, maxHealth);
+        player.getVitals().add(mana, initialMana, minMana, maxMana);
         std::cout << "Vitals initialized: " 
                   << "Health=" << initialHealth
                   << ", Mana=" << initialMana 
@@ -71,11 +75,15 @@ namespace rpg_sim
         std::cout << "Wallet initialized: Copper=100, Silver=10" << std::endl;
         
         // Initialize attributes.
-        player.getAttributes().add(strengthName, 1);
-        player.getAttributes().add(dexterityName, 1);
-        player.getAttributes().add(constitutionName, 1);
-        player.getAttributes().add(intelligenceName, 1);
+        player.getAttributes().add(strength, 1);
+        player.getAttributes().add(dexterity, 1);
+        player.getAttributes().add(constitution, 1);
+        player.getAttributes().add(intelligence, 1);
         std::cout << "Attributes initialized: Strength=1, Constitution=1, Intelligence=1." << std::endl;
+        
+        // Initialize progress markers.
+        player.getProgress().add(level, 1);
+        player.getProgress().add(xp, 0);
         
         // Apply stat cross-modifiers.
         helper_methods::updateModifiers(player);
@@ -84,23 +92,26 @@ namespace rpg_sim
     
     void displayPlayerStatus(rpg::Player& player)
     {
-        std::cout << "\nPlayer Status:" << std::endl
-                  << "\tHealth: " << player.getVitals().get(healthName).getCurrent() << "/"
-                                   << player.getVitals().get(healthName).getCurrentMax() << std::endl
-                  << "\tMana: " << player.getVitals().get(manaName).getCurrent() << "/"
-                                   << player.getVitals().get(manaName).getCurrentMax()<< std::endl
+        std::cout << "Player Status:" << std::endl
+                  << "\tLevel: " << player.getProgress().get(level).get() << std::endl
+                  << "\tXP: " << player.getProgress().get(xp).get() << std::endl
+                  << "\tHealth: " << player.getVitals().get(health).getCurrent() << "/"
+                                   << player.getVitals().get(health).getCurrentMax() << std::endl
+                  << "\tMana: " << player.getVitals().get(mana).getCurrent() << "/"
+                                   << player.getVitals().get(mana).getCurrentMax()<< std::endl
                   << "\tSilver: " << player.getWallet().get(silver).getQuantity() << std::endl
                   << "\tCopper: " << player.getWallet().get(copper).getQuantity() << std::endl
-                  << "\tStrength: " << player.getAttributes().get(strengthName).getCurrent() << std::endl
-                  << "\tDexterity: " << player.getAttributes().get(dexterityName).getCurrent() << std::endl
-                  << "\tConstitution: " << player.getAttributes().get(constitutionName).getCurrent() << std::endl
-                  << "\tIntelligence: " << player.getAttributes().get(intelligenceName).getCurrent() << std::endl; 
+                  << "\tStrength: " << player.getAttributes().get(strength).getCurrent() << std::endl
+                  << "\tDexterity: " << player.getAttributes().get(dexterity).getCurrent() << std::endl
+                  << "\tConstitution: " << player.getAttributes().get(constitution).getCurrent() << std::endl
+                  << "\tIntelligence: " << player.getAttributes().get(intelligence).getCurrent() << std::endl; 
     }
     
     
     void displaySimulatorOptions()
     {
         std::cout << "Available Actions:" << std::endl
+                  << "0. Revive" << std::endl
                   << "1. Level up (automated)" << std::endl
                   << "2. Loot Treasure (automated)" << std::endl
                   << "5. Spend Currency (automated)" << std::endl
@@ -135,9 +146,18 @@ namespace rpg_sim
             // Separator between available actions and action being performed.
             std::cout << "=================================" << std::endl;
 
+            if (isDead(player) && choice != 0)
+            {
+                std::cout << "Player is dead, must revive before continuing!" << std::endl;
+                continue;
+            }
+            
             // Handle choice
             switch (choice)
             {
+                case 0:
+                    revive(player);
+                    break;
                 case 1:
                     levelUp(player);
                     break;
@@ -174,8 +194,8 @@ namespace rpg_sim
 
     void fightMobAutomated(rpg::Player& player)
     {
-        int currentHealth = player.getVitals().get(healthName).getCurrent();
-        int currentMana = player.getVitals().get(manaName).getCurrent();
+        int currentHealth = player.getVitals().get(health).getCurrent();
+        int currentMana = player.getVitals().get(mana).getCurrent();
 
         std::cout << "Player encounters a hostile mob..." << std::endl;
 
@@ -201,15 +221,15 @@ namespace rpg_sim
                 std::cout << "Mob attacks! Player takes " << mobDamage << " damage." << std::endl;
             }
 
-            if (player.getVitals().has(healthName, mobDamage)) 
+            if (player.getVitals().has(health, mobDamage)) 
             {
                 currentHealth -= mobDamage;
-                player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentHealth);
+                player.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentHealth);
                 std::cout << "Player survives with " << currentHealth << " health." << std::endl;
             } 
             else 
             {
-                player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, 0);
+                player.getVitals().update(health, stats::VitalDataTarget::CURRENT, 0);
                 std::cout << "Player takes lethal damage and dies." << std::endl;
                 break; // break the fight immediately.
             }
@@ -220,16 +240,17 @@ namespace rpg_sim
                 int spellCost = math::randomInt(10, 25);
                 std::cout << "Player attempts to cast a spell (cost " << spellCost << " mana)." << std::endl;
 
-                if (player.getVitals().has(manaName, spellCost)) 
+                if (player.getVitals().has(mana, spellCost)) 
                 {
                     currentMana -= spellCost;
-                    player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, currentMana);
+                    player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, currentMana);
                     std::cout << "Spell cast successfully. Remaining mana: " << currentMana << "." << std::endl;
 
                     std::cout << "The spell hits! Mob is damaged!" << std::endl;
                     if (math::randomChance(0.5))
                     { // 50% chance the spell kills the mob.
                         std::cout << "Mob is defeated!" << std::endl;
+                        player.getProgress().get(xp).add(25); // Gain 25 xp from auto kills.
                         break;
                     }
                     else
@@ -272,10 +293,10 @@ namespace rpg_sim
     void displayMobStatus(rpg::Player& mob)
     {
         std::cout << "Mob Status:" << std::endl
-                  << "\t Health: " << mob.getVitals().get(healthName).getCurrent() << "/"
-                                   << mob.getVitals().get(healthName).getCurrentMax() << std::endl
-                  << "\t Strength: " << mob.getAttributes().get(strengthName).getCurrent() << std::endl
-                  << "\t Dexterity: " << mob.getAttributes().get(dexterityName).getCurrent() << std::endl;
+                  << "\t Health: " << mob.getVitals().get(health).getCurrent() << "/"
+                                   << mob.getVitals().get(health).getCurrentMax() << std::endl
+                  << "\t Strength: " << mob.getAttributes().get(strength).getCurrent() << std::endl
+                  << "\t Dexterity: " << mob.getAttributes().get(dexterity).getCurrent() << std::endl;
     }
     
     
@@ -297,8 +318,8 @@ namespace rpg_sim
         
         // Determine if the attack hits.
         double hitChance = 0.95; // 95% hit chance.
-        int playerDexterity = player.getAttributes().get(dexterityName).getCurrent();
-        int mobDexterity = mob.getAttributes().get(dexterityName).getCurrent();
+        int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
+        int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
         if (mobDexterity > playerDexterity)
             hitChance -= 0.1; // If the mob is faster, reduce hit chance by 10%.
         
@@ -312,19 +333,22 @@ namespace rpg_sim
         
         // Determine the attack damage.
         int attackDamage = math::randomInt(5, 20); // Base damage.
-        int playerStrength = player.getAttributes().get(strengthName).getCurrent();
+        int playerStrength = player.getAttributes().get(strength).getCurrent();
         attackDamage += playerStrength; // Add strength as attack damage.
         
         std::cout << "Attacking the mob for " << attackDamage << " damage!" << std::endl;
         
         // Update the mob health.        
-        int mobHealth = mob.getVitals().get(healthName).getCurrent();
-        mob.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, mobHealth - attackDamage);
+        int mobHealth = mob.getVitals().get(health).getCurrent();
+        mob.getVitals().update(health, stats::VitalDataTarget::CURRENT, mobHealth - attackDamage);
         
         // Determine if the fight should continue or not.
         if (mobHealth - attackDamage > 0)
         {
             std::cout << "The mob has died!" << std::endl;
+            // Gain xp equal to the max health of the mob killed.
+            int xpGained = mob.getVitals().get(health).getCurrentMax();
+            player.getProgress().get(xp).add(xpGained);
             return true;
         }
         return false;
@@ -337,8 +361,8 @@ namespace rpg_sim
 
         // Determine if the attack hits.
         double hitChance = 0.95; // 95% hit chance.
-        int playerDexterity = player.getAttributes().get(dexterityName).getCurrent();
-        int mobDexterity = mob.getAttributes().get(dexterityName).getCurrent();
+        int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
+        int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
 
         if (playerDexterity > mobDexterity)
             hitChance -= 0.1; // If the player is faster, reduce the mob's hit chance by 10%.
@@ -353,24 +377,24 @@ namespace rpg_sim
         
         // Determine the attack damage.
         int attackDamage = math::randomInt(5, 20); // Base damage.
-        int mobStrength = mob.getAttributes().get(strengthName).getCurrent();
+        int mobStrength = mob.getAttributes().get(strength).getCurrent();
         attackDamage += mobStrength;
 
         std::cout << "The mob hits the player for " << attackDamage << " damage!" << std::endl;
 
         // Update the player's health.
-        int playerHealth = player.getVitals().get(healthName).getCurrent();
+        int playerHealth = player.getVitals().get(health).getCurrent();
         int remainingHealth = playerHealth - attackDamage;
 
         if (remainingHealth <= 0)
         {
-            player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, 0);
+            player.getVitals().update(health, stats::VitalDataTarget::CURRENT, 0);
 
             std::cout << "The player takes lethal damage and dies!" << std::endl;
             return false;
         }
 
-        player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, remainingHealth);
+        player.getVitals().update(health, stats::VitalDataTarget::CURRENT, remainingHealth);
         std::cout << "Player survives with " << remainingHealth << " health." << std::endl;
         
         return true;
@@ -383,8 +407,8 @@ namespace rpg_sim
         
         // Determine if the spell hits.
         double hitChance = 0.75; // 75% hit chance.
-        int playerDexterity = player.getAttributes().get(dexterityName).getCurrent();
-        int mobDexterity = mob.getAttributes().get(dexterityName).getCurrent();
+        int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
+        int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
         if (mobDexterity > playerDexterity)
             hitChance -= 0.1; // If the mob is faster, reduce hit chance by 10%.
         
@@ -399,8 +423,8 @@ namespace rpg_sim
         // Determine spell cost and damage.
         int minSpellCost = 10;
         int maxSpellCost = 30;
-        int remainingMana = player.getVitals().get(manaName).getCurrent();
-        int currentIntelleligence = player.getAttributes().get(intelligenceName).getCurrent();
+        int remainingMana = player.getVitals().get(mana).getCurrent();
+        int currentIntelleligence = player.getAttributes().get(intelligence).getCurrent();
         if (remainingMana < minSpellCost)
         {
             std::cout << "Not enough mana to cast spell!" << std::endl;
@@ -414,9 +438,9 @@ namespace rpg_sim
         std::cout << "The spell hits for " << spellDamage << " damage!" << std::endl;
         
         // Update player and mob values.
-        player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, remainingMana - spellCost);
-        int currentMobHealth = mob.getVitals().get(healthName).getCurrent();
-        mob.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentMobHealth - spellDamage);
+        player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, remainingMana - spellCost);
+        int currentMobHealth = mob.getVitals().get(health).getCurrent();
+        mob.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentMobHealth - spellDamage);
         
         if (currentMobHealth - spellDamage < 0)
         {
@@ -432,9 +456,9 @@ namespace rpg_sim
     {
         std::cout << "Player casts heal!" << std::endl;
         
-        int currentHealth = player.getVitals().get(healthName).getCurrent();
-        int maxHealth = player.getVitals().get(healthName).getCurrentMax();
-        int currentMana = player.getVitals().get(manaName).getCurrent();
+        int currentHealth = player.getVitals().get(health).getCurrent();
+        int maxHealth = player.getVitals().get(health).getCurrentMax();
+        int currentMana = player.getVitals().get(mana).getCurrent();
         int missingHealth = maxHealth - currentHealth;
 
         if (missingHealth == 0)
@@ -457,18 +481,18 @@ namespace rpg_sim
         // Update the appropriate values.
         std::cout << "The player heals for: " << healthToRestore 
                   << ", using " << healthToRestore << " mana!" << std::endl;
-        player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentHealth + healthToRestore);
-        player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, currentMana - healthToRestore);
+        player.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentHealth + healthToRestore);
+        player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, currentMana - healthToRestore);
     }
 
 
     bool fleeMob(rpg::Player& player, rpg::Player& mob)
     {
         double fleeChance = 0.9; // Initial 90% chance to flee.
-        int playerDexterity = player.getAttributes().get(dexterityName).getCurrent();
-        int mobDexterity = mob.getAttributes().get(dexterityName).getCurrent();
-        int playerHealth = player.getVitals().get(healthName).getCurrent();
-        int mobHealth = mob.getVitals().get(healthName).getCurrent();
+        int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
+        int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
+        int playerHealth = player.getVitals().get(health).getCurrent();
+        int mobHealth = mob.getVitals().get(health).getCurrent();
         
         if (mobDexterity > playerDexterity)
             fleeChance -= 0.2; // If the mob is faster, lower the flee chance by 20%.
@@ -492,19 +516,19 @@ namespace rpg_sim
     rpg::Player createMob(rpg::Player& player)
     {
         rpg::Player mob;
-        int playerMaxHealth = player.getVitals().get(healthName).getCurrentMax();
+        int playerMaxHealth = player.getVitals().get(health).getCurrentMax();
         int mobHealthMin = std::round(playerMaxHealth * 0.1);
         int mobHealthMax = std::round(playerMaxHealth * 1.5);
         int mobHealth = math::randomInt(mobHealthMin, mobHealthMax);
-        mob.getVitals().add(healthName, mobHealth, 0, mobHealth);
+        mob.getVitals().add(health, mobHealth, 0, mobHealth);
         
-        int playerStrength = player.getAttributes().get(strengthName).getCurrent();
+        int playerStrength = player.getAttributes().get(strength).getCurrent();
         int mobStrength = math::randomInt(1, playerStrength);
-        mob.getAttributes().add(strengthName, mobStrength);
+        mob.getAttributes().add(strength, mobStrength);
         
-        int playerDexterity = player.getAttributes().get(dexterityName).getCurrent();
+        int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
         int mobDexterity = math::randomInt(1, playerDexterity*2);
-        mob.getAttributes().add(dexterityName, mobDexterity);
+        mob.getAttributes().add(dexterity, mobDexterity);
         
         return mob;
     }
@@ -516,8 +540,8 @@ namespace rpg_sim
         rpg::Player mob = createMob(player);
         
         // Determine battle order.
-        int playerDexterity = player.getAttributes().get(dexterityName).getCurrent();
-        int mobDexterity = mob.getAttributes().get(dexterityName).getCurrent();
+        int playerDexterity = player.getAttributes().get(dexterity).getCurrent();
+        int mobDexterity = mob.getAttributes().get(dexterity).getCurrent();
         bool mobAttacksFirst = mobDexterity > playerDexterity;
 
         // Fight the mob.
@@ -618,10 +642,10 @@ namespace rpg_sim
                   << restTypeToString(restType)
                   << " to recover vitals..." << std::endl;
 
-        int currentHealth = player.getVitals().get(healthName).getCurrent();
-        int currentMana = player.getVitals().get(manaName).getCurrent();
-        int maxHealth = player.getVitals().get(healthName).getCurrentMax();
-        int maxMana = player.getVitals().get(manaName).getCurrentMax();
+        int currentHealth = player.getVitals().get(health).getCurrent();
+        int currentMana = player.getVitals().get(mana).getCurrent();
+        int maxHealth = player.getVitals().get(health).getCurrentMax();
+        int maxMana = player.getVitals().get(mana).getCurrentMax();
 
         int healthRestore = 0;
         int manaRestore = 0;
@@ -652,8 +676,8 @@ namespace rpg_sim
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         if (currentMana > maxMana) currentMana = maxMana;
 
-        player.getVitals().update(healthName, stats::VitalDataTarget::CURRENT, currentHealth);
-        player.getVitals().update(manaName, stats::VitalDataTarget::CURRENT, currentMana);
+        player.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentHealth);
+        player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, currentMana);
 
         std::cout << "Recovered " << healthRestore << " health (now at " << currentHealth << ")." << std::endl;
         std::cout << "Recovered " << manaRestore << " mana (now at " << currentMana << ")." << std::endl;
@@ -716,18 +740,21 @@ namespace rpg_sim
         int dexIncrease = 1 + math::randomInt(0, 2);
         int intIncrease = 1 + math::randomInt(0, 2);
         int conIncrease = 1 + math::randomInt(0, 2);
+        
+        // Increment the current level.
+        player.getProgress().get(level).add(1);
 
         // Get current attribute values.
-        int currentStr = player.getAttributes().get(strengthName).getCurrent();
-        int currentDex = player.getAttributes().get(dexterityName).getCurrent();
-        int currentInt = player.getAttributes().get(intelligenceName).getCurrent();
-        int currentCon = player.getAttributes().get(constitutionName).getCurrent();
+        int currentStr = player.getAttributes().get(strength).getCurrent();
+        int currentDex = player.getAttributes().get(dexterity).getCurrent();
+        int currentInt = player.getAttributes().get(intelligence).getCurrent();
+        int currentCon = player.getAttributes().get(constitution).getCurrent();
 
         // Update attribute values with new changes.
-        player.getAttributes().update(strengthName, currentStr + strIncrease);
-        player.getAttributes().update(dexterityName, currentDex + dexIncrease);
-        player.getAttributes().update(intelligenceName, currentInt + intIncrease);
-        player.getAttributes().update(constitutionName, currentCon + conIncrease);
+        player.getAttributes().update(strength, currentStr + strIncrease);
+        player.getAttributes().update(dexterity, currentDex + dexIncrease);
+        player.getAttributes().update(intelligence, currentInt + intIncrease);
+        player.getAttributes().update(constitution, currentCon + conIncrease);
 
         // Print a status message on attribute changes.
         std::cout << "Leveled up! " << std::endl
@@ -740,6 +767,24 @@ namespace rpg_sim
         // Update cross-modifiers.
         helper_methods::updateModifiers(player);
     }
+    
+    
+    bool isDead(rpg::Player& player)
+    {
+        if (player.getVitals().get(health).getCurrent() == 0)
+            return true;
+        return false;
+    }
+    
+    
+    void revive(rpg::Player& player)
+    {
+        if(isDead(player))
+            player.getVitals().update(health, stats::VitalDataTarget::CURRENT, 1);
+        else
+            std::cout << "Player is not dead!" << std::endl;
+    }
+    
 
     void savePlayerData(rpg::Player& player, std::string& saveFile)
     {

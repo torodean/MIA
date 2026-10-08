@@ -11,7 +11,6 @@
 
 namespace rpg
 {
-
     bool Player::saveToFile(const std::string& filename) const
     {
         std::ofstream file(filename);
@@ -19,12 +18,14 @@ namespace rpg
         {
             return false;
         }
-        file << attributes.serialize() << "\n";
-        file << vitals.serialize() << "\n";
-        file << wallet.serialize() << "\n";
+        file << attributes.serialize() << std::endl;
+        file << vitals.serialize() << std::endl;
+        file << wallet.serialize() << std::endl;
+        file << progress.serialize() << std::endl;
         file.close();
         return true;
     }
+
 
     bool Player::loadFromFile(const std::string& filename)
     {
@@ -44,6 +45,7 @@ namespace rpg
             vitals = stats::Vitals::deserialize(data);
             wallet = currency::Wallet::deserialize(data);
             attributes = stats::Attributes::deserialize(data);
+            progress = progress::ProgressMarkers::deserialize(data);
         } 
         catch (const std::exception&) 
         {
@@ -52,5 +54,4 @@ namespace rpg
 
         return true;
     }
-    
 } // namespace rpg

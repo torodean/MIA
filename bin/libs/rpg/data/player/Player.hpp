@@ -10,6 +10,7 @@
 #include "Wallet.hpp"
 #include "Vitals.hpp"
 #include "Attributes.hpp"
+#include "ProgressMarkers.hpp"
 
 namespace rpg
 {
@@ -38,6 +39,12 @@ namespace rpg
          * @return Reference to the attributes.
          */
         stats::Attributes& getAttributes() { return attributes; }
+        
+        /**
+         * Gets the player's progress.
+         * @return Reference to the progress.
+         */
+        progress::ProgressMarkers& getProgress() { return progress; }
 
         /**
          * Writes the contents of the player's data to a file.
@@ -56,8 +63,9 @@ namespace rpg
         bool loadFromFile(const std::string& filename);
 
     private:
-        currency::Wallet wallet;      ///< The player's currency container.
-        stats::Attributes attributes; ///< The player's attributes.
-        stats::Vitals vitals;         ///< The player's vitals.
+        currency::Wallet wallet;             ///< The player's currency container.
+        stats::Attributes attributes;        ///< The player's attributes.
+        stats::Vitals vitals;                ///< The player's vitals.
+        progress::ProgressMarkers progress;  ///< The player's progress.
     };
 } // namespace rpg

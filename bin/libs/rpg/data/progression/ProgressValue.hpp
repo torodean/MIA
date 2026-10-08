@@ -27,6 +27,8 @@ namespace progress
         /// Adjusters for the value.
         void set(unsigned int val) { value = val; }
         void add(unsigned int val) { value += val; }
+        void subtract(unsigned int val) 
+        { if (val > value) value = 0; value -= val; }
             
     private:        
         unsigned int value{0};  ///< The value of this progress marker.

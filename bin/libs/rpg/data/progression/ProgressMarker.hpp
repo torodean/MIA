@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <string>
+
 #include <nlohmann/json.hpp>
 
 #include "BaseDataObject.hpp"
