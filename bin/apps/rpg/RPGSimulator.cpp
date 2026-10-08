@@ -224,12 +224,12 @@ namespace rpg_sim
             if (player.getVitals().has(health, mobDamage)) 
             {
                 currentHealth -= mobDamage;
-                player.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentHealth);
+                player.getVitals().update(health, currentHealth);
                 std::cout << "Player survives with " << currentHealth << " health." << std::endl;
             } 
             else 
             {
-                player.getVitals().update(health, stats::VitalDataTarget::CURRENT, 0);
+                player.getVitals().update(health, 0);
                 std::cout << "Player takes lethal damage and dies." << std::endl;
                 break; // break the fight immediately.
             }
@@ -243,7 +243,7 @@ namespace rpg_sim
                 if (player.getVitals().has(mana, spellCost)) 
                 {
                     currentMana -= spellCost;
-                    player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, currentMana);
+                    player.getVitals().update(mana, currentMana);
                     std::cout << "Spell cast successfully. Remaining mana: " << currentMana << "." << std::endl;
 
                     std::cout << "The spell hits! Mob is damaged!" << std::endl;
@@ -341,7 +341,7 @@ namespace rpg_sim
         
         // Update the mob health.        
         int mobHealth = mob.getVitals().get(health).getCurrent();
-        mob.getVitals().update(health, stats::VitalDataTarget::CURRENT, mobHealth - attackDamage);
+        mob.getVitals().update(health, mobHealth - attackDamage);
         
         // Determine if the fight should continue or not.
         if (mobHealth - attackDamage <= 0)
@@ -391,13 +391,13 @@ namespace rpg_sim
 
         if (remainingHealth <= 0)
         {
-            player.getVitals().update(health, stats::VitalDataTarget::CURRENT, 0);
+            player.getVitals().update(health, 0);
 
             std::cout << "The player takes lethal damage and dies!" << std::endl;
             return false;
         }
 
-        player.getVitals().update(health, stats::VitalDataTarget::CURRENT, remainingHealth);
+        player.getVitals().update(health, remainingHealth);
         std::cout << "Player survives with " << remainingHealth << " health." << std::endl;
         
         return true;
@@ -441,9 +441,9 @@ namespace rpg_sim
         std::cout << "The spell hits for " << spellDamage << " damage!" << std::endl;
         
         // Update player and mob values.
-        player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, remainingMana - spellCost);
+        player.getVitals().update(mana, remainingMana - spellCost);
         int currentMobHealth = mob.getVitals().get(health).getCurrent();
-        mob.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentMobHealth - spellDamage);
+        mob.getVitals().update(health, currentMobHealth - spellDamage);
         
         if (currentMobHealth - spellDamage < 0)
         {
@@ -484,8 +484,8 @@ namespace rpg_sim
         // Update the appropriate values.
         std::cout << "The player heals for: " << healthToRestore 
                   << ", using " << healthToRestore << " mana!" << std::endl;
-        player.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentHealth + healthToRestore);
-        player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, currentMana - healthToRestore);
+        player.getVitals().update(health, currentHealth + healthToRestore);
+        player.getVitals().update(mana, currentMana - healthToRestore);
     }
 
 
@@ -679,8 +679,8 @@ namespace rpg_sim
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         if (currentMana > maxMana) currentMana = maxMana;
 
-        player.getVitals().update(health, stats::VitalDataTarget::CURRENT, currentHealth);
-        player.getVitals().update(mana, stats::VitalDataTarget::CURRENT, currentMana);
+        player.getVitals().update(health, currentHealth);
+        player.getVitals().update(mana, currentMana);
 
         std::cout << "Recovered " << healthRestore << " health (now at " << currentHealth << ")." << std::endl;
         std::cout << "Recovered " << manaRestore << " mana (now at " << currentMana << ")." << std::endl;
@@ -783,7 +783,7 @@ namespace rpg_sim
     void revive(rpg::Player& player)
     {
         if(isDead(player))
-            player.getVitals().update(health, stats::VitalDataTarget::CURRENT, 1);
+            player.getVitals().update(health, 1);
         else
             std::cout << "Player is not dead!" << std::endl;
     }
@@ -801,4 +801,3 @@ namespace rpg_sim
         std::cout << "Saved game state." << std::endl;
     }
 } // namespace rpg_sim
-
