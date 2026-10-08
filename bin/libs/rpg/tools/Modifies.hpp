@@ -2,13 +2,12 @@
  * @file Modifies.hpp
  * @author Antonius Torode
  * @date 07/12/2025
- * @brief: A class for storing/managing modifications to other objects in the RPG system.
+ * @brief A class for storing/managing modifications to other objects in the RPG system.
  */
 #pragma once
 
+#include <iosfwd>
 #include <string>
-#include <vector>
-#include <cstdint>
 
 #include "DataType.hpp"
 
@@ -19,9 +18,9 @@ namespace rpg
      */
     enum class ModifyType
     {
-        ADD_MAX,   ///< Adds a value to the target maximum.
-        MULTIPLY,  ///< Multiplies the target by a value.
-        SET,       ///< Sets the target to a specific value.
+        ADD_MAX,   ///< Adds the value to the target value.
+        MULTIPLY,  ///< Scales the target by (1 + value), e.g. 0.1 = +10%.
+        SET,       ///< Sets the target to the value.
         UNKNOWN    ///< Unknown or unspecified modification type.
     };
 
@@ -32,16 +31,7 @@ namespace rpg
      * @return A string corresponding to the ModifyType.
      *         Returns "UNKNOWN" if the type is not recognized.
      */
-    inline std::string modifyTypeToString(const ModifyType& type)
-    {
-        switch (type)
-        {
-            case ModifyType::ADD_MAX:  return "ADD_MAX";
-            case ModifyType::MULTIPLY: return "MULTIPLY";
-            case ModifyType::SET:      return "SET";
-            default:                   return "UNKNOWN";
-        }
-    }
+    std::string modifyTypeToString(const ModifyType& type);
 
     /**
      * Converts a string to a ModifyType enum.
@@ -52,27 +42,18 @@ namespace rpg
      * @param typeStr The string representation of the ModifyType.
      * @return The corresponding ModifyType enum value.
      */
-    inline ModifyType stringToModifyType(const std::string& typeStr)
-    {
-        std::string str = typeStr;
-        std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-
-        if (str == "ADD_MAX")  return ModifyType::ADD_MAX;
-        if (str == "MULTIPLY") return ModifyType::MULTIPLY;
-        if (str == "SET")      return ModifyType::SET;
-        return ModifyType::UNKNOWN;
-    }
+    ModifyType stringToModifyType(const std::string& typeStr);
 
     /**
      * A struct to represent a modification to another object's value.
      */
     struct Modifies
     {
-        rpg::DataType targetType;  ///< The type of the target object (e.g., "VITAL"). 
+        rpg::DataType targetType;  ///< The type of the target object (e.g., "VITAL").
         std::string targetName;    ///< Name of the target object (e.g., "Health").
         ModifyType modifyType;     ///< Type of modification (e.g., ADD_MAX, MULTIPLY, SET).
         double modifyValuePer;     ///< Value applied. Potentially per unit (e.g., 5 per point of attribute).
-        
+
         /// Default constructor.
         Modifies() = default;
 
@@ -83,71 +64,39 @@ namespace rpg
          * @param type The type of modification.
          * @param valuePer The value to apply per unit of the source.
          */
-        Modifies(rpg::DataType targetType, 
-                 const std::string& target, 
-                 ModifyType type, 
-                 double valuePer) :
-            targetType(targetType),
-            targetName(target), 
-            modifyType(type), 
-            modifyValuePer(valuePer) {}
+        Modifies(rpg::DataType targetType,
+                 const std::string& target,
+                 ModifyType type,
+                 double valuePer);
 
         /**
          * Equality operator for Modifies.
          *
-         * Compares two Modifies objects based on targetName and modifyType.
-         * The modifyValuePer is excluded from comparison.
+         * Compares two Modifies objects on every field: targetType, targetName,
+         * modifyType, and modifyValuePer.
          *
          * @param other The Modifies object to compare with.
-         * @return true if targetName and modifyType are equal; false otherwise.
+         * @return true if all fields are equal; false otherwise.
          */
-        bool operator==(const Modifies& other) const
-        {
-            return targetType == other.targetType && 
-                   targetName == other.targetName && 
-                   modifyType == other.modifyType &&
-                   modifyValuePer == other.modifyValuePer;
-        }
+        bool operator==(const Modifies& other) const;
 
         /**
-         * Serializes the Modifies to a string.         *
+         * Serializes the Modifies to a string.
          * Format: "targetType:targetName:modifyType:modifyValuePer"
          *
          * @return A string representing the serialized Modifies.
          */
-        std::string serialize() const
-        {
-            return rpg::dataTypeToString(targetType) + ":" + 
-                   targetName + ":" + 
-                   modifyTypeToString(modifyType) + ":" + 
-                   std::to_string(modifyValuePer);
-        }
+        std::string serialize() const;
 
         /**
-         * Deserializes a Modifies instance from a string.         *
+         * Deserializes a Modifies instance from a string.
          * Expects format: "targetType:targetName:modifyType:modifyValuePer"
          *
          * @param data The serialized string data.
          * @return A reconstructed Modifies instance.
-         * @throws std::invalid_argument if the data format is invalid.
+         * @throws error::MIAException if the data format is invalid.
          */
-        static Modifies deserialize(const std::string& data)
-        {
-            std::vector<std::string> tokens;
-            std::string token;
-            std::istringstream tokenStream(data);
-            
-            while (std::getline(tokenStream, token, ':'))
-                tokens.push_back(token);
-
-            if (tokens.size() != 4)
-                throw std::invalid_argument("Invalid Modifies data format");
-
-            return Modifies(rpg::stringToDataType(tokens[0]), 
-                            tokens[1], 
-                            stringToModifyType(tokens[2]), 
-                            std::stod(tokens[3]));
-        }
+        static Modifies deserialize(const std::string& data);
     };
 
     /**
@@ -159,11 +108,5 @@ namespace rpg
      * @param modifies The Modifies object to serialize.
      * @return The modified output stream.
      */
-    inline std::ostream& operator<<(std::ostream& os, const Modifies& modifies)
-    {
-        os << "Modifies{targetName=" << modifies.targetName
-           << ", modifyType=" << modifyTypeToString(modifies.modifyType)
-           << ", modifyValuePer=" << modifies.modifyValuePer << "}";
-        return os;
-    }
+    std::ostream& operator<<(std::ostream& os, const Modifies& modifies);
 } // namespace rpg
