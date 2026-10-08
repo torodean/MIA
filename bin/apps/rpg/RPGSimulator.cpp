@@ -2,7 +2,7 @@
  * @file RPGSimulator.cpp
  * @author Antonius Torode
  * @date 07/10/2025
- * Description: Implementation of a terminal-based RPG simulator that lists and executes player actions.
+ * @brief Implementation of a terminal-based RPG simulator that lists and executes player actions.
  */
 
 #include <iostream>
