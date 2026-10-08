@@ -2,7 +2,7 @@
  * @file RPGFiddler.cpp
  * @author Antonius Torode
  * @date 05/24/2025
- * Description: Implementation of the RPGFiddler app.
+ * @brief Implementation of the RPGFiddler app.
  */
 
 #include <iostream>
@@ -33,38 +33,42 @@ RPGFiddler::RPGFiddler() :
 void RPGFiddler::initialize(int argc, char* argv[])
 {
     try
-    {    
-        MIAApplication::initialize(argc, argv);        
-        
+    {
+        MIAApplication::initialize(argc, argv);
+        LOG_METHOD_CALL();
+
+        // Provide the simulator with this app's runtime context for logging.
+        rpg_sim::setRuntimeContext(getContext());
+
         // Set the values from the command line arguments.
-        saveFileOpt.getOptionVal<std::string>(argc, argv, fullSaveFilePath);        
+        saveFileOpt.getOptionVal<std::string>(argc, argv, fullSaveFilePath);
         if (fullSaveFilePath.empty())
             fullSaveFilePath = paths::getDefaultConfigDirToUse() + "/" + defaultSaveFile;
         else if (fullSaveFilePath[0] != '/')
-            fullSaveFilePath = paths::getDefaultConfigDirToUse() + "/" + fullSaveFilePath;            
-    
-        // Load the RPG configuration.
-        std::string configDir = "/home/awtorode/git/MIA/bin/libs/rpg/data/";
-        if (!rpg::DataLoader::getInstance().initialize(configDir)) 
+            fullSaveFilePath = paths::getDefaultConfigDirToUse() + "/" + fullSaveFilePath;
+
+        // Load the RPG configuration from the rpg library's data directory.
+        std::string configDir = paths::REPO_DIR + "/bin/libs/rpg/data/";
+        if (!rpg::DataLoader::getInstance().initialize(configDir))
         {
             MIA_THROW(error::ErrorCode::Catastrophic_Failure, "Failed to initialize registries.");
         }
-        
+
         // Load the saved player data or initialize fresh rpg data for testing.
         if (files::fileExists(fullSaveFilePath))
         {
-            std::cout << "Loading player values from save file: " << fullSaveFilePath << std::endl;
+            log("Loading player values from save file: " + fullSaveFilePath, true);
             player.loadFromFile(fullSaveFilePath);
         }
         else
         {
-            std::cout << "Save file not found: " << fullSaveFilePath << std::endl;
+            log("Save file not found: " + fullSaveFilePath, true);
             rpg_sim::setupSimulator(player);
         }
     }
     catch (const error::MIAException& ex)
     {
-        std::cerr << "Error during RPGFiddler::initialize: " << ex.what() << std::endl;
+        log("Error during RPGFiddler::initialize: " + std::string(ex.what()), true);
     }
 }
 
