@@ -13,6 +13,7 @@
 #include "Attributes.hpp"
 #include "AttributeRegistry.hpp"
 #include "RegistryHelper.hpp"
+#include "MIAException.hpp"
 
 namespace stats
 {
@@ -291,8 +292,9 @@ namespace stats
 
         if (startPos == std::string::npos || endPos == std::string::npos || endPos < startPos)
         {
-            // Invalid or missing markers, return empty Attributes
-            return result;
+            // Invalid or missing markers; the save data is corrupt, not merely empty.
+            MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                      "Attributes block not found.");
         }
 
         // Extract the content between markers
