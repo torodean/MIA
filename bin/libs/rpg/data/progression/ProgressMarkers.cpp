@@ -5,13 +5,14 @@
  * Description: A container class for managing multiple progress markers and their values.
  */
 
+// Include associated header file.
+#include "ProgressMarkers.hpp"
+
 #include <string>
 #include <iostream>
 
-#include "ProgressMarkers.hpp"
 #include "RegistryHelper.hpp"
 #include "ProgressRegistry.hpp"
-
 // Used for error handling.
 #include "Error.hpp"
 #include "MIAException.hpp"
@@ -214,8 +215,17 @@ namespace progress
             size_t sep = token.find(':');
             if (sep == std::string::npos) continue;
 
-            uint32_t id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
-            uint32_t val = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
+            uint32_t id;
+            uint32_t val;
+            try
+            {
+                id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
+                val = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
+            }
+            catch (...)
+            {
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid progress entry: " + token);
+            }
 
             const ProgressMarker* progressMarker = ProgressRegistry::getInstance().getByID(id);
             if (progressMarker) 
@@ -226,5 +236,4 @@ namespace progress
 
         return progressMarkers;
     }
-    
 } // namespace progress
