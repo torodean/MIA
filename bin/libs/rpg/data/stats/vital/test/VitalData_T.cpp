@@ -33,15 +33,15 @@ namespace stats
     {
         VitalData vital(80, 0, 100);
         EXPECT_EQ(vital.getCurrent(), 80)
-            << "The constructor should set the current value to 80";
+            << "The constructor should set the current value to 80.";
         EXPECT_EQ(vital.getBaseMin(), 0)
-            << "The constructor should set the base minimum to 0";
+            << "The constructor should set the base minimum to 0.";
         EXPECT_EQ(vital.getBaseMax(), 100)
-            << "The constructor should set the base maximum to 100";
+            << "The constructor should set the base maximum to 100.";
         EXPECT_EQ(vital.getCurrentMin(), 0)
-            << "The effective minimum should equal the base minimum with no modifiers";
+            << "The effective minimum should equal the base minimum with no modifiers.";
         EXPECT_EQ(vital.getCurrentMax(), 100)
-            << "The effective maximum should equal the base maximum with no modifiers";
+            << "The effective maximum should equal the base maximum with no modifiers.";
     }
 
     /**
@@ -52,17 +52,17 @@ namespace stats
         // An accumulative vital starts empty at its minimum.
         VitalData rage(VitalType::ACCUMULATIVE, 0, 100);
         EXPECT_EQ(rage.getCurrent(), 0)
-            << "An accumulative vital should start at its minimum";
+            << "An accumulative vital should start at its minimum.";
 
         // A depletive vital starts full at its maximum.
         VitalData health(VitalType::DEPLETIVE, 0, 100);
         EXPECT_EQ(health.getCurrent(), 100)
-            << "A depletive vital should start at its maximum";
+            << "A depletive vital should start at its maximum.";
 
         // An unknown vital type defaults to half of the range.
         VitalData unknown(VitalType::UNKNOWN, 0, 100);
         EXPECT_EQ(unknown.getCurrent(), 50)
-            << "An unknown vital type should start at half of the range";
+            << "An unknown vital type should start at half of the range.";
     }
 
     /**
@@ -73,15 +73,15 @@ namespace stats
         VitalData vital(80, 0, 100);
         vital.setCurrent(90);
         EXPECT_EQ(vital.getCurrent(), 90)
-            << "An in-range value should be stored as-is";
+            << "An in-range value should be stored as-is.";
 
         vital.setCurrent(120);
         EXPECT_EQ(vital.getCurrent(), 100)
-            << "A value above the maximum should clamp to the maximum";
+            << "A value above the maximum should clamp to the maximum.";
 
         vital.setCurrent(-10);
         EXPECT_EQ(vital.getCurrent(), 0)
-            << "A value below the minimum should clamp to the minimum";
+            << "A value below the minimum should clamp to the minimum.";
     }
 
     /**
@@ -92,12 +92,12 @@ namespace stats
         // The constructor does not clamp the stored current; reading it does.
         VitalData vital(150, 0, 100);
         EXPECT_EQ(vital.getCurrent(), 100)
-            << "A stored current above the maximum should read as the maximum";
+            << "A stored current above the maximum should read as the maximum.";
 
         // Lowering the base maximum clamps the read value.
         vital.setBaseMax(50);
         EXPECT_EQ(vital.getCurrent(), 50)
-            << "The current value should clamp to the lowered effective maximum";
+            << "The current value should clamp to the lowered effective maximum.";
     }
 
     /**
@@ -108,14 +108,14 @@ namespace stats
         VitalData vital(80, 0, 100);
         vital.addModifier(sampleModifier, VitalDataTarget::CURRENT_MAX);
         EXPECT_EQ(vital.getCurrentMax(), 105)
-            << "The additive modifier should raise the effective maximum";
+            << "The additive modifier should raise the effective maximum.";
 
         rpg::Modifier replacement(1, rpg::ModifierSourceType::ATTRIBUTE, 20);
         vital.addModifier(replacement, VitalDataTarget::CURRENT_MAX);
         ASSERT_EQ(vital.getModifiers(VitalDataTarget::CURRENT_MAX).size(), 1)
-            << "Replacing modifier should not grow the vector";
+            << "Replacing modifier should not grow the vector.";
         EXPECT_EQ(vital.getCurrentMax(), 120)
-            << "The replaced modifier should carry the new value";
+            << "The replaced modifier should carry the new value.";
     }
 
     /**
@@ -131,17 +131,17 @@ namespace stats
                           VitalDataTarget::CURRENT_MAX);
         vital.addModifier(anotherModifier, VitalDataTarget::CURRENT_MAX);
         EXPECT_EQ(vital.getCurrentMax(), 140)
-            << "Both modifiers should apply: (100 * 1.1) + 20 + 10";
+            << "Both modifiers should apply: (100 * 1.1) + 20 + 10.";
 
         // A placeholder modifier whose source matches is enough to remove both.
         vital.removeModifier(rpg::Modifier(1, rpg::ModifierSourceType::ATTRIBUTE, 0),
                              VitalDataTarget::CURRENT_MAX);
         ASSERT_EQ(vital.getModifiers(VitalDataTarget::CURRENT_MAX).size(), 1)
-            << "Removing a source should drop every modify type from that source";
+            << "Removing a source should drop every modify type from that source.";
         EXPECT_EQ(vital.getModifiers(VitalDataTarget::CURRENT_MAX)[0].sourceID, 2)
-            << "Only the other source's modifier should remain";
+            << "Only the other source's modifier should remain.";
         EXPECT_EQ(vital.getCurrentMax(), 110)
-            << "The effective maximum should derive from the remaining modifier";
+            << "The effective maximum should derive from the remaining modifier.";
     }
 
     /**
@@ -154,31 +154,31 @@ namespace stats
         vital.addModifier(rpg::Modifier(1, rpg::ModifierSourceType::ATTRIBUTE, 20),
                           VitalDataTarget::CURRENT_MAX);
         EXPECT_EQ(vital.getCurrentMax(), 120)
-            << "An additive modifier should add to the base maximum";
+            << "An additive modifier should add to the base maximum.";
 
         vital.addModifier(rpg::Modifier(2, rpg::ModifierSourceType::BUFF, 0.1,
                                         rpg::ModifyType::MULTIPLY),
                           VitalDataTarget::CURRENT_MAX);
         EXPECT_EQ(vital.getCurrentMax(), 130)
-            << "The multiplier should scale the base before additions: (100 * 1.1) + 20";
+            << "The multiplier should scale the base before additions: (100 * 1.1) + 20.";
 
         vital.addModifier(rpg::Modifier(3, rpg::ModifierSourceType::ITEM, 90,
                                         rpg::ModifyType::SET),
                           VitalDataTarget::CURRENT_MAX);
         EXPECT_EQ(vital.getCurrentMax(), 90)
-            << "A set modifier should replace the computed maximum";
+            << "A set modifier should replace the computed maximum.";
 
         // Removing the set modifier restores the computed value from the other modifiers.
         vital.removeModifier(rpg::Modifier(3, rpg::ModifierSourceType::ITEM, 0),
                              VitalDataTarget::CURRENT_MAX);
         EXPECT_EQ(vital.getCurrentMax(), 130)
-            << "Removing the set modifier should restore the computed value";
+            << "Removing the set modifier should restore the computed value.";
 
         // Modifiers can also target the minimum.
         vital.addModifier(rpg::Modifier(4, rpg::ModifierSourceType::BUFF, 5),
                           VitalDataTarget::CURRENT_MIN);
         EXPECT_EQ(vital.getCurrentMin(), 5)
-            << "An additive modifier should raise the effective minimum";
+            << "An additive modifier should raise the effective minimum.";
     }
 
     /**
@@ -191,18 +191,18 @@ namespace stats
         // A base minimum above the base maximum yields to the maximum.
         vital.setBaseMin(150);
         EXPECT_EQ(vital.getCurrentMin(), 100)
-            << "The effective minimum should yield to the effective maximum";
+            << "The effective minimum should yield to the effective maximum.";
         EXPECT_EQ(vital.getCurrentMax(), 100)
-            << "The effective maximum should be unaffected";
+            << "The effective maximum should be unaffected.";
         EXPECT_EQ(vital.getCurrent(), 100)
-            << "The current value should clamp to the effective bounds";
+            << "The current value should clamp to the effective bounds.";
 
         // A raising modifier on the minimum is also capped by the maximum.
         VitalData capped(50, 0, 100);
         capped.addModifier(rpg::Modifier(1, rpg::ModifierSourceType::ATTRIBUTE, 150),
                            VitalDataTarget::CURRENT_MIN);
         EXPECT_EQ(capped.getCurrentMin(), 100)
-            << "A modifier pushing the minimum past the maximum should be capped";
+            << "A modifier pushing the minimum past the maximum should be capped.";
     }
 
     /**
@@ -212,8 +212,8 @@ namespace stats
     {
         VitalData vital(80, 0, 100);
         EXPECT_THROW(vital.getModifiers(VitalDataTarget::CURRENT), error::MIAException)
-            << "The CURRENT target has no modifier vector";
+            << "The CURRENT target has no modifier vector.";
         EXPECT_THROW(vital.getModifiers(VitalDataTarget::UNKNOWN), error::MIAException)
-            << "The UNKNOWN target has no modifier vector";
+            << "The UNKNOWN target has no modifier vector.";
     }
 } // namespace stats
