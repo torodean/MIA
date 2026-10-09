@@ -287,13 +287,13 @@ namespace currency
     /**
      * @brief Verifies deserialize rejects malformed input and yields an empty Wallet for empty content.
      */
-    TEST_F(Wallet_T, DeserializeInvalidInput) 
+    TEST_F(Wallet_T, DeserializeInvalidInput)
     {
-        EXPECT_THROW(Wallet::deserialize("BAD_FORMAT"), std::invalid_argument)
-            << "Deserialize with missing markers should throw invalid_argument.";
-        
+        EXPECT_THROW(Wallet::deserialize("BAD_FORMAT"), error::MIAException)
+            << "Deserialize with missing markers should throw MIAException.";
+
         Wallet deserialized = Wallet::deserialize("[WALLET_BEGIN][WALLET_END]");
-        EXPECT_EQ(deserialized.get(coin).getQuantity(), 0) 
+        EXPECT_EQ(deserialized.get(coin).getQuantity(), 0)
             << "Deserialize with empty content should return empty Wallet.";
     }
 } // namespace currency
