@@ -5,10 +5,12 @@
  * @brief A class representing the vitals for a character.
  */
 
+// Include the associated header file.
+#include "Vitals.hpp"
+
 #include <cmath>
 #include <sstream>
 #include <variant>
-#include "Vitals.hpp"
 
 #include "VitalRegistry.hpp"
 #include "RegistryHelper.hpp"
@@ -298,23 +300,13 @@ namespace stats
             ss << id << ":" << data.getCurrent() << "," << data.getBaseMin() << ","
                << data.getBaseMax();
 
-            // Serialize the min and max modifiers with their modify types.
+            // Serialize the min and max modifiers; each is one self-contained
+            // ';'-delimited unit followed by the target it applies to.
             for (const auto target : {VitalDataTarget::CURRENT_MIN, VitalDataTarget::CURRENT_MAX})
             {
                 for (const auto& mod : data.getModifiers(target))
-                {
-                    std::ostringstream valueStream;
-                    if (std::holds_alternative<int>(mod.value))
-                        valueStream << std::get<int>(mod.value);
-                    else
-                        valueStream << std::get<double>(mod.value);
-
-                    ss << ";" << mod.sourceID << ","
-                       << rpg::modifierSourceTypeToString(mod.source) << ","
-                       << valueStream.str() << ","
-                       << VitalDataTargetToString(target) << ","
-                       << rpg::modifyTypeToString(mod.modifyType);
-                }
+                    ss << ";" << mod.serialize() << ","
+                       << VitalDataTargetToString(target);
             }
         }
 
@@ -381,35 +373,21 @@ namespace stats
             std::string modStr;
             while (std::getline(entryStream, modStr, ';'))
             {
-                std::vector<std::string> parts;
-                std::stringstream modStream(modStr);
-                std::string token;
-                while (std::getline(modStream, token, ','))
-                    parts.push_back(token);
-
-                if (parts.size() != 5)
+                // The trailing field names the vital target the modifier applies to;
+                // everything before it is one serialized Modifier.
+                size_t lastComma = modStr.find_last_of(',');
+                if (lastComma == std::string::npos)
                     MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid modifier format");
 
-                uint32_t sourceID = std::stoul(parts[0]);
-                rpg::ModifierSourceType sourceType = rpg::stringToModifierSourceType(parts[1]);
-                double parsedValue = std::stod(parts[2]);
-                VitalDataTarget target = stringToVitalDataTarget(parts[3]);
-                rpg::ModifyType modifyType = rpg::stringToModifyType(parts[4]);
-
+                VitalDataTarget target = stringToVitalDataTarget(modStr.substr(lastComma + 1));
                 if (target != VitalDataTarget::CURRENT_MIN && target != VitalDataTarget::CURRENT_MAX)
                     MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid modifier target");
 
-                // Store the value as an int for ADD_MAX and SET, and as a double for MULTIPLY.
-                rpg::Modifier mod(sourceID, sourceType,
-                                  (modifyType == rpg::ModifyType::MULTIPLY)
-                                      ? rpg::Modifier::Value(parsedValue)
-                                      : rpg::Modifier::Value(static_cast<int>(std::round(parsedValue))),
-                                  modifyType);
+                rpg::Modifier mod = rpg::Modifier::deserialize(modStr.substr(0, lastComma));
                 vitals.dataStore.at(id).addModifier(mod, target);
             }
         }
 
         return vitals;
     }
-
 } // namespace stats
