@@ -343,6 +343,18 @@ namespace rpg
 
 
     /**
+     * @brief Verifies a non-numeric id or value token is rejected with a MIAException.
+     */
+    TEST(ModifierTest, Deserialize_NonNumericTokenThrows)
+    {
+        EXPECT_THROW(Modifier::deserialize("not_an_id:BUFF:5:ADD_MAX:STACK"),
+                     error::MIAException);
+        EXPECT_THROW(Modifier::deserialize("1:BUFF:not_a_number:ADD_MAX:STACK"),
+                     error::MIAException);
+    }
+
+
+    /**
      * @brief Verifies the stream operator output format.
      */
     TEST(ModifierTest, StreamOperator)
