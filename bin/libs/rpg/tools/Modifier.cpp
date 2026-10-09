@@ -206,9 +206,19 @@ namespace rpg
         if (tokens.size() != 5)
             MIA_THROW(error::Invalid_RPG_Data, "Invalid Modifier data format");
 
-        uint32_t sourceID = std::stoul(tokens[0]);
+        uint32_t sourceID;
+        double parsedValue;
+        try
+        {
+            sourceID = std::stoul(tokens[0]);
+            parsedValue = std::stod(tokens[2]);
+        }
+        catch (const std::exception&)
+        {
+            MIA_THROW(error::Invalid_RPG_Data, "Invalid Modifier numeric value: " + data);
+        }
+
         ModifierSourceType source = stringToModifierSourceType(tokens[1]);
-        double parsedValue = std::stod(tokens[2]);
         ModifyType type = stringToModifyType(tokens[3]);
         ModifierStackPolicy policy = stringToModifierStackPolicy(tokens[4]);
 
