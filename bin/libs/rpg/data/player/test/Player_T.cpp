@@ -243,4 +243,25 @@ namespace rpg
         std::remove(filename.c_str());
     }
 
+    /**
+     * @brief Verifies loadFromFile returns false when a later container block is missing.
+     *
+     * The file holds a valid vitals block, so deserialization fails in the wallet step.
+     * This exercises the MIAException path for a partially valid save.
+     */
+    TEST_F(Player_T, LoadFromFileFailsForPartiallyValidFile)
+    {
+        const std::string filename = "playerPartiallyValidTest.MIA";
+        {
+            std::ofstream file(filename);
+            file << player.getVitals().serialize() << std::endl;
+        }
+
+        Player loaded;
+        EXPECT_FALSE(loaded.loadFromFile(filename))
+            << "loadFromFile should fail when the wallet block is missing.";
+
+        std::remove(filename.c_str());
+    }
+
 } // namespace rpg
