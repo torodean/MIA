@@ -2,7 +2,7 @@
  * @file Wallet.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A container class for managing multiple currencies and their quantities.
+ * @brief A container class for managing multiple currencies and their quantities.
  */
 #pragma once
 
@@ -32,9 +32,9 @@ namespace currency
          * in the objects map, a default constructed data object will be returned.
          * Overloads allow querying by currency name, currency ID, or Currency object (by reference).
          *
-         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the currency.
-         *        currency[const Currency&] - The Currency object.
+         * @param name The name of the currency (e.g., "gold", "silver").
+         *        id The ID of the currency.
+         *        currency The Currency object.
          * @return The Currency associated with the identifier, or a default Currency if not found.
          */
         CurrencyQuantity& get(const std::string& name) override;
@@ -46,10 +46,10 @@ namespace currency
          * Overloads allow adding by Currency object, currency ID, or currency name.
          * If the currency is already added, this will increment the value.
          *
-         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the currency.
-         *        currency[const Currency&] - The Currency object.
-         * @param quantity[uint32_t] - The amount to add.
+         * @param name The name of the currency (e.g., "gold", "silver").
+         *        id The ID of the currency.
+         *        currency The Currency object.
+         * @param quantity The amount to add.
          */
         void add(const std::string& name, uint32_t quantity);
         void add(uint32_t id, uint32_t quantity);
@@ -59,9 +59,9 @@ namespace currency
          * Removes a specified currency from the container.
          * Overloads allow removing by Currency object, currency ID, or currency name.
          *
-         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the currency.
-         *        currency[const Currency&] - The Currency object.
+         * @param name The name of the currency (e.g., "gold", "silver").
+         *        id The ID of the currency.
+         *        currency The Currency object.
          */
         void remove(const std::string& name);
         void remove(uint32_t id);
@@ -71,10 +71,10 @@ namespace currency
          * Updates a specified quantity of a currency.
          * Overloads allow updating by Currency object, currency ID, or currency name.
          *
-         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the currency.
-         *        currency[const Currency&] - The Currency object.
-         * @param amount[int] - The signed amount to update (positive = add, negative = remove).
+         * @param name The name of the currency (e.g., "gold", "silver").
+         *        id The ID of the currency.
+         *        currency The Currency object.
+         * @param amount The signed amount to update (positive = add, negative = remove).
          */
         void update(const std::string& name, unsigned int amount);
         void update(uint32_t id, unsigned int amount);
@@ -84,10 +84,10 @@ namespace currency
          * Checks if the container has at least the specified quantity of a currency.
          * Overloads allow checking by Currency object, currency ID, or currency name.
          *
-         * @param name[const std::string&] - The name of the currency (e.g., "gold", "silver").
-         *        id[uint32_t] - The ID of the currency.
-         *        currency[const Currency&] - The Currency object.
-         * @param quantity[uint32_t] - The required amount.
+         * @param name The name of the currency (e.g., "gold", "silver").
+         *        id The ID of the currency.
+         *        currency The Currency object.
+         * @param quantity The required amount.
          * @return True if the container has enough; false otherwise.
          */
         bool has(const std::string& name, unsigned int quantity) const;
@@ -118,7 +118,7 @@ namespace currency
          *
          * @param data A string containing the serialized container, possibly among other data.
          * @return A reconstructed Wallet instance.
-         * @throws std::invalid_argument if no valid serialized block is found.
+         * @throws MIAException if no valid serialized block is found.
          */
         static Wallet deserialize(const std::string& data);
 

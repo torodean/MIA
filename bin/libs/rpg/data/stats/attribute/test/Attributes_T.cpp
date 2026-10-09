@@ -284,4 +284,18 @@ namespace stats
         EXPECT_TRUE(data3.getModifiers().empty()) << "Attribute 3 should have no modifiers.";
     }
 
+    /**
+     * @brief Verifies deserialize throws for a missing block and yields an empty
+     * container for block content that is genuinely empty.
+     */
+    TEST_F(Attributes_T, DeserializeInvalidInput)
+    {
+        EXPECT_THROW(Attributes::deserialize("BAD_FORMAT"), error::MIAException)
+            << "Deserialize with missing markers should throw MIAException.";
+
+        Attributes deserialized = Attributes::deserialize("[ATTRIBUTES_BEGIN][ATTRIBUTES_END]");
+        EXPECT_TRUE(deserialized.getMap().empty())
+            << "Deserialize with empty block content should return an empty container.";
+    }
+
 } // namespace stats

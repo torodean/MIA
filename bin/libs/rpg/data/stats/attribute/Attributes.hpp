@@ -160,6 +160,7 @@ namespace stats
          *
          * @param data A string containing the serialized Attributes.
          * @return A reconstructed Attributes instance.
+         * @throws MIAException if no valid serialized block is found.
          */
         static Attributes deserialize(const std::string& data);
 

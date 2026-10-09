@@ -11,6 +11,7 @@
 #include "Wallet.hpp"
 #include "CurrencyRegistry.hpp"
 #include "RegistryHelper.hpp"
+#include "MIAException.hpp"
 
 
 namespace currency
@@ -196,9 +197,9 @@ namespace currency
         size_t start = data.find("[WALLET_BEGIN]");
         size_t end = data.find("[WALLET_END]", start);
 
-        if (start == std::string::npos || end == std::string::npos) 
+        if (start == std::string::npos || end == std::string::npos)
         {
-            throw std::invalid_argument("Wallet block not found.");
+            MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Wallet block not found.");
         }
 
         start += std::string("[WALLET_BEGIN]").length();
@@ -214,8 +215,17 @@ namespace currency
             size_t sep = token.find(':');
             if (sep == std::string::npos) continue;
 
-            uint32_t id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
-            uint32_t qty = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
+            uint32_t id;
+            uint32_t qty;
+            try
+            {
+                id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
+                qty = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
+            }
+            catch (...)
+            {
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid wallet entry: " + token);
+            }
 
             const Currency* curr = CurrencyRegistry::getInstance().getByID(id);
             if (curr) 
