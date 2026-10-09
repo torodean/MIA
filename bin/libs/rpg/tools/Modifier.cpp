@@ -5,19 +5,23 @@
  * @brief Implements the modifier data and computation utilities declared in Modifier.hpp.
  */
 
+// Include associated header file.
 #include "Modifier.hpp"
-
-// Used for exception and error handling.
-#include "MIAException.hpp"
-#include "Error.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <iomanip>
 #include <limits>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <utility>
+#include <vector>
+
+// Used for exception and error handling.
+#include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace rpg
 {
@@ -33,6 +37,7 @@ namespace rpg
         }
     }
 
+
     ModifierSourceType stringToModifierSourceType(const std::string& typeStr)
     {
         std::string str = typeStr;
@@ -45,14 +50,44 @@ namespace rpg
         return ModifierSourceType::UNKNOWN;
     }
 
-    Modifier::Modifier(uint32_t id, ModifierSourceType src, int val, ModifyType type)
-        : sourceID(id), source(src), value(val), modifyType(type) {}
 
-    Modifier::Modifier(uint32_t id, ModifierSourceType src, double val, ModifyType type)
-        : sourceID(id), source(src), value(val), modifyType(type) {}
+    Modifier::Modifier(uint32_t id, ModifierSourceType src, 
+                       int val, 
+                       ModifyType type,
+                       ModifierStackPolicy policy) : 
+        sourceID(id), 
+        source(src), 
+        value(val), 
+        modifyType(type), 
+        stackPolicy(policy) 
+    {}
 
-    Modifier::Modifier(uint32_t id, ModifierSourceType src, Value val, ModifyType type)
-        : sourceID(id), source(src), value(std::move(val)), modifyType(type) {}
+
+    Modifier::Modifier(uint32_t id, 
+                       ModifierSourceType src, 
+                       double val, 
+                       ModifyType type,
+                       ModifierStackPolicy policy) : 
+        sourceID(id), 
+        source(src), 
+        value(val), 
+        modifyType(type), 
+        stackPolicy(policy) 
+    {}
+
+
+    Modifier::Modifier(uint32_t id, 
+                       ModifierSourceType src, 
+                       Value val, 
+                       ModifyType type,
+                       ModifierStackPolicy policy) : 
+        sourceID(id), 
+        source(src), 
+        value(std::move(val)), 
+        modifyType(type), 
+        stackPolicy(policy)
+    {}
+
 
     int Modifier::getValueAsInt() const
     {
@@ -63,6 +98,7 @@ namespace rpg
         return std::get<int>(value);
     }
 
+
     double Modifier::getValueAsDouble() const
     {
         if (!std::holds_alternative<double>(value))
@@ -72,11 +108,118 @@ namespace rpg
         return std::get<double>(value);
     }
 
+
+    bool Modifier::isStrongerThan(const Modifier& other) const
+    {
+        if (modifyType != other.modifyType)
+            return false;
+
+        if (modifyType == ModifyType::MULTIPLY)
+            return getValueAsDouble() > other.getValueAsDouble();
+
+        return getValueAsInt() > other.getValueAsInt();
+    }
+
+
     bool Modifier::operator==(const Modifier& other) const
     {
         return sourceID == other.sourceID && source == other.source &&
-               modifyType == other.modifyType;
+               modifyType == other.modifyType && stackPolicy == other.stackPolicy;
     }
+
+
+    void attachModifier(std::vector<Modifier>& modifiers, const Modifier& modifier)
+    {
+        // The same source, source type, modify type, and stack policy is the same effect.
+        auto exactMatch = std::find(modifiers.begin(), modifiers.end(), modifier);
+
+        if (modifier.stackPolicy == ModifierStackPolicy::STACK)
+        {
+            // Stack modifiers accumulate, even re-applications from the same source.
+            modifiers.push_back(modifier);
+            return;
+        }
+
+        if (exactMatch != modifiers.end())
+        {
+            if (modifier.stackPolicy == ModifierStackPolicy::KEEP_STRONGEST &&
+                !modifier.isStrongerThan(*exactMatch))
+                return;
+
+            *exactMatch = modifier;
+            return;
+        }
+
+        if (modifier.stackPolicy != ModifierStackPolicy::KEEP_STRONGEST)
+        {
+            modifiers.push_back(modifier);
+            return;
+        }
+
+        // A KEEP_STRONGEST modifier competes with every attached modifier of the same
+        // source type and modify type, regardless of which source attached them.
+        auto competing = std::find_if(modifiers.begin(), modifiers.end(),
+            [&modifier](const Modifier& attached)
+            {
+                return attached.source == modifier.source &&
+                       attached.modifyType == modifier.modifyType;
+            });
+
+        if (competing == modifiers.end())
+        {
+            modifiers.push_back(modifier);
+            return;
+        }
+
+        if (modifier.isStrongerThan(*competing))
+            *competing = modifier;
+    } // void attachModifier()
+
+
+    std::string Modifier::serialize() const
+    {
+        // max_digits10 guarantees the serialized double reads back as the same value.
+        std::ostringstream valueStream;
+        valueStream << std::setprecision(std::numeric_limits<double>::max_digits10);
+        if (std::holds_alternative<int>(value))
+            valueStream << std::get<int>(value);
+        else
+            valueStream << std::get<double>(value);
+
+        return std::to_string(sourceID) + ":" +
+               modifierSourceTypeToString(source) + ":" +
+               valueStream.str() + ":" +
+               modifyTypeToString(modifyType) + ":" +
+               modifierStackPolicyToString(stackPolicy);
+    }
+
+
+    Modifier Modifier::deserialize(const std::string& data)
+    {
+        std::vector<std::string> tokens;
+        std::string token;
+        std::istringstream tokenStream(data);
+
+        while (std::getline(tokenStream, token, ':'))
+            tokens.push_back(token);
+
+        if (tokens.size() != 5)
+            MIA_THROW(error::Invalid_RPG_Data, "Invalid Modifier data format");
+
+        uint32_t sourceID = std::stoul(tokens[0]);
+        ModifierSourceType source = stringToModifierSourceType(tokens[1]);
+        double parsedValue = std::stod(tokens[2]);
+        ModifyType type = stringToModifyType(tokens[3]);
+        ModifierStackPolicy policy = stringToModifierStackPolicy(tokens[4]);
+
+        // Store the value as an int for ADD_MAX and SET, and as a double for MULTIPLY.
+        Value value = (type == ModifyType::MULTIPLY)
+                          ? Value(parsedValue)
+                          : Value(static_cast<int>(std::round(parsedValue)));
+
+        return Modifier(sourceID, source, value, type, policy);
+    }
+
 
     int computeModifiedValue(int base, const std::vector<Modifier>& modifiers)
     {
@@ -109,6 +252,7 @@ namespace rpg
         return static_cast<int>(std::round(clamped));
     }
 
+
     std::ostream& operator<<(std::ostream& os, const Modifier& modifier)
     {
         os << "Modifier{sourceID=" << modifier.sourceID
@@ -118,7 +262,8 @@ namespace rpg
             os << std::get<int>(modifier.value);
         else
             os << std::get<double>(modifier.value);
-        os << ", type=" << modifyTypeToString(modifier.modifyType) << "}";
+        os << ", type=" << modifyTypeToString(modifier.modifyType)
+           << ", policy=" << modifierStackPolicyToString(modifier.stackPolicy) << "}";
         return os;
     }
 } // namespace rpg
