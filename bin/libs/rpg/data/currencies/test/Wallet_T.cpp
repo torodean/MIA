@@ -107,9 +107,9 @@ namespace currency
     }
 
     /**
-     * @brief Verifies adding past the unsigned int maximum throws error::MIAException.
+     * @brief Verifies adding past the unsigned int maximum throws MIAException.
      */
-    TEST_F(Wallet_T, AddOverflowThrows) 
+    TEST_F(Wallet_T, AddOverflowThrows)
     {
         container.add(coin, std::numeric_limits<unsigned int>::max());
         EXPECT_THROW(container.add(coin, 1), error::MIAException)
@@ -156,18 +156,19 @@ namespace currency
     }
 
     /**
-     * @brief Verifies CurrencyQuantity::remove decreases quantity and clamps to zero when exceeded.
+     * @brief Verifies CurrencyQuantity::remove decreases quantity and throws when exceeded.
      */
-    TEST_F(Wallet_T, CurrencyQuantityRemoveDecreasesQuantity) 
+    TEST_F(Wallet_T, CurrencyQuantityRemoveDecreasesQuantity)
     {
         container.add(gem, 100);
         container.get(gem).remove(30);
-        EXPECT_EQ(container.get(gem).getQuantity(), 70) 
+        EXPECT_EQ(container.get(gem).getQuantity(), 70)
             << "CurrencyQuantity::remove(30) should decrease quantity to 70.";
-        
-        container.get(gem).remove(100); // Exceeds quantity
-        EXPECT_EQ(container.get(gem).getQuantity(), 0) 
-            << "CurrencyQuantity::remove(100) should set quantity to 0.";
+
+        EXPECT_THROW(container.get(gem).remove(100), error::MIAException)
+            << "CurrencyQuantity::remove(100) should throw when it exceeds the quantity.";
+        EXPECT_EQ(container.get(gem).getQuantity(), 70)
+            << "A failed remove should leave the quantity unchanged.";
     }
 
     /**
