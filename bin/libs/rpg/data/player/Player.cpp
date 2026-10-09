@@ -7,7 +7,9 @@
 
 #include <fstream>
 #include <sstream>
+
 #include "Player.hpp"
+#include "MIAException.hpp"
 
 namespace rpg
 {
@@ -47,8 +49,9 @@ namespace rpg
             attributes = stats::Attributes::deserialize(data);
             progress = progress::ProgressMarkers::deserialize(data);
         } 
-        catch (const std::exception&) 
+        catch (const error::MIAException& e) 
         {
+            std::cerr << e.what() << std::endl;
             return false;
         }
 

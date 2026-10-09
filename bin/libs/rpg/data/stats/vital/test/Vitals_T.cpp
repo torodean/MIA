@@ -15,19 +15,19 @@
 using namespace stats;
 
 /**
- * Test fixture for Vitals tests.
+ * @brief Test fixture for Vitals tests.
  */
 class Vitals_T : public ::testing::Test 
 {
 protected:
     void SetUp() override
     {
-        // Create a JSON object with the "vitals" key containing the array of vitals
+        // Create a JSON object with the "vitals" key containing the array of vitals.
         nlohmann::json jsonObject;
         jsonObject["VITAL"] = { health.toJson(), mana.toJson(), rage.toJson() };
         std::string jsonData = jsonObject.dump();
         
-        // Load currencies into registry
+        // Load currencies into registry.
         VitalRegistry::getInstance().loadFromString(jsonData);
     }
     
@@ -39,6 +39,9 @@ protected:
 };
 
 
+/*
+ * @brief Tests the get method.
+ */
 TEST_F(Vitals_T, get)
 {
     vitals.add("Health", 80, 0, 100);
@@ -60,6 +63,10 @@ TEST_F(Vitals_T, get)
     EXPECT_THROW(vitals.get("invalid"), error::MIAException);
 }
 
+
+/*
+ * @brief Test adding a new vital.
+ */
 TEST_F(Vitals_T, add)
 {
     EXPECT_NO_THROW(vitals.add("Health", 80, 0, 100));
@@ -74,26 +81,34 @@ TEST_F(Vitals_T, add)
     EXPECT_THROW(vitals.add(1, 50, 120, 100), error::MIAException); // Min > max
 }
 
+
+/*
+ * @brief Test updating the current vital values.
+ */
 TEST_F(Vitals_T, updateCurrent)
 {
     vitals.add("Health", 80, 0, 100);
 
-    // Valid update within range
+    // Valid update within range.
     EXPECT_NO_THROW(vitals.update("Health", 90));
     EXPECT_EQ(vitals.get("Health").getCurrent(), 90);
 
-    // Update above max should clamp to max
+    // Update above max should clamp to max.
     EXPECT_NO_THROW(vitals.update(1, 120));
     EXPECT_EQ(vitals.get(1).getCurrent(), 100);
 
-    // Update below min should clamp to min
+    // Update below min should clamp to min.
     EXPECT_NO_THROW(vitals.update(health, -10));
     EXPECT_EQ(vitals.get(health).getCurrent(), 0);
 
-    // Invalid vital name should throw
+    // Invalid vital name should throw.
     EXPECT_THROW(vitals.update("invalid", 50), error::MIAException);
 }
 
+
+/*
+ * @brief Test that the bounds of the base values behave accordingly.
+ */
 TEST_F(Vitals_T, baseBounds)
 {
     vitals.add("Health", 80, 0, 100);
@@ -119,6 +134,10 @@ TEST_F(Vitals_T, baseBounds)
     EXPECT_EQ(vitals.get(health).getCurrentMax(), 50);
 }
 
+
+/*
+ * @brief Test the various modifier types and that they work correctly.
+ */
 TEST_F(Vitals_T, modifierTypes)
 {
     vitals.add("Health", 80, 0, 100);
@@ -149,64 +168,75 @@ TEST_F(Vitals_T, modifierTypes)
 }
 
 
-TEST_F(Vitals_T, AddremoveModifier)
+/*
+ * @brief Test that adding and removing modifiers correctly updates values.
+ */
+TEST_F(Vitals_T, AddRemoveModifier)
 {
     vitals.add("Health", 80, 0, 100);
 
-    // Add +20 modifier to max → max becomes 120
+    // Add +20 modifier to max -> max becomes 120.
     EXPECT_NO_THROW(vitals.addModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE, 20,
                                        VitalDataTarget::CURRENT_MAX));
     EXPECT_EQ(vitals.get("Health").getCurrentMax(), 120);
 
-    // Add -10 modifier to max → max becomes 110
+    // Add -10 modifier to max -> max becomes 110.
     EXPECT_NO_THROW(vitals.addModifier(1, 2, rpg::ModifierSourceType::ITEM, -10,
                                             VitalDataTarget::CURRENT_MAX));
     EXPECT_EQ(vitals.get(1).getCurrentMax(), 110);
 
-    // Add +5 modifier to min → min becomes 5
+    // Add +5 modifier to min -> min becomes 5.
     EXPECT_NO_THROW(vitals.addModifier(health, 3, rpg::ModifierSourceType::BUFF, 5,
                                             VitalDataTarget::CURRENT_MIN));
     EXPECT_EQ(vitals.get(health).getModifiers(VitalDataTarget::CURRENT_MIN).size(), 1);
     EXPECT_EQ(vitals.get(health).getCurrentMin(), 5);
 
-    // Remove modifier with sourceId 1 from max → max becomes 90
+    // Remove modifier with sourceId 1 from max -> max becomes 90.
     EXPECT_NO_THROW(vitals.removeModifier("Health", 1, rpg::ModifierSourceType::ATTRIBUTE,
                                           VitalDataTarget::CURRENT_MAX));
     EXPECT_EQ(vitals.get("Health").getCurrentMax(), 90);
 
-    // Remove non-existent modifier → no exception; data unchanged
+    // Remove non-existent modifier -> no exception; data unchanged.
     EXPECT_NO_THROW(vitals.removeModifier("Health", 999, rpg::ModifierSourceType::ATTRIBUTE,
                                           VitalDataTarget::CURRENT_MAX));
-    EXPECT_EQ(vitals.get("Health").getCurrentMax(), 90); // Confirm unchanged
+    EXPECT_EQ(vitals.get("Health").getCurrentMax(), 90); // Confirm unchanged.
 
-    // Invalid vital name → throws
+    // Invalid vital name -> throws
     EXPECT_THROW(vitals.addModifier("invalid", 1, rpg::ModifierSourceType::ATTRIBUTE, 20,
                                     VitalDataTarget::CURRENT_MAX), error::MIAException);
 
-    // Overflow risk (optional test) - depending on logic, this may or may not throw
+    // Overflow risk (optional test) - depending on logic, this may or may not throw.
     EXPECT_NO_THROW(vitals.addModifier(1, 1, rpg::ModifierSourceType::ATTRIBUTE,
                                        std::numeric_limits<int>::max(),
                                        VitalDataTarget::CURRENT_MAX));
-    // The resulting max may wrap, clamp, or just increase depending on implementation
+    // The resulting max may wrap, clamp, or just increase depending on implementation.
 }
 
+
+/*
+ * @brief Test removing a vital.
+ */
 TEST_F(Vitals_T, remove)
 {
     vitals.add("Health", 80, 0, 100);
 
-    // Remove Health → data removed from internal map
+    // Remove Health -> data removed from internal map.
     EXPECT_NO_THROW(vitals.remove("Health"));
 
     // Querying after removal should return default
-    EXPECT_EQ(vitals.get("Health").getCurrentMax(), 100); // From fallback/default
+    EXPECT_EQ(vitals.get("Health").getCurrentMax(), 100); // From fallback/default.
 
-    // Attempting second removal does not throw, but does nothing
+    // Attempting second removal does not throw, but does nothing.
     EXPECT_NO_THROW(vitals.remove("Health"));
 
-    // Remove invalid vital → throws
+    // Remove invalid vital -> throws.
     EXPECT_THROW(vitals.remove("invalid"), error::MIAException);
 }
 
+
+/*
+ * @brief Test that a vital is correctly found when it exists.
+ */
 TEST_F(Vitals_T, has)
 {
     vitals.add("Health", 80, 0, 100);
@@ -217,10 +247,14 @@ TEST_F(Vitals_T, has)
     // Test whether or not it correctly finds not enough..
     EXPECT_FALSE(vitals.has("Health", 90));
 
-    // Invalid vital → throws
+    // Invalid vital -> throws
     EXPECT_THROW(vitals.has("invalid", 5), error::MIAException);
 }
 
+
+/*
+ * @brief Test getting the min and max values.
+ */
 TEST_F(Vitals_T, GetVitalMaxMin)
 {
     vitals.add("Health", 80, 0, 100);
@@ -239,6 +273,9 @@ TEST_F(Vitals_T, GetVitalMaxMin)
 }
 
 
+/*
+ * @brief Test that serialize and deserialize work as expected.
+ */
 TEST_F(Vitals_T, SerializeDeserialize)
 {
     vitals.add("Health", 80, 0, 100);

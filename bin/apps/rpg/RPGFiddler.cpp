@@ -57,18 +57,23 @@ void RPGFiddler::initialize(int argc, char* argv[])
         // Load the saved player data or initialize fresh rpg data for testing.
         if (files::fileExists(fullSaveFilePath))
         {
-            log("Loading player values from save file: " + fullSaveFilePath, true);
-            player.loadFromFile(fullSaveFilePath);
+            log("Loading player values from save file: " + fullSaveFilePath, getVerboseMode());
+            bool loadSuccess = player.loadFromFile(fullSaveFilePath);
+            if (!loadSuccess)
+            {
+                log("ERROR: Could not load player save! Creating default values.", getVerboseMode());
+                rpg_sim::setupSimulator(player);
+            }
         }
         else
         {
-            log("Save file not found: " + fullSaveFilePath, true);
+            log("Save file not found: " + fullSaveFilePath, getVerboseMode());
             rpg_sim::setupSimulator(player);
         }
     }
     catch (const error::MIAException& ex)
     {
-        log("Error during RPGFiddler::initialize: " + std::string(ex.what()), true);
+        log("Error during RPGFiddler::initialize: " + std::string(ex.what()), getVerboseMode());
     }
 }
 

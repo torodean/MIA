@@ -80,14 +80,6 @@ namespace stats
     }
     void Vitals::add(const Vital& vital, int32_t current, int32_t baseMin, int32_t baseMax)
     {
-        if (current < baseMin || current > baseMax || baseMin > baseMax)
-        {
-            std::string err = "Inconsistent value set: "
-                            + std::to_string(baseMin) + " < "
-                            + std::to_string(current) + " < "
-                            + std::to_string(baseMax) + "\n";
-            MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
-        }
         auto id = vital.getID();
         if (dataStore.find(id) != dataStore.end())
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);

@@ -194,6 +194,7 @@ namespace stats
          *
          * @param data A string containing the serialized Vitals.
          * @return A reconstructed Vitals instance.
+         * @throws MIAException for various deserialization errors.
          */
         static Vitals deserialize(const std::string& data);
         
