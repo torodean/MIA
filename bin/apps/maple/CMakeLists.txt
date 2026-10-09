@@ -14,7 +14,7 @@ set(MAPLE_INC
     FinancialCalculations.hpp 
     MapleMisc.hpp )
 add_executable(maple ${MAPLE_SRC} ${MAPLE_INC} )
-target_link_libraries(maple PRIVATE Framework_CORE System_UTIL Math_UTIL )
+target_link_libraries(maple PRIVATE Framework_CORE System_UTIL Math_UTIL Types_UTIL )
 
 # Install the app.
 install_app( maple )

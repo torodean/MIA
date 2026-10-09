@@ -13,7 +13,7 @@ target_link_libraries( RPG_Progression_LIB
                        PRIVATE
                        RPG_Tools_LIB
                        RPG_Data_LIB
-                       Framework_CORE )
+                       Error_CORE )
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(RPG_Progression_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
