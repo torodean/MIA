@@ -203,6 +203,8 @@ Do not add traditional `#ifndef` include guards.
 
 Google Test files use the same file-header format as other .cpp files.
 
+Tests live inside the namespace under test (e.g. the body of `Modifier_T.cpp` sits in `namespace rpg`), with test-local helper functions in an anonymous namespace inside it; assertions then use unqualified names. Separate tests by two blank lines.
+
 Each `TEST(...)` gets a `/** ... */` block comment describing what the test verifies, even when the brief is a single sentence.
 No `@test` tag (it duplicates the TEST name and Doxygen does not resolve gtest macros).
 One terse line is usually enough; add a body paragraph only when the test is genuinely non-obvious.

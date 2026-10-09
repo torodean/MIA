@@ -2,13 +2,15 @@
  * @file Wallet.cpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A container class for managing multiple currencies and their quantities.
+ * @brief A container class for managing multiple currencies and their quantities.
  */
+
+// The associated header file.
+#include "Wallet.hpp"
 
 #include <sstream>
 #include <limits>
 
-#include "Wallet.hpp"
 #include "CurrencyRegistry.hpp"
 #include "RegistryHelper.hpp"
 #include "MIAException.hpp"
@@ -38,8 +40,8 @@ namespace currency
         }
 
     } // namespace helper_methods
-    
-    
+
+
     CurrencyQuantity& Wallet::get(const std::string& name)
     {
         const Currency* curr = helper_methods::getFromRegistry(name);
@@ -84,9 +86,10 @@ namespace currency
         }
         else
         {
-            if (it->second.getQuantity() > std::numeric_limits<unsigned int>::max() - quantity) 
+            if (it->second.getQuantity() > std::numeric_limits<unsigned int>::max() - quantity)
             {
-                throw std::overflow_error("Quantity overflow for currency ID " + currency.getName());
+                MIA_THROW(error::ErrorCode::Exceeded_RPG_Quantity,
+                          "Quantity overflow for currency " + currency.getName());
             }
             unsigned int newQuantity = it->second.getQuantity() + quantity;
             it->second.set(newQuantity);
@@ -199,7 +202,7 @@ namespace currency
 
         if (start == std::string::npos || end == std::string::npos)
         {
-            MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Wallet block not found.");
+            MIA_THROW(error::ErrorCode::Serialization_Key_Not_Found, "Wallet block not found.");
         }
 
         start += std::string("[WALLET_BEGIN]").length();
@@ -236,5 +239,4 @@ namespace currency
 
         return container;
     }
-
 } // namespace currency

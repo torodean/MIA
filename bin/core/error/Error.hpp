@@ -98,6 +98,8 @@ namespace error
         Duplicate_RPG_Value = 37101,          ///< A duplicate RPG entry was added.
         Invalid_RPG_Data = 37102,             ///< An invalid combination/set of RPG data was used.
         Serialization_Key_Not_Found = 37103,  ///< A Serialization key was not found.
+        Exceeded_RPG_Quantity = 37104,        ///< An RPG quantity exceeded the maximum storable value.
+        Insufficient_RPG_Quantity = 37105,    ///< An RPG quantity removal exceeded the available amount.
         
         /*
          * Database error codes. 38XXX

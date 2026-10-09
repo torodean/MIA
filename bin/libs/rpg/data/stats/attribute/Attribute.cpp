@@ -2,18 +2,19 @@
  * @file Attribute.cpp
  * @author Antonius Torode
  * @date 07/11/2025
- * Description: Base Attribute class for character attributes with categorized 
- *     types representing different behavior patterns.
+ * @brief Base Attribute class for character attributes with categorized 
+ *        types representing different behavior patterns.
  */
+
+// Include the associated header file.
+#include "Attribute.hpp"
 
 #include <algorithm>
 
-#include "Attribute.hpp"
 #include "Modifies.hpp"
 
 namespace stats
 {
-
     Attribute::Attribute(uint32_t id,
               const std::string& name,
               const std::string& description,
@@ -44,14 +45,7 @@ namespace stats
         {
             nlohmann::json modifiesJson = nlohmann::json::array();
             for (const auto& modify : modifies)
-            {
-                modifiesJson.push_back({
-                    {"targetType", rpg::dataTypeToString(modify.targetType)},
-                    {"targetName", modify.targetName},
-                    {"ModifyType", rpg::modifyTypeToString(modify.modifyType)},
-                    {"ModifyValuePer", modify.modifyValuePer}
-                });
-            }
+                modifiesJson.push_back(modify.toJson());
             json["modifies"] = modifiesJson;
         }
 
@@ -68,21 +62,11 @@ namespace stats
         if (json.contains("modifies"))
         {
             for (const auto& modJson : json.at("modifies"))
-            {
-                rpg::Modifies mod(
-                    rpg::stringToDataType(modJson.at("targetType").get<std::string>()),
-                    modJson.at("targetName").get<std::string>(),
-                    rpg::stringToModifyType(modJson.at("ModifyType").get<std::string>()),
-                    modJson.at("ModifyValuePer").get<double>()
-                );
-                modifies.push_back(mod);
-            }
+                modifies.push_back(rpg::Modifies::fromJson(modJson));
         }
 
         Attribute attribute(base.getID(), base.getName(), base.getDescription(), 
                             baseValue, modifies);
         return attribute;
     }
-
 } // namespace stats
-

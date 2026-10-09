@@ -2,14 +2,15 @@
  * @file ProgressMarkers_T.cpp
  * @author Antonius Torode
  * @date 07/20/2025
- * @brief Unit tests for the ProgressMarkers class using Google Test.
+ * @brief Unit tests for the ProgressMarkers class.
  */
 
-#include <gtest/gtest.h>
 #include <sstream>
+
+#include <gtest/gtest.h>
+
 #include "ProgressMarkers.hpp"
 #include "ProgressRegistry.hpp"
-
 #include "MIAException.hpp"
 
 namespace progress
@@ -216,5 +217,19 @@ namespace progress
         // Both markers should succeed.
         serialized = "[PROGRESS_BEGIN]2:200;1:100[PROGRESS_END]";
         ASSERT_NO_THROW(ProgressMarkers::deserialize(serialized));
-    }     
+    }
+
+
+    /*
+     * Tests that the deserialize method fails when an entry has an unparseable
+     * id or value instead of surfacing a raw std exception.
+     */
+    TEST_F(ProgressMarkers_T, DeserializeMalformedEntryThrows)
+    {
+        ASSERT_THROW(ProgressMarkers::deserialize(
+            "[PROGRESS_BEGIN]bad_id:200[PROGRESS_END]"), error::MIAException);
+
+        ASSERT_THROW(ProgressMarkers::deserialize(
+            "[PROGRESS_BEGIN]2:not_a_number[PROGRESS_END]"), error::MIAException);
+    }
 } // namespace progress

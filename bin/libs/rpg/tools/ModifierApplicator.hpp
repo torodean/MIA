@@ -2,15 +2,15 @@
  * @file ModifierApplicator.hpp
  * @author Antonius Torode
  * @date 07/14/2025
- * @brief: Utility for applying modifiers from source objects to target objects.
+ * @brief Utility for applying modifiers from source objects to target objects.
  */
-
 #pragma once
 
 #include <string>
 
 #include "Registry.hpp"
 #include "Modifies.hpp"
+#include "Modifier.hpp"
 // Used for error handling.
 #include "MIAException.hpp"
 #include "Error.hpp"
@@ -87,7 +87,7 @@ namespace rpg::helper_methods
                         int modifyValue = static_cast<int>(
                             modifies.modifyValuePer * sourceDataValue);
                         rpg::Modifier mod(source->getID(), sourceType, modifyValue,
-                                          modifies.modifyType);
+                                          modifies.modifyType, modifies.stackPolicy);
 
                         // Attach the modifier to the target.
                         targetStorage.addModifier(modifies.targetName, mod);
@@ -98,7 +98,7 @@ namespace rpg::helper_methods
                     {
                         double modifyValue = modifies.modifyValuePer * sourceDataValue;
                         rpg::Modifier mod(source->getID(), sourceType, modifyValue,
-                                          modifies.modifyType);
+                                          modifies.modifyType, modifies.stackPolicy);
 
                         // Attach the modifier to the target.
                         targetStorage.addModifier(modifies.targetName, mod);
@@ -109,7 +109,7 @@ namespace rpg::helper_methods
                     {
                         int modifyValue = static_cast<int>(modifies.modifyValuePer);
                         rpg::Modifier mod(source->getID(), sourceType, modifyValue,
-                                          modifies.modifyType);
+                                          modifies.modifyType, modifies.stackPolicy);
 
                         // Attach the modifier to the target.
                         targetStorage.addModifier(modifies.targetName, mod);
@@ -119,8 +119,8 @@ namespace rpg::helper_methods
                     case rpg::ModifyType::UNKNOWN:
                     default:
                         break;
-                }
-            }
-        }
-    }
+                } // switch (modifies.modifyType)
+            } // for (const auto& modifies : source->getModifies()) 
+        } // for (auto& sourceData : sourceStorage.getMap())
+    } // void applyModifiers()
 } // namespace rpg::helper_methods

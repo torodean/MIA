@@ -4,13 +4,15 @@
  * @date 07/11/2025
  * @brief Storage for a container of attributes.
  */
- 
+
+// Include the associated header file.
+#include "Attributes.hpp"
+
 #include <cmath>
 #include <sstream>
 #include <stdexcept>
 #include <variant>
 
-#include "Attributes.hpp"
 #include "AttributeRegistry.hpp"
 #include "RegistryHelper.hpp"
 #include "MIAException.hpp"
@@ -39,7 +41,8 @@ namespace stats
         }
 
     } // namespace helper_methods
-    
+
+
     // get() methods...
     AttributeData& Attributes::get(const std::string& name)
     {
@@ -232,6 +235,7 @@ namespace stats
         dataStore.erase(it);
     }
 
+
     void Attributes::dump(std::ostream& os) const
     {
         for (const auto& [id, attributeData] : dataStore) 
@@ -242,6 +246,7 @@ namespace stats
                << "\n";
         }
     }
+
 
     std::string Attributes::serialize() const
     {
@@ -258,21 +263,10 @@ namespace stats
             // Serialize id and base value
             ss << id << ":" << attrData.getBaseValue();
 
-            // Serialize modifiers
+            // Serialize modifiers; each is one self-contained ','-delimited unit.
             const auto& modifiers = attrData.getModifiers();
             for (const auto& mod : modifiers)
-            {
-                std::ostringstream valueStream;
-                if (std::holds_alternative<int>(mod.value))
-                    valueStream << std::get<int>(mod.value);
-                else
-                    valueStream << std::get<double>(mod.value);
-
-                ss << "," << mod.sourceID << ","
-                   << rpg::modifierSourceTypeToString(mod.source) << ","
-                   << valueStream.str() << ","
-                   << rpg::modifyTypeToString(mod.modifyType);
-            }
+                ss << "," << mod.serialize();
         }
 
         ss << "[ATTRIBUTES_END]";
@@ -293,7 +287,7 @@ namespace stats
         if (startPos == std::string::npos || endPos == std::string::npos || endPos < startPos)
         {
             // Invalid or missing markers; the save data is corrupt, not merely empty.
-            MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+            MIA_THROW(error::ErrorCode::Serialization_Key_Not_Found,
                       "Attributes block not found.");
         }
 
@@ -323,8 +317,8 @@ namespace stats
             }
             catch (const std::exception&)
             {
-                // Skip invalid id
-                continue;
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                          "Invalid attribute id: " + segment);
             }
 
             std::getline(entryStream, segment, ',');
@@ -335,51 +329,15 @@ namespace stats
             }
             catch (const std::exception&)
             {
-                // Skip invalid current value
-                continue;
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                          "Invalid attribute value: " + segment);
             }
 
-            // Create AttributeData with modifiers.
+            // Each remaining ','-delimited unit is one serialized Modifier.
             std::vector<rpg::Modifier> modifiers;
-            while (std::getline(entryStream, segment, ','))
-            {
-                uint32_t sourceID;
-                try
-                {
-                    sourceID = std::stoul(segment);
-                }
-                catch (const std::exception&)
-                {
-                    // Skip invalid sourceID.
-                    continue;
-                }
-
-                std::getline(entryStream, segment, ',');
-                rpg::ModifierSourceType sourceType = rpg::stringToModifierSourceType(segment);
-
-                std::getline(entryStream, segment, ',');
-                double parsedValue;
-                try
-                {
-                    parsedValue = std::stod(segment);
-                }
-                catch (const std::exception&)
-                {
-                    // Skip invalid modifier value.
-                    continue;
-                }
-
-                std::getline(entryStream, segment, ',');
-                rpg::ModifyType modifyType = rpg::stringToModifyType(segment);
-
-                // Store the value as an int for ADD_MAX and SET, and as a double for MULTIPLY.
-                rpg::Modifier::Value value =
-                    (modifyType == rpg::ModifyType::MULTIPLY)
-                        ? rpg::Modifier::Value(parsedValue)
-                        : rpg::Modifier::Value(static_cast<int>(std::round(parsedValue)));
-
-                modifiers.emplace_back(rpg::Modifier{sourceID, sourceType, value, modifyType});
-            }
+            std::string modifierEntry;
+            while (std::getline(entryStream, modifierEntry, ','))
+                modifiers.push_back(rpg::Modifier::deserialize(modifierEntry));
 
             // Create and add AttributeData to the map.
             result.dataStore.emplace(id, AttributeData(current, modifiers));

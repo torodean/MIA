@@ -60,6 +60,17 @@ When a target's files include a module's headers but its `target_link_libraries`
 Flag the missing link and suggest naming it explicitly.
 In the other direction, a PUBLIC link is only justified when the target's public headers include that library or its consumers are meant to depend on it; otherwise the link belongs PRIVATE.
 
+### Include block layout
+
+When writing or reorganizing includes, order them in groups separated by blank lines:
+
+1. The file's associated header first (a .cpp includes its own header before anything else), preceded by a `//` comment naming it, e.g. `// Include the associated header file.` A test file uses `// Include the associated file for testing.` before the header under test.
+2. Standard library includes.
+3. Third-party includes (e.g. `<nlohmann/json.hpp>`).
+4. Project headers, with one `//` purpose comment above a group of includes which share a purpose (e.g. `// Used for exception and error handling.` above `MIAException.hpp` and `Error.hpp`), rather than a separate comment per include.
+
+The grouped-comment form keeps short include lists readable; do not repeat the purpose on every line.
+
 ## How to report
 
 For each finding, give enough detail to act on:

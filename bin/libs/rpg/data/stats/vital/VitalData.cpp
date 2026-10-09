@@ -5,11 +5,12 @@
  * @brief A class representing configurable vital Data for storing an active vital.
  */
 
+// Include the associated header files.
+#include "VitalData.hpp"
+
 #include <algorithm>
 #include <string>
 #include <vector>
-
-#include "VitalData.hpp"
 
 // Used for exception and error handling.
 #include "MIAException.hpp"
@@ -42,7 +43,8 @@ namespace stats
 
 
     VitalData::VitalData(int curr, int baseMin, int baseMax)
-        : current(curr), baseMin(baseMin), baseMax(baseMax) {}
+        : current(curr), baseMin(baseMin), baseMax(baseMax) 
+    {}
 
 
     VitalData::VitalData(VitalType type, int baseMin, int baseMax)
@@ -66,7 +68,8 @@ namespace stats
           baseMin(baseMin),
           baseMax(baseMax),
           maxModifiers(maxMods),
-          minModifiers(minMods) {}
+          minModifiers(minMods) 
+    {}
 
 
     void VitalData::addMaxModifier(const rpg::Modifier& mod)
@@ -86,12 +89,8 @@ namespace stats
         else
             return;
 
-        // The same source, source type, and modify type is the same effect, so replace it.
-        auto it = std::find(modifiers->begin(), modifiers->end(), mod);
-        if (it != modifiers->end())
-            modifiers->erase(it);
-
-        modifiers->push_back(mod);
+        // Attachment follows the modifier's stack policy.
+        rpg::attachModifier(*modifiers, mod);
     }
 
 

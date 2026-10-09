@@ -2,7 +2,7 @@
  * @file Attributes_T.cpp
  * @author Antonius Torode
  * @date 07/14/2025
- * Description: Google Test suite for the Attributes class.
+ * @brief Unit tests for the Attributes class.
  */
 
 #include <gtest/gtest.h>
@@ -17,8 +17,9 @@
 
 namespace stats
 {
-
-    // Test fixture for Attributes tests, modeled after Vitals_T
+    /**
+     * @brief Test fixture for Attributes tests, modeled after Vitals_T.
+     */
     class Attributes_T : public ::testing::Test
     {
     protected:
@@ -44,8 +45,11 @@ namespace stats
         Attribute dexterity{2, "Dexterity", "The dexterity of a player.", 50};
         Attribute strength{3, "Strength", "The strength of a player.", 75};
     };
-    
-    // Test the default constructor
+
+
+    /**
+     * @brief Test the default constructor.
+     */
     TEST_F(Attributes_T, DefaultConstructor)
     {
         Attributes emptyAttrs;
@@ -53,7 +57,10 @@ namespace stats
             << "Default constructor should create an empty Attributes object.";
     }
 
-    // Test get with string name
+
+    /**
+     * @brief Test get with string name.
+     */
     TEST_F(Attributes_T, getByName)
     {
         const AttributeData& data = attributes.get("Wisdom");
@@ -62,7 +69,10 @@ namespace stats
         EXPECT_THROW(attributes.get("NonExistent"), error::MIAException);
     }
 
-    // Test get with uint32_t ID
+
+    /**
+     * @brief Test get with uint32_t ID.
+     */
     TEST_F(Attributes_T, getByID)
     {
         const AttributeData& data = attributes.get(1);
@@ -71,7 +81,10 @@ namespace stats
         EXPECT_THROW(attributes.get(999), error::MIAException);
     }
 
-    // Test get with Attribute object
+
+    /**
+     * @brief Test get with Attribute object.
+     */
     TEST_F(Attributes_T, getByAttribute)
     {
         const AttributeData& data = attributes.get(wisdom);
@@ -84,7 +97,10 @@ namespace stats
             << "get for non-existent Attribute should return default AttributeData.";
     }
 
-    // Test add with string name
+
+    /**
+     * @brief Test add with string name.
+     */
     TEST_F(Attributes_T, addByName)
     {
         Attributes attr;
@@ -95,7 +111,10 @@ namespace stats
         EXPECT_THROW(attr.add("NonExistent", 25), error::MIAException);
     }
 
-    // Test add with uint32_t ID
+
+    /**
+     * @brief Test add with uint32_t ID.
+     */
     TEST_F(Attributes_T, addById)
     {
         Attributes attr;
@@ -104,7 +123,10 @@ namespace stats
         EXPECT_EQ(data.getCurrent(), 25) << "add(3, 25) should set current value to 25.";
     }
 
-    // Test add with Attribute object
+
+    /**
+     * @brief Test add with Attribute object.
+     */
     TEST_F(Attributes_T, addByAttribute)
     {
         Attributes attr;
@@ -114,7 +136,10 @@ namespace stats
             << "add(strength, 30) should set current value to 30.";
     }
 
-    // Test update with string name
+
+    /**
+     * @brief Test update with string name.
+     */
     TEST_F(Attributes_T, updateByName)
     {
         attributes.update("Wisdom", 200);
@@ -124,7 +149,10 @@ namespace stats
         EXPECT_THROW(attributes.update("NonExistent", 300), error::MIAException);
     }
 
-    // Test update with uint32_t ID
+
+    /**
+     * @brief Test update with uint32_t ID.
+     */
     TEST_F(Attributes_T, updateById)
     {
         attributes.update(1, 200);
@@ -134,7 +162,10 @@ namespace stats
         EXPECT_THROW(attributes.update(999, 300), error::MIAException);
     }
 
-    // Test update with Attribute object
+
+    /**
+     * @brief Test update with Attribute object.
+     */
     TEST_F(Attributes_T, updateByAttribute)
     {
         attributes.update(dexterity, 150);
@@ -142,7 +173,10 @@ namespace stats
             << "update(dexterity, 150) should update current value to 150.";
     }
 
-    // Test addModifier with string name
+
+    /**
+     * @brief Test addModifier with string name.
+     */
     TEST_F(Attributes_T, addModifierByName)
     {
         attributes.addModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
@@ -160,7 +194,10 @@ namespace stats
                      error::MIAException);
     }
 
-    // Test addModifier with uint32_t ID
+
+    /**
+     * @brief Test addModifier with uint32_t ID.
+     */
     TEST_F(Attributes_T, addModifierById)
     {
         attributes.addModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
@@ -178,7 +215,10 @@ namespace stats
                      error::MIAException);
     }
 
-    // Test addModifier with Attribute object
+
+    /**
+     * @brief Test addModifier with Attribute object.
+     */
     TEST_F(Attributes_T, addModifierByAttribute)
     {
         attributes.addModifier(strength, 2, rpg::ModifierSourceType::BUFF, 15);
@@ -193,7 +233,10 @@ namespace stats
         EXPECT_EQ(modifiers[0].getValueAsInt(), 15) << "Modifier value should be 15.";
     }
 
-    // Test removeModifier with string name
+
+    /**
+     * @brief Test removeModifier with string name.
+     */
     TEST_F(Attributes_T, removeModifierByName)
     {
         attributes.addModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
@@ -207,7 +250,10 @@ namespace stats
                      error::MIAException);
     }
 
-    // Test removeModifier with uint32_t ID
+
+    /**
+     * @brief Test removeModifier with uint32_t ID.
+     */
     TEST_F(Attributes_T, removeModifierById)
     {
         attributes.addModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
@@ -221,7 +267,10 @@ namespace stats
                      error::MIAException);
     }
 
-    // Test removeModifier with Attribute object
+
+    /**
+     * @brief Test removeModifier with Attribute object.
+     */
     TEST_F(Attributes_T, removeModifierByAttribute)
     {
         attributes.addModifier(dexterity, 2, rpg::ModifierSourceType::BUFF, 10);
@@ -232,7 +281,10 @@ namespace stats
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
     }
 
-    // Test remove with string name
+
+    /**
+     * @brief Test remove with string name.
+     */
     TEST_F(Attributes_T, removeByName)
     {
         attributes.remove("Wisdom");
@@ -240,7 +292,10 @@ namespace stats
             << "remove('Wisdom') should remove the attribute, returning default AttributeData.";
     }
 
-    // Test remove with uint32_t ID
+
+    /**
+     * @brief Test remove with uint32_t ID.
+     */
     TEST_F(Attributes_T, removeById)
     {
         attributes.remove(1);
@@ -248,7 +303,10 @@ namespace stats
             << "remove(1) should remove the attribute, returning default AttributeData.";
     }
 
-    // Test remove with Attribute object
+
+    /**
+     * @brief Test remove with Attribute object.
+     */
     TEST_F(Attributes_T, removeByAttribute)
     {
         attributes.remove(strength);
@@ -256,6 +314,10 @@ namespace stats
             << "remove(strength) should remove the attribute, returning default AttributeData.";
     }
 
+
+    /**
+     * @brief Tests the serialize - deserialize round trip.
+     */
     TEST_F(Attributes_T, SerializeDeserialize)
     {
         Attributes attr;
@@ -284,6 +346,7 @@ namespace stats
         EXPECT_TRUE(data3.getModifiers().empty()) << "Attribute 3 should have no modifiers.";
     }
 
+
     /**
      * @brief Verifies deserialize throws for a missing block and yields an empty
      * container for block content that is genuinely empty.
@@ -298,4 +361,19 @@ namespace stats
             << "Deserialize with empty block content should return an empty container.";
     }
 
+
+    /**
+     * @brief Verifies deserialize throws for an entry with an unparseable id or value
+     * instead of silently skipping the entry.
+     */
+    TEST_F(Attributes_T, DeserializeMalformedEntryThrows)
+    {
+        EXPECT_THROW(Attributes::deserialize(
+            "[ATTRIBUTES_BEGIN]bad_id:50[ATTRIBUTES_END]"), error::MIAException)
+            << "A malformed attribute id should throw MIAException.";
+
+        EXPECT_THROW(Attributes::deserialize(
+            "[ATTRIBUTES_BEGIN]1:not_a_number[ATTRIBUTES_END]"), error::MIAException)
+            << "A malformed attribute value should throw MIAException.";
+    }
 } // namespace stats
