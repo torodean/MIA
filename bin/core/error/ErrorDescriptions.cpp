@@ -24,8 +24,7 @@ namespace error
         { Logon_Failure, "The user name or password is incorrect." },
         { RPC_S_Server_Unavailable, "The RPC server is unavailable." },
         { NErr_User_Not_Found, "The user name could not be found." },
-        { No_Browser_Servers_Found, "The list of servers for this workgroup is not currently available." },
-        
+        { No_Browser_Servers_Found, "The list of servers for this workgroup is not currently available." }, 
         
         /*
          * MIA Program/application specific errors.
@@ -78,7 +77,9 @@ namespace error
         { Duplicate_RPG_Value, "A duplicate RPG entry was added." },
         { Invalid_RPG_Data, "An invalid combination/set of RPG data was used." },
         { Serialization_Key_Not_Found, "A Serialization key was not found." },
-        
+        { Exceeded_RPG_Quantity, "An RPG quantity exceeded the maximum storable value." },
+        { Insufficient_RPG_Quantity, "An RPG quantity removal exceeded the available amount." },
+
         /*
          * Database error codes. 38XXX
          */
