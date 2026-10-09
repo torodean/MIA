@@ -7,7 +7,7 @@ set(Files_INC
 add_library(Files_UTIL ${Files_SRC} ${Files_INC})
 target_link_libraries(Files_UTIL 
     PRIVATE
-        Framework_CORE 
+        Error_CORE 
         Types_UTIL 
 )
 

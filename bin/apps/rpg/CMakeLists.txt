@@ -3,8 +3,9 @@ set(RPGFiddler_SRC RPGFiddler.cpp RPGFiddler_main.cpp RPGSimulator.cpp )
 set(RPGFiddler_INC RPGFiddler.hpp RPGSimulator.hpp )
 add_executable(RPGFiddler ${RPGFiddler_SRC} ${RPGFiddler_INC} )
 target_link_libraries( RPGFiddler 
-                       PRIVATE
+                   PRIVATE
                        Framework_CORE
+                       Error_CORE
                        Files_UTIL
                        RPG_DataLoader_LIB
                        RPG_Player_LIB

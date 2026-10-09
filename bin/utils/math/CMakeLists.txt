@@ -10,7 +10,7 @@ set(Math_INC
     MathTypes.hpp
     FinanceUtils.hpp )
 add_library(Math_UTIL ${Math_SRC} ${Math_INC})
-target_link_libraries(Math_UTIL PUBLIC Types_UTIL Framework_CORE )
+target_link_libraries(Math_UTIL PRIVATE Types_UTIL Error_CORE )
 
 # Expose this library's source directory for #include access by dependent targets
 target_include_directories(Math_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

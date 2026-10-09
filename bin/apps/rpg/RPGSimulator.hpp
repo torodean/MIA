@@ -7,6 +7,9 @@
  */
 #pragma once
 
+#include <string>
+
+#include "RuntimeContext.hpp"
 #include "Player.hpp"
 #include "CurrencyRegistry.hpp"
 #include "VitalRegistry.hpp"
@@ -16,24 +19,31 @@
 namespace rpg_sim
 {
     /**
+     * Sets the runtime context used by the simulator methods to log diagnostics.
+     * This must be called before any simulator method which logs diagnostics;
+     * when it is not called, diagnostic messages are discarded.
+     * @param context The application's runtime context, which must outlive the
+     *        simulator's use of it.
+     */
+    void setRuntimeContext(const RuntimeContext& context);
+
+    /**
      * Sets up the simulator by giving some initial values to things.
-     * Runs the selected action and continues until the user exits.
      * @param player The player data.
-     * @param saveFile The file to save the data to.
      */
     void setupSimulator(rpg::Player& player);
-    
+
     /**
      * Displays the player status (various indicators used by this simulator).
      * @param player The player data.
      */
     void displayPlayerStatus(rpg::Player& player);
-    
+
     /**
      * Displays the various simulator options.
      */
     void displaySimulatorOptions();
-    
+
     /**
      * Displays the menu of possible actions and processes user input.
      * Runs the selected action and continues until the user exits.

@@ -154,7 +154,7 @@ namespace stats
         ASSERT_EQ(modifiers.size(), 1) << "One modifier should be added.";
         EXPECT_EQ(modifiers[0].sourceID, 2) << "Modifier sourceID should be 2.";
         EXPECT_EQ(modifiers[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
-        EXPECT_EQ(modifiers[0].value, 10) << "Modifier value should be 10.";
+        EXPECT_EQ(modifiers[0].getValueAsInt(), 10) << "Modifier value should be 10.";
 
         EXPECT_THROW(attributes.addModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF, 5), 
                      error::MIAException);
@@ -172,7 +172,7 @@ namespace stats
         ASSERT_EQ(modifiers.size(), 1) << "One modifier should be added.";
         EXPECT_EQ(modifiers[0].sourceID, 2) << "Modifier sourceID should be 2.";
         EXPECT_EQ(modifiers[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
-        EXPECT_EQ(modifiers[0].value, 10) << "Modifier value should be 10.";
+        EXPECT_EQ(modifiers[0].getValueAsInt(), 10) << "Modifier value should be 10.";
 
         EXPECT_THROW(attributes.addModifier(999, 3, rpg::ModifierSourceType::BUFF, 5), 
                      error::MIAException);
@@ -190,7 +190,7 @@ namespace stats
         ASSERT_EQ(modifiers.size(), 1) << "One modifier should be added.";
         EXPECT_EQ(modifiers[0].sourceID, 2) << "Modifier sourceID should be 2.";
         EXPECT_EQ(modifiers[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
-        EXPECT_EQ(modifiers[0].value, 15) << "Modifier value should be 15.";
+        EXPECT_EQ(modifiers[0].getValueAsInt(), 15) << "Modifier value should be 15.";
     }
 
     // Test removeModifier with string name
@@ -199,12 +199,11 @@ namespace stats
         attributes.addModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF, 10);
         attributes.removeModifier("Wisdom", 2, rpg::ModifierSourceType::BUFF);
         const AttributeData& data = attributes.get("Wisdom");
-        int current = data.getCurrent();
-        EXPECT_EQ(data.getCurrent(), current) // Assuming modifier removal reverses effect
-            << "removeModifier('Wisdom', ...) should revert current value to current.";
+        EXPECT_EQ(data.getCurrent(), 100) // The base value remains after removal.
+            << "removeModifier('Wisdom', ...) should revert current value to the base value.";
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
 
-        EXPECT_THROW(attributes.removeModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF), 
+        EXPECT_THROW(attributes.removeModifier("NonExistent", 3, rpg::ModifierSourceType::BUFF),
                      error::MIAException);
     }
 
@@ -212,14 +211,13 @@ namespace stats
     TEST_F(Attributes_T, removeModifierById)
     {
         attributes.addModifier(1, 2, rpg::ModifierSourceType::BUFF, 10);
-        const AttributeData& data = attributes.get(1);
-        int current = data.getCurrent();
         attributes.removeModifier(1, 2, rpg::ModifierSourceType::BUFF);
-        EXPECT_EQ(data.getCurrent(), current) // Assuming modifier removal reverses effect
-            << "removeModifier(1, ...) should revert current value to current.";
+        const AttributeData& data = attributes.get(1);
+        EXPECT_EQ(data.getCurrent(), 100) // The base value remains after removal.
+            << "removeModifier(1, ...) should revert current value to the base value.";
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
 
-        EXPECT_THROW(attributes.removeModifier(999, 3, rpg::ModifierSourceType::BUFF), 
+        EXPECT_THROW(attributes.removeModifier(999, 3, rpg::ModifierSourceType::BUFF),
                      error::MIAException);
     }
 
@@ -229,9 +227,8 @@ namespace stats
         attributes.addModifier(dexterity, 2, rpg::ModifierSourceType::BUFF, 10);
         attributes.removeModifier(dexterity, 2, rpg::ModifierSourceType::BUFF);
         const AttributeData& data = attributes.get(dexterity);
-        int current = data.getCurrent();
-        EXPECT_EQ(data.getCurrent(), current) // Assuming modifier removal reverses effect
-            << "removeModifier(dexterity, ...) should revert current value to current.";
+        EXPECT_EQ(data.getCurrent(), 50) // The base value remains after removal.
+            << "removeModifier(dexterity, ...) should revert current value to the base value.";
         EXPECT_TRUE(data.getModifiers().empty()) << "Modifier should be removed.";
     }
 
@@ -276,7 +273,7 @@ namespace stats
         ASSERT_EQ(mods1.size(), 1) << "Attribute 1 should have one modifier.";
         EXPECT_EQ(mods1[0].sourceID, 2) << "Modifier sourceID should be 2.";
         EXPECT_EQ(mods1[0].source, rpg::ModifierSourceType::BUFF) << "Modifier source should be BUFF.";
-        EXPECT_EQ(mods1[0].value, 10) << "Modifier value should be 10.";
+        EXPECT_EQ(mods1[0].getValueAsInt(), 10) << "Modifier value should be 10.";
 
         const AttributeData& data2 = deserialized.get(2);
         EXPECT_EQ(data2.getCurrent(), 50) << "Deserialized attribute 2 should have current=50.";

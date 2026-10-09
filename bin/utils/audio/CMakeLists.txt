@@ -13,7 +13,8 @@ set(Audio_INC
 add_library(Audio_UTIL ${Audio_SRC} ${Audio_INC})
 target_link_libraries(Audio_UTIL 
     PRIVATE 
-        Framework_CORE
+        Error_CORE
+        Constants_CORE
         Types_UTIL
         System_UTIL
         Math_UTIL

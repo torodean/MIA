@@ -2,14 +2,17 @@
  * @file Modifier.hpp
  * @author Antonius Torode
  * @date 07/10/2025
- * Description: Data for representing modifiers to object values in the RPG system.
+ * @brief Data for representing modifiers to object values in the RPG system.
  */
 #pragma once
 
-#include <algorithm>
-#include <string>
 #include <cstdint>
-#include <iostream>
+#include <iosfwd>
+#include <string>
+#include <variant>
+#include <vector>
+
+#include "Modifies.hpp"
 
 namespace rpg
 {
@@ -24,7 +27,7 @@ namespace rpg
         DEBUFF,    ///< Modifier from a temporary debuff effect.
         UNKNOWN    ///< Unknown or unspecified source type.
     };
-    
+
     /**
      * Converts a ModifierSourceType enum to its string representation.
      *
@@ -32,17 +35,7 @@ namespace rpg
      * @return A string corresponding to the ModifierSourceType.
      *         Returns "UNKNOWN" if the type is not recognized.
      */
-    inline std::string modifierSourceTypeToString(const ModifierSourceType& type)
-    {
-        switch (type)
-        {
-            case ModifierSourceType::ATTRIBUTE: return "ATTRIBUTE";
-            case ModifierSourceType::ITEM:      return "ITEM";
-            case ModifierSourceType::BUFF:      return "BUFF";
-            case ModifierSourceType::DEBUFF:    return "DEBUFF";
-            default:                            return "UNKNOWN";
-        }
-    }
+    std::string modifierSourceTypeToString(const ModifierSourceType& type);
 
     /**
      * Converts a string to a ModifierSourceType enum.
@@ -53,61 +46,110 @@ namespace rpg
      * @param typeStr The string representation of the ModifierSourceType.
      * @return The corresponding ModifierSourceType enum value.
      */
-    inline ModifierSourceType stringToModifierSourceType(const std::string& typeStr)
-    {
-        std::string str = typeStr;
-        std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+    ModifierSourceType stringToModifierSourceType(const std::string& typeStr);
 
-        if (str == "ATTRIBUTE") return ModifierSourceType::ATTRIBUTE;
-        if (str == "ITEM")      return ModifierSourceType::ITEM;
-        if (str == "BUFF")      return ModifierSourceType::BUFF;
-        if (str == "DEBUFF")    return ModifierSourceType::DEBUFF;
-        return ModifierSourceType::UNKNOWN;
-    }
-    
     /**
-     * A templated struct to represent a modifier to an object's value.
+     * A modifier to an object's value.
+     *
+     * A modifier is a self-contained description of one effect; the data type it is
+     * attached to combines it with its own value when computing an effective value.
+     * The interpretation of the value field is defined by ModifyType: ADD_MAX and SET
+     * hold an int amount, MULTIPLY holds a double multiplier bonus.
      */
-    template<typename Type>
     struct Modifier
     {
+        /// The value alternatives; an int amount for ADD_MAX and SET, a double bonus for MULTIPLY.
+        using Value = std::variant<int, double>;
+
         uint32_t sourceID;         ///< ID of the source (e.g., attribute ID, item ID, etc).
         ModifierSourceType source; ///< Type of source (e.g., "attribute", "item", "buff").
-        Type value;                ///< The modifier value (positive or negative, depending on type).
+        Value value;               ///< The modifier value; which alternative is set follows modifyType.
+        ModifyType modifyType;     ///< How this modifier combines with the target value.
 
-        Modifier(uint32_t id, ModifierSourceType src, Type val)
-            : sourceID(id), source(src), value(val) {}
-            
+        /**
+         * Constructs a Modifier with an int value (ADD_MAX, SET).
+         *
+         * @param id The ID of the source (e.g., attribute ID, item ID).
+         * @param src The type of the source.
+         * @param val The modifier amount.
+         * @param type The modification type; defaults to ADD_MAX.
+         */
+        Modifier(uint32_t id, ModifierSourceType src, int val,
+                 ModifyType type = ModifyType::ADD_MAX);
+
+        /**
+         * Constructs a Modifier with a double value (MULTIPLY).
+         *
+         * @param id The ID of the source (e.g., attribute ID, item ID).
+         * @param src The type of the source.
+         * @param val The modifier multiplier bonus (0.1 = +10%).
+         * @param type The modification type; defaults to MULTIPLY.
+         */
+        Modifier(uint32_t id, ModifierSourceType src, double val,
+                 ModifyType type = ModifyType::MULTIPLY);
+
+        /**
+         * Constructs a Modifier from a pre-built variant value.
+         * Used when the value's alternative is chosen at runtime, e.g. deserialization.
+         *
+         * @param id The ID of the source (e.g., attribute ID, item ID).
+         * @param src The type of the source.
+         * @param val The modifier value.
+         * @param type The modification type.
+         */
+        Modifier(uint32_t id, ModifierSourceType src, Value val, ModifyType type);
+
+        /**
+         * Returns the modifier value as an int (ADD_MAX, SET).
+         *
+         * @return The int value stored in the modifier.
+         * @throws error::MIAException if the value holds a double instead of an int.
+         */
+        int getValueAsInt() const;
+
+        /**
+         * Returns the modifier value as a double (MULTIPLY).
+         *
+         * @return The double value stored in the modifier.
+         * @throws error::MIAException if the value holds an int instead of a double.
+         */
+        double getValueAsDouble() const;
+
         /**
          * Equality operator for Modifier.
          *
-         * Compares two Modifier objects for equality based on their sourceID and source fields.
-         * The value field is intentionally excluded from the comparison.
-         * TODO - I forgot to record the 'why' on that 'intentionally excluded' piece...
+         * Compares two Modifier objects by sourceID, source, and modifyType, which identify
+         * one effect from one source. The value field is intentionally excluded: two modifiers
+         * from the same source with the same type are the same effect, so re-adding one with a
+         * new value replaces the old one rather than stacking alongside it.
          *
          * @param other The Modifier object to compare with.
-         * @return true if both sourceID and source are equal; false otherwise.
+         * @return true if sourceID, source, and modifyType are equal; false otherwise.
          */
-        bool operator==(const Modifier<Type>& other) const
-        {
-            return sourceID == other.sourceID && source == other.source;
-        }
+        bool operator==(const Modifier& other) const;
     }; // struct Modifier
-            
+
+    /**
+     * Computes a base value with modifiers applied in three fixed phases: every MULTIPLY
+     * scales the base first, then every ADD_MAX value is summed on, then a SET override
+     * wins (the last attached SET takes effect). Applying multipliers before additions
+     * keeps large additive stacks from amplifying each other. The result is rounded and
+     * clamped to the range of int.
+     *
+     * @param base The unmodified value.
+     * @param modifiers The modifiers to apply.
+     * @return The base value with every modifier applied.
+     */
+    int computeModifiedValue(int base, const std::vector<Modifier>& modifiers);
+
     /**
      * Stream insertion operator for Modifier.
-     * Formats the Modifier as: "Modifier{sourceID=<id>, source=<source>, value=<value>}".
+     * Formats the Modifier as:
+     * "Modifier{sourceID=<id>, source=<source>, value=<value>, type=<type>}".
      *
      * @param os The output stream to write to.
      * @param modifier The Modifier object to serialize.
      * @return The modified output stream.
      */
-    template<typename Type>
-    std::ostream& operator<<(std::ostream& os, const Modifier<Type>& modifier)
-    {
-        os << "Modifier{sourceID=" << modifier.sourceID
-           << ", source=" << modifierSourceTypeToString(modifier.source)
-           << ", value=" << modifier.value << "}";
-        return os;
-    }
+    std::ostream& operator<<(std::ostream& os, const Modifier& modifier);
 } // namespace rpg

@@ -2,14 +2,14 @@
  * @file Vitals.hpp
  * @author Antonius Torode
  * @date 07/07/2025
- * Description: A class representing configurable vitals for a character.
+ * @brief A class representing configurable vitals for a character.
  */
 #pragma once
 
 #include <unordered_map>
 #include <string>
 
-#include <Modifier.hpp>
+#include "Modifier.hpp"
 #include "Vital.hpp"
 #include "VitalData.hpp"
 #include "BaseDataObjectStorage.hpp"
@@ -45,57 +45,63 @@ namespace stats
          *        id The ID of the vital.
          *        vital The Vital object.
          * @param current The initial current value.
-         * @param min The minimum value.
-         * @param max The base maximum value.
+         * @param baseMin The base minimum value.
+         * @param baseMax The base maximum value.
          */
-        void add(const std::string& name, int current, int min, int max);
-        void add(uint32_t id, int current, int min, int max);
-        void add(const Vital& vital, int current, int min, int max);
+        void add(const std::string& name, int current, int baseMin, int baseMax);
+        void add(uint32_t id, int current, int baseMin, int baseMax);
+        void add(const Vital& vital, int current, int baseMin, int baseMax);
 
         /**
-         * Updates a value of a Vital Data object. This uses the target to determine which 
-         * value to modify.
+         * Updates the current value of a Vital Data object. The value is clamped into
+         * the effective minimum and maximum. Bound changes happen through the base
+         * setters or through modifiers, not through this method.
          *
          * @param name The name of the vital.
          *        id The ID of the vital.
          *        vital The Vital object.
-         * @param target The target value to modify.
          * @param value The new current value.
          */
-        void update(const std::string& name, VitalDataTarget target, int value);
-        void update(uint32_t id, VitalDataTarget target, int value);
-        void update(const Vital& vital, VitalDataTarget target, int value);
+        void update(const std::string& name, int value);
+        void update(uint32_t id, int value);
+        void update(const Vital& vital, int value);
         
         /**
-         * Adds a modifier to a vital's max or min value. This uses the target to determine 
-         * which value to modify.
+         * Adds a modifier to a vital's max or min value. This uses the target to determine
+         * which value to modify. The modifier value is an int, which suits the ADD_MAX and
+         * SET types; MULTIPLY modifiers (a double multiplier bonus) are attached through
+         * the Modifier overloads.
          *
          * @param name The name of the vital.
          *        id The ID of the vital.
          *        vital The Vital object.
          * @param sourceID ID of the source (e.g., attribute or item ID).
-         * @param sourceTypeType of source (e.g., ATTRIBUTE).
-         * @param valueThe modifier value.
+         * @param sourceType Type of source (e.g., ATTRIBUTE).
+         * @param value The modifier value.
+         * @param modifyType The modification type (defaults to ADD_MAX).
          * @param target The target modifier type to modify.
          */
-        void addModifier(const std::string& name, 
-                         uint32_t sourceID, 
-                         rpg::ModifierSourceType sourceType, 
+        void addModifier(const std::string& name,
+                         uint32_t sourceID,
+                         rpg::ModifierSourceType sourceType,
                          int32_t value,
-                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
-        void addModifier(uint32_t id, 
-                         uint32_t sourceID, 
-                         rpg::ModifierSourceType sourceType, 
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX,
+                         rpg::ModifyType modifyType = rpg::ModifyType::ADD_MAX);
+        void addModifier(uint32_t id,
+                         uint32_t sourceID,
+                         rpg::ModifierSourceType sourceType,
                          int32_t value,
-                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
-        void addModifier(const Vital& vital, 
-                         uint32_t sourceID, 
-                         rpg::ModifierSourceType sourceType, 
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX,
+                         rpg::ModifyType modifyType = rpg::ModifyType::ADD_MAX);
+        void addModifier(const Vital& vital,
+                         uint32_t sourceID,
+                         rpg::ModifierSourceType sourceType,
                          int32_t value,
-                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
-                         
+                         VitalDataTarget target = VitalDataTarget::CURRENT_MAX,
+                         rpg::ModifyType modifyType = rpg::ModifyType::ADD_MAX);
+
         /**
-         * Adds a modifier to a vital's max or min value. This uses the target to determine 
+         * Adds a modifier to a vital's max or min value. This uses the target to determine
          * which value to modify.
          *
          * @param name The name of the vital.
@@ -104,14 +110,14 @@ namespace stats
          * @param mod The modifier to apply.
          * @param target The target modifier type to modify.
          */
-        void addModifier(const std::string& name, 
-                         rpg::Modifier<int>& mod,
+        void addModifier(const std::string& name,
+                         const rpg::Modifier& mod,
                          VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
-        void addModifier(uint32_t id, 
-                         rpg::Modifier<int>& mod,
+        void addModifier(uint32_t id,
+                         const rpg::Modifier& mod,
                          VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
-        void addModifier(const Vital& vital, 
-                         rpg::Modifier<int>& mod,
+        void addModifier(const Vital& vital,
+                         const rpg::Modifier& mod,
                          VitalDataTarget target = VitalDataTarget::CURRENT_MAX);
 
         /**
@@ -122,7 +128,7 @@ namespace stats
          *        id The ID of the vital.
          *        vital The Vital object.
          * @param sourceID ID of the source.
-         * @param sourceType[ModifierSourceType] Type of source.
+         * @param sourceType Type of source.
          * @param target The target modifier type to modify.
          */
         void removeModifier(const std::string& name, 
@@ -171,9 +177,11 @@ namespace stats
 
         /**
          * Serializes the Vitals to a compact string enclosed by unique markers
-         * for reliable extraction within a larger data stream.
+         * for reliable extraction within a larger data stream. The serialized values
+         * are the base bounds, so the effective values recompute from the modifiers
+         * on deserialization.
          *
-         * Format: [VITALS_BEGIN]id:current,max,min;mod1sourceID,mod1SourceType,mod1Value;...[VITALS_END]
+         * Format: [VITALS_BEGIN]id:current,min,max;sourceID,SOURCE,value,TARGET,TYPE|...[VITALS_END]
          *
          * @return A string representing the serialized state of the Vitals.
          */
@@ -186,6 +194,7 @@ namespace stats
          *
          * @param data A string containing the serialized Vitals.
          * @return A reconstructed Vitals instance.
+         * @throws MIAException for various deserialization errors.
          */
         static Vitals deserialize(const std::string& data);
         

@@ -5,9 +5,9 @@
  * @brief A class representing the vitals for a character.
  */
 
-#include <iostream>
+#include <cmath>
 #include <sstream>
-#include <limits>
+#include <variant>
 #include "Vitals.hpp"
 
 #include "VitalRegistry.hpp"
@@ -56,7 +56,7 @@ namespace stats
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
         {
-            // The data is not found so add a default one, then update the current.
+            // The data is not found so add a default one, then return it.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
             it = dataStore.find(vital.getID());
@@ -68,46 +68,38 @@ namespace stats
     
     
     // add(..) methods.
-    void Vitals::add(const std::string& name, int32_t current, int32_t min, int32_t max)
+    void Vitals::add(const std::string& name, int32_t current, int32_t baseMin, int32_t baseMax)
     {
-        const Vital* vital = getVitalFromRegistry(name);            
-        add(*vital, current, min, max);
+        const Vital* vital = getVitalFromRegistry(name);
+        add(*vital, current, baseMin, baseMax);
     }
-    void Vitals::add(uint32_t id, int32_t current, int32_t min, int32_t max)
+    void Vitals::add(uint32_t id, int32_t current, int32_t baseMin, int32_t baseMax)
     {
-        const Vital* vital = getVitalFromRegistry(id);            
-        add(*vital, current, min, max);
+        const Vital* vital = getVitalFromRegistry(id);
+        add(*vital, current, baseMin, baseMax);
     }
-    void Vitals::add(const Vital& vital, int32_t current, int32_t min, int32_t max)
+    void Vitals::add(const Vital& vital, int32_t current, int32_t baseMin, int32_t baseMax)
     {
-        if (current < min || current > max || min > max)
-        {
-            std::string err = "Inconsistent value set: " 
-                            + std::to_string(min) + " < " 
-                            + std::to_string(current) + " < " 
-                            + std::to_string(max) + "\n";
-            MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
-        }
         auto id = vital.getID();
-        if (dataStore.find(id) != dataStore.end())            
+        if (dataStore.find(id) != dataStore.end())
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);
-            
-        dataStore.emplace(id, VitalData(current, min, max));
+
+        dataStore.emplace(id, VitalData(current, baseMin, baseMax));
     }
 
 
     // update(..) methods.
-    void Vitals::update(const std::string& name, VitalDataTarget target, int32_t value)
+    void Vitals::update(const std::string& name, int32_t value)
     {
         const Vital* vital = getVitalFromRegistry(name);
-        update(*vital, target, value);
+        update(*vital, value);
     }
-    void Vitals::update(uint32_t id, VitalDataTarget target, int32_t value)
+    void Vitals::update(uint32_t id, int32_t value)
     {
         const Vital* vital = getVitalFromRegistry(id);
-        update(*vital, target, value);
+        update(*vital, value);
     }
-    void Vitals::update(const Vital& vital, VitalDataTarget target, int32_t value)
+    void Vitals::update(const Vital& vital, int32_t value)
     {
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
@@ -119,98 +111,74 @@ namespace stats
             it = dataStore.find(vital.getID());
         }
 
-        if (target == VitalDataTarget::CURRENT)
-        {
-            it->second.setCurrent(value);
-        }
-        else if (target == VitalDataTarget::CURRENT_MIN)
-        {
-            if (value > it->second.getCurrentMax())
-            {
-                std::string err = "Inconsistent value set:  min(" 
-                                + std::to_string(value) + ") > max(" 
-                                + std::to_string(it->second.getCurrentMax()) + ")\n";
-                MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
-            }
-            it->second.setCurrentMin(value);
-            it->second.setCurrent(it->second.getCurrent()); // If correction is needed.
-        }
-        else if (target == VitalDataTarget::CURRENT_MAX)
-        {
-            if (value < it->second.getCurrentMin())
-            {
-                std::string err = "Inconsistent value set:  min(" 
-                                + std::to_string(it->second.getCurrentMin()) + ") > max(" 
-                                + std::to_string(value) + ")\n";
-                MIA_THROW(error::ErrorCode::Invalid_RPG_Data, err);
-            }
-            it->second.setCurrentMax(value);
-            it->second.setCurrent(it->second.getCurrent()); // If correction is needed.
-        }
+        it->second.setCurrent(value);
     }
     
     
     // addModifier(..) methods.
-    void Vitals::addModifier(const std::string& name, 
-                             uint32_t sourceID, 
-                             rpg::ModifierSourceType sourceType, 
+    void Vitals::addModifier(const std::string& name,
+                             uint32_t sourceID,
+                             rpg::ModifierSourceType sourceType,
                              int32_t value,
-                             VitalDataTarget target)
+                             VitalDataTarget target,
+                             rpg::ModifyType modifyType)
     {
         const Vital* vital = getVitalFromRegistry(name);
-        addModifier(*vital, sourceID, sourceType, value, target);
+        addModifier(*vital, sourceID, sourceType, value, target, modifyType);
     }
-    void Vitals::addModifier(uint32_t id, 
-                             uint32_t sourceID, 
-                             rpg::ModifierSourceType sourceType, 
+    void Vitals::addModifier(uint32_t id,
+                             uint32_t sourceID,
+                             rpg::ModifierSourceType sourceType,
                              int32_t value,
-                             VitalDataTarget target)
+                             VitalDataTarget target,
+                             rpg::ModifyType modifyType)
     {
         const Vital* vital = getVitalFromRegistry(id);
-        addModifier(*vital, sourceID, sourceType, value, target);
+        addModifier(*vital, sourceID, sourceType, value, target, modifyType);
     }
     void Vitals::addModifier(const Vital& vital,
                              uint32_t sourceID,
                              rpg::ModifierSourceType sourceType,
                              int32_t value,
-                             VitalDataTarget target)
+                             VitalDataTarget target,
+                             rpg::ModifyType modifyType)
     {
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
         {
-            // The data is not found so add a default one, then update the current.
+            // The data is not found so add a default one, then attach the modifier.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
             // The insert may have rehashed the map, so the iterator must be refreshed.
             it = dataStore.find(vital.getID());
         }
 
-        rpg::Modifier<int32_t> mod = rpg::Modifier<int32_t>(sourceID, sourceType, value);
+        rpg::Modifier mod = rpg::Modifier(sourceID, sourceType, value, modifyType);
 
         it->second.addModifier(mod, target);
     }
-    void Vitals::addModifier(const std::string& name, 
-                             rpg::Modifier<int32_t>& mod,
+    void Vitals::addModifier(const std::string& name,
+                             const rpg::Modifier& mod,
                              VitalDataTarget target)
     {
         const Vital* vital = getVitalFromRegistry(name);
         addModifier(*vital, mod, target);
     }
-    void Vitals::addModifier(uint32_t id, 
-                             rpg::Modifier<int32_t>& mod,
+    void Vitals::addModifier(uint32_t id,
+                             const rpg::Modifier& mod,
                              VitalDataTarget target)
     {
         const Vital* vital = getVitalFromRegistry(id);
         addModifier(*vital, mod, target);
     }
     void Vitals::addModifier(const Vital& vital,
-                             rpg::Modifier<int32_t>& mod,
+                             const rpg::Modifier& mod,
                              VitalDataTarget target)
     {
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
         {
-            // The data is not found so add a default one, then update the current.
+            // The data is not found so add a default one, then attach the modifier.
             // TODO - setting the current here to baseMax... This may not always be best/desired.
             add(vital, vital.getBaseMax(), vital.getBaseMin(), vital.getBaseMax());
             // The insert may have rehashed the map, so the iterator must be refreshed.
@@ -250,8 +218,8 @@ namespace stats
             return;
         }
         
-        // removeModifier() doesn't check the value so setting it to zero here...
-        rpg::Modifier<int32_t> mod = rpg::Modifier<int32_t>(sourceID, sourceType, 0);
+        // removeModifier() matches on source ID and type only, so the value here is a placeholder.
+        rpg::Modifier mod = rpg::Modifier(sourceID, sourceType, 0);
 
         it->second.removeModifier(mod, target);
     }
@@ -326,25 +294,27 @@ namespace stats
                 ss << "|"; // Separate entries with '|'
             first = false;
 
-            // Write the base vital data: <id>:<current>,<currentMin>,<currentMax>
-            ss << id << ":" << data.getCurrent() << "," << data.getCurrentMin() << "," << data.getCurrentMax();
+            // Write the base vital data: <id>:<current>,<baseMin>,<baseMax>
+            ss << id << ":" << data.getCurrent() << "," << data.getBaseMin() << ","
+               << data.getBaseMax();
 
-            // Serialize all min modifiers for this vital
-            for (const auto& mod : data.getModifiers(VitalDataTarget::CURRENT_MIN))
+            // Serialize the min and max modifiers with their modify types.
+            for (const auto target : {VitalDataTarget::CURRENT_MIN, VitalDataTarget::CURRENT_MAX})
             {
-                ss << ";" << mod.sourceID << "," 
-                   << rpg::modifierSourceTypeToString(mod.source) << "," 
-                   << mod.value << "," 
-                   << VitalDataTargetToString(VitalDataTarget::CURRENT_MIN);
-            }
+                for (const auto& mod : data.getModifiers(target))
+                {
+                    std::ostringstream valueStream;
+                    if (std::holds_alternative<int>(mod.value))
+                        valueStream << std::get<int>(mod.value);
+                    else
+                        valueStream << std::get<double>(mod.value);
 
-            // Serialize all max modifiers for this vital
-            for (const auto& mod : data.getModifiers(VitalDataTarget::CURRENT_MAX))
-            {
-                ss << ";" << mod.sourceID << "," 
-                   << rpg::modifierSourceTypeToString(mod.source) << "," 
-                   << mod.value << "," 
-                   << VitalDataTargetToString(VitalDataTarget::CURRENT_MAX);
+                    ss << ";" << mod.sourceID << ","
+                       << rpg::modifierSourceTypeToString(mod.source) << ","
+                       << valueStream.str() << ","
+                       << VitalDataTargetToString(target) << ","
+                       << rpg::modifyTypeToString(mod.modifyType);
+                }
             }
         }
 
@@ -359,7 +329,8 @@ namespace stats
         size_t start = data.find(beginString);
         size_t end = data.find("[VITALS_END]");
         if (start == std::string::npos || end == std::string::npos || end <= start + beginString.size())
-            throw std::invalid_argument("Invalid serialized data: missing or malformed [VITALS_BEGIN]/[VITALS_END]");
+            MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                  "Invalid serialized data: missing or malformed [VITALS_BEGIN]/[VITALS_END]");
 
         std::string content = data.substr(start + beginString.size(), end - start - beginString.size());
         Vitals vitals;
@@ -376,11 +347,13 @@ namespace stats
             std::stringstream entryStream(vitalEntry);
             std::string baseInfo;
             if (!std::getline(entryStream, baseInfo, ';'))
-                throw std::invalid_argument("Malformed vital entry: missing base info");
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                          "Malformed vital entry: missing base info");
 
             size_t colon = baseInfo.find(':');
             if (colon == std::string::npos)
-                throw std::invalid_argument("Malformed base info: missing ':' separator");
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                          "Malformed base info: missing ':' separator");
 
             uint32_t id;
             try
@@ -389,14 +362,14 @@ namespace stats
             }
             catch (...)
             {
-                throw std::invalid_argument("Invalid vital id");
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid vital id");
             }
 
             std::stringstream baseStream(baseInfo.substr(colon + 1));
             int32_t current, min, max;
             char comma1, comma2;
             if (!(baseStream >> current >> comma1 >> min >> comma2 >> max) || comma1 != ',' || comma2 != ',')
-                throw std::invalid_argument("Invalid vital values format");
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid vital values format");
 
             const Vital* vital = getVitalFromRegistry(id);
         
@@ -414,22 +387,25 @@ namespace stats
                 while (std::getline(modStream, token, ','))
                     parts.push_back(token);
 
-                if (parts.size() != 4)
-                    throw std::invalid_argument("Invalid modifier format");
+                if (parts.size() != 5)
+                    MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid modifier format");
 
                 uint32_t sourceID = std::stoul(parts[0]);
                 rpg::ModifierSourceType sourceType = rpg::stringToModifierSourceType(parts[1]);
-                int32_t value = std::stoi(parts[2]);
+                double parsedValue = std::stod(parts[2]);
                 VitalDataTarget target = stringToVitalDataTarget(parts[3]);
+                rpg::ModifyType modifyType = rpg::stringToModifyType(parts[4]);
 
                 if (target != VitalDataTarget::CURRENT_MIN && target != VitalDataTarget::CURRENT_MAX)
-                    throw std::invalid_argument("Invalid modifier target");
+                    MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid modifier target");
 
-                // The vitals are already calculated so this block bypasses the recaclulate() 
-                // call in addModifier().
-                auto& vitalData = vitals.dataStore.at(id);
-                rpg::Modifier<int32_t> mod(sourceID, sourceType, value);                
-                vitalData.addModifier(mod, target, false);
+                // Store the value as an int for ADD_MAX and SET, and as a double for MULTIPLY.
+                rpg::Modifier mod(sourceID, sourceType,
+                                  (modifyType == rpg::ModifyType::MULTIPLY)
+                                      ? rpg::Modifier::Value(parsedValue)
+                                      : rpg::Modifier::Value(static_cast<int>(std::round(parsedValue))),
+                                  modifyType);
+                vitals.dataStore.at(id).addModifier(mod, target);
             }
         }
 

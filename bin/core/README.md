@@ -1,18 +1,14 @@
-# Program
+# bin -> core
 
 This folder contains core program components, including error handling and related descriptions, which form the foundation for application functionality.
 
-## Error Handling
+## Error Component
 
-The `Error.hpp` and `Error.cpp` files implement the `Error` class responsible for managing error codes and reporting within the application. This module centralizes error handling logic to ensure consistent error reporting and management.
+The `error/` subfolder is a standalone component built as the `Error_CORE` library, so targets which only need error and exception handling can link `Error_CORE` without pulling in the rest of the framework. It depends only on the standard library.
 
-## Error Descriptions
-
-The `ErrorDescriptions.hpp` and `ErrorDescriptions.cpp` files store mappings of error codes to human-readable descriptions. This separation allows easy maintenance and extension of error messages without modifying core error handling logic.
-
-## MIAException
-
-The `MIAException.hpp` file defines `MIAException`, a custom exception that carries an `ErrorCode` and a descriptive message. It inherits from `std::exception` and uses the error descriptions above to build a readable message, giving structured error propagation across the application.
+- `Error.hpp` and `Error.cpp` implement error code definitions and error information structures for handling error codes across MIA applications.
+- `ErrorDescriptions.hpp` and `ErrorDescriptions.cpp` store mappings of error codes to human-readable descriptions. This separation allows easy maintenance and extension of error messages without modifying core error handling logic.
+- `MIAException.hpp` defines `MIAException`, a custom exception that carries an `ErrorCode` and a descriptive message. It inherits from `std::exception` and uses the error descriptions above to build a readable message, giving structured error propagation across the application.
 
 ## Application Framework
 
@@ -59,7 +55,7 @@ The `basic_utilities/` subfolder contains `BasicUtilities.hpp` and `BasicUtiliti
 
 ## Tests
 
-The `test/` subfolder holds GoogleTest sources for the core components, with one executable per module (e.g., `MIAException_T`, `CommandOption_T`, `CommandParser_T`, `MIAConfig_T`, `Logger_T`, `AppFramework_T`, `BackgroundTask_T`), declared in its `CMakeLists.txt`.
+The `test/` subfolder holds GoogleTest sources for the core components, with one executable per module (e.g., `CommandOption_T`, `CommandParser_T`, `MIAConfig_T`, `Logger_T`, `AppFramework_T`, `BackgroundTask_T`), declared in its `CMakeLists.txt`. The error component's tests live in `error/test/` (e.g., `MIAException_T`).
 
 
 ---

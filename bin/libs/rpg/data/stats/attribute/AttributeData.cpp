@@ -8,70 +8,54 @@
 #include <algorithm>
 #include <vector>
 
-#include "Modifier.hpp"
 #include "AttributeData.hpp"
 
 namespace stats
 {
-    AttributeData::AttributeData(int curr) : current(curr) {}
+    AttributeData::AttributeData(int baseValue) : baseValue(baseValue) {}
 
 
-    AttributeData::AttributeData(int curr, const std::vector<rpg::Modifier<int>>& mods)
-        : current(curr), modifiers(mods) {}
+    AttributeData::AttributeData(int baseValue, const std::vector<rpg::Modifier>& mods)
+        : baseValue(baseValue), modifiers(mods) {}
 
 
-    void AttributeData::addModifier(const rpg::Modifier<int>& mod)
+    void AttributeData::addModifier(const rpg::Modifier& mod)
     {
+        // The same source, source type, and modify type is the same effect, so replace it.
         auto it = std::find(modifiers.begin(), modifiers.end(), mod);
         if (it != modifiers.end())
-            return; // Modifier already exists
+            modifiers.erase(it);
 
         modifiers.push_back(mod);
-        recalculateAdd(mod);
     }
 
 
-    void AttributeData::removeModifier(const rpg::Modifier<int>& mod)
+    void AttributeData::removeModifier(const rpg::Modifier& mod)
     {
         auto it = std::find_if(modifiers.begin(), modifiers.end(),
-            [&mod](const rpg::Modifier<int>& m)
+            [&mod](const rpg::Modifier& m)
             {
                 return m.sourceID == mod.sourceID && m.source == mod.source;
             });
         if (it != modifiers.end())
-        {
             modifiers.erase(it);
-            recalculateRemove(mod);
-        }
     }
-    
+
 
     int AttributeData::getCurrent() const
-    { 
-        return current; 
-    }
-
-
-    void AttributeData::setCurrent(int value)
     {
-        current = value;
+        return rpg::computeModifiedValue(baseValue, modifiers);
     }
-    
 
-    void AttributeData::recalculateAdd(const rpg::Modifier<int>& mod)
+
+    void AttributeData::setBaseValue(int value)
     {
-        current += mod.value;
+        baseValue = value;
     }
-    
-    
-    const std::vector<rpg::Modifier<int>>& AttributeData::getModifiers() const
-    { 
+
+
+    const std::vector<rpg::Modifier>& AttributeData::getModifiers() const
+    {
         return modifiers;
-    }
-    
-
-    void AttributeData::recalculateRemove(const rpg::Modifier<int>& mod)
-    {
-        current -= mod.value;
     }
 } // namespace stats
