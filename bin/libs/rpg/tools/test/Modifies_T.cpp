@@ -206,12 +206,12 @@ namespace rpg
 
 
     /**
-     * @brief Verifies a non-numeric value token is rejected.
-     * The exception currently comes from std::stod rather than MIAException.
+     * @brief Verifies a non-numeric value token is rejected with a MIAException.
      */
     TEST(ModifiesTest, Deserialize_NonNumericValueThrows)
     {
-        EXPECT_ANY_THROW(Modifies::deserialize("VITAL:Health:ADD_MAX:not_a_number"));
+        EXPECT_THROW(Modifies::deserialize("VITAL:Health:ADD_MAX:not_a_number"),
+                     error::MIAException);
     }
 
 
