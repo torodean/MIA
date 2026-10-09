@@ -41,7 +41,8 @@ namespace stats
         }
 
     } // namespace helper_methods
-    
+
+
     // get() methods...
     AttributeData& Attributes::get(const std::string& name)
     {
@@ -286,7 +287,7 @@ namespace stats
         if (startPos == std::string::npos || endPos == std::string::npos || endPos < startPos)
         {
             // Invalid or missing markers; the save data is corrupt, not merely empty.
-            MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+            MIA_THROW(error::ErrorCode::Serialization_Key_Not_Found,
                       "Attributes block not found.");
         }
 
@@ -316,8 +317,8 @@ namespace stats
             }
             catch (const std::exception&)
             {
-                // Skip invalid id
-                continue;
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                          "Invalid attribute id: " + segment);
             }
 
             std::getline(entryStream, segment, ',');
@@ -328,8 +329,8 @@ namespace stats
             }
             catch (const std::exception&)
             {
-                // Skip invalid current value
-                continue;
+                MIA_THROW(error::ErrorCode::Invalid_RPG_Data,
+                          "Invalid attribute value: " + segment);
             }
 
             // Each remaining ','-delimited unit is one serialized Modifier.
