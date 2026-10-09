@@ -2,7 +2,7 @@
  * @file AttributeData_T.cpp
  * @author Antonius Torode
  * @date 07/13/2025
- * @brief Google Test file for testing the AttributeData class functionality.
+ * @brief Test file for testing the various AttributeData class functionality.
  */
 #include <gtest/gtest.h>
 #include <vector>
