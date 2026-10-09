@@ -50,6 +50,7 @@ namespace currency
          *        id The ID of the currency.
          *        currency The Currency object.
          * @param quantity The amount to add.
+         * @throws MIAException with Exceeded_RPG_Quantity if the addition overflows the quantity.
          */
         void add(const std::string& name, uint32_t quantity);
         void add(uint32_t id, uint32_t quantity);
