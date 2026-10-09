@@ -1,29 +1,28 @@
 # This app currently requires the python and XDO features to be available.
-if(BUILD_PYTHON_FEATURES AND 
-   (WIN32 OR CYGWIN OR BUILD_XDO_FEATURES) )
+if( BUILD_PYTHON_FEATURES AND (WIN32 OR CYGWIN OR BUILD_XDO_FEATURES) )
     # Create the test executable.
-    set(test_SRC
-        MIATest.cpp
-        MIATest_main.cpp
-        PythonModuleTests.cpp
-        PythonPlotterTests.cpp
-        PythonUITests.cpp 
-        KeybindTests.cpp 
-		SystemSoundTests.cpp
-        AudioPlayerTests.cpp        )
-    set(test_INC
-        MIATest.hpp
-        PythonModuleTests.hpp
-        PythonPlotterTests.hpp
-        PythonUITests.hpp 
-        KeybindTests.hpp 
-		SystemSoundTests.hpp
-        AudioPlayerTests.hpp )
+    set( test_SRC
+         MIATest.cpp
+         MIATest_main.cpp
+         PythonModuleTests.cpp
+         PythonPlotterTests.cpp
+         PythonUITests.cpp 
+         KeybindTests.cpp 
+		 SystemSoundTests.cpp
+         AudioPlayerTests.cpp        )
+    set( test_INC
+         MIATest.hpp
+         PythonModuleTests.hpp
+         PythonPlotterTests.hpp
+         PythonUITests.hpp 
+         KeybindTests.hpp 
+		 SystemSoundTests.hpp
+         AudioPlayerTests.hpp )
 
     #  The target name "test" is reserved when CTest testing is enabled.
-    add_executable(miatest ${test_SRC} ${test_INC} )
+    add_executable( miatest ${test_SRC} ${test_INC} )
     target_link_libraries( miatest 
-                           PRIVATE 
+                       PRIVATE 
 	                       Framework_CORE 
 						   Python_UTIL 
 						   Py_Plotting_LIB 
