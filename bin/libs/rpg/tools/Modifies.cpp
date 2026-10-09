@@ -131,10 +131,20 @@ namespace rpg
         if (tokens.size() != 5)
             MIA_THROW(error::Invalid_RPG_Data, "Invalid Modifies data format");
 
+        double valuePer;
+        try
+        {
+            valuePer = std::stod(tokens[3]);
+        }
+        catch (const std::exception&)
+        {
+            MIA_THROW(error::Invalid_RPG_Data, "Invalid Modifies numeric value: " + data);
+        }
+
         return Modifies(rpg::stringToDataType(tokens[0]),
                         tokens[1],
                         stringToModifyType(tokens[2]),
-                        std::stod(tokens[3]),
+                        valuePer,
                         stringToModifierStackPolicy(tokens[4]));
     }
 
