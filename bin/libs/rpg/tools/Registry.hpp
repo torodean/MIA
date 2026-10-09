@@ -2,7 +2,7 @@
  * @file Registry.hpp
  * @author Antonius Torode
  * @date 07/08/2025
- * Description: A base class for managing registries of game objects in the MIA RPG system.
+ * @brief A base class for managing registries of game objects in the MIA RPG system.
  */
 #pragma once
 
@@ -154,7 +154,8 @@ namespace rpg
         /**
          * Loads objects from a JSON object by extracting the array for the derived class's key.
          * @param data The JSON object containing the array.
-         * @throws MIAException if the key is missing or not an array.
+         * @throws MIAException if the key is missing or not an array, if an entry is
+         *         missing its id or name key, or if an entry duplicates an existing id or name.
          */
         void loadFromJson(const nlohmann::json& data)
         {
@@ -168,10 +169,22 @@ namespace rpg
             nameToId.clear();
             for (const auto& item : data[key])
             {
-                Type obj = parseJson(item);
+                if (!item.contains("id"))
+                    MIA_THROW(error::JSON_Key_Not_Found, key + " entry is missing 'id'.");
+                if (!item.contains("name"))
+                    MIA_THROW(error::JSON_Key_Not_Found, key + " entry is missing 'name'.");
+
                 uint32_t id = item["id"].get<uint32_t>();
-                objects[id] = std::move(obj);
-                nameToId[item["name"].get<std::string>()] = id;
+                std::string name = item["name"].get<std::string>();
+                if (objects.count(id))
+                    MIA_THROW(error::Duplicate_RPG_Value,
+                              "Duplicate " + key + " id: " + std::to_string(id));
+                if (nameToId.count(name))
+                    MIA_THROW(error::Duplicate_RPG_Value,
+                              "Duplicate " + key + " name: " + name);
+
+                objects[id] = parseJson(item);
+                nameToId[name] = id;
             }
         }
 
