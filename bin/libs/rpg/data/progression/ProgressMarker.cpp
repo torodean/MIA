@@ -2,14 +2,14 @@
  * @file ProgressMarker.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: This is the base progression class for all progress markers.
+ * @brief This is the base progression class for all progress markers.
  */
 
+// Include the associated header file.
 #include "ProgressMarker.hpp"
 
 namespace progress
 {
-
     ProgressMarker::ProgressMarker(uint32_t id,
                                    const std::string& name, 
                                    const std::string& description) : 
@@ -31,5 +31,4 @@ namespace progress
         ProgressMarker progressMarker(base.getID(), base.getName(), base.getDescription());
         return progressMarker;
     }
-
 } // namespace progress
