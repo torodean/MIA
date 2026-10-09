@@ -1,0 +1,20 @@
+{
+    "VITAL": [
+        {
+            "id": 1,
+            "name": "Health",
+            "description": "Represents the character's life.",
+            "type": "DEPLETIVE",
+            "baseMax": 100,
+            "baseMin": 0
+        },
+        {
+            "id": 2,
+            "name": "Mana",
+            "description": "Used to cast spells.",
+            "type": "DEPLETIVE",
+            "baseMax": 200,
+            "baseMin": 0
+        }
+    ]
+}
