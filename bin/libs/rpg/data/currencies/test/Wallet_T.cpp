@@ -107,13 +107,13 @@ namespace currency
     }
 
     /**
-     * @brief Verifies adding past the unsigned int maximum throws std::overflow_error.
+     * @brief Verifies adding past the unsigned int maximum throws error::MIAException.
      */
     TEST_F(Wallet_T, AddOverflowThrows) 
     {
         container.add(coin, std::numeric_limits<unsigned int>::max());
-        EXPECT_THROW(container.add(coin, 1), std::overflow_error)
-            << "Adding beyond max unsigned int should throw overflow_error.";
+        EXPECT_THROW(container.add(coin, 1), error::MIAException)
+            << "Adding beyond max unsigned int should throw a MIAException.";
     }
 
     /**
