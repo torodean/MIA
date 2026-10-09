@@ -2,13 +2,15 @@
  * @file AttributeData.cpp
  * @author Antonius Torode
  * @date 07/13/2025
- * Description: A class representing configurable attribute data for storing an active attribute.
+ * @brief A class representing configurable attribute data for storing an active attribute.
  */
+
+// Include associated header file.
+#include "AttributeData.hpp"
 
 #include <algorithm>
 #include <vector>
 
-#include "AttributeData.hpp"
 
 namespace stats
 {
@@ -21,12 +23,7 @@ namespace stats
 
     void AttributeData::addModifier(const rpg::Modifier& mod)
     {
-        // The same source, source type, and modify type is the same effect, so replace it.
-        auto it = std::find(modifiers.begin(), modifiers.end(), mod);
-        if (it != modifiers.end())
-            modifiers.erase(it);
-
-        modifiers.push_back(mod);
+        rpg::attachModifier(modifiers, mod);
     }
 
 
