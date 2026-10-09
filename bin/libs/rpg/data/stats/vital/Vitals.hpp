@@ -16,6 +16,16 @@
 
 namespace stats
 {
+    /**
+     * A container for the runtime state of a character's vitals.
+     *
+     * Each entry pairs a registered Vital with its VitalData, which stores the vital's
+     * current value and base bounds along with the modifiers attached to those bounds.
+     * The effective minimum and maximum always derive from the stored base values, so
+     * lookups by name, ID, or Vital object return the live data rather than a copy.
+     * Vital definitions live in the VitalRegistry; this class only holds per-instance
+     * values.
+     */
     class Vitals : public data::BaseDataObjectStorage<Vital, VitalData>
     {
     public:    
@@ -181,7 +191,7 @@ namespace stats
          * are the base bounds, so the effective values recompute from the modifiers
          * on deserialization.
          *
-         * Format: [VITALS_BEGIN]id:current,min,max;sourceID,SOURCE,value,TARGET,TYPE|...[VITALS_END]
+         * Format: [VITALS_BEGIN]id:current,min,max;sourceID:SOURCE:value:TYPE:POLICY,TARGET|...[VITALS_END]
          *
          * @return A string representing the serialized state of the Vitals.
          */
