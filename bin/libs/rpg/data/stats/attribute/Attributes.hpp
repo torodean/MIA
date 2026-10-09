@@ -7,12 +7,22 @@
 #pragma once
 
 #include <string>
+
 #include "Attribute.hpp"
 #include "AttributeData.hpp"
 #include "BaseDataObjectStorage.hpp"
 
 namespace stats
 {
+    /**
+     * A container for the runtime state of a character's attributes.
+     *
+     * Each entry pairs a registered Attribute with its AttributeData, which stores the
+     * attribute's base value along with the modifiers attached to it. The effective
+     * current value always derives from the stored base, so lookups by name, ID, or
+     * Attribute object return the live data rather than a copy. Attribute definitions
+     * live in the AttributeRegistry; this class only holds per-instance values.
+     */
     class Attributes : public data::BaseDataObjectStorage<Attribute, AttributeData>
     {
     public:
@@ -147,7 +157,7 @@ namespace stats
          * the base value, so the effective value recomputes from the modifiers on
          * deserialization.
          *
-         * Format: [ATTRIBUTES_BEGIN]id:base,sourceID,SOURCE,value,TYPE;...[ATTRIBUTES_END]
+         * Format: [ATTRIBUTES_BEGIN]id:base,sourceID:SOURCE,value:TYPE:POLICY;...[ATTRIBUTES_END]
          *
          * @return A string representing the serialized state of the Attributes.
          */
