@@ -16,6 +16,6 @@ target_link_libraries( RPG_Attributes_LIB PUBLIC Error_CORE RPG_Tools_LIB RPG_Da
 target_include_directories(RPG_Attributes_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()
 
 

@@ -12,4 +12,4 @@ target_link_libraries( Python_UTIL
 target_include_directories( Python_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Add the unit tests.
-add_subdirectory( test )
+add_test_dir()

@@ -15,4 +15,4 @@ target_link_libraries(Files_UTIL
 target_include_directories(Files_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()

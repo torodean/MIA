@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # The version of the current MIA code.
-set(MIA_VERSION_VAL "2.109")
+set(MIA_VERSION_VAL "2.110")
 
 message(STATUS "MIA_VERSION_VAL: ${MIA_VERSION_VAL}")
 
@@ -103,14 +103,16 @@ message(STATUS "DEFAULT_REPO_CONFIG_FILE: ${DEFAULT_REPO_CONFIG_FILE}")
 message(STATUS "DEFAULT_REPO_LOG_DIR: ${DEFAULT_REPO_LOG_DIR}")
 message(STATUS "DEFAULT_REPO_LOG: ${DEFAULT_REPO_LOG}")
 
-find_package(GTest REQUIRED)
-enable_testing()
+if ( TESTING_ENABLED )
+    find_package(GTest REQUIRED)
+    enable_testing()
+endif()
 
 # Include application specifics.
 include( cmake/apps.cmake )
 
 add_subdirectory( bin )
-#add_subdirectory( documentation )
+#add_subdirectory( docs )
 add_subdirectory( resources )
 
 # Warn about any optional feature sets which were skipped (and the apps which depend on them).

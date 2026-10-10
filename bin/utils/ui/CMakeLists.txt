@@ -31,4 +31,4 @@ endif()
 target_include_directories( UI_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Add test directory.
-add_subdirectory( test )
+add_test_dir()
