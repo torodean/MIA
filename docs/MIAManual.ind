@@ -10,9 +10,13 @@
 
   \item add, \hyperpage{50}
   \item add\_definiition, \hyperpage{8}
+  \item add\_executable, \hyperpage{81}
   \item add\_subdirectory, \hyperpage{10}, \hyperpage{28}
+  \item add\_subdirectory(), \hyperpage{81}
   \item add\_test, \hyperpage{28}
   \item add\_test\_dir, \hyperpage{10}, \hyperpage{28}
+  \item ALL\_CAPS, \hyperpage{75}
+  \item Allman, \hyperpage{74}
   \item AppInterface, \hyperpage{1}, \hyperpage{11}
   \item Application, \hyperpage{12}
   \item application framework, \hyperpage{10}
@@ -29,6 +33,7 @@
   \item Basic, \hyperpage{4}
   \item bin/, \hyperpage{2}
   \item BOOL\_OPTION, \hyperpage{16}
+  \item Brace placement, \hyperpage{74}
   \item build, \hyperpage{4}, \hyperpage{6, 7}
   \item build process, \hyperpage{4}
   \item build.sh, \hyperpage{2}, \hyperpage{4}, \hyperpage{29}
@@ -43,8 +48,9 @@
   \indexspace
 
   \item C++20, \hyperpage{1}, \hyperpage{7}, \hyperpage{11}
+  \item camelCase, \hyperpage{75}
   \item CMake, \hyperpage{2}, \hyperpage{6, 7}, \hyperpage{10}, 
-		\hyperpage{19}, \hyperpage{28}
+		\hyperpage{19}, \hyperpage{28}, \hyperpage{81}
   \item cmake, \hyperpage{10}
   \item cmake/database.cmake, \hyperpage{28}
   \item cmake/nlohmann.cmake, \hyperpage{28}
@@ -62,6 +68,7 @@
   \item commit-msg, \hyperpage{6}
   \item commitAll.sh, \hyperpage{6}
   \item compile-time, \hyperpage{2}
+  \item composition, \hyperpage{76}
   \item concept, \hyperpage{11}
   \item concepts, \hyperpage{1}, \hyperpage{11}
   \item conditionMet, \hyperpage{26}
@@ -71,6 +78,7 @@
   \item configuration, \hyperpage{1, 2}, \hyperpage{20}
   \item Configurator, \hyperpage{20}
   \item Configure, \hyperpage{4}
+  \item const, \hyperpage{76}
   \item constants, \hyperpage{2}, \hyperpage{19}
   \item Constants.hpp, \hyperpage{11}
   \item constants.hpp, \hyperpage{7}
@@ -88,6 +96,7 @@
   \item Debug level, \hyperpage{13}
   \item debugLevel, \hyperpage{13}
   \item dependencies, \hyperpage{4}
+  \item deprecated, \hyperpage{77}
   \item digitsum, \hyperpage{51}
   \item docs/, \hyperpage{2}
   \item DOUBLE\_OPTION, \hyperpage{16}
@@ -116,7 +125,9 @@
   \item FILE\_NOT\_FOUND, \hyperpage{25}
   \item FILES, \hyperpage{10}
   \item find mouse, \hyperpage{51}
+  \item find\_package, \hyperpage{81}
   \item Framework\_CORE, \hyperpage{7}
+  \item free-functions, \hyperpage{76}
 
   \indexspace
 
@@ -146,6 +157,7 @@
 
   \indexspace
 
+  \item Indentation, \hyperpage{74}
   \item initialization, \hyperpage{10}
   \item initialize, \hyperpage{1}, \hyperpage{11, 12}
   \item initialize(), \hyperpage{13, 14}, \hyperpage{22}
@@ -169,6 +181,7 @@
 
   \indexspace
 
+  \item K\&R, \hyperpage{74}
   \item KeyValueData, \hyperpage{20, 21}
 
   \indexspace
@@ -178,6 +191,7 @@
   \item libraries, \hyperpage{9}
   \item libxdo, \hyperpage{28}
   \item life cycle, \hyperpage{10}
+  \item Line length, \hyperpage{74}
   \item Linux, \hyperpage{6--8}, \hyperpage{10}
   \item log(), \hyperpage{15}
   \item log(std::string), \hyperpage{13}
@@ -199,7 +213,8 @@
   \item maxNumOfExercises, \hyperpage{63, 64}
   \item maxNumOfSets, \hyperpage{63}
   \item MIA, \hyperpage{1, 2}, \hyperpage{4}, \hyperpage{7}, 
-		\hyperpage{12}, \hyperpage{17}, \hyperpage{27}
+		\hyperpage{12}, \hyperpage{17}, \hyperpage{27}, 
+		\hyperpage{74}
   \item MIA\_MAIN, \hyperpage{2}, \hyperpage{12}, \hyperpage{25}
   \item MIA\_MAIN(AppClass), \hyperpage{12}
   \item MIA\_THROW, \hyperpage{18}
@@ -208,7 +223,7 @@
   \item MIAApplication, \hyperpage{2}, \hyperpage{12--14}
   \item MIAApplication.hpp, \hyperpage{12}
   \item MIAConfig, \hyperpage{2}, \hyperpage{20, 21}, \hyperpage{23}
-  \item MIAException, \hyperpage{2}, \hyperpage{17--19}
+  \item MIAException, \hyperpage{2}, \hyperpage{17--19}, \hyperpage{76}
   \item MIAExceptions, \hyperpage{11}
   \item MIATemplate, \hyperpage{9}
   \item minNumOfExercises, \hyperpage{63, 64}
@@ -224,10 +239,15 @@
 
   \indexspace
 
+  \item override, \hyperpage{77}
+
+  \indexspace
+
   \item palindrome, \hyperpage{52}
+  \item PascalCase, \hyperpage{75}
   \item paths, \hyperpage{2}, \hyperpage{20}
   \item paths::getDefaultLogDirToUse(), \hyperpage{23}
-  \item PIMPL, \hyperpage{20}
+  \item PIMPL, \hyperpage{20}, \hyperpage{76}
   \item prime, \hyperpage{52}
   \item printHelp(), \hyperpage{13, 14}, \hyperpage{16}
   \item Python, \hyperpage{27, 28}
@@ -241,7 +261,7 @@
 
   \item randomFromFile, \hyperpage{52}
   \item RawLinesData, \hyperpage{20}
-  \item README, \hyperpage{3}
+  \item README, \hyperpage{3}, \hyperpage{80}
   \item release/, \hyperpage{3}
   \item RELEASE\_BUILD, \hyperpage{8, 9}
   \item reload(), \hyperpage{22}
@@ -275,8 +295,10 @@
   \item std::exception, \hyperpage{18}
   \item std::exception\_ptr, \hyperpage{27}
   \item std::exit(), \hyperpage{27}
+  \item std::shared\_ptr, \hyperpage{75}
   \item std::terminate(), \hyperpage{27}
   \item std::thread, \hyperpage{25}
+  \item std::unique\_ptr, \hyperpage{75}
   \item stdout, \hyperpage{23}
   \item stop(), \hyperpage{25, 26}
   \item stopRequested, \hyperpage{25, 26}
@@ -291,6 +313,7 @@
 
   \indexspace
 
+  \item target\_link\_libraries, \hyperpage{81}
   \item taskName, \hyperpage{26}
   \item templates, \hyperpage{11}
   \item test, \hyperpage{9}, \hyperpage{28}
@@ -312,6 +335,7 @@
   \item verbose, \hyperpage{14}
   \item Verbose mode, \hyperpage{13}
   \item verboseMode, \hyperpage{13}, \hyperpage{26}
+  \item virtual, \hyperpage{77}
   \item VLC, \hyperpage{28}
   \item vlc.cmake, \hyperpage{10}
 

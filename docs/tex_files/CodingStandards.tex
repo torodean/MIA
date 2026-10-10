@@ -22,7 +22,7 @@ Many `coding standards' are based around preference or visual desires for code. 
 
 \subsection{Function Size Constraint}
 
-Functions must remain small enough to be reviewed as a single logical unit. As a practical limit, a function should not exceed roughly one printed page when formatted with one statement and one declaration per line (approximately 60 lines of code). \cite{Rules_For_Developing_Safety_Critical_Code}
+Functions must remain small enough to be reviewed as a single logical unit. As a practical limit, a function should not exceed roughly one printed page when formatted with one statement and one declaration per line (approximately 60 lines of code) \cite{Rules_For_Developing_Safety_Critical_Code}.
 
 Each function (or method) should be a single unit in the code. It is the smallest unit of behavior and provides a specific purpose. Part of understanding the purpose of a function (especially the context of why it exists, how it's used, etc) lies within the associated documentation and comments. However, the specific functionality should be able to be understood as a standalone unit by the code itself. When a function is multiple pages (or screens), comprehension and readability degrades and potential issues can be masked or overlooked. Large functions typically indicate excessive responsibility - that the unit is doing too much. Enforcing a strict size limit forces clearer separation of concerns and improves reviewability, testability, and long-term maintainability.
 
@@ -30,7 +30,7 @@ Each function (or method) should be a single unit in the code. It is the smalles
 
 \subsection{Return Value and Parameter Validation}
 
-The return value of every non-void function must be explicitly handled by the caller and parameters should be checked for validity within each function. In cases where responding to an error case would be no different than to a success, casting the function return to void is acceptable - as it indicates that the programmer explicitly chose to ignore the return values.
+The return value of every non-void\footnote{If a function returns a non-void value, it typically has \textit{some} meaning that is intended for the caller.} function must be explicitly handled by the caller and parameters should be checked for validity within each function. In cases where responding to an error case would be no different than to a success, casting the function return to void is acceptable - as it indicates that the programmer explicitly chose to ignore the return values.
 
 Parameter validation is important for a few reasons. First, it provides a clear check for potential error cases. Second, it forces the developer to think about the possible input possibilities (both desired and potentially not) to help ensure they understand the consequences of different input parameters. Third, parameter validation enforces defensive boundaries between components. Functions should not rely on external guarantees about input correctness. By validating inputs at the point of entry, the code establishes explicit preconditions, prevents undefined behavior, and localizes faults to their source rather than allowing them to propagate unpredictably through the system. 
 
@@ -48,37 +48,45 @@ By explicitly handling function return values, the code ensures that errors are 
 
 \section{C++ Coding Standards}
 
+Many of the standards in this section are purely stylistic or preferential. Therefore, when isolated as individual rules or guidelines, they do not significantly impact the functionality or reliability of the code. Despite this, my personal experience has shown that a code base which adheres to consistent stylistic formatting is far more readable than one which uses various styles. This inherently leads to a code base which is easier to work with, understand, maintain, and expand. Thus, these stylistic guidelines have potential to push a project to a higher quality and reliability strictly from being more consistent in trivial matters. For this reason, I am outlining me stylistic preferences here to be used throughout the \idx{MIA} project. 
+
+
 \subsection{Formatting and Style}
+
 \begin{itemize}\itemsep0em
-    \item \textbf{Indentation}: Use \texttt{spaces} with a width of \texttt{4} spaces.
-    \item \textbf{Line length}: Limit lines to \texttt{120} to \texttt{140} characters. Traditionally, less characters are used. However, with newer computers and displays, this rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time wth an additional file-browser window. The range in values comes from a standput of developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the, range allows the developer to use discretion based on the code itself. 
-    \item \textbf{Brace placement}: \texttt{Allman}. Although the original MIA project was in K\&R format, I've chosen to move to \texttt{Allman} as of version 2. The benefits of Allman include the following:    
+    \item \idx{Indentation}: Use \texttt{spaces} with a width of \texttt{4} spaces.
+    \item \idx{Line length}: Limit lines to \texttt{120} to \texttt{140} maximum characters. Traditionally, less characters are used. However, with newer computers and displays, less rarely makes sense. With a \texttt{120} to \texttt{140} width, most modern-sized computer displays can display 2-3 columns/files of code at a time with an additional file-browser window opened comfortably. The range in values comes from a perspective of allowing some developer discretion. Often times, a hard cap at a set line length can produce some fairly unappealing code and less readable, where the variable range allows the developer to use discretion based on the code itself. 
+    \item \idx{Brace placement}: \idx{Allman}. Although the original MIA project was in \idx{K\&R} format, I've chosen to move to \idx{Allman} as of version 2. The benefits of Allman include the following:    
     \begin{itemize}\itemsep0em
         \item Aligned Blocks: With Allman, readability is often enhanced because you do not have to visually search the end of variable-length lines for brackets or rely on tabs. Allman can help reduce cognitive load when scanning code. All brackets are at the start of the line and aligned with the ending bracket. 
         \item Clearly Separated Blocks: This style makes each block of code more clearly separated.
-        \item Commenting: The initial bracket of a code block can serve as a perfect spot for a brief comment related to the block itself. 
+        \item Commenting: The initial bracket of a code block can serve as a perfect spot for a brief comment related to the block itself. This is something I've found occasionally useful and easy to visually parse.
     \end{itemize}
     \item \textbf{Naming conventions}:
     \begin{itemize}\itemsep0em
-        \item Classes and structs: \texttt{PascalCase}
-        \item Enums and typedefs: \texttt{PascalCase}
-        \item Functions and methods: \texttt{camelCase}
+        \item Classes and structs: \idx{PascalCase}
+        \item Enums and typedefs: \idx{PascalCase}
+        \item Functions and methods: \idx{camelCase}
         \begin{itemize}
             \item Method names should be short, simple, and informative and accurately match the intent of the method implementation.
-            \item All methods which are used to determine if some state is true or false should begin with \texttt{is} (e.g., \texttt{bool isValidData(Data\& data)}).
-            \item All methods which are used to access or return private member variables should begin with \texttt{get} (e.g., \texttt{Data\& getDataReference()}).
-            \item All methods which are used to set private member variables should begin with \texttt{set} (e.g., \texttt{void setDataReference(Data\& data)}).
+            \item All methods which are used to determine if some state is true or false should begin with \texttt{is} (e.g., \texttt{bool isValidData(Data\& data)}) or similar verbiage. Some exceptions to this may be appropriate (e.g., \texttt{bool canBeUpdated(Data\& data)} may be preferred over \texttt{bool isUpdatable(Data\& data)}), but the core principal here (and with the other naming conventions) is that method names should immediately convey purpose.
+            \item All methods which are used to access or return private member variables should begin with \texttt{get} (e.g., \texttt{Data\& getDataReference()}) or similar verbiage.
+            \item All methods which are used to set private member variables should begin with \texttt{set} (e.g., \texttt{void setDataReference(Data\& data)}) or similar verbiage.
         \end{itemize}
-        \item Variables: \texttt{camelCase}
+        \item Variables: \idx{camelCase}
         \begin{itemize}
             \item Method names should be short, simple, and informative and accurately match the intent of the method implementation.
             \item All variables which represent if some state is true or false should begin with \texttt{is} (e.g., \texttt{bool isLoaded}).
         \end{itemize}
-        \item Constants: \texttt{ALL\_CAPS} 
+        \item Constants: \idx{ALL\_CAPS} 
     \end{itemize}
 \end{itemize}
 
+
+
+
 \subsection{Code Organization and Practices}
+
 \begin{itemize}\itemsep0em
     \item Header files should include include guards or \texttt{\#pragma once}.
     \item \textbf{Header include order}: When a source or header file includes other files, group the includes in a fixed order, separated by blank lines:
@@ -88,14 +96,14 @@ By explicitly handling function return values, the code ensures that errors are 
         \item Third-party library headers (e.g., \texttt{<gtest/gtest.h>}).
         \item Other MIA headers (project headers outside the pairing header).
         \end{enumerate}
-    \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \texttt{std::unique\_ptr} and \texttt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
+    \item Prefer smart pointers over raw pointers where ownership is involved. Smart pointers such as \idxtt{std::unique\_ptr} and \idxtt{std::shared\_ptr} manage memory automatically and help prevent common issues like memory leaks, dangling pointers, and double deletions. They make ownership semantics explicit and integrate with RAII (Resource Acquisition Is Initialization), ensuring that resources are properly released when no longer needed. Raw pointers can still be used for non-owning references, but ownership should be clearly represented through smart pointers to improve code safety and maintainability.    
     \item Avoid using \texttt{using namespace std;} in headers. Placing \texttt{using namespace} directives in headers pollutes the global namespace for any file that includes that header, potentially causing name collisions and ambiguous references. This can lead to subtle and hard-to-debug errors, especially in large codebases or when integrating with third-party libraries. Instead, fully qualify names (i.e., \texttt{std::vector}) in headers to keep dependencies explicit and avoid unintended side effects.
     \item Separate declaration and implementation: use headers (\texttt{.hpp}) for interfaces and source files (\texttt{.cpp}) for implementation.
     \item Prefer forward declarations over includes in headers when only a pointer or reference to a type is needed. Only include full headers when access to the complete type is required.
     \item Where applicable, default fallback values (i.e., 0, "", false) may be returned in lieu of exceptions for non-critical failures, provided this behavior is explicitly documented. This includes all get*() functions for configuration access.
-    \item Exceptions should be used only for unrecoverable errors or contract violations, and custom exceptions (i.e., MIAException) should encapsulate error context where possible.
+    \item Exceptions should be used only for unrecoverable errors or contract violations, and custom exceptions (i.e., \idxtt{MIAException}) should encapsulate error context where possible.
     \item Use Resource acquisition is initialization (RAII) for resource management.
-    \item Use const correctness to express immutability.
+    \item Use \idxtt{const} correctness to express immutability.
     \item Document all public interfaces with Doxygen-style comments.
 \end{itemize}
 
@@ -103,7 +111,10 @@ By explicitly handling function return values, the code ensures that errors are 
 
 \subsection{Virtual Classes, Abstractions, and PIMPL}
 
-Object-oriented abstractions such as virtual classes and the PIMPL (Pointer to Implementation) idiom are powerful tools but must be used judiciously to avoid unnecessary complexity and indirection. Code should prioritize readability and simplicity over overengineering. Clear, straightforward implementations are easier to maintain, debug, and extend than overly abstract or generalized solutions. Avoid premature optimization or architectural complexity unless justified by concrete requirements. The goal is to make the intent and behavior of the code immediately understandable to other developers. When in doubt, favor code that communicates clearly over code that attempts to be overly clever or flexible without a proven need.
+Object-oriented abstractions such as virtual classes and the \idx{PIMPL} (Pointer to Implementation) idiom are powerful tools but must be used judiciously to avoid unnecessary complexity and indirection. Code should prioritize readability and simplicity over over-engineering. Clear, straightforward implementations are easier to maintain, debug, and extend than overly abstract or generalized solutions. Avoid premature optimization or architectural complexity unless justified by concrete requirements. The goal is to make the intent and behavior of the code immediately understandable to other developers. When in doubt, favor code that communicates clearly over code that attempts to be overly clever or flexible without a proven need\footnote{There are many times in programming when a fancy or clever approach to something can provide clear benefits. Those times are not usually the common case, and using fancy and clever techniques for remedial tasks nearly always (in my experience) proves to slow down projects and lead to code that is more of hindrance and roadblock rather than being maintainable.}.
+
+
+
 
 \subsubsection*{Virtual Classes and Abstract Interfaces}
 
@@ -113,18 +124,22 @@ Abstract classes (i.e., classes with pure virtual functions) should be used to d
     \item Code must be testable via mocks or stubs.
     \item A plugin or extensibility mechanism is being designed.
 \end{itemize}
-Avoid over-engineering by introducing interfaces prematurely. When there is no clear need for polymorphism, prefer concrete classes for simplicity and clarity. Overall, free-functions are preferred where applicable.
+Avoid over-engineering by introducing interfaces prematurely. When there is no clear need for polymorphism, prefer concrete classes for simplicity and clarity. Overall, \idx{free-functions} and \idx{composition} are sometimes preferred, though this is very context-dependent.
+
+
+
+
 
 \subsubsection*{PIMPL Idiom}
 
-The PIMPL idiom may be used to encapsulate implementation details and reduce compilation dependencies, particularly for public interfaces that are expected to remain stable while their internals may change. Its use must be justified by the need to isolate dependencies, improve build performance, or enforce ABI stability. The PIMPL (Pointer to Implementation) idiom is used to:
+The \idx{PIMPL} idiom may be used to encapsulate implementation details and reduce compilation dependencies, particularly for public interfaces that are expected to remain stable while their internals may change. Its use must be justified by the need to isolate dependencies, improve build performance, or enforce ABI stability. The PIMPL (Pointer to Implementation) idiom is used to:
 \begin{itemize}\itemsep0em
     \item Hide private data members and internal implementation details.
     \item Reduce build dependencies and improve compilation times.
     \item Achieve binary interface stability across library versions.
 \end{itemize}
 
-PIMPL should only be used when these benefits are specifically needed. It introduces runtime indirection and heap allocation, which may be unnecessary in simpler or performance-sensitive components.
+PIMPL should only be used when these benefits are specifically needed. It introduces runtime indirection and heap allocation, which may be unnecessary in simpler or performance-sensitive components. If misused or overused, this idiom can also obfuscate code by adding unnecessary layers of indirection which make reading and understanding the code structure (as a human) much more time-consuming. An simplified example of the basic PIMPL idiom follows:
 \begin{lstlisting}[style=cppstyle]
 /**
  * @brief A class demonstrating the PIMPL idiom for encapsulation.
@@ -146,7 +161,7 @@ private:
     std::unique_ptr<Data> data; ///< Pointer to implementation.
 \end{lstlisting}
 
-\paragraph{Usage Guidelines}
+\subsubsection{Summary: Usage Guidelines}
 
 \begin{itemize}\itemsep0em
     \item Use virtual functions only where dynamic behavior is explicitly required.
@@ -155,7 +170,12 @@ private:
     \item Avoid using PIMPL as a default or substitute for proper modular design.
 \end{itemize}
 
-By adhering to these principles, the code remains both flexible and maintainable without incurring the overhead of unnecessary abstraction.
+By adhering to these principles, the code remains flexible and maintainable without incurring unnecessary abstraction and complexity.
+
+
+
+
+
 
 
 
@@ -166,7 +186,7 @@ By adhering to these principles, the code remains both flexible and maintainable
 C++ standard attributes such as \texttt{\textbf{[[deprecated]]}}, \texttt{\textbf{[[maybe\_unused]]}}, and others should be used appropriately to enhance clarity, compiler diagnostics, and maintainability.
 \begin{itemize}\itemsep0em
   \item \textbf{\texttt{[[deprecated]]}} \\
-  Use to mark deprecated interfaces explicitly. Always include an explanatory message:
+  Use to mark \idx{deprecated} interfaces explicitly. Always include an explanatory message:
   \begin{lstlisting}[style=cppstyle]
 [[deprecated("Use newMethod() instead")]]
 void oldMethod();
@@ -186,7 +206,7 @@ Use attribute specifiers only when their intended behavior is part of the API co
 
 \subsubsection*{\texttt{override} and \texttt{final} Usage}
 
-All overridden virtual methods must be explicitly marked with \texttt{override}. Do \textbf{not} use the \texttt{virtual} keyword on the overriding declaration.
+All overridden virtual methods must be explicitly marked with \idxtt{override}. Do \textbf{not} use the \idxtt{virtual} keyword on the overriding declaration.
 \begin{itemize}\itemsep0em
   \item Correct:
   \begin{lstlisting}[style=cppstyle]
@@ -202,6 +222,14 @@ Use \texttt{final} on classes or methods where further subclassing or overriding
 class Logger final { ... };
 void onShutdown() final;
 \end{lstlisting}
+
+
+
+
+
+
+
+
 
 
 \subsection{Comments and Documentation}
@@ -344,7 +372,7 @@ settings.setTimeout(DEFAULT_TIMEOUT);
 
 \subsection{README Files and Higher-Level Documentation}
 
-Each code directory must contain a \texttt{README} file that provides a concise overview of the directory’s purpose. The README should include:
+Each code directory must contain a \idxtt{README} file that provides a concise overview of the directory’s purpose. The README should include:
 \begin{itemize}\itemsep0em
     \item A brief description of the contents of the directory (key files, subfolders).
     \item The role and relationship of these files or components within the larger project.
@@ -385,12 +413,12 @@ This directory contains the standalone apps for the MIA project. Below is a brie
 \section{CMake Standards}
 
 \subsection{Structure and Conventions}
-A clean CMake structure improves build reproducibility and portability. Modern practices enable more maintainable and scalable build definitions. Clear separation of targets and dependencies reduces cross-target pollution.
+A clean \idx{CMake} structure improves build reproducibility and portability. Modern practices enable more maintainable and scalable build definitions. Clear separation of targets and dependencies reduces cross-target pollution.
 \begin{itemize}\itemsep0em
-    \item Use lowercase CMake commands (i.e., \texttt{add\_executable}, \texttt{target\_link\_libraries}).
-    \item Group CMake files logically and modularly using subdirectories and \texttt{add\_subdirectory()}.
+    \item Use lowercase CMake commands (i.e., \idxtt{add\_executable}, \idxtt{target\_link\_libraries}).
+    \item Group CMake files logically and modularly using subdirectories and \idxtt{add\_subdirectory()}.
     \item Use modern CMake features (i.e., target\_include\_directories, target\_compile\_features).
-    \item External dependencies must be managed using \texttt{FetchContent} or \texttt{find\_package}.
+    \item External dependencies should be managed using \idxtt{find\_package}.
     \item Add comments to any blocks of cmake code which function together to perform a particular task. For example:
     \begin{lstlisting}[style=pythonstyle]
 # Create the MIATemplate executable.
@@ -399,6 +427,7 @@ set(MIATemplate_INC MIATemplate.hpp )
 add_executable(MIATemplate ${MIATemplate_SRC} ${MIATemplate_INC} )
 target_link_libraries(MIATemplate PRIVATE Core_LIB )
     \end{lstlisting}
+	\item Modules should be added for external dependencies which can be optionally built or contain a larger amount of CMake code so that the code can be clearly isolated by purpose and not dilute the CMake. See \ref{section:cmake_modules} for more details.
 \end{itemize}
 
 
