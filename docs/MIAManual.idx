@@ -420,3 +420,32 @@
 \indexentry{maxNumOfExercises|hyperpage}{63}
 \indexentry{minNumOfExercises|hyperpage}{64}
 \indexentry{maxNumOfExercises|hyperpage}{64}
+\indexentry{MIA|hyperpage}{74}
+\indexentry{Indentation|hyperpage}{74}
+\indexentry{Line length|hyperpage}{74}
+\indexentry{Brace placement|hyperpage}{74}
+\indexentry{Allman|hyperpage}{74}
+\indexentry{K\&R|hyperpage}{74}
+\indexentry{Allman|hyperpage}{74}
+\indexentry{PascalCase|hyperpage}{75}
+\indexentry{PascalCase|hyperpage}{75}
+\indexentry{camelCase|hyperpage}{75}
+\indexentry{camelCase|hyperpage}{75}
+\indexentry{ALL\_CAPS|hyperpage}{75}
+\indexentry{std::unique\_ptr|hyperpage}{75}
+\indexentry{std::shared\_ptr|hyperpage}{75}
+\indexentry{MIAException|hyperpage}{76}
+\indexentry{const|hyperpage}{76}
+\indexentry{PIMPL|hyperpage}{76}
+\indexentry{free-functions|hyperpage}{76}
+\indexentry{composition|hyperpage}{76}
+\indexentry{PIMPL|hyperpage}{76}
+\indexentry{deprecated|hyperpage}{77}
+\indexentry{override|hyperpage}{77}
+\indexentry{virtual|hyperpage}{77}
+\indexentry{README|hyperpage}{80}
+\indexentry{CMake|hyperpage}{81}
+\indexentry{add\_executable|hyperpage}{81}
+\indexentry{target\_link\_libraries|hyperpage}{81}
+\indexentry{add\_subdirectory()|hyperpage}{81}
+\indexentry{find\_package|hyperpage}{81}
