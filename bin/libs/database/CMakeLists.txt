@@ -8,4 +8,4 @@ target_link_libraries( Database_LIB PUBLIC Error_CORE Security_UTIL mysqlcppconn
 target_include_directories( Database_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Add the directory where tests are located.
-add_subdirectory( test ) 
+add_test_dir()

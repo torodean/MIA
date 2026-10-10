@@ -25,4 +25,4 @@ target_link_libraries( maple
 install_app( maple )
 
 # Add test directory.
-add_subdirectory( test )
+add_test_dir()

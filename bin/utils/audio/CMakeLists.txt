@@ -34,4 +34,4 @@ endif()
 target_include_directories(Audio_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add the unit tests for this utility.
-add_subdirectory( test )
+add_test_dir()

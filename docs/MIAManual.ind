@@ -1,0 +1,329 @@
+\begin{theindex}
+
+  \item .githooks, \hyperpage{6}
+  \item \_\_FILE\_\_, \hyperpage{18}
+  \item \_\_LINE\_\_, \hyperpage{18}
+  \item \_\_func\_\_, \hyperpage{14}, \hyperpage{18}, \hyperpage{23}
+  \item \_\_linux\_\_, \hyperpage{7}
+
+  \indexspace
+
+  \item add, \hyperpage{50}
+  \item add\_definiition, \hyperpage{8}
+  \item add\_subdirectory, \hyperpage{10}, \hyperpage{28}
+  \item add\_test, \hyperpage{28}
+  \item add\_test\_dir, \hyperpage{10}, \hyperpage{28}
+  \item AppInterface, \hyperpage{1}, \hyperpage{11}
+  \item Application, \hyperpage{12}
+  \item application framework, \hyperpage{10}
+  \item Applications, \hyperpage{1}, \hyperpage{4}
+  \item apps.cmake, \hyperpage{10}, \hyperpage{28}
+  \item argc, \hyperpage{17}
+  \item argv, \hyperpage{17}
+
+  \indexspace
+
+  \item BackgroundClass, \hyperpage{26}
+  \item BackgroundTask, \hyperpage{25--27}
+  \item Bash, \hyperpage{4}
+  \item Basic, \hyperpage{4}
+  \item bin/, \hyperpage{2}
+  \item BOOL\_OPTION, \hyperpage{16}
+  \item build, \hyperpage{4}, \hyperpage{6, 7}
+  \item build process, \hyperpage{4}
+  \item build.sh, \hyperpage{2}, \hyperpage{4}, \hyperpage{29}
+  \item build/, \hyperpage{3}
+  \item BUILD\_DATABASE\_FEATURES, \hyperpage{10}, \hyperpage{28}
+  \item BUILD\_NLOHMANN\_JSON\_FEATURES, \hyperpage{28}
+  \item BUILD\_PYTHON\_FEATURES, \hyperpage{10}, \hyperpage{27, 28}
+  \item BUILD\_VLC\_FEATURES, \hyperpage{28}
+  \item BUILD\_XDO\_FEATURES, \hyperpage{10}, \hyperpage{28}
+  \item button spam, \hyperpage{50}
+
+  \indexspace
+
+  \item C++20, \hyperpage{1}, \hyperpage{7}, \hyperpage{11}
+  \item CMake, \hyperpage{2}, \hyperpage{6, 7}, \hyperpage{10}, 
+		\hyperpage{19}, \hyperpage{28}
+  \item cmake, \hyperpage{10}
+  \item cmake/database.cmake, \hyperpage{28}
+  \item cmake/nlohmann.cmake, \hyperpage{28}
+  \item cmake/python.cmake, \hyperpage{28}
+  \item cmake/vlc.cmake, \hyperpage{28}
+  \item cmake/xdo.cmake, \hyperpage{28}
+  \item cmakeArgs, \hyperpage{6}
+  \item CMakeLists.txt, \hyperpage{6}, \hyperpage{10}, \hyperpage{28}
+  \item collatz, \hyperpage{51}
+  \item command option, \hyperpage{15}
+  \item command-line, \hyperpage{15}
+  \item command\_parser, \hyperpage{15}, \hyperpage{17}
+  \item CommandOption, \hyperpage{15}, \hyperpage{17}
+  \item commandOptionType, \hyperpage{16}
+  \item commit-msg, \hyperpage{6}
+  \item commitAll.sh, \hyperpage{6}
+  \item compile-time, \hyperpage{2}
+  \item concept, \hyperpage{11}
+  \item concepts, \hyperpage{1}, \hyperpage{11}
+  \item conditionMet, \hyperpage{26}
+  \item Config\_File\_Not\_Set, \hyperpage{17}
+  \item ConfigData, \hyperpage{20, 21}, \hyperpage{23}
+  \item ConfigType, \hyperpage{23}
+  \item configuration, \hyperpage{1, 2}, \hyperpage{20}
+  \item Configurator, \hyperpage{20}
+  \item Configure, \hyperpage{4}
+  \item constants, \hyperpage{2}, \hyperpage{19}
+  \item Constants.hpp, \hyperpage{11}
+  \item constants.hpp, \hyperpage{7}
+  \item constants::ConfigType, \hyperpage{20}
+  \item Constants\_LIB, \hyperpage{9}
+  \item Core, \hyperpage{1}, \hyperpage{4}
+  \item core framework, \hyperpage{1, 2}
+  \item cross-platform, \hyperpage{2}, \hyperpage{7}
+
+  \indexspace
+
+  \item d0s1, \hyperpage{51}
+  \item d0s2, \hyperpage{51}
+  \item database.cmake, \hyperpage{10}
+  \item Debug level, \hyperpage{13}
+  \item debugLevel, \hyperpage{13}
+  \item dependencies, \hyperpage{4}
+  \item digitsum, \hyperpage{51}
+  \item docs/, \hyperpage{2}
+  \item DOUBLE\_OPTION, \hyperpage{16}
+  \item doWhenStopped(), \hyperpage{26}
+
+  \indexspace
+
+  \item error code, \hyperpage{17}
+  \item error codes, \hyperpage{17}
+  \item error handling, \hyperpage{1, 2}, \hyperpage{17}
+  \item error info, \hyperpage{51}
+  \item error::ErrorCodes, \hyperpage{18, 19}
+  \item ErrorCode, \hyperpage{2}, \hyperpage{17, 18}
+  \item ErrorDescriptions.hpp, \hyperpage{17}
+  \item errorInfo(), \hyperpage{18}
+  \item errorInfoRun(), \hyperpage{18}
+  \item exit, \hyperpage{51}
+  \item eyedropper, \hyperpage{51}
+
+  \indexspace
+
+  \item factors, \hyperpage{51}
+  \item FAILURE, \hyperpage{25}
+  \item FATAL\_File\_Not\_Found, \hyperpage{17}
+  \item Feature\_In\_Dev, \hyperpage{17}
+  \item FILE\_NOT\_FOUND, \hyperpage{25}
+  \item FILES, \hyperpage{10}
+  \item find mouse, \hyperpage{51}
+  \item Framework\_CORE, \hyperpage{7}
+
+  \indexspace
+
+  \item getBool(), \hyperpage{21}
+  \item getCode(), \hyperpage{19}
+  \item getContext(), \hyperpage{13}
+  \item getDebugLevel(), \hyperpage{13}
+  \item getdebugLevel(), \hyperpage{14}
+  \item getDefaultConfigDirToUse(), \hyperpage{20}
+  \item getDouble(), \hyperpage{21}
+  \item getErrorDescription(), \hyperpage{19}
+  \item getException(), \hyperpage{27}
+  \item getExecutableDir(), \hyperpage{20}
+  \item getHelp(), \hyperpage{16}
+  \item getInt(), \hyperpage{21}
+  \item getopts, \hyperpage{5}
+  \item getString(), \hyperpage{21}
+  \item getVerboseMode(), \hyperpage{13, 14}
+  \item git hooks, \hyperpage{6}
+  \item Google Test framework, \hyperpage{28}
+
+  \indexspace
+
+  \item hasFailed(), \hyperpage{27}
+  \item help, \hyperpage{50}
+  \item Help flag, \hyperpage{13}
+
+  \indexspace
+
+  \item initialization, \hyperpage{10}
+  \item initialize, \hyperpage{1}, \hyperpage{11, 12}
+  \item initialize(), \hyperpage{13, 14}, \hyperpage{22}
+  \item Install, \hyperpage{4}
+  \item install, \hyperpage{10}
+  \item install\_app, \hyperpage{9, 10}
+  \item INSTALL\_LOCATION, \hyperpage{20}
+  \item install\_python\_files, \hyperpage{10}, \hyperpage{27}
+  \item Installation, \hyperpage{6}
+  \item INT\_OPTION, \hyperpage{16}
+  \item INVALID\_INPUT, \hyperpage{25}
+  \item IS\_LINUX, \hyperpage{7}
+  \item IS\_WINDOWS, \hyperpage{7}
+  \item isConditionMet(), \hyperpage{26}
+  \item isInstalled(), \hyperpage{20}
+  \item isRunning(), \hyperpage{26}
+
+  \indexspace
+
+  \item JSON, \hyperpage{10}, \hyperpage{28}
+
+  \indexspace
+
+  \item KeyValueData, \hyperpage{20, 21}
+
+  \indexspace
+
+  \item lattice, \hyperpage{52}
+  \item Libraries, \hyperpage{1}, \hyperpage{4}
+  \item libraries, \hyperpage{9}
+  \item libxdo, \hyperpage{28}
+  \item life cycle, \hyperpage{10}
+  \item Linux, \hyperpage{6--8}, \hyperpage{10}
+  \item log(), \hyperpage{15}
+  \item log(std::string), \hyperpage{13}
+  \item LOG\_METHOD\_CALL(), \hyperpage{15}
+  \item LOG\_METHOD\_CALL(...), \hyperpage{14}
+  \item Logger, \hyperpage{2}, \hyperpage{23}
+  \item logger, \hyperpage{13}
+  \item logger::Logger, \hyperpage{13, 14}
+  \item logging, \hyperpage{1, 2}, \hyperpage{7}, \hyperpage{13}, 
+		\hyperpage{23}
+  \item logToFile, \hyperpage{23}
+
+  \indexspace
+
+  \item macro, \hyperpage{12}
+  \item Macros, \hyperpage{7}
+  \item macros, \hyperpage{2}, \hyperpage{13}
+  \item Make, \hyperpage{6}
+  \item maxNumOfExercises, \hyperpage{63, 64}
+  \item maxNumOfSets, \hyperpage{63}
+  \item MIA, \hyperpage{1, 2}, \hyperpage{4}, \hyperpage{7}, 
+		\hyperpage{12}, \hyperpage{17}, \hyperpage{27}
+  \item MIA\_MAIN, \hyperpage{2}, \hyperpage{12}, \hyperpage{25}
+  \item MIA\_MAIN(AppClass), \hyperpage{12}
+  \item MIA\_THROW, \hyperpage{18}
+  \item MIA\_VERSION, \hyperpage{20}
+  \item MIA\_VERSION\_VAL, \hyperpage{6, 7}, \hyperpage{20}
+  \item MIAApplication, \hyperpage{2}, \hyperpage{12--14}
+  \item MIAApplication.hpp, \hyperpage{12}
+  \item MIAConfig, \hyperpage{2}, \hyperpage{20, 21}, \hyperpage{23}
+  \item MIAException, \hyperpage{2}, \hyperpage{17--19}
+  \item MIAExceptions, \hyperpage{11}
+  \item MIATemplate, \hyperpage{9}
+  \item minNumOfExercises, \hyperpage{63, 64}
+  \item minNumOfSets, \hyperpage{63}
+  \item multiply, \hyperpage{52}
+  \item MySQL, \hyperpage{28}
+
+  \indexspace
+
+  \item Nlohmann, \hyperpage{28}
+  \item nlohmann, \hyperpage{10}
+  \item nlohmann.cmake, \hyperpage{10}
+
+  \indexspace
+
+  \item palindrome, \hyperpage{52}
+  \item paths, \hyperpage{2}, \hyperpage{20}
+  \item paths::getDefaultLogDirToUse(), \hyperpage{23}
+  \item PIMPL, \hyperpage{20}
+  \item prime, \hyperpage{52}
+  \item printHelp(), \hyperpage{13, 14}, \hyperpage{16}
+  \item Python, \hyperpage{27, 28}
+  \item python.cmake, \hyperpage{10}, \hyperpage{27}
+
+  \indexspace
+
+  \item quadratic, \hyperpage{52}
+
+  \indexspace
+
+  \item randomFromFile, \hyperpage{52}
+  \item RawLinesData, \hyperpage{20}
+  \item README, \hyperpage{3}
+  \item release/, \hyperpage{3}
+  \item RELEASE\_BUILD, \hyperpage{8, 9}
+  \item reload(), \hyperpage{22}
+  \item REPO\_CONFIG\_FILE, \hyperpage{20}
+  \item REPO\_CONFIG\_FILE\_DIR, \hyperpage{20}
+  \item REPO\_LOG, \hyperpage{20}
+  \item REPO\_LOG\_DIR, \hyperpage{20}
+  \item REQUIRED, \hyperpage{10}
+  \item resources, \hyperpage{10}, \hyperpage{20}
+  \item resources/, \hyperpage{3}
+  \item rethrowExceptionIfAny(), \hyperpage{27}
+  \item return codes, \hyperpage{11}
+  \item return values, \hyperpage{24}
+  \item ReturnCode, \hyperpage{24, 25}
+  \item returnError(), \hyperpage{18}
+  \item run, \hyperpage{1}, \hyperpage{11, 12}
+  \item run(), \hyperpage{12}, \hyperpage{14}, \hyperpage{24--27}
+  \item runApp, \hyperpage{2}, \hyperpage{11, 12}, \hyperpage{24}, 
+		\hyperpage{27}
+  \item RuntimeContext, \hyperpage{13}, \hyperpage{26}
+
+  \indexspace
+
+  \item scripts/, \hyperpage{2}
+  \item sequencer, \hyperpage{54}
+  \item set, \hyperpage{8}
+  \item setContext(), \hyperpage{26}
+  \item shared\_ptr, \hyperpage{26}
+  \item SKIPPED\_FEATURES, \hyperpage{10}
+  \item start(), \hyperpage{26}
+  \item std::exception, \hyperpage{18}
+  \item std::exception\_ptr, \hyperpage{27}
+  \item std::exit(), \hyperpage{27}
+  \item std::terminate(), \hyperpage{27}
+  \item std::thread, \hyperpage{25}
+  \item stdout, \hyperpage{23}
+  \item stop(), \hyperpage{25, 26}
+  \item stopRequested, \hyperpage{25, 26}
+  \item STRING\_OPTION, \hyperpage{16}
+  \item subtract, \hyperpage{52}
+  \item SUCCESS, \hyperpage{25}
+  \item SYSTEM\_CONFIG\_FILE, \hyperpage{20}
+  \item SYSTEM\_CONFIG\_FILE\_DIR, \hyperpage{20}
+  \item SYSTEM\_INSTALL, \hyperpage{8, 9}
+  \item SYSTEM\_LOG, \hyperpage{20}
+  \item SYSTEM\_LOG\_DIR, \hyperpage{20}
+
+  \indexspace
+
+  \item taskName, \hyperpage{26}
+  \item templates, \hyperpage{11}
+  \item test, \hyperpage{9}, \hyperpage{28}
+  \item Test code, \hyperpage{9}
+  \item TESTING\_ENABLED, \hyperpage{10}, \hyperpage{28}
+  \item toggleCondition(), \hyperpage{26}
+  \item triangle, \hyperpage{52}
+  \item Types\_UTIL, \hyperpage{9}
+
+  \indexspace
+
+  \item Uninstall, \hyperpage{4}
+  \item Unix, \hyperpage{8}
+  \item UNSIGNED\_INT\_OPTION, \hyperpage{16}
+  \item Utilities, \hyperpage{1}, \hyperpage{4}, \hyperpage{9}
+
+  \indexspace
+
+  \item verbose, \hyperpage{14}
+  \item Verbose mode, \hyperpage{13}
+  \item verboseMode, \hyperpage{13}, \hyperpage{26}
+  \item VLC, \hyperpage{28}
+  \item vlc.cmake, \hyperpage{10}
+
+  \indexspace
+
+  \item Windows, \hyperpage{7, 8}
+  \item workout, \hyperpage{61}
+
+  \indexspace
+
+  \item X11, \hyperpage{28}
+  \item xdo.cmake, \hyperpage{10}
+  \item XXdYY, \hyperpage{53}
+
+\end{theindex}

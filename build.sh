@@ -100,7 +100,7 @@ elif [[ "$OSTYPE" == "win32" ]]; then
   # I'm not sure this can happen.
   echo "Installing dependencies for win32 not supported yet."
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
-  # FreeBSD OS
+  # FreeBSD OS.
   echo "Installing dependencies for freebsd not supported yet."
 else
   echo "WARNING: Undetected OS! Please install dependencies manually."
@@ -128,6 +128,11 @@ if [[ $releaseMode ]]; then
   cmakeArgs="$cmakeArgs -DCMAKE_BUILD_TYPE=Release"
 fi
 
+# This needs added before running cmake.
+if [[ $enableTesting ]]; then
+    cmakeArgs="$cmakeArgs -DTESTING_ENABLED=ON"
+fi
+
 echo "...Beginning MIA Build!"
 
 mkdir -p "$rootDirectory"/build
@@ -137,7 +142,7 @@ make -j16 || exit
 
 echo "...MIA Build done!"
 
-#Run tests if specified
+# Run the tests if specified.
 if [[ $enableTesting ]]; then
   echo "Running the MIA tests!"
   cd "$rootDirectory"/build
@@ -150,7 +155,7 @@ if [[ $enableTesting ]]; then
   echo "Finished with tests!"
 fi
 
-# Install MIA if specified
+# Install MIA if specified.
 if [[ -z $installMIA && -n $updateReleaseFiles ]]; then
   echo "...Updating Release files!"
   cmake --install "$rootDirectory"/build
@@ -160,6 +165,3 @@ elif [[ $installMIA ]]; then
   sudo cmake --install "$rootDirectory"/build
   $rootDirectory/scripts/install.sh
 fi
-
-
-

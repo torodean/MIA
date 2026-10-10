@@ -1,4 +1,3 @@
-
 # Create the Types_UTIL
 set(Types_SRC 
     StringUtils.cpp 
@@ -14,4 +13,4 @@ target_link_libraries( Types_UTIL PRIVATE BasicUtilities_CORE )
 target_include_directories(Types_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()

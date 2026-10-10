@@ -10,11 +10,11 @@ This chapter provides an overview of the core features, architectural design, an
 
 The project is organized into layers to manage dependencies clearly:
 \begin{itemize}\itemsep0em
-	\item Basic: These are trivial utility methods needed by the core layer. It has no dependencies on any other layers.
-	\item Core: Contains fundamental types, error codes, and logging interfaces. Depends on the basic layer.
-	\item Utilities: Depend on Core and provide reusable helper functions like file and string operations.
-	\item Libraries: Depend on Core and Utilities, implementing domain-specific logic such as math functions.
-	\item Applications: Depend on Core, Utilities, and Libraries to build and run the final executable.
+	\item \idx{Basic}: These are trivial utility methods needed by the core layer. It has no dependencies on any other layers.
+	\item \idx{Core}: Contains fundamental types, error codes, and logging interfaces. Depends on the basic layer.
+	\item \idx{Utilities}: Depend on Core and provide reusable helper functions like file and string operations.
+	\item \idx{Libraries}: Depend on Core and Utilities, implementing domain-specific logic such as math functions.
+	\item \idx{Applications}: Depend on Core, Utilities, and Libraries to build and run the final executable.
 \end{itemize}
 Modules within the same layer may depend on each other as needed. The key rule is to avoid circular dependencies between layers to maintain clear and manageable dependency flow. This layering ensures a unidirectional dependency flow, promoting modularity and easier maintenance. Details on utility modules can be found in Chapter \ref{chapter:utilities}. Details on domain-specific libraries are in Chapter \ref{chapter:libraries}.
 
@@ -26,23 +26,19 @@ Modules within the same layer may depend on each other as needed. The key rule i
 
 \section{Build Script Overview}\label{section:build_script}
 
-The build process for MIA is orchestrated through a Bash script, \texttt{build.sh}, located in the root directory of the project. This script automates common tasks involved in building, installing, and managing the application.
-
-\subsection{Purpose}
-
-The build script serves as a centralized interface for developers and users to:
+The \idx{build process} for \idx{MIA} is orchestrated through a \idx{Bash} script, \idxtt{build.sh}, located in the root directory of the project. This script automates common tasks involved in building, installing, and managing the application. This script serves as a centralized interface for developers and users to perform the following tasks:
 \begin{itemize}\itemsep0em
-	\item Configure and build the MIA project using CMake.
-	\item Install the application on the system.
-	\item Manage dependencies for supported platforms.
+	\item \idx{Configure} and \idx{build} the MIA project using CMake.
+	\item \idx{Install} the application on the system.
+	\item Manage \idx{dependencies} for supported platforms.
 	\item Generate release builds.
 	\item Clean the build environment for fresh compilation.
-	\item Uninstall installed components.
+	\item \idx{Uninstall} installed components.
 \end{itemize}
 
-\subsection{Key Functionalities}
+\subsection{Key Features}
 
-The script supports a range of command-line options to control its behavior. The help option (\texttt{-h}) can be used to see the various options the script is capable of:
+The script supports a range of command-line options to control its behavior. The help option (\texttt{-h}) can be used to see the various options the script is capable of and should be used to get the most recent options available in the script. A snapshot of what this output will look like follows (this may or may not be outdated):
 \begin{lstlisting}[style=terminalstyle]
 $ ./build.sh -h
 
@@ -65,7 +61,7 @@ This build script is continually evolving and new options are added.
 
 \subsubsection{Adding New Build Script Options}
 
-To add a new option to the build script, a few things need considered. First, options must be unique. Each option should contain a short option argument (i.e. \inlinecode{-v, -h, -d}) as well as a description. These new options need added to the \texttt{usage} function and the \texttt{getopts} loop.
+To add a new option to the build script, a few things need considered. First, options must be unique. Each option should contain a short option argument (i.e. \inlinecode{-v, -h, -d}) as well as a description. These new options need added to the \texttt{usage} function and the \idxtt{getopts} loop.
 \begin{lstlisting}[style=shellstyle]
 usage() # Create the usage output.
 {
@@ -86,23 +82,22 @@ while getopts "hCvDIfRU" opt; do # Add the flag to the list here.
   esac
 done
 \end{lstlisting}
-The flag actions should be added to the getopts list (as seen above). These actions are typically setting a variable to store that the flag is used, then called later in the script. But functions or lists of other variables can be added here too.
+The flag actions should be added to the \texttt{getopts} list (as seen above). These actions are typically setting a variable to store that the flag is used, then called later in the script. But functions or lists of other variables can be added here too.
 
 \subsection{Platform Support}
 
-The script contains conditional logic to perform platform-specific setup, with support primarily targeted at Linux environments. At the time of writing this, dependency installation scripts are stubbed for other platforms (e.g., macOS, Windows) but are not fully implemented.
+The script contains conditional logic to perform platform-specific setup, with support primarily targeted at \idx{Linux} environments. At the time of writing this, dependency installation scripts are stubbed for other platforms (e.g., macOS, Windows) but are not fully implemented.
 
 \subsection{CMake Integration}
 
-The build is managed via CMake, which is invoked with appropriate flags based on script options. A separate \texttt{build} directory is used to isolate generated files, and Make is used to compile the project with support for parallel jobs. See section \ref{section:cmake_setup} for more details. The build script handles adding flags to the CMake configuration via the \texttt{cmakeArgs}. To add a flag to be used during the CMake build, add the appropriate flag to the \texttt{cmakeArgs} via the following:
+The build is managed via \idx{CMake}, which is invoked with appropriate flags based on script options. A separate \idxtt{build} directory is used to isolate generated files, and \idx{Make} is used to compile the project with support for parallel jobs. See section \ref{section:cmake_setup} for more details. The build script handles adding flags to the CMake configuration via the \idxtt{cmakeArgs}. To add a flag to be used during the CMake build, add the appropriate flag to the \texttt{cmakeArgs} via the following:
 \begin{lstlisting}[style=shellstyle]
 cmakeArgs = "$cmakeArgs -DNEW_FLAG_HERE"
 \end{lstlisting}
 
 \subsection{Installation and Uninstallation}
 
-Installation is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstalling is handled early in the script flow via a dedicated script and bypasses other operations. Although installation is handled via CMake, there are also separate install and uninstall scripts which are located in the scripts folder. These are setup to be called during the build script and are meant to implement additional install or uninstall steps. these are called via the following
-
+\idx{Installation} is optionally triggered using \texttt{cmake --install} followed by a custom installation script. Uninstalling is handled early in the script flow via a dedicated script and bypasses other operations. Although installation is handled via CMake, there are also separate install and uninstall scripts which are located in the scripts folder. These are setup to be called during the build script and are meant to implement additional install or uninstall steps. these are called via the following:
 \begin{lstlisting}[style=shellstyle]
 $rootDirectory/scripts/install.sh
 $rootDirectory/scripts/uninstall.sh
@@ -116,7 +111,7 @@ $rootDirectory/scripts/uninstall.sh
 
 \section{Git Hooks}\label{section:git_hooks}
 
-The repository includes git hooks in the \texttt{.githooks/} directory at the top level. Git only reads hooks from \texttt{.git/hooks} by default, so the repository path is activated by pointing \texttt{core.hooksPath} at the folder, which \texttt{scripts/setup.sh} does automatically. After cloning (or if the setup script is not run), enable the hooks manually with:
+The repository includes \idx{git hooks} in the \idxtt{.githooks} directory at the top level. Git only reads hooks from \texttt{.git/hooks} by default, so the repository path is activated by pointing \texttt{core.hooksPath} at the folder, which \texttt{scripts/setup.sh} does automatically. After cloning (or if the setup script is not run), enable the hooks manually with:
 \begin{lstlisting}[style=shellstyle]
 git config core.hooksPath .githooks
 \end{lstlisting}
@@ -124,11 +119,11 @@ The setting is stored per-clone, so it needs re-running once per repository chec
 
 \subsection{The commit-msg Hook}
 
-The \texttt{commit-msg} hook runs after a commit message is entered and before the commit is created. When a commit changes \texttt{MIA\_VERSION\_VAL} in the top-level \texttt{CMakeLists.txt}, the hook prefixes the commit message with the new version in \texttt{[vX.YYY]} form:
+The \idxtt{commit-msg} hook runs after a commit message is entered and before the commit is created. When a commit changes \idxtt{MIA\_VERSION\_VAL} in the top-level \idxtt{CMakeLists.txt}, the hook prefixes the commit message with the new version in \texttt{[vX.YYY]} form:
 \begin{lstlisting}[style=terminalstyle]
 [v2.099] Adding a new feature to the sequencer.
 \end{lstlisting}
-Commits which do not change the version are left untouched, and a message which already carries the version prefix is not stamped twice. Because \texttt{commitAll.sh} increments the version before committing, version bump commits made through that script are stamped automatically.
+Commits which do not change the version are left untouched, and a message which already carries the version prefix is not stamped twice. Because \idxtt{commitAll.sh} increments the version before committing, version bump commits made through that script are stamped automatically.
 
 The prefix makes version bumps identifiable in the commit history and in changelog tooling which reads commit messages:
 \begin{lstlisting}[style=terminalstyle]
@@ -145,10 +140,10 @@ $ git log --grep="\[v"
 \section{C++ Macros}\label{section:cpp_macros}
 
 
-Macros are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve the ability to debug. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
+\idx{Macros} are used sparingly within the framework, only when necessary to achieve concise and consistent code; whenever possible, inline functions or templates are preferred to maintain type safety and improve the ability to debug. Macros are employed within the application framework to provide concise, reusable code snippets that simplify common tasks and improve maintainability. They allow:
 \begin{itemize}\itemsep0em
     \item \textbf{Code Reusability:} Encapsulate repetitive code patterns, reducing duplication and the chance for errors.
-    \item \textbf{Consistent Behavior:} Enforce standardized procedures (e.g., logging conventions) across multiple classes and methods.
+    \item \textbf{Consistent Behavior:} Enforce standardized procedures (e.g., \idx{logging} conventions) across multiple classes and methods.
     \item \textbf{Ease of Use:} Provide simple interfaces for complex operations, enabling developers to invoke functionality with minimal syntax.
     \item \textbf{Conditional Logic:} Enable compile-time or runtime conditional behavior without adding verbose control flow code in the method body.
 \end{itemize}
@@ -171,12 +166,11 @@ While macros can have drawbacks such as reduced type safety and debugging comple
 
 \section{Cross-Platform Support}
 
-The \texttt{MIA} project is designed to be cross-platform, with support for both Windows and Linux systems (and maybe more at later dates). This portability is achieved in part through the use of preprocessor macros that enable platform-specific compilation paths where necessary.
+The \idx{MIA} project is designed to be \idx{cross-platform}, with support for both \idx{Windows} and \idx{Linux} systems (and maybe more at later dates). This portability is achieved in part through the use of preprocessor macros that enable platform-specific compilation paths where necessary.
 
-A key component of this system is the use of centralized platform detection macros defined in the \texttt{constants.hpp} file, which is included in the \texttt{Framework\_CORE} CMake library. These macros simplify platform checks throughout the codebase by abstracting away verbose compiler-defined flags. This code (which will look something like the example below) defines platform-specific macros, \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX}, based on standard compiler-defined macros. The purpose is to centralize platform detection logic in one place for easier maintenance and extension when supporting additional platforms.
+A key component of this system is the use of centralized platform detection macros defined in the \idxtt{constants.hpp} file, which is included in the \idxtt{Framework\_CORE} CMake library. These macros simplify platform checks throughout the codebase by abstracting away verbose compiler-defined flags. This code (which will look something like the example below) defines platform-specific macros, \idxtt{IS\_WINDOWS} and \idxtt{IS\_LINUX}, based on standard compiler-defined macros. The purpose is to centralize platform detection logic in one place for easier maintenance and extension when supporting additional platforms.
 
-By defining \texttt{IS\_WINDOWS} when any common Windows-related macros are detected, and \texttt{IS\_LINUX} when the Linux macro \texttt{\_\_linux\_\_} is detected, the code enables simpler conditional compilation. Developers can then write platform-specific code using straightforward checks like \texttt{\#ifdef IS\_WINDOWS} or \texttt{\#if defined(IS\_LINUX)} rather than repeating complex or lengthy preprocessor conditionals throughout the codebase.
-
+By defining \idxtt{IS\_WINDOWS} when any common Windows-related macros are detected, and \idxtt{IS\_LINUX} when the Linux macro \idxtt{\_\_linux\_\_} is detected, the code enables simpler conditional compilation. Developers can then write platform-specific code using straightforward checks like \texttt{\#ifdef IS\_WINDOWS} or \texttt{\#if defined(IS\_LINUX)} rather than repeating complex or lengthy preprocessor conditionals throughout the codebase.
 \begin{lstlisting}[style=cppstyle]
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 	#define IS_WINDOWS
@@ -184,8 +178,7 @@ By defining \texttt{IS\_WINDOWS} when any common Windows-related macros are dete
 	#define IS_LINUX
 #endif
 \end{lstlisting}
-
-By defining \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX} in a single, shared header, platform-specific logic in the rest of the code can be expressed clearly and concisely using \texttt{\#ifdef} or \texttt{\#if defined(...)} blocks.
+By defining \idxtt{IS\_WINDOWS} and \idxtt{IS\_LINUX} in a single, shared header, platform-specific logic in the rest of the code can be expressed clearly and concisely using \texttt{\#ifdef} or \texttt{\#if defined(...)} blocks.
 
 
 
@@ -203,18 +196,18 @@ By defining \texttt{IS\_WINDOWS} and \texttt{IS\_LINUX} in a single, shared head
 
 \section{CMake Setup}\label{section:cmake_setup}
 
-The MIA project utilizes CMake to manage the build configuration, compilation, and installation processes. The setup is designed to be flexible and portable across supported platforms while allowing customization for release or system installation builds.
+The \idx{MIA} project utilizes \idx{CMake} to manage the \idx{build} configuration, compilation, and installation processes. The setup is designed to be flexible and portable across supported platforms while allowing customization for release or system installation builds.
 
 \subsection{Project Definition, Standards and Versioning}
 
-The CMake configuration begins by specifying a minimum required CMake version and defining the project name \texttt{MIA} along with its version. The version is also passed as a preprocessor definition (\texttt{MIA\_VERSION\_VAL}) for use in the code base. At the time of writing this, C++20 is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
+The \idx{CMake} configuration begins by specifying a minimum required CMake version and defining the project name \idx{MIA} along with its version. The version is also passed as a preprocessor definition (\idxtt{MIA\_VERSION\_VAL}) for use in the code base. At the time of writing this, \idx{C++20} is set as the required language standard, and compiler warnings are enabled globally using the \texttt{-Wall} flag. The build directory path is stored in a variable for reference.
 
 \subsection{Build Options}
 
 Two primary options control build behavior:
 \begin{itemize}\itemsep0em
-	\item \texttt{RELEASE\_BUILD}: When enabled, modifies install paths and triggers release-specific build behavior.
-	\item \texttt{SYSTEM\_INSTALL}: When enabled, configures installation paths and behaviors suitable for system-wide deployment.
+	\item \idxtt{RELEASE\_BUILD}: When enabled, modifies install paths and triggers release-specific build behavior.
+	\item \idxtt{SYSTEM\_INSTALL}: When enabled, configures installation paths and behaviors suitable for system-wide deployment.
 	\item NOTE: The two build behaviors are somewhat incompatible and a clean build needs done when switching between them.
 \end{itemize}
 
@@ -222,8 +215,8 @@ Two primary options control build behavior:
 
 Installation paths and default directories for configuration files and logs are set depending on the operating system:
 \begin{itemize}\itemsep0em
-	\item \textbf{Windows:} Uses \texttt{C:/Program Files} for the install and \texttt{C:/ProgramData} for supporting files.
-	\item \textbf{Linux/Unix:} Uses \texttt{/usr/local} for the install, \texttt{/etc} for supporting resource files, and \texttt{/var/log} for logging.
+	\item \textbf{Windows:}\index{Windows} Uses \texttt{C:/Program Files} for the install and \texttt{C:/ProgramData} for supporting files.
+	\item \textbf{Linux/Unix:}\index{Linux}\index{Unix} Uses \texttt{/usr/local} for the install, \texttt{/etc} for supporting resource files, and \texttt{/var/log} for logging.
 	\item Unsupported platforms produce a configuration error.
 \end{itemize}
 The CMake section that contains these configurations will give the exact file paths chosen for the various files. The actual CMake file should be used for gathering the current used paths (this documentation may become out-dated) which will be in a section similar to the following:
@@ -248,7 +241,7 @@ Both system-level and repository-level default paths for configuration and log f
 
 \subsubsection{Defining C++ Accessible CMake Variables}\label{section:cmake_setup_cpp}
 
-First, the value needs defined in the CMake using the \texttt{set} and \texttt{add\_definiition} methods:
+First, the value needs defined in the CMake using the \idxtt{set} and \idxtt{add\_definiition} methods:
 \begin{lstlisting}[style=makestyle]
 # The version of the current MIA code.
 set(MIA_VERSION_VAL "2.001")
@@ -261,14 +254,14 @@ These values can then be accessed within the source C++ code directly via
 // The MIA Version value gathered from CMake.
 inline const std::string MIA_VERSION = MIA_VERSION_VAL;
 \end{lstlisting}
-These values are typically added within the \texttt{Constants\_LIB} files which contains system related MIA constants. 
+These values are typically added within the \idxtt{Constants\_LIB} files which contains system related MIA constants. 
 
 \subsection{Project Structure and Targets}
 
 The project is organized into subdirectories for executables, libraries, resources, and tests:
 
 \begin{itemize}\itemsep0em
-	\item \textbf{Executables:} Targets like \texttt{MIATemplate} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
+	\item \textbf{Executables:} Targets like \idxtt{MIATemplate} are defined with source and header files, linked against core libraries, and have conditional install rules based on build options.
 	\begin{lstlisting}[style=makestyle]
 # Create the MIATemplate executable.
 set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
@@ -284,7 +277,7 @@ if(RELEASE_BUILD)
  install(TARGETS MIATemplate DESTINATION ${RELEASE_INSTALL_LOCATION})
 endif()
 	\end{lstlisting}
-	A custom \texttt{install\_app} CMake function is available to streamline the above checks for the various apps. The function (defined in \texttt{cmake/apps.cmake}) takes the app target name as its argument and installs the target into the system install location when \texttt{SYSTEM\_INSTALL} is enabled, or into the release install location when \texttt{RELEASE\_BUILD} is enabled; if neither option is set, no install rule is created. This allows the above to be simplified to:
+	A custom \idxtt{install\_app} CMake function is available to streamline the above checks for the various apps. The function (defined in \texttt{cmake/apps.cmake}) takes the app target name as its argument and installs the target into the system install location when \idxtt{SYSTEM\_INSTALL} is enabled, or into the release install location when \idxtt{RELEASE\_BUILD} is enabled. If neither option is set, no install rule is created. This allows the above to be simplified to:
 	\begin{lstlisting}[style=makestyle]
 # Create the MIATemplate executable.
 set(MIATemplate_SRC MIATemplate.cpp MIATemplate_main.cpp )
@@ -295,34 +288,36 @@ target_link_libraries(MIATemplate PRIVATE Core_LIB )
 # Install the app.
 install_app( MIATemplate )
 	\end{lstlisting}
-	\item \textbf{Libraries:} Utility libraries such as \texttt{Types\_LIB} are created from source files and expose their include directories for dependent targets. Libraries can link to other internal utilities or libraries.
+	\item \textbf{Libraries and Utilities:} \idx{Utilities} and \idx{libraries} such as \idxtt{Types\_UTIL} are created from source files and expose their include directories for dependent targets. Libraries can link to other internal utilities or libraries.
 	\begin{lstlisting}[style=makestyle]
-# Create the Types_LIB
-set(Types_SRC StringUtils.cpp )
-set(Types_INC StringUtils.hpp )
-add_library(Types_LIB ${Types_SRC} ${Types_INC})
-target_link_libraries( Types_LIB PUBLIC BasicUtilities_LIB )
+# Create the Types_UTIL
+set( Types_SRC StringUtils.cpp CharUtils.cpp )
+set( Types_INC StringUtils.hpp CharUtils.hpp VectorUtils.hpp )
+add_library( Types_UTIL ${Types_SRC} ${Types_INC} )
+target_link_libraries( Types_UTIL PRIVATE BasicUtilities_CORE )
 
 # Expose this library's source directory for #include access by dependent targets
-target_include_directories(Types_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Types_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 	\end{lstlisting}
-	\item \textbf{Tests:} Test code is included via a dedicated subdirectory.
+	\item \textbf{Tests:} \idx{Test code} is included via a dedicated subdirectory (\idxtt{test}). Prefer adding tests via the cmake module helper to automatically handle this inclusion (see section \ref{section:testing_cmake}).
 	\begin{lstlisting}[style=shellstyle]
 # Include the test directory.
 add_subdirectory( test )
-	\end{lstlisting}
-	\item \textbf{Resources:} Static resources are managed in their own subdirectory. These are primarily for configuration files and other resources. These are installed via the \texttt{FILES} Cmake keyword as follows:
-	\begin{lstlisting}[style=makestyle]
-set(MIA_Config_Files
-    MIATemplate.MIA
-	# Other files here...
-)
 
-if(SYSTEM_INSTALL)
+# Prefer adding tests via the cmake module helper.
+add_test_dir()
+	\end{lstlisting}
+	\item \textbf{Resources:} Static \idx{resources} are managed in their own subdirectory. These are primarily for configuration files and other resources. These are installed via the \idxtt{FILES} Cmake keyword as follows:
+	\begin{lstlisting}[style=makestyle]
+set( MIA_Config_Files
+     MIATemplate.MIA
+	 # Other files here... )
+
+if( SYSTEM_INSTALL )
     install(FILES ${MIA_Config_Files} DESTINATION ${DEFAULT_SYSTEM_CONFIG_FILE_DIR})
 endif()
 
-if(RELEASE_BUILD)
+if( RELEASE_BUILD )
     install(FILES ${MIA_Config_Files} DESTINATION ${RELEASE_CONFIG_INSTALL_LOCATION})
 endif()
 	\end{lstlisting}
@@ -330,20 +325,26 @@ endif()
 
 \subsection{Installation Rules}
 
-Conditional install commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags (seen in the above shown CMake blocks). This supports flexible deployment workflows for development, testing, and production release. Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
+Conditional \idx{install} commands allow targets to be installed either to system-wide locations or release-specific directories based on build flags (seen in the above shown CMake blocks). This supports flexible deployment workflows for development, testing, and production release. Overall, the CMake setup provides a structured, modular, and configurable build environment that adapts to different platforms and build scenarios while maintaining centralized control over important variables and paths.
 
 \subsection{CMake Modules}\label{section:cmake_modules}
 
-Reusable CMake logic is broken out into modules in the \texttt{cmake/} folder, which are included by the top-level \texttt{CMakeLists.txt} via \texttt{include( cmake/<module>.cmake )}. This keeps the top-level file focused on project definition, paths, and subdirectories. The current modules are:
+Reusable \idx{CMake} logic is broken out into modules in the \idxtt{cmake} folder, which are included by the top-level \idxtt{CMakeLists.txt} via \texttt{include(cmake/<module>.cmake)}. This keeps the top-level file focused on project definition, paths, and subdirectories. The current modules are:
 
 \begin{itemize}\itemsep0em
-	\item \texttt{apps.cmake} - Defines the \texttt{install\_app} function, which installs app targets into the system install location during a system install, or into the release install location during a release build (see section \ref{section:cmake_setup}).
-	\item \texttt{database.cmake} - Finds MySQL Connector/C++ and sets \texttt{BUILD\_DATABASE\_FEATURES}.
-	\item \texttt{python.cmake} - Finds the Python development libraries, sets \texttt{BUILD\_PYTHON\_FEATURES}, and defines the \texttt{install\_python\_files} function, which installs the given python files into the system python directory during a system install, or into the release python resources directory during a release build.
-	\item \texttt{xdo.cmake} - Finds libxdo and X11 and sets \texttt{BUILD\_XDO\_FEATURES}.
+	\item \idxtt{apps.cmake} - Defines the following functions:
+		\begin{itemize}\itemsep0em
+			\item \idxtt{install\_app} function, which installs app targets into the system install location during a system install, or into the release install location during a release build (see section \ref{section:cmake_setup}).
+			\item \idxtt{add\_test\_dir} function, which wraps CMake's \idxtt{add\_subdirectory} function around a conditional to only add the subdirectory when \idxtt{TESTING\_ENABLED} is \texttt{ON}. See section \ref{section:testing_cmake}.
+		\end{itemize}
+	\item \idxtt{database.cmake} - Finds MySQL Connector/C++ and sets \idxtt{BUILD\_DATABASE\_FEATURES}.
+	\item \idxtt{nlohmann.cmake} - Finds and includes the \idxtt{nlohmann} header file for \idx{JSON} functionality.
+	\item \idxtt{python.cmake} - Finds the Python development libraries, sets \idxtt{BUILD\_PYTHON\_FEATURES}, and defines the \idxtt{install\_python\_files} function, which installs the given python files into the system python directory during a system install, or into the release python resources directory during a release build.
+	\item \idxtt{vlc.cmake} - Find vlc dev libraries which are needed for various audio features on \idx{Linux} systems.
+	\item \idxtt{xdo.cmake} - Finds libxdo and X11 and sets \idxtt{BUILD\_XDO\_FEATURES}.
 \end{itemize}
 
-The feature-detection modules share a common shape: each soft-finds its libraries (no \texttt{REQUIRED}), sets its \texttt{BUILD\_*\_FEATURES} flag accordingly, appends its feature name to the \texttt{SKIPPED\_FEATURES} list when the libraries are not found, and prints a configure-time status message. When adding a new optional dependency, create a module following this pattern, include it from the top-level \texttt{CMakeLists.txt}, and guard the targets which need it with the flag (see section \ref{section:optional_features}).
+The feature-detection modules share a common shape: each soft-finds its libraries (no \idxtt{REQUIRED}), sets its \texttt{BUILD\_*\_FEATURES} flag accordingly, appends its feature name to the \idxtt{SKIPPED\_FEATURES} list when the libraries are not found, and prints a configure-time status message. When adding a new optional dependency, create a module following this pattern, include it from the top-level \idxtt{CMakeLists.txt}, and guard the targets which need it with the flag (see section \ref{section:optional_features}).
 
 
 
@@ -363,7 +364,8 @@ The feature-detection modules share a common shape: each soft-finds its librarie
 \section{Application Framework}\label{section:app_framework}
 
 \subsection{Overview}
-The application framework provides a minimal structure for C++ applications that follow a consistent life cycle. It enforces a standard interface consisting of initialization and execution phases, and offers utilities to streamline application entry point definition. The design leverages C++20 concepts and templates for compile-time enforcement of interface contracts.
+
+The \idx{application framework} provides a minimal structure for C++ applications that follow a consistent \idx{life cycle}. It enforces a standard interface consisting of \idx{initialization} and execution phases, and offers utilities to streamline application entry point definition. The design leverages \idx{C++20} \idx{concepts} and \idx{templates} for compile-time enforcement of interface contracts.
 
 \subsection{Life Cycle Model}
 Applications using this framework must implement the following life cycle methods:
@@ -371,12 +373,11 @@ Applications using this framework must implement the following life cycle method
 	\item \texttt{void initialize(int argc, char** argv)} \\
 	Performs startup logic, such as argument parsing and resource allocation.
 	\item \texttt{int run()} \\
-	Contains the main execution logic of the application. The return value is propagated as the process exit code. This value should be chosen from one of the valid return codes defined in the \texttt{Constants.hpp} file (see section \ref{section:return_codes}).
+	Contains the main execution logic of the application. The return value is propagated as the process exit code. This value should be chosen from one of the valid \idx{return codes} defined in the \idxtt{Constants.hpp} file (see section \ref{section:return_codes}).
 \end{itemize}
 
 \subsection{Interface Enforcement}
-The framework uses a C++20 concept, \texttt{AppInterface}, to statically constrain application types. This ensures that any type passed to the launcher function conforms to the expected interface, eliminating runtime errors due to missing methods. Other types can be added to this interface if they are in the future and should conform to the same format as the currently existing ones. 
-
+The framework uses a \idx{C++20} \idx{concept}, \idxtt{AppInterface}, to statically constrain application types. This ensures that any type passed to the launcher function conforms to the expected interface, eliminating runtime errors due to missing methods. Other types can be added to this interface if they are in the future and should conform to the same format as the currently existing ones. 
 \begin{lstlisting}[style=cppstyle]
 template<typename App>
 concept AppInterface = requires(App app, int argc, char** argv) 
@@ -387,12 +388,13 @@ concept AppInterface = requires(App app, int argc, char** argv)
 \end{lstlisting}
 
 \subsection{Application Launch}
-Applications are launched using the \texttt{runApp} template function:
+
+Applications are launched using the \idxtt{runApp} template function:
 \begin{itemize}\itemsep0em
-	\item Accepts any type satisfying \texttt{AppInterface}.
-	\item Calls \texttt{initialize} followed by \texttt{run}, in that order.
-	\item Returns the result of \texttt{run} as the application's exit code.
-	\item Catches any MIAExceptions thrown in the application and adjusts the return code accordingly.
+	\item Accepts any type satisfying \idxtt{AppInterface}.
+	\item Calls \idxtt{initialize} followed by \idxtt{run}, in that order.
+	\item Returns the result of \idxtt{run} as the application's exit code.
+	\item Catches any \idxtt{MIAExceptions} thrown in the application and adjusts the return code accordingly.
 	\item Other method calls can be added in this sequence if they are needed in the future.
 \end{itemize}
 \begin{lstlisting}[style=cppstyle]
@@ -414,9 +416,9 @@ int runApp(int argc, char** argv)
 \end{lstlisting}
 
 \subsection{Entry Point Definition}
-To reduce boilerplate (code needing to be implemented by the end user) and unify application entry points, the framework provides an application macro entry point:
+To reduce boilerplate (code needing to be implemented by the end user) and unify application entry points, the framework provides an application \idx{macro} entry point:
 \begin{itemize}\itemsep0em
-	\item \texttt{MIA\_MAIN(AppClass)} defines a \texttt{main()} function that delegates to \texttt{runApp<AppClass>}.
+	\item \idxtt{MIA\_MAIN(AppClass)} defines a \texttt{main()} function that delegates to \texttt{runApp<AppClass>}\index{runApp}.
 	\item This enables consistent startup across applications while preserving type safety and clarity.
 \end{itemize}
 \begin{lstlisting}[style=cppstyle]
@@ -437,8 +439,8 @@ MIA_MAIN(MIATemplate)
 \end{lstlisting}
 Some tips and considerations follow:
 \begin{enumerate}
-	\item Define an application class that implements the required \texttt{initialize} and \texttt{run} methods.
-	\item Use \texttt{MIA\_MAIN(YourAppClass);} in a translation unit to define the application entry point.
+	\item Define an application class that implements the required \idxtt{initialize} and \idxtt{run} methods.
+	\item Use \texttt{MIA\_MAIN(YourAppClass);}\index{MIA\_MAIN} in a translation unit to define the application entry point.
 	\item Avoid manual \texttt{main()} definitions to preserve uniform life-cycle management.
 \end{enumerate}
 
@@ -460,10 +462,10 @@ Some tips and considerations follow:
 
 
 
-\section{Base Application Class: \texttt{MIAApplication}}\label{section:base_application}
+\section{Base Application Class: \idxtt{MIAApplication}}\label{section:base_application}
 
 \subsection{Overview and Purpose}
-The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{section:app_framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose), \texttt{-d} (debug level) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \texttt{run()} method. This ensures that the application framework templates and required concepts are enforced.
+The base \idx{MIA} \idx{Application} (see \idxtt{MIAApplication.hpp}) serves as the foundational base class for applications built using the framework (See section \ref{section:app_framework}). It defines a standardized interface for application life cycle methods and provides shared functionality for command-line argument parsing, particularly handling common flags such as \texttt{-v} (verbose), \texttt{-d} (debug level) and \texttt{-h} (help). This class is intended to be sub-classed by MIA applications. It provides default behavior for argument parsing and flag handling, while enforcing the implementation of core logic via a pure virtual \idxtt{run()} method. This ensures that the application framework templates and required concepts are enforced.
 
 \subsection{Initialization and Execution Interface}
 \begin{itemize}\itemsep0em
@@ -478,15 +480,15 @@ The base MIA Application (see \texttt{MIAApplication.hpp}) serves as the foundat
 
 \subsection{Flag Handling}
 \begin{itemize}\itemsep0em
-	\item Verbose mode is handled internally and can be queried via \texttt{getVerboseMode()}.
-	\item Debug level is handled internally and can be queried via \texttt{getDebugLevel()}.
-	\item Help flag status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded printHelp() method, print the help message, then exit the application.)
-	\item \texttt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
-	\item A \texttt{logger::Logger logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \texttt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \texttt{log(string)} method, which automatically handles verbose handling. The base \texttt{initialize()} also sets the logger's application name to the executable name, so log lines are tagged with \texttt{[executableName]} automatically. See section \ref{section:logging_Framework} for more details.
+	\item \idx{Verbose mode} is handled internally and can be queried via \idxtt{getVerboseMode()}.
+	\item \idx{Debug level} is handled internally and can be queried via \idxtt{getDebugLevel()}.
+	\item \idx{Help flag} status is stored and can be utilized to trigger usage messages. When the help flag is specified, an application is automatically set to print the potentially-overloaded \idxtt{printHelp()} method, print the help message, then exit the application.)
+	\item \idxtt{printHelp()} provides a virtual method to emit shared help information; it can be extended or overridden by subclasses. Derived classes should override this method to extend help output to be app specific but should still invoke the base implementation to preserve base command help options.
+	\item A \idxtt{logger::Logger} object is created with the optional \texttt{--logfile} flag setting a custom log file. This allows for easy logging by applications. This depends on application and user permissions in the case where the file path does not exist. The \idxtt{logger} is stored as a private data member and meant to be hidden from the end-user. The logging functionality should be called via a \idxtt{log(std::string)} method, which automatically handles verbose handling. The base \idxtt{initialize()} also sets the logger's application name to the executable name, so log lines are tagged with \texttt{[executableName]} automatically. See section \ref{section:logging_Framework} for more details.
 \end{itemize}
 
 \subsection{Runtime Context}
-\textbf{RuntimeContext} is a struct designed to encapsulate shared runtime configuration and services used across application components. It holds common data such as a global \texttt{logger} instance for consistent logging, a \texttt{verboseMode} flag to control verbose output, and a \texttt{debugLevel} indicating the debug verbosity. This context struct is intended to be passed by reference or pointer to subsystems and utilities that require uniform access to these application-wide settings during execution.
+\idxtt{RuntimeContext} is a struct designed to encapsulate shared runtime configuration and services used across application components. It holds common data such as a global \idxtt{logger} instance for consistent logging, a \idxtt{verboseMode} flag to control verbose output, and a \idxtt{debugLevel} indicating the debug verbosity. This context struct is intended to be passed by reference or pointer to subsystems and utilities that require uniform access to these application-wide settings during execution.
 \begin{lstlisting}[style=cppstyle]
 struct RuntimeContext
 {
@@ -495,7 +497,7 @@ struct RuntimeContext
 	unsigned int debugLevel{0}; // Stores the debuglevel.
 };
 \end{lstlisting}
-The \texttt{MIAApplication} class provides a \texttt{getContext()} method which returns a pointer to this context object which can be used by other classes. If another class desires the information from context, it should store a pointer to the context object of the application using something similar to the below:
+The \idxtt{MIAApplication} class provides a \idxtt{getContext()} method which returns a pointer to this context object which can be used by other classes. If another class desires the information from context, it should store a pointer to the context object of the application using something similar to the below:
 \begin{lstlisting}[style=cppstyle]
 void setContext(const RuntimeContext& ctx) 
 { context = &ctx; }
@@ -515,23 +517,23 @@ const RuntimeContext* context{nullptr};
 \end{itemize}
 
 \subsection{Logging Macros}
-To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable macros for standardized logging. These macros improve traceability during debugging, especially when verbose mode is enabled.
+To promote consistency and reduce boilerplate in logging method entry points, the application framework defines reusable \idx{macros} for standardized \idx{logging}. These macros improve traceability during debugging, especially when verbose mode is enabled.
 \begin{itemize}\itemsep0em
-    \item \texttt{LOG\_METHOD\_CALL(...)} logs the name of the calling method when it is entered. It uses the internal logger and respects the verbose mode flag. Optional parameters can be entered which allow the caller to specify a string of parameters or context data to include in the log output.
+    \item \idxtt{LOG\_METHOD\_CALL(...)} logs the name of the calling method when it is entered. It uses the internal logger and respects the \idx{verbose} mode flag. Optional parameters can be entered which allow the caller to specify a string of parameters or context data to include in the log output.
 \end{itemize}
-These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \texttt{\_\_func\_\_} identifier for method name capture and rely on the internal \texttt{logger::Logger} instance.
+These macros are designed for use at the beginning of methods to ensure clear trace logging with minimal code overhead. They automatically utilize the \idxtt{\_\_func\_\_} identifier for method name capture and rely on the internal \idxtt{logger::Logger} instance.
 
 
 \subsection{Usage Guidelines}
 An example application exists in \texttt{bin/apps/template} which demonstrates how the base application class is used.
 \begin{enumerate}
-	\item Inherit from \texttt{MIAApplication}.
+	\item Inherit from \idxtt{MIAApplication}.
 	\begin{lstlisting}[style=cppstyle]
 class MIATemplate : public MIAApplication
 { // Class details... }
 	\end{lstlisting}
  
-	\item Override \texttt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling at the start of the application initialize() implementation.
+	\item Override \idxtt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling at the start of the application initialize() implementation.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::initialize(int argc, char* argv[])
 {
@@ -550,7 +552,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 }
 	\end{lstlisting}
  
-	\item Implement the \texttt{run()} method with the application's main logic.
+	\item Implement the \idxtt{run()} method with the application's main logic.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::run()
 {
@@ -558,13 +560,13 @@ void MIATemplate::run()
 }
 	\end{lstlisting}
  
-	\item Use \texttt{getVerboseMode()} to conditionally enable verbose output (if the verbose flag was used when running the application).
+	\item Use \idxtt{getVerboseMode()} to conditionally enable verbose output (if the verbose flag was used when running the application).
 	\begin{lstlisting}[style=cppstyle]
 if (getVerboseMode())
     std::cout << "This is verbose output!" << std::endl;
 	\end{lstlisting}
 
-	\item Use \texttt{getdebugLevel()} to conditionally enable debug output (if the debug flag was used when running the application).
+	\item Use \idxtt{getdebugLevel()} to conditionally enable debug output (if the debug flag was used when running the application).
 \begin{lstlisting}[style=cppstyle]
 if (getdebugLevel() >= 1)
 	std::cout << "This is debug output!" << std::endl;
@@ -572,7 +574,7 @@ if (getdebugLevel() >= 2)
 	std::cout << "This is higher level debug output!" << std::endl;
 \end{lstlisting}
  
-	\item Override \texttt{printHelp()} to add help output specific to the application. Call the base method to retain base application help menu output.
+	\item Override \idxtt{printHelp()} to add help output specific to the application. Call the base method to retain base application help menu output.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::printHelp() const
 {
@@ -584,7 +586,7 @@ void MIATemplate::printHelp() const
 }
 	\end{lstlisting}
  
-	\item Call the \texttt{log()} method in order to log information.
+	\item Call the \idxtt{log()} method in order to log information.
 	\begin{lstlisting}[style=cppstyle]
 log("This is a message to log");
 	\end{lstlisting}
@@ -593,7 +595,7 @@ log("This is a message to log");
 log("This is a message to log", true);
 	\end{lstlisting}
  
-	 \item Use the \texttt{LOG\_METHOD\_CALL()} macro at the start of methods to automatically log method entry points. These macros use the internal logger and respect the verbose mode flag.
+	 \item Use the \idxtt{LOG\_METHOD\_CALL()} macro at the start of methods to automatically log method entry points. These macros use the internal logger and respect the verbose mode flag.
 	\begin{lstlisting}[style=cppstyle]
 void MyClass::compute()
 {
@@ -628,21 +630,21 @@ void MyClass::computeWithInput(int x)
 
 \section{Command Option System}\label{section:cmd_option_system}
 
-The command option system provides structured parsing and management of command-line arguments. It is composed of two main components: the \texttt{CommandOption} class and the \texttt{command\_parser} namespace. Together, they offer a consistent and type-safe interface for defining, parsing, and validating command-line options. An example application exists in \texttt{bin/apps/template} which demonstrates how the command options can be used.
+The \idx{command option} system provides structured parsing and management of \idx{command-line} arguments. It is composed of two main components: the \idxtt{CommandOption} class and the \idxtt{command\_parser} namespace. Together, they offer a consistent and type-safe interface for defining, parsing, and validating command-line options. An example application exists in \texttt{bin/apps/template} which demonstrates how the command options can be used.
 
 \subsection{CommandOption Class}
 
-The \texttt{CommandOption} class encapsulates metadata and behavior for individual command-line arguments. It supports a variety of data types and provides a standardized help display format.
+The \idxtt{CommandOption} class stores metadata and behavior for individual command-line arguments. It supports a variety of data types and provides a standardized help display format.
 
 \subsubsection{Key Features}
 \begin{itemize}\itemsep0em
-	\item \textbf{Supported Types:} These define the type of command option that is expected. Each command option should only have one expected type which is defined by the \texttt{commandOptionType} enum:
+	\item \textbf{Supported Types:} These define the type of command option that is expected. Each command option should only have one expected type which is defined by the \idxtt{commandOptionType} enum:
 	\begin{itemize}\itemsep0em
-		\item \texttt{BOOL\_OPTION}: A single command flag to store true when used (false otherwise).
-		\item \texttt{INT\_OPTION}: A command flag followed by an integer.
-		\item \texttt{UNSIGNED\_INT\_OPTION}: A command flag followed by an unsigned integer.
-		\item \texttt{DOUBLE\_OPTION}: A command flag option followed by a double.
-		\item \texttt{STRING\_OPTION}: A command flag option followed by a string.
+		\item \idxtt{BOOL\_OPTION}: A single command flag to store true when used (false otherwise).
+		\item \idxtt{INT\_OPTION}: A command flag followed by an integer.
+		\item \idxtt{UNSIGNED\_INT\_OPTION}: A command flag followed by an unsigned integer.
+		\item \idxtt{DOUBLE\_OPTION}: A command flag option followed by a double.
+		\item \idxtt{STRING\_OPTION}: A command flag option followed by a string.
 	\end{itemize}
 	
 	\item \textbf{Constructor:} Accepts short/long argument forms, a description, data type, and a \texttt{required} flag. This constructor should be called during construction for the application class. This constructor sets the command option flags, description, and the type; all of which are needed during initialization to enable command option output and parsing.
@@ -655,11 +657,11 @@ MIATemplate::MIATemplate() :
 { };
 	\end{lstlisting}
 	
-	\item \textbf{Help Output:} \texttt{getHelp()} returns a formatted string of the form:
+	\item \textbf{Help Output:} \idxtt{getHelp()} returns a formatted string of the form:
 	\begin{lstlisting}
 -s, --long        Description
 	\end{lstlisting}
-	This method is intended to return a string for each command option in a consistent format in order to make constructing the overridden printHelp() message of the base application class simpler. The getHelp() method can be used in constructing the help message for an app in a way similar to the following:
+	This method is intended to return a string for each command option in a consistent format in order to make constructing the overridden \idxtt{printHelp()} message of the base application class simpler. The \idxtt{getHelp()} method can be used in constructing the help message for an app in a way similar to the following:
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::printHelp() const
 {
@@ -694,12 +696,12 @@ void MIATemplate::initialize(int argc, char* argv[])
 }
 	\end{lstlisting}
 	
-	\item \textbf{Error Handling:} Throws \texttt{MIAException} if a type mismatch occurs or parsing fails.
+	\item \textbf{Error Handling:} Throws \idxtt{MIAException} if a type mismatch occurs or parsing fails.
 \end{itemize}
 
 \subsection{command\_parser Namespace}
 
-This namespace implements the actual logic for extracting typed values from \texttt{argc}/\texttt{argv}. Each function accepts short and long option names, and a reference to the variable where the parsed value should be stored.
+This namespace implements the actual logic for extracting typed values from \idxtt{argc}/\idxtt{argv}. Each function accepts short and long option names, and a reference to the variable where the parsed value should be stored.
 
 \subsubsection{Parsing Functions}
 \begin{itemize}\itemsep0em
@@ -714,9 +716,9 @@ Each parser:
 \begin{itemize}\itemsep0em
 	\item Validates the presence of the option.
 	\item Converts the argument to the correct type.
-	\item Throws a \texttt{MIAException} on error, such as type mismatch or missing required value.
+	\item Throws a \idxtt{MIAException} on error, such as type mismatch or missing required value.
 \end{itemize}
-The \texttt{CommandOption} class acts as a high-level interface, while \texttt{command\_parser} performs the low-level parsing. Together, they ensure robustness, type safety, and consistent error reporting across the command-line interface.
+The \idxtt{CommandOption} class acts as a high-level interface, while \idxtt{command\_parser} performs the low-level parsing. Together, they ensure robustness, type safety, and consistent error reporting across the command-line interface.
 
 
 
@@ -734,26 +736,26 @@ The \texttt{CommandOption} class acts as a high-level interface, while \texttt{c
 \section{Error Handling Framework}\label{section:error_handling}
 
 \subsection{Overview}
-The MIA error handling system provides a structured and consistent mechanism for reporting, categorizing, and propagating errors throughout MIA applications. It is centered around a custom exception type (\texttt{MIAException}) and an extensible set of error codes defined via the \texttt{ErrorCode} enumeration.
+The \idx{MIA} \idx{error handling} system provides a structured and consistent mechanism for reporting, categorizing, and propagating errors throughout MIA applications. It is centered around a custom exception type (\idxtt{MIAException}) and an extensible set of \idx{error codes} defined via the \idxtt{ErrorCode} enumeration.
 
 \subsection{Error Codes}
-The \texttt{ErrorCode} enumeration defines a comprehensive list of standardized error values used throughout the MIA framework. These include:
+The \idxtt{ErrorCode} enumeration defines a comprehensive list of standardized error values used throughout the MIA framework. These include:
 \begin{itemize}\itemsep0em
 	\item System-aligned codes (e.g., \texttt{Access\_denied = 5})
-	\item Application-specific codes starting at 31415 (i.e., \texttt{int}($\pi$ × 10000)), e.g., \texttt{Feature\_In\_Dev}
-	\item Custom fatal and configuration errors (e.g., \texttt{FATAL\_File\_Not\_Found}, \texttt{Config\_File\_Not\_Set})
+	\item Application-specific codes starting at 31415 (i.e., \texttt{int}($\pi$ × 10000)), e.g., \idxtt{Feature\_In\_Dev}
+	\item Custom fatal and configuration errors (e.g., \idxtt{FATAL\_File\_Not\_Found}, \idxtt{Config\_File\_Not\_Set})
 \end{itemize}
 
-Each error code is associated with a human-readable description defined in \texttt{ErrorDescriptions.hpp}, accessible via:
+Each \idx{error code} is associated with a human-readable description defined in \idxtt{ErrorDescriptions.hpp}, accessible via:
 \begin{lstlisting}[style=cppstyle]
 const std::string& getErrorDescription(ErrorCode code);
 \end{lstlisting}
 
 \subsection{MIAException Class}
-The primary mechanism for structured error propagation is the \texttt{MIAException} class:
+The primary mechanism for structured error propagation is the \idxtt{MIAException} class:
 \begin{itemize}\itemsep0em
-	\item Inherits from \texttt{std::exception}.
-	\item Encapsulates an \texttt{ErrorCode} and an optional detailed message.
+	\item Inherits from \idxtt{std::exception}.
+	\item Encapsulates an \idxtt{ErrorCode} and an optional detailed message.
 	\item Supports integration with standard C++ \texttt{try/catch} error handling.
 \end{itemize}
 
@@ -768,15 +770,15 @@ The primary mechanism for structured error propagation is the \texttt{MIAExcepti
 \end{itemize}
 
 \subsection{Deprecated Legacy Functions}
-Several older functions exist but are marked deprecated in favor of \texttt{MIAException}:
+Several older functions exist but are marked deprecated in favor of \idxtt{MIAException}:
 \begin{itemize}\itemsep0em
-	\item \texttt{returnError()}, \texttt{errorInfo()}, and \texttt{errorInfoRun()} are retained for backward compatibility but should be avoided.
+	\item \idxtt{returnError()}, \idxtt{errorInfo()}, and \idxtt{errorInfoRun()} are retained for backward compatibility but should be avoided.
 	\item These are flagged with \texttt{[[deprecated]]} attributes.
 \end{itemize}
 
 
 \subsection{Exception Throwing Macro}
-To streamline exception throwing and ensure consistent inclusion of contextual metadata, the framework defines a macro \texttt{MIA\_THROW(code, ...)}. This macro reduces boilerplate when throwing exceptions while ensuring that the error message includes file, line, and function information. This contextual data is critical for debugging and tracing issues during runtime. Instead of manually constructing exception messages with source location details, developers can use this macro for clarity and convenience:
+To streamline exception throwing and ensure consistent inclusion of contextual metadata, the framework defines a macro \texttt{MIA\_THROW(code, ...)}\index{MIA\_THROW}. This macro reduces boilerplate when throwing exceptions while ensuring that the error message includes file, line, and function information. This contextual data is critical for debugging and tracing issues during runtime. Instead of manually constructing exception messages with source location details, developers can use this macro for clarity and convenience:
 \begin{lstlisting}[style=cppstyle]
 if (!configLoaded)
 {
@@ -785,17 +787,17 @@ if (!configLoaded)
 \end{lstlisting}
 The macro assists with the following features:
 \begin{itemize}\itemsep0em
-    \item Automatically captures and appends \texttt{\_\_FILE\_\_}, \texttt{\_\_LINE\_\_}, and \texttt{\_\_func\_\_}.
+    \item Automatically captures and appends \idxtt{\_\_FILE\_\_}, \idxtt{\_\_LINE\_\_}, and \idxtt{\_\_func\_\_}.
     \item Accepts an optional message string describing the error context.
     \item Safely wrapped in a \texttt{do \{...\} while(0)} block for predictable macro expansion.
 \end{itemize}
-This macro enhances code readability, enforces consistent exception formatting, and aids postmortem analysis or log review. It should be preferred over manual \texttt{MIAException} construction unless special behavior is required.
+This macro enhances code readability, enforces consistent exception formatting, and aids postmortem analysis or log review. It should be preferred over manual \idxtt{MIAException} construction unless special behavior is required.
 
 
 
 \subsection{Usage Guidelines}
 \begin{enumerate}
-	\item Throw \texttt{MIAException} in place of manual error returns. An appropriate error code from \texttt{error::ErrorCodes} should be used. If one does not exist, one should be added.
+	\item Throw \idxtt{MIAException} in place of manual error returns. An appropriate error code from \idxtt{error::ErrorCodes} should be used. If one does not exist, one should be added.
 	\begin{lstlisting}[style=cppstyle]
 if (someErrorCondition) 
 {
@@ -803,7 +805,7 @@ if (someErrorCondition)
     throw error::MIAException(error::ErrorCode::Catastrophic_Failure, err); 
 }
 	\end{lstlisting}
-	\item Throw \texttt{MIAException} using the pre-defined macro if file name, line number, and method name are desired in the output. An appropriate error code from \texttt{error::ErrorCodes} should be used. If one does not exist, one should be added.
+	\item Throw \idxtt{MIAException} using the pre-defined macro if file name, line number, and method name are desired in the output. An appropriate error code from \idxtt{error::ErrorCodes} should be used. If one does not exist, one should be added.
 	\begin{lstlisting}[style=cppstyle]
 if (someErrorCondition) 
 {
@@ -811,8 +813,8 @@ if (someErrorCondition)
     MIA_THROW(error::ErrorCode::Catastrophic_Failure, err); 
 }
 	\end{lstlisting}
-	\item Use \texttt{getErrorDescription()} to log or report known error codes.
-	\item Check exception codes via \texttt{getCode()} in catch blocks to take context-specific actions.
+	\item Use \idxtt{getErrorDescription()} to log or report known error codes.
+	\item Check exception codes via \idxtt{getCode()} in catch blocks to take context-specific actions.
 	\begin{lstlisting}[style=cppstyle]
 catch (const error::MIAException& ex)
 {
@@ -860,41 +862,42 @@ namespace error
 
 \section{Global Constants and Paths}\label{section:global_constants_and_paths}
 
-This section documents the centralized constants and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version. See section \ref{section:cmake_setup_cpp} for some related information on adding global paths and compile time through CMake.
+This section documents the centralized \idx{constants} and path utilities used across the application. These components standardize access to configuration values, resource locations, and metadata such as the application version. See section \ref{section:cmake_setup_cpp} for some related information on adding global paths and compile time through \idx{CMake}.
 
 \subsection{constants Namespace}
 
-The \texttt{constants} namespace provides globally accessible constant values compiled into the application.
+The \idxtt{constants} namespace provides globally accessible constant values compiled into the application.
 
 \subsubsection{Defined Constant}
+
 \begin{itemize}\itemsep0em
-	\item \texttt{MIA\_VERSION}: A \texttt{std::string} representing the version of the MIA application, injected from CMake via the \texttt{MIA\_VERSION\_VAL} macro.
+	\item \idxtt{MIA\_VERSION}: A \texttt{std::string} representing the version of the MIA application, injected from CMake via the \idxtt{MIA\_VERSION\_VAL} macro.
 \end{itemize}
 
 \subsection{paths Namespace}
 
-The \texttt{paths} namespace offers a centralized interface for accessing directory and file paths used by the system. These include installation-specific and repository-relative locations, as well as runtime-determined paths.
+The \idxtt{paths} namespace offers a centralized interface for accessing directory and file paths used by the system. These include installation-specific and repository-relative locations, as well as runtime-determined paths.
 
 \subsubsection{Static Path Constants}
 \begin{itemize}\itemsep0em
-	\item \texttt{SYSTEM\_CONFIG\_FILE\_DIR}, \texttt{SYSTEM\_CONFIG\_FILE}: Paths to the configuration directory and file for system installations.
-	\item \texttt{REPO\_CONFIG\_FILE\_DIR}, \texttt{REPO\_CONFIG\_FILE}: Paths used during development and testing.
-	\item \texttt{SYSTEM\_LOG\_DIR}, \texttt{SYSTEM\_LOG}: Default logging directory and file when installed.
-	\item \texttt{REPO\_LOG\_DIR}, \texttt{REPO\_LOG}: Logging paths for repository use.
-	\item \texttt{INSTALL\_LOCATION}: The root directory of the system installation.
+	\item \idxtt{SYSTEM\_CONFIG\_FILE\_DIR}, \idxtt{SYSTEM\_CONFIG\_FILE}: Paths to the configuration directory and file for system installations.
+	\item \idxtt{REPO\_CONFIG\_FILE\_DIR}, \idxtt{REPO\_CONFIG\_FILE}: Paths used during development and testing.
+	\item \idxtt{SYSTEM\_LOG\_DIR}, \idxtt{SYSTEM\_LOG}: Default logging directory and file when installed.
+	\item \idxtt{REPO\_LOG\_DIR}, \idxtt{REPO\_LOG}: Logging paths for repository use.
+	\item \idxtt{INSTALL\_LOCATION}: The root directory of the system installation.
 \end{itemize}
 
 \subsubsection{Runtime Utilities} \label{section:global_constants_utilities}
 \begin{itemize}\itemsep0em
-	\item \texttt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
+	\item \idxtt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
 	
-	\item \texttt{isInstalled()}: Determines whether the application is running from the system-installed location by comparing the executable path with the install directory.
+	\item \idxtt{isInstalled()}: Determines whether the application is running from the system-installed location by comparing the executable path with the install directory.
 	
-	\item \texttt{getDefaultConfigDirToUse()}: Selects the configuration directory based on execution context:
+	\item \idxtt{getDefaultConfigDirToUse()}: Selects the configuration directory based on execution context:
 	\begin{itemize}\itemsep0em
 		\item If installed: returns \texttt{SYSTEM\_CONFIG\_FILE\_DIR}.
-		\item If a \texttt{resources} folder exists in the executable directory: returns that path.
-		\item Otherwise: returns \texttt{REPO\_CONFIG\_FILE\_DIR}.
+		\item If a \idxtt{resources} folder exists in the executable directory: returns that path.
+		\item Otherwise: returns \idxtt{REPO\_CONFIG\_FILE\_DIR}.
 	\end{itemize}
 	This is particularly useful when determining the full path of a configuration file to use. The application will automatically try to detect which file to use based on its location and which files are available. This allows for portability and flexibility.
 \end{itemize}
@@ -922,23 +925,23 @@ This design ensures portability and flexibility across different environments (d
 
 \section{Configuration System}\label{section:configuration_system}
 
-The \texttt{MIAConfig} class provides a flexible and extensible interface for managing configuration data in the MIA system. It replaces the legacy \texttt{Configurator} from the previous MIA project. The system is designed using the PIMPL (Pointer to IMPLementation) idiom, encapsulating implementation details and allowing for multiple configuration types such as key-value pairs or raw-line formats (with the flexibility to add more later).
+The \idxtt{MIAConfig} class provides a flexible and extensible interface for managing \idx{configuration} data in the MIA system. It replaces the legacy \idxtt{Configurator} from the previous MIA project. The system is designed using the \idx{PIMPL} (Pointer to IMPLementation) idiom, encapsulating implementation details and allowing for multiple configuration types such as key-value pairs or raw-line formats (with the flexibility to add more later).
 
 \subsection{Overview}
 
 \begin{itemize}\itemsep0em
-	\item \texttt{MIAConfig} is the main public interface that users interact with.
-	\item \texttt{ConfigData} is an abstract base class defining the interface for internal configuration storage.
-	\item \texttt{KeyValueData} is a concrete implementation of \texttt{ConfigData::KEY\_VALUE}, supporting standard key-value format parsing and access.
-	\item \texttt{RawLinesData} is a concrete implementation of \texttt{ConfigData::RAW\_LINES}, supporting raw line format parsing and access.
-	\item Configuration types are enumerated via \texttt{constants::ConfigType}.
+	\item \idxtt{MIAConfig} is the main public interface that users interact with.
+	\item \idxtt{ConfigData} is an abstract base class defining the interface for internal configuration storage.
+	\item \idxtt{KeyValueData} is a concrete implementation of \texttt{ConfigData::KEY\_VALUE}, supporting standard key-value format parsing and access.
+	\item \idxtt{RawLinesData} is a concrete implementation of \texttt{ConfigData::RAW\_LINES}, supporting raw line format parsing and access.
+	\item Configuration types are enumerated via \idxtt{constants::ConfigType}.
 \end{itemize}
 
 \subsection{Key Features}
 
 \begin{itemize}\itemsep0em
 	\item Supports setting and retrieving configuration files and types dynamically.
-	\item Provides typed accessors: \texttt{getInt()}, \texttt{getDouble()}, \texttt{getString()}, \texttt{getBool()}, and vector versions.
+	\item Provides typed accessors: \idxtt{getInt()}, \idxtt{getDouble()}, \idxtt{getString()}, \idxtt{getBool()}, and vector versions.
 	\item Supports verbose logging during file parsing for debugging.
 	\item Can return all configuration entries as key-value pairs, raw lines, or other formats depending on the format and implementation details.
 \end{itemize}
@@ -946,15 +949,15 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 \subsection{Class Hierarchy and Responsibilities}
 
 \begin{description}
-	\item[\texttt{MIAConfig}] 
+	\item[\idxtt{MIAConfig}] 
 	\hfill \\
-	Acts as the front-end API. It delegates all data handling to the \texttt{ConfigData} object through a \texttt{std::unique\_ptr}.
+	Acts as the front-end API. It delegates all data handling to the \idxtt{ConfigData} object through a \texttt{std::unique\_ptr}.
 	
-	\item[\texttt{ConfigData}] 
+	\item[\idxtt{ConfigData}] 
 	\hfill \\
 	Abstract base class defining the required interface for data handling implementations. Includes methods for loading, retrieving, and dumping configuration data.
 	
-	\item[\texttt{KeyValueData}]
+	\item[\idxtt{KeyValueData}]
 	\hfill \\
 	Implements \texttt{ConfigData}. Parses files formatted with \texttt{key=value} lines into an internal map and supports type conversion and retrieval.
 	
@@ -971,13 +974,13 @@ The \texttt{MIAConfig} class provides a flexible and extensible interface for ma
 /// The configuration loader for this app.
 config::MIAConfig config;
 	\end{lstlisting}
-	\item Instantiate \texttt{MIAConfig} with a file name and configuration type. This should be done at application construction so that the configuration is available to parse and use during initialization. A default configuration file name can be defined and used at object construction or defined later. The file name can contain a full file path, but if it does not, the MIAConfig class will attempt to identify an appropriate configuration directory during config initialization using the \texttt{paths::getDefaultConfigDirToUse()} method (see section \ref{section:global_constants_utilities} for more details).
+	\item Instantiate \idxtt{MIAConfig} with a file name and configuration type. This should be done at application construction so that the configuration is available to parse and use during initialization. A default configuration file name can be defined and used at object construction or defined later. The file name can contain a full file path, but if it does not, the \idxtt{MIAConfig} class will attempt to identify an appropriate configuration directory during config initialization using the \texttt{paths::getDefaultConfigDirToUse()} method (see section \ref{section:global_constants_utilities} for more details).
 	\begin{lstlisting}[style=cppstyle]
 MIATemplate::MIATemplate() : 
 	config(defaultConfigFile, constants::ConfigType::KEY_VALUE)                      
 { };
 	\end{lstlisting}
-	\textbf{Important:} If you create a private data member within a class for a default configuration file, that variable must be constructed before the \texttt{MIAConfig} object.
+	\textbf{Important:} If you create a private data member within a class for a default configuration file, that variable must be constructed before the \idxtt{MIAConfig} object.
 	\begin{lstlisting}[style=cppstyle]
 // This is the CORRECT usage.
 class WoWFishbot {
@@ -1002,7 +1005,7 @@ private:
 terminate called after throwing an instance of 'std::bad_alloc'
 what():  std::bad_alloc
 	\end{lstlisting}
-	\item Call \texttt{initialize()}, \texttt{reload()} or \texttt{setConfigFileName(..)} during application initialization to parse and load the base configuration file into the appropriate config implementation (this is based on the specified configuration type).
+	\item Call \idxtt{initialize()}, \idxtt{reload()} or \texttt{setConfigFileName(..)} during application initialization to parse and load the base configuration file into the appropriate config implementation (this is based on the specified configuration type).
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::initialize(int argc, char* argv[])
 {
@@ -1057,7 +1060,7 @@ int timeout = cfg.getInt("network.timeout");
 
 \subsection{Extensibility}
 
-New configuration formats can be supported by deriving new classes from \texttt{ConfigData} and implementing the required interface. \texttt{MIAConfig} will manage the polymorphic pointer and delegate appropriately based on the \texttt{ConfigType}.
+New configuration formats can be supported by deriving new classes from \idxtt{ConfigData} and implementing the required interface. \idxtt{MIAConfig} will manage the polymorphic pointer and delegate appropriately based on the \idxtt{ConfigType}.
 
 
 
@@ -1085,30 +1088,30 @@ New configuration formats can be supported by deriving new classes from \texttt{
 \section{Logging Framework}\label{section:logging_Framework}
 
 \subsection{Overview}
-The \texttt{Logger} component provides centralized logging functionality for all MIA applications. It supports simple log message recording to either a default or user-defined log file, with optional verbosity to print messages to \texttt{stdout}.
+The \idxtt{Logger} component provides centralized \idx{logging} functionality for all MIA applications. It supports simple log message recording to either a default or user-defined log file, with optional verbosity to print messages to \idxtt{stdout}.
 
 \subsection{Free Logging Functions}
 Various free-standing functions are provided for lightweight, context-independent logging (see \texttt{bin/core/Logger.hpp} for the full API). The functions are summarized below:
 
 \begin{itemize}\itemsep0em
 	\item \texttt{logToDefaultFile(message, verbose = false)}\\
-	Logs a message to a default log file (typically \texttt{MIA.log}). If \texttt{verbose} is \texttt{true}, the message is also printed to \texttt{stdout}.
+	Logs a message to a default log file (typically \texttt{MIA.log}). If \texttt{verbose} is \texttt{true}, the message is also printed to \idxtt{stdout}.
 
 	\item \texttt{logToDefaultFile(message, tags, verbose = false)}\\
-	Logs a message to the default log file with optional tags, formatted the same way as the \texttt{Logger} class tags overload.
+	Logs a message to the default log file with optional tags, formatted the same way as the \idxtt{Logger} class tags overload.
 
 	\item \texttt{logToFile(message, filename, verbose = false)}\\
 	Logs a message to a specified file. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 
 	\item \texttt{logToFile(message, filename, tags, verbose = false)}\\
-	Logs a message to a specified file with optional tags, formatted the same way as the \texttt{Logger} class tags overload.
+	Logs a message to a specified file with optional tags, formatted the same way as the \idxtt{Logger} class tags overload.
 
  	\item \texttt{void logMethodCallToFile(methodName, filename, params = "", verbose = false)}\\
-  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \texttt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \texttt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). See section \ref{section:base_application} to see how these macros are (and should be) called. If only a filename is provided (not a full path), the path is resolved using \texttt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
+  	Logs a message to the specified file which contains the method name and optional parameters. This method is intended to be called with \idxtt{\_\_func\_\_} as the methodName from some other method call in order to track and log that method entry. This message is somewhat redundant alongside \idxtt{logToFile}, though it's formatted specifically to be used with some various application framework macros which pre-format some of the arguments (i.e. methodName). See section \ref{section:base_application} to see how these macros are (and should be) called. If only a filename is provided (not a full path), the path is resolved using \idxtt{paths::getDefaultLogDirToUse()}. Assumes the target directory exists. Supports optional verbosity.
 \end{itemize}
 
 \subsection{The \texttt{Logger} Class}
-For more structured applications, the \texttt{Logger} class provides an object-oriented interface for managing log state:
+For more structured applications, the \idxtt{Logger} class provides an object-oriented interface for managing log state:
 
 \begin{itemize}\itemsep0em
 	\item \texttt{Logger(filename = DEFAULT\_LOG\_FILE)}\\
@@ -1197,9 +1200,9 @@ Note that a two-argument call like \texttt{log("message", \{"tag"\})} binds the 
 
 \section{Return Codes}\label{section:return_codes}
 
-To standardize and simplify status reporting across the framework, the \texttt{ReturnCode} enumeration defines a consistent set of return values that functions and applications can use to indicate the outcome of their execution. This allows for clearer control flow, easier debugging, and predictable integration behavior.
+To standardize and simplify status reporting across the framework, the \idxtt{ReturnCode} enumeration defines a consistent set of \idx{return values} that functions and applications can use to indicate the outcome of their execution. This allows for clearer control flow, easier debugging, and predictable integration behavior.
 
-The \texttt{ReturnCode} values are primarily intended to be returned from the \texttt{run()} method of application classes conforming to the framework's interface (see section \ref{section:app_framework}). This ensures that exit codes are standardized across all applications and compatible with the expectations of the \texttt{runApp} launcher and \texttt{MIA\_MAIN} macro. Developers should select an appropriate \texttt{ReturnCode} value to reflect the result of their application logic.
+The \idxtt{ReturnCode} values are primarily intended to be returned from the \idxtt{run()} method of application classes conforming to the framework's interface (see section \ref{section:app_framework}). This ensures that exit codes are standardized across all applications and compatible with the expectations of the \idxtt{runApp} launcher and \idxtt{MIA\_MAIN} macro. Developers should select an appropriate \idxtt{ReturnCode} value to reflect the result of their application logic.
 
 \begin{lstlisting}[style=cppstyle]
 namespace constants
@@ -1215,7 +1218,7 @@ namespace constants
 }
 \end{lstlisting}
 
-Use of the \texttt{ReturnCode} enum improves type clarity and encourages consistent exit handling across the MIA ecosystem. The main return codes are \texttt{SUCCESS} and \texttt{FAILURE}. This enumeration can be extended with additional codes to cover specific operational contexts (e.g., \texttt{FILE\_NOT\_FOUND}, \texttt{INVALID\_INPUT}, etc.) if the need exists.
+Use of the \idxtt{ReturnCode} enum improves type clarity and encourages consistent exit handling across the MIA ecosystem. The main return codes are \idxtt{SUCCESS} and \idxtt{FAILURE}. This enumeration can be extended with additional codes to cover specific operational contexts (e.g., \idxtt{FILE\_NOT\_FOUND}, \idxtt{INVALID\_INPUT}, etc.) if the need exists.
 
 
 
@@ -1233,7 +1236,7 @@ Use of the \texttt{ReturnCode} enum improves type clarity and encourages consist
 
 \section{Threading: BackgroundTask Class}\label{section:background_task}
 
-The \texttt{BackgroundTask} class (see \texttt{bin/core/BackgroundTask.hpp}) is an abstract base class which runs task logic on a background \texttt{std::thread}. To use it, subclass it and implement the \texttt{run()} method with the task's logic. The base class launches the thread and repeatedly calls \texttt{run()} until a stop is requested. An application can then use the subclass as follows:
+The \idxtt{BackgroundTask} class (see \texttt{bin/core/BackgroundTask.hpp}) is an abstract base class which runs task logic on a background \idxtt{std::thread}. To use it, subclass it and implement the \idxtt{run()} method with the task's logic. The base class launches the thread and repeatedly calls \idxtt{run()} until a stop is requested. An application can then use the subclass as follows:
 \begin{lstlisting}[style=cppstyle]
 MyTask task;
 task.start();    // Launches the thread and begins calling run().
@@ -1245,7 +1248,7 @@ task.stop();     // Sets the stop flag and joins the thread.
 
 \subsection{Implementing the Task}
 
-The \texttt{run()} method is invoked repeatedly (not continuously) by an internal loop, so it should contain one \textit{iteration} of the task's work. An implementation which sleeps or busy-waits internally should check \texttt{stopRequested} and return early, so a stop request is observed promptly instead of after the full iteration finishes. The protected \texttt{stopRequested} flag is an \texttt{std::atomic<bool>} which the base class sets when \texttt{stop()} is called.
+The \idxtt{run()} method is invoked repeatedly (not continuously) by an internal loop, so it should contain one \textit{iteration} of the task's work. An implementation which sleeps or busy-waits internally should check \idxtt{stopRequested} and return early, so a stop request is observed promptly instead of after the full iteration finishes. The protected \idxtt{stopRequested} flag is an \texttt{std::atomic<bool>} which the base class sets when \idxtt{stop()} is called.
 \begin{lstlisting}[style=cppstyle]
 class MyTask : public threading::BackgroundTask
 {
@@ -1261,23 +1264,23 @@ protected:
     }
 };
 \end{lstlisting}
-A task can also stop itself by setting \texttt{stopRequested} directly. The thread then exits after the current \texttt{run()} call returns.
+A task can also stop itself by setting \idxtt{stopRequested} directly. The thread then exits after the current \idxtt{run()} call returns.
 
-The \texttt{BackgroundClass} also holds an optional \texttt{taskName} string which can be set with \texttt{setTaskName(std::string\&)}. When set, this task name will appear in various error and status messages to help indicate which type of background thread the message is originating from. This should typically be done in the constructor of the child class.
+The \idxtt{BackgroundClass} also holds an optional \idxtt{taskName} string which can be set with \texttt{setTaskName(std::string\&)}. When set, this task name will appear in various error and status messages to help indicate which type of background thread the message is originating from. This should typically be done in the constructor of the child class.
 
 \subsection{Lifecycle}
 
 \begin{itemize}\itemsep0em
-	\item \texttt{start()} launches the worker thread. It only has an effect if the thread is not already running, so calling it twice on a live task does nothing.
-	\item \texttt{isRunning()} returns \texttt{true} until a stop has been requested. Note that this reflects the \textit{request}, not the thread's actual state; a stopped thread may still be finishing its final \texttt{run()} iteration until \texttt{stop()} joins it.
-	\item \texttt{stop()} sets \texttt{stopRequested} and joins the thread, so it blocks until the current \texttt{run()} iteration completes. The destructor also calls \texttt{stop()}, so a \texttt{BackgroundTask} which goes out of scope cleans up its thread automatically.
-	\item \texttt{doWhenStopped()} is an optional hook which is called once, on the worker thread, after the loop exits. Override it for cleanup or finalization logic. Note that it does not run if the process exits before the thread does.
+	\item \idxtt{start()} launches the worker thread. It only has an effect if the thread is not already running, so calling it twice on a live task does nothing.
+	\item \idxtt{isRunning()} returns \texttt{true} until a stop has been requested. Note that this reflects the \textit{request}, not the thread's actual state; a stopped thread may still be finishing its final \idxtt{run()} iteration until \idxtt{stop()} joins it.
+	\item \idxtt{stop()} sets \idxtt{stopRequested} and joins the thread, so it blocks until the current \idxtt{run()} iteration completes. The destructor also calls \idxtt{stop()}, so a \idxtt{BackgroundTask} which goes out of scope cleans up its thread automatically.
+	\item \idxtt{doWhenStopped()} is an optional hook which is called once, on the worker thread, after the loop exits. Override it for cleanup or finalization logic. Note that it does not run if the process exits before the thread does.
 \end{itemize}
-Copy and move operations are deleted. A \texttt{BackgroundTask} owns exactly one thread and two atomic flags, so duplicating it would create two owners of the same thread. If a task must be shared, share the object itself through a \texttt{shared\_ptr}.
+Copy and move operations are deleted. A \idxtt{BackgroundTask} owns exactly one thread and two atomic flags, so duplicating it would create two owners of the same thread. If a task must be shared, share the object itself through a \idxtt{shared\_ptr}.
 
 \subsection{The Condition Flag}
 
-Alongside the stop flag, the base class provides an \texttt{std::atomic<bool>} named \texttt{conditionMet} which a task can use to communicate \textit{conditional state} to the calling thread without stopping. This is meant for cases where the background thread watches for some event (e.g., a key press) and the main thread needs to react to it:
+Alongside the stop flag, the base class provides an \texttt{std::atomic<bool>} named \idxtt{conditionMet} which a task can use to communicate \textit{conditional state} to the calling thread without stopping. This is meant for cases where the background thread watches for some event (e.g., a key press) and the main thread needs to react to it:
 \begin{lstlisting}[style=cppstyle]
 // Main thread: block until the task's condition is met.
 while (listener.isConditionMet())
@@ -1285,30 +1288,30 @@ while (listener.isConditionMet())
     // React to the condition here...
 }
 \end{lstlisting}
-The condition flag is controlled from the main thread with \texttt{setConditionMet()}, read with \texttt{isConditionMet()}, and flipped with \texttt{toggleCondition()} (which is useful for tasks which toggle state on an external event, such as a key-press listener).
+The condition flag is controlled from the main thread with \texttt{setConditionMet()}, read with \idxtt{isConditionMet()}, and flipped with \idxtt{toggleCondition()} (which is useful for tasks which toggle state on an external event, such as a key-press listener).
 
 \subsection{Runtime Context}
 
-A task can be given the application's \texttt{RuntimeContext} (see section \ref{section:base_application}) via \texttt{setContext()}. The context is stored as a pointer, so the application's context must outlive the task. This is typically done right after construction:
+A task can be given the application's \idxtt{RuntimeContext} (see section \ref{section:base_application}) via \idxtt{setContext()}. The context is stored as a pointer, so the application's context must outlive the task. This is typically done right after construction:
 \begin{lstlisting}[style=cppstyle]
 MyTask task;
 task.setContext(getContext());
 \end{lstlisting}
-With the context set, the task can consult application-wide settings such as \texttt{verboseMode} before producing output.
+With the context set, the task can consult application-wide settings such as \idxtt{verboseMode} before producing output.
 
 \subsection{Example}
 
-The key-press listener in \texttt{bin/utils/ui/SingleKeyListener.hpp} is a working example of the class. It overrides \texttt{run()} to poll the platform keyboard API and toggles \texttt{conditionMet} when the configured key is pressed, while the sequencer's main loop waits on \texttt{isConditionMet()} as shown above. The unit tests in \texttt{bin/core/test/BackgroundTask\_T.cpp} exercise the lifecycle and condition flag and demonstrate a minimal subclass.
+The key-press listener in \texttt{bin/utils/ui/SingleKeyListener.hpp} is a working example of the class. It overrides \idxtt{run()} to poll the platform keyboard API and toggles \idxtt{conditionMet} when the configured key is pressed, while the sequencer's main loop waits on \idxtt{isConditionMet()} as shown above. The unit tests in \texttt{bin/core/test/BackgroundTask\_T.cpp} exercise the lifecycle and condition flag and demonstrate a minimal subclass.
 
 \subsection{Exception Handling}
-Exceptions thrown from the overridden \texttt{run()} method do not propagate automatically to the calling thread. The C++ runtime only calls \texttt{std::terminate()} when an exception escapes a thread, so the base class catches any exception that leaves \texttt{run()}, stores it, and lets the worker thread exit cleanly. The stored exception can be inspected and rethrown on the calling thread:
+Exceptions thrown from the overridden \idxtt{run()} method do not propagate automatically to the calling thread. The C++ runtime only calls \idxtt{std::terminate()} when an exception escapes a thread, so the base class catches any exception that leaves \idxtt{run()}, stores it, and lets the worker thread exit cleanly. The stored exception can be inspected and rethrown on the calling thread:
 \begin{itemize}\itemsep0em
-	\item \texttt{hasFailed()} returns \texttt{true} once an exception has been captured. This is a cheap, non-blocking query intended for use in application loops, game ticks, or any other main-thread code that needs to notice a background failure.
-	\item \texttt{getException()} returns the stored \texttt{std::exception\_ptr} (or an empty pointer if none exists).
-	\item \texttt{rethrowExceptionIfAny()} rethrows the stored exception on the calling thread. If no exception was stored the method does nothing.
+	\item \idxtt{hasFailed()} returns \texttt{true} once an exception has been captured. This is a cheap, non-blocking query intended for use in application loops, game ticks, or any other main-thread code that needs to notice a background failure.
+	\item \idxtt{getException()} returns the stored \idxtt{std::exception\_ptr} (or an empty pointer if none exists).
+	\item \idxtt{rethrowExceptionIfAny()} rethrows the stored exception on the calling thread. If no exception was stored the method does nothing.
 \end{itemize}
 
-Typical usage is to poll \texttt{hasFailed()} at a convenient point and then rethrow when it is safe to do so:
+Typical usage is to poll \idxtt{hasFailed()} at a convenient point and then rethrow when it is safe to do so:
 \begin{lstlisting}[style=cppstyle]
 MyTask task;
 task.start();
@@ -1318,9 +1321,9 @@ task.start();
 if (task.hasFailed())
 	task.rethrowExceptionIfAny(); // propagates the original exception here.
 \end{lstlisting}
-Because the exception is rethrown on the calling thread, it can be handled by ordinary \texttt{try}/\texttt{catch} blocks (for example the one in the AppFramework's \texttt{runApp}). This preserves the ability to run framework-level cleanup or shutdown logic that would be skipped if the worker thread simply called \texttt{std::terminate()} or \texttt{std::exit()}.
+Because the exception is re-thrown on the calling thread, it can be handled by ordinary \texttt{try}/\texttt{catch} blocks (for example the one in the AppFramework's \idxtt{runApp}). This preserves the ability to run framework-level cleanup or shutdown logic that would be skipped if the worker thread simply called \idxtt{std::terminate()} or \idxtt{std::exit()}.
 
-If the caller never checks \texttt{hasFailed()} or calls \texttt{rethrowExceptionIfAny()}, the exception is simply discarded when the \texttt{BackgroundTask} is destroyed. Callers that care about background failures are therefore expected to query the task at appropriate points in their own control flow.
+If the caller never checks \idxtt{hasFailed()} or calls \idxtt{rethrowExceptionIfAny()}, the exception is simply discarded when the \idxtt{BackgroundTask} is destroyed. Callers that care about background failures are therefore expected to query the task at appropriate points in their own control flow.
 
 
 
@@ -1334,7 +1337,7 @@ If the caller never checks \texttt{hasFailed()} or calls \texttt{rethrowExceptio
 
 \section{Python Modules}\label{section:python_modules}
 
-The MIA project provides the ability to write code in python and call it from the c++ files. This is primarily done through the python interpreter utility class (see section \ref{section:python_utils}). The \texttt{python.cmake} file handles finding the python development packages and setting the \texttt{BUILD\_PYTHON\_FEATURES} flag. For any feature which requires the python capabilities, the CMake should be wrapped in this flag to ensure that it is only built in environments where python is available. A \texttt{install\_python\_files} method is available to make installing python files during a system install or release build easy. The following example wraps an application so that it will only build when python is found and will install the needed python modules along with the application install:
+The \idx{MIA} project provides the ability to write code in \idx{Python} and call it from the c++ files. This is primarily done through the python interpreter utility class (see section \ref{section:python_utils}). The \idxtt{python.cmake} file handles finding the python development packages and setting the \idxtt{BUILD\_PYTHON\_FEATURES} flag. For any feature which requires the python capabilities, the CMake should be wrapped in this flag to ensure that it is only built in environments where python is available. A \idxtt{install\_python\_files} method is available to make installing python files during a system install or release build easy. The following example wraps an application so that it will only build when python is found and will install the needed python modules along with the application install:
 \begin{lstlisting}[style=makestyle]
 # This app currently requires the python features to be available.
 if(BUILD_PYTHON_FEATURES)
@@ -1370,12 +1373,14 @@ CMake Warning at CMakeLists.txt:112 (message):
 \end{lstlisting}
 The current flags are:
 \begin{itemize}\itemsep0em
-	\item \texttt{BUILD\_DATABASE\_FEATURES} (\texttt{cmake/database.cmake}) - MySQL Connector/C++.
-	\item \texttt{BUILD\_PYTHON\_FEATURES} (\texttt{cmake/python.cmake}) - Python development libraries.
-	\item \texttt{BUILD\_XDO\_FEATURES} (\texttt{cmake/xdo.cmake}) - libxdo and X11 for the virtual key strokes (Linux only; Windows uses its own input APIs).
+	\item \idxtt{BUILD\_DATABASE\_FEATURES} (\idxtt{cmake/database.cmake}) - \idx{MySQL} Connector/C++.
+	\item \idxtt{BUILD\_NLOHMANN\_JSON\_FEATURES} (\idxtt{cmake/nlohmann.cmake}) - \idxtt{Nlohmann} \idxtt{JSON} features.
+	\item \idxtt{BUILD\_PYTHON\_FEATURES} (\idxtt{cmake/python.cmake}) - \idx{Python} development libraries.
+	\item \idxtt{BUILD\_VLC\_FEATURES} (\idxtt{cmake/vlc.cmake}) - \idxtt{VLC} development libraries.
+	\item \idxtt{BUILD\_XDO\_FEATURES} (\idxtt{cmake/xdo.cmake}) - \idxtt{libxdo} and \idxtt{X11} for the virtual key strokes (Linux only; Windows uses its own input APIs).
 \end{itemize}
 
-When a feature flag is off, the CMake targets which need it should be wrapped in the flag check (as shown in section \ref{section:python_modules}) and the app folders which require the feature should be conditionally added:
+When a feature flag is off, the \idx{CMake} targets which need it should be wrapped in the flag check (as shown in section \ref{section:python_modules}) and the app folders which require the feature should be conditionally added:
 \begin{lstlisting}[style=makestyle]
 # These apps use the virtual key strokes, which use Windows APIs directly; on Linux
 # they need libxdo/X11, so the apps are only built when those are available.
@@ -1396,11 +1401,22 @@ endif()
 
 \section{Testing}\label{section:testing}
 
-Unit tests use the Google Test framework, which the top-level \texttt{CMakeLists.txt} requires via \texttt{find\_package(GTest REQUIRED)}. The \texttt{scripts/setup-gtest.sh} script installs it and can be run on its own or as part of \texttt{scripts/setup.sh}.
+Unit tests use the \idx{Google Test framework}, which the top-level \idxtt{CMakeLists.txt} requires via \texttt{find\_package(GTest REQUIRED)}. The \texttt{scripts/setup-gtest.sh} script installs it and can be run on its own or as part of \texttt{scripts/setup.sh}.
 
-\subsection{Writing and Registering Tests}
+\subsection{Writing and Registering Tests}\label{section:testing_cmake}
 
-Each module keeps its tests in a \texttt{test/} subdirectory added to the build by its CMakeLists.txt. A test is a standalone executable which links \texttt{GTest::gtest\_main} and is registered with CTest through \texttt{add\_test}:
+Each module keeps its tests in a \idxtt{test} subdirectory added to the build by its CMakeLists.txt. A \idxtt{add\_test\_dir} helper function is defined in the \idxtt{apps.cmake} module which should be preferred over the common \idxtt{add\_subdirectory}. The \idxtt{add\_test\_dir} function is a wrapper around CMake's \idxtt{add\_subdirectory} which will add a \idxtt{test} folder only when \idxtt{TESTING\_ENABLED} is \texttt{ON}. This variable is set and passed to the CMake within the build script when the \texttt{-T} (enable tests) option is specified. Since all test directories should follow the same common naming pattern of simply \textit{test}, this function requires no arguments and automatically adds a \textit{test} directory. Usage follows as:
+\begin{lstlisting}[style=makestyle]
+# The standard CMake way of adding a test directory.
+if ( TESTING_ENABLED )
+	add_subdirectory( test )
+endif()
+
+# The simplified way using the helper function.
+add_test_dir()
+\end{lstlisting}
+
+A test is a standalone executable which links \texttt{GTest::gtest\_main} and is registered with CTest through \idxtt{add\_test}:
 \begin{lstlisting}[style=makestyle]
 # Add tests for the SingleKeyListener.
 add_executable(SingleKeyListener_T SingleKeyListener_T.cpp ../SingleKeyListener.cpp ../SingleKeyListener.hpp )
@@ -1416,7 +1432,7 @@ Tests run through CTest from the build directory:
 \begin{lstlisting}[style=terminalstyle]
 ctest --test-dir build --output-on-failure
 \end{lstlisting}
-The \texttt{-T} option of \texttt{build.sh} also builds and runs the tests.
+The \texttt{-T} option of \idxtt{build.sh} also builds and runs the tests.
 
 \subsection{Continuous Integration}
 

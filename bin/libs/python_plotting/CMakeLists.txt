@@ -11,4 +11,4 @@ target_include_directories( Py_Plotting_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 install_python_files( PythonPlotter.py )
 
 # Add the directory where tests are located.
-#add_subdirectory( test ) 
+#add_test_dir()

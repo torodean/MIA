@@ -9,4 +9,4 @@ target_link_libraries(ML_UTIL PUBLIC Types_UTIL)
 target_include_directories(ML_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()

@@ -7,4 +7,4 @@ target_link_libraries(MIATemplate PRIVATE Framework_CORE Error_CORE System_UTIL 
 # Install the app.
 install_app( MIATemplate )
 
-add_subdirectory( test )
+add_test_dir()

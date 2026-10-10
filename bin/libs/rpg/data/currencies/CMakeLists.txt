@@ -16,4 +16,4 @@ target_link_libraries(RPG_Currencies_LIB PUBLIC System_UTIL Error_CORE RPG_Tools
 target_include_directories(RPG_Currencies_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()

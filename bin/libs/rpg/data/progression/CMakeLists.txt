@@ -19,4 +19,4 @@ target_link_libraries( RPG_Progression_LIB
 target_include_directories(RPG_Progression_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()

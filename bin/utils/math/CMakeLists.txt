@@ -16,4 +16,4 @@ target_link_libraries(Math_UTIL PRIVATE Types_UTIL Error_CORE )
 target_include_directories(Math_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the test directory.
-add_subdirectory( test )
+add_test_dir()

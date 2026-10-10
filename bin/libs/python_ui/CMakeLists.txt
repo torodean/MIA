@@ -8,4 +8,4 @@ target_link_libraries( Py_UI_LIB PRIVATE Framework_CORE Python_UTIL System_UTIL 
 target_include_directories( Py_UI_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Add the directory where tests are located.
-#add_subdirectory( test )
+#add_test_dir()

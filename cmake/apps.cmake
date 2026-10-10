@@ -7,3 +7,11 @@ function( install_app )
         install(TARGETS ${ARGV} DESTINATION ${RELEASE_INSTALL_LOCATION})
     endif()
 endfunction()
+
+# This will add a test subdirectory but only if TESTING_ENABLED is ON. This variable
+# is enabled when -T is passed to the build script. 
+function( add_test_dir )
+    if ( TESTING_ENABLED )
+        add_subdirectory( test )
+    endif()
+endfunction()
