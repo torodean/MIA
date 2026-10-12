@@ -14,9 +14,4 @@ add_subdirectory( mia_test )
 add_subdirectory( old_game_tools )
 add_subdirectory( workout )
 
-# OS-Specific Path Configuration
-if(WIN32 OR CYGWIN)
-    message(STATUS "RPG Libraries not yet supported on Windows!")
-elseif(UNIX AND NOT APPLE)
-    add_subdirectory( rpg )
-endif()
+add_subdirectory( rpg )
