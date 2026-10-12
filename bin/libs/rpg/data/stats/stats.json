@@ -47,50 +47,310 @@
         {
             "id": 1,
             "name": "Strength",
-            "description": "Physical power, affects melee damage and carrying capacity.",
-            "baseValue": 1
+            "description": "Physical power and capacity for exertion or endurance. Improves melee damage and carrying capacity.",
+            "baseValue": 1,
+            "modifies":,
+            [
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Ranged Attack Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 3
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Melee Attack Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 3
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Parry",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Block Value",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                }
+            ]
         },
         {
             "id": 2,
-            "name": "Dexterity",
-            "description": "Agility and reflexes, influences accuracy and evasion.",
-            "baseValue": 1
+            "name": "Agility",
+            "description": "Agility and movability. Influences accuracy and evasion.",
+            "baseValue": 1,
+            "modifies":,
+            [
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Ranged Attack Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Ranged Accuracy",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Melee Attack Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 2
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Melee Accuracy",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 2
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Speed",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Evasiveness",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                }
+            ]
         },
         {
             "id": 3,
             "name": "Intelligence",
             "description": "Mental acuity, enhances spellcasting and problem-solving.",
             "baseValue": 1,
-            "modifies" : 
+            "modifies" :
             [
                 {
                     "targetType" : "VITAL",
                     "targetName" : "Mana",
                     "ModifyType" : "ADD_MAX",
                     "ModifyValuePer" : 5
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Spell Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 3
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Healing Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
                 }
-            ]
         },
         {
             "id": 4,
             "name": "Constitution",
             "description": "Endurance and resilience, boosts health and stamina.",
             "baseValue": 1,
-            "modifies" : 
+            "modifies" :
             [
                 {
                     "targetType" : "VITAL",
                     "targetName" : "Health",
                     "ModifyType" : "ADD_MAX",
-                    "ModifyValuePer" : 5
+                    "ModifyValuePer" : 10
                 }
             ]
         },
         {
             "id": 5,
             "name": "Wisdom",
-            "description": "Perception and insight, improves decision-making and resistance to mental effects.",
+            "description": "Perception and insight, improves decision-making, resistance to mental effects, and healing capabilities.",
+            "baseValue": 1,
+            "modifies":,
+            [
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Spell Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Healing Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 2
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Mana Regen",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Spell Accuracy",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Dexterity",
+            "description": "Readiness and grace in physical activity. Inproves attack speed and physical accuracy.",
+            "baseValue": 1,
+            "modifies":,
+            [
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Ranged Attack Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 2
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Ranged Accuracy",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 2
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Melee Attack Power",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Melee Accuracy",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Parry",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Speed",
+            "description": "How fast the character can move.",
             "baseValue": 1
+        },
+        {
+            "id": 8,
+            "name": "Melee Accuracy",
+            "description": "Accuracy of melee attacks.",
+            "baseValue": 1
+        },
+        {
+            "id": 9,
+            "name": "Spell Accuracy",
+            "description": "Accuracy of spell attacks.",
+            "baseValue": 1
+        },
+        {
+            "id": 10,
+            "name": "Ranged Accuracy",
+            "description": "Improves power of melee attacks.",
+            "baseValue": 1
+        },
+        {
+            "id": 11,
+            "name": "Melee Attack Power",
+            "description": "Improves power of melee attacks.",
+            "baseValue": 1
+        },
+        {
+            "id": 12,
+            "name": "Spell Power",
+            "description": "Improves power of spell attacks.",
+            "baseValue": 1
+        },
+        {
+            "id": 13,
+            "name": "Ranged Attack Power",
+            "description": "Improves power of ranged attacks.",
+            "baseValue": 1
+        },
+        {
+            "id": 14,
+            "name": "Healing Power",
+            "description": "Improves power of heals.",
+            "baseValue": 1
+        },
+        {
+            "id": 15,
+            "name": "Mana Regen",
+            "description": "Improves mana regeneration.",
+            "baseValue": 1
+        },
+        {
+            "id": 16,
+            "name": "Dodge",
+            "description": "Improves chance to dodge an attack.",
+            "baseValue": 1
+        },
+        {
+            "id": 17,
+            "name": "Parry",
+            "description": "Improves chance to parry an attack.",
+            "baseValue": 1
+        },
+        {
+            "id": 18,
+            "name": "Evasiveness",
+            "description": "Improves chance to evade an attack.",
+            "baseValue": 1
+        },
+        {
+            "id": 19,
+            "name": "Block",
+            "description": "Improves chance to block an attack.",
+            "baseValue": 1
+        },
+        {
+            "id": 20,
+            "name": "Block Value",
+            "description": "Improves the amount of damage that can be blocked.",
+            "baseValue": 1
+        },
+        {
+            "id": 21,
+            "name": "Defense",
+            "description": "Improves overall defensive abilities.",
+            "baseValue": 1,
+            "modifies":,
+            [
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Dodge",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Parry",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Evasiveness",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                },
+                {
+                    "targetType" : "ATTRIBUTE",
+                    "targetName" : "Block",
+                    "ModifyType" : "ADD_MAX",
+                    "ModifyValuePer" : 1
+                }
+            ]
         }
-    ]    
+    ]
 }

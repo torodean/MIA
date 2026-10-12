@@ -85,7 +85,7 @@ namespace math
          * allow is then 4 sigma (should be sufficient) in either direction.
          */
         int iterations = 10000;
-        std::vector<int> chances = {0,0,0,0,0,0,0,0,0};
+        std::vector<int> chances = {0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<iterations; i++)
         {
             for (size_t j=1; j<10; j++)
