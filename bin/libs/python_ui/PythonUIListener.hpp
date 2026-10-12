@@ -6,7 +6,6 @@
  */
 #pragma once
 
-#include <chrono>
 #include <string>
 #include <vector>
 
@@ -79,7 +78,7 @@ namespace python_ui
          * @param getEventsMethod The name of the module method to call each
          *        poll. The method must return a list of strings.
          * @param pollInterval The time to sleep after each poll. The default
-         *        (zero) polls as fast as possible.
+         *        (zero) polls as fast as possible. Units are in ms.
          * @param maxConsecutiveFailures The number of consecutive failed
          *        polls after which the listener stops itself. Zero (the default)
          *        means failures are reported but never stop the listener.
@@ -87,7 +86,7 @@ namespace python_ui
         PythonUIListener(PythonModule& module,
                          ui::EventQueue& queue,
                          const std::string& getEventsMethod = "getAllEvents",
-                         std::chrono::milliseconds pollInterval = std::chrono::milliseconds(0),
+                         uint32_t pollInterval = 0,
                          unsigned int maxConsecutiveFailures = 0);
 
         /**
@@ -139,8 +138,8 @@ namespace python_ui
         /// The name of the module method which returns the pending events.
         std::string getEventsMethod;
 
-        /// The time to sleep after each poll. Zero polls continuously.
-        std::chrono::milliseconds pollInterval;
+        /// The time to sleep after each poll. Zero polls continuously. Units are ms.
+        uint32_t pollInterval;
 
         /// The consecutive-failure limit. Zero means never stop on failures.
         unsigned int maxConsecutiveFailures;
