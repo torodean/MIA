@@ -27,6 +27,7 @@ namespace testing
             }
         };
 
+
         /*
          * Object whose dump matches the common default argument form
          * `void dump(std::ostream& os = std::cout) const;`
@@ -39,6 +40,7 @@ namespace testing
             }
         };
     } // namespace
+
 
     /*
      * Tests for the std::string overload of containsAllStrings.
@@ -70,6 +72,7 @@ namespace testing
             << "No needles hits the base case and returns true.";
     }
 
+
     /*
      * Tests for the const char* overload of containsAllStrings.
      */
@@ -88,6 +91,7 @@ namespace testing
         EXPECT_TRUE(containsAllStrings("anything"))
             << "No needles hits the base case and returns true.";
     }
+
 
     /*
      * Tests for allStringsInDump.
@@ -108,5 +112,4 @@ namespace testing
         EXPECT_TRUE(allStringsInDump(defaulted, "status=ok"))
             << "A dump method with a default cout argument should work.";
     }
-
 } // namespace testing
