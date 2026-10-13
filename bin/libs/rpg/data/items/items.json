@@ -6,7 +6,7 @@
             "name": "Training Sword",
             "description": "A wooden training sword.",
             "icon": "training_sword.png",
-            "type": "TWOHAND",
+            "type": "TWOHANDEDSWORD",
             "vendorable": true,
             "sell_price":
             [
