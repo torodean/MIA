@@ -1,15 +1,15 @@
 /**
  * @file CommandOption_T.cpp
- * @brief Unit tests for the CommandOption class using Google Test.
  * @author Antonius Torode
  * @date 06/15/2025
+ * @brief Unit tests for the CommandOption class using Google Test.
  *
  * Tests include help string formatting, valid parsing of each supported type,
  * and proper exception throwing on type mismatches.
  */
 
+#include <gtest/gtest.h>
 #include "CommandOption.hpp"
-#include "gtest/gtest.h"
 
 /**
  * @brief Mock implementations for command-line parsing helpers.
@@ -40,10 +40,8 @@ namespace command_parser
     {
         out = "parsed_value";
     }
-}
+} // namespace command_parser
 
-using error::MIAException;
-using error::ErrorCode;
 
 /**
  * @test CommandOptionTest.HelpStringFormatting
@@ -61,8 +59,8 @@ TEST(CommandOptionTest, HelpStringFormatting)
     EXPECT_NE(help.find("Specifies the file name."), std::string::npos);
 }
 
+
 /**
- * @test CommandOptionTest.GetBoolOptionSuccess
  * @brief Verifies that CommandOption correctly dispatches boolean options
  *        to the boolean parsing routine.
  */
@@ -75,8 +73,8 @@ TEST(CommandOptionTest, GetBoolOptionSuccess)
     EXPECT_TRUE(value);
 }
 
+
 /**
- * @test CommandOptionTest.GetIntOptionSuccess
  * @brief Verifies that integer command-line options are parsed correctly.
  */
 TEST(CommandOptionTest, GetIntOptionSuccess) 
@@ -88,8 +86,8 @@ TEST(CommandOptionTest, GetIntOptionSuccess)
     EXPECT_EQ(value, 42);
 }
 
+
 /**
- * @test CommandOptionTest.GetDoubleOptionSuccess
  * @brief Verifies that double command-line options are parsed correctly.
  */
 TEST(CommandOptionTest, GetDoubleOptionSuccess) 
@@ -101,8 +99,8 @@ TEST(CommandOptionTest, GetDoubleOptionSuccess)
     EXPECT_DOUBLE_EQ(value, 3.14);
 }
 
+
 /**
- * @test CommandOptionTest.GetStringOptionSuccess
  * @brief Verifies that string command-line options are parsed correctly.
  */
 TEST(CommandOptionTest, GetStringOptionSuccess) 
@@ -114,8 +112,8 @@ TEST(CommandOptionTest, GetStringOptionSuccess)
     EXPECT_EQ(value, "parsed_value");
 }
 
+
 /**
- * @test CommandOptionTest.ThrowsOnTypeMismatch
  * @brief Verifies that requesting an option value with an incompatible type
  *        results in an exception.
  *
@@ -133,16 +131,16 @@ TEST(CommandOptionTest, ThrowsOnTypeMismatch)
         opt.getOptionVal(3, argv, wrongType);
         FAIL() << "Expected MIAException not thrown";
     } 
-    catch (const MIAException& ex) 
+    catch (const error::MIAException& ex) 
     {
         std::string msg = ex.what();
         EXPECT_NE(msg.find("Expected bool"), std::string::npos);
-        EXPECT_EQ(ex.getCode(), ErrorCode::Invalid_Type_Requested);
+        EXPECT_EQ(ex.getCode(), error::ErrorCode::Invalid_Type_Requested);
     }
 }
 
+
 /**
- * @test CommandOptionTest.ThrowsOnUnsupportedTemplateType
  * @brief Verifies that unsupported template types passed to getOptionVal()
  *        trigger an exception.
  *
@@ -161,9 +159,9 @@ TEST(CommandOptionTest, ThrowsOnUnsupportedTemplateType)
         opt.getOptionVal(2, argv, d); // unsupported type
         FAIL() << "Expected MIAException not thrown";
     } 
-    catch (const MIAException& ex) 
+    catch (const error::MIAException& ex) 
     {
-        EXPECT_EQ(ex.getCode(), ErrorCode::Invalid_Type_Requested);
+        EXPECT_EQ(ex.getCode(), error::ErrorCode::Invalid_Type_Requested);
         EXPECT_NE(std::string(ex.what()).find("Unsupported template type"), std::string::npos);
     }
 }
