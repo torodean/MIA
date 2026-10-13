@@ -13,7 +13,9 @@
 namespace rpg
 {
     /**
-     * Base data object. 
+     * Base data object. This data objects represents a piece of data from
+     * the game-defined configuration. This does not represent a dynamic
+     * object which changes during gameplay - although closely related.
      */
     class BaseDataObject
     {
