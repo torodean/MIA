@@ -2,7 +2,7 @@
  * @file CurrencyRegistry.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A singleton class to manage static Currency objects loaded from a config file.
+ * @brief A singleton class to manage static Currency objects loaded from a config file.
  */
 #pragma once
 
@@ -16,7 +16,8 @@ namespace currency
     protected:
     
         /// Returns the JSON key for the class's data array.
-        std::string getJsonKey() const override { return "CURRENCY"; }
+        std::string getJsonKey() const override 
+        { return "CURRENCY"; }
     
         /**
          * Parses a JSON object into a Currency instance.

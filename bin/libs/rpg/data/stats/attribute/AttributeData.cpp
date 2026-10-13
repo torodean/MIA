@@ -14,11 +14,13 @@
 
 namespace stats
 {
-    AttributeData::AttributeData(int baseValue) : baseValue(baseValue) {}
+    AttributeData::AttributeData(int32_t baseValue) : baseValue(baseValue) 
+    {}
 
 
-    AttributeData::AttributeData(int baseValue, const std::vector<rpg::Modifier>& mods)
-        : baseValue(baseValue), modifiers(mods) {}
+    AttributeData::AttributeData(int32_t baseValue, const std::vector<rpg::Modifier>& mods)
+        : baseValue(baseValue), modifiers(mods) 
+    {}
 
 
     void AttributeData::addModifier(const rpg::Modifier& mod)
@@ -39,13 +41,13 @@ namespace stats
     }
 
 
-    int AttributeData::getCurrent() const
+    int32_t AttributeData::getCurrent() const
     {
         return rpg::computeModifiedValue(baseValue, modifiers);
     }
 
 
-    void AttributeData::setBaseValue(int value)
+    void AttributeData::setBaseValue(int32_t value)
     {
         baseValue = value;
     }

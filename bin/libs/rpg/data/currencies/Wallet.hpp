@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <cstdint>
 
 #include "Currency.hpp"
 #include "CurrencyQuantity.hpp"
@@ -52,9 +53,9 @@ namespace currency
          * @param quantity The amount to add.
          * @throws MIAException with Exceeded_RPG_Quantity if the addition overflows the quantity.
          */
-        void add(const std::string& name, uint32_t quantity);
-        void add(uint32_t id, uint32_t quantity);
-        void add(const Currency& currency, uint32_t quantity);
+        void add(const std::string& name, int32_t quantity);
+        void add(uint32_t id, int32_t quantity);
+        void add(const Currency& currency, int32_t quantity);
 
         /**
          * Removes a specified currency from the container.
@@ -77,9 +78,9 @@ namespace currency
          *        currency The Currency object.
          * @param amount The signed amount to update (positive = add, negative = remove).
          */
-        void update(const std::string& name, unsigned int amount);
-        void update(uint32_t id, unsigned int amount);
-        void update(const Currency& currency, unsigned int amount);
+        void update(const std::string& name, int32_t amount);
+        void update(uint32_t id, int32_t amount);
+        void update(const Currency& currency, int32_t amount);
 
         /**
          * Checks if the container has at least the specified quantity of a currency.
@@ -91,9 +92,9 @@ namespace currency
          * @param quantity The required amount.
          * @return True if the container has enough; false otherwise.
          */
-        bool has(const std::string& name, unsigned int quantity) const;
-        bool has(uint32_t id, unsigned int quantity) const;
-        bool has(const Currency& currency, unsigned int quantity) const;
+        bool has(const std::string& name, int32_t quantity) const;
+        bool has(uint32_t id, int32_t quantity) const;
+        bool has(const Currency& currency, int32_t quantity) const;
 
         /**
          * Dumps the container's contents to the provided output stream.

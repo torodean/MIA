@@ -70,17 +70,17 @@ namespace stats
     
     
     // add() methods...
-    void Attributes::add(const std::string& name, int baseValue)
+    void Attributes::add(const std::string& name, int32_t baseValue)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
         add(*attribute, baseValue);
     }
-    void Attributes::add(uint32_t id, int baseValue)
+    void Attributes::add(uint32_t id, int32_t baseValue)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
         add(*attribute, baseValue);
     }
-    void Attributes::add(const Attribute& attribute, int baseValue)
+    void Attributes::add(const Attribute& attribute, int32_t baseValue)
     {
         auto id = attribute.getID();
         if (dataStore.find(id) != dataStore.end())            
@@ -91,17 +91,17 @@ namespace stats
     
     
     // update() methods...
-    void Attributes::update(const std::string& name, int value)
+    void Attributes::update(const std::string& name, int32_t value)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(name);
         update(*attribute, value);
     }
-    void Attributes::update(uint32_t id, int value)
+    void Attributes::update(uint32_t id, int32_t value)
     {
         const Attribute* attribute = helper_methods::getAttributeFromRegistry(id);
         update(*attribute, value);
     }
-    void Attributes::update(const Attribute& attribute, int value)
+    void Attributes::update(const Attribute& attribute, int32_t value)
     {
         auto it = dataStore.find(attribute.getID());
         if (it == dataStore.end())
@@ -322,7 +322,7 @@ namespace stats
             }
 
             std::getline(entryStream, segment, ',');
-            int current;
+            int32_t current;
             try
             {
                 current = std::stoi(segment);

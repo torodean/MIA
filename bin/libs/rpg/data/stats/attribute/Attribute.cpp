@@ -18,16 +18,23 @@ namespace stats
     Attribute::Attribute(uint32_t id,
               const std::string& name,
               const std::string& description,
-              int baseValue,
+              int32_t baseValue,
               const std::vector<rpg::Modifies>& modifies) :
         BaseDataObject(id, name, description),
         baseValue(baseValue),
         modifies(modifies)
     { }
 
+
     // Getters for the various data members.
-    int Attribute::getBaseValue() const { return baseValue; }
-    const std::vector<rpg::Modifies>& Attribute::getModifies() const { return modifies; }
+    int32_t Attribute::getBaseValue() const 
+    { 
+        return baseValue; 
+    }
+    const std::vector<rpg::Modifies>& Attribute::getModifies() const 
+    { 
+        return modifies; 
+    }
 
 
     void Attribute::addModify(const rpg::Modifies& modify)
@@ -56,7 +63,7 @@ namespace stats
     Attribute Attribute::fromJson(const nlohmann::json& json)
     {
         BaseDataObject base = BaseDataObject::fromJson(json);
-        int baseValue = json.at("baseValue").get<int>();
+        int32_t baseValue = json.at("baseValue").get<int32_t>();
         std::vector<rpg::Modifies> modifies;
 
         if (json.contains("modifies"))

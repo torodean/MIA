@@ -2,11 +2,11 @@
  * @file Currency.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: This is the base currency class for all currencies.
+ * @brief This is the base currency class for all currencies.
  */
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <nlohmann/json.hpp>
 
@@ -27,12 +27,12 @@ namespace currency
         
         /**
          * The main constructor for a Currency object.
-         * @param id[uint32_t] - The unique identifier for the currency.
-         * @param name[const std::string&] - The name of the currency.
-         * @param description[const std::string&] - The desciption of the currency.
-         * @param type[CurrencyType] - The type for this currency.
-         * @param trade[bool] - Whether or not this currency is tradeable.
-         * @param icon[const std::string&] - The icon art for this currency.
+         * @param id The unique identifier for the currency.
+         * @param name The name of the currency.
+         * @param description The desciption of the currency.
+         * @param type The type for this currency.
+         * @param trade Whether or not this currency is tradeable.
+         * @param icon The icon art for this currency.
          */
         Currency(uint32_t id,
                  const std::string& name, 

@@ -2,11 +2,12 @@
  * @file Vital.hpp
  * @author Antonius Torode
  * @date 07/09/2025
- * Description: Base vital class for character vitals with categorized types representing different behavior patterns.
+ * @brief Base vital class for character vitals with categorized types representing 
+ *        different behavior patterns.
  */
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <nlohmann/json.hpp>
 
@@ -18,9 +19,10 @@ namespace stats
     /**
      * Base class representing a configurable Vital resource, inheriting from BaseDataObject.
      *
-     * Vitals represent character resources such as health, mana, or rage.
-     * They have a type defining their behavior (e.g., consumable or accumulative),
-     * and track current, max, and min values.
+     * Vitals represent character resources such as health, mana, or rage. They have a type 
+     * defining their behavior (e.g., consumable or accumulative), and track current, max, 
+     * and min values. These values are the configurable values which are read in and define
+     * the available registry values.
      */
     class Vital : public rpg::BaseDataObject
     {
@@ -68,8 +70,8 @@ namespace stats
     private:
     
         VitalType type{VitalType::UNKNOWN}; ///< Behavior type of the Vital.
-        int32_t baseMin{0};                     ///< Minimum value of the Vital.
-        int32_t baseMax{100};                   ///< Maximum value of the Vital.
+        int32_t baseMin{0};                ///< Minimum value of the Vital.
+        int32_t baseMax{100};              ///< Maximum value of the Vital.
     };
 } // namespace stats
 

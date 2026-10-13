@@ -7,6 +7,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #include "Vital.hpp"
 #include "Modifier.hpp"
@@ -52,8 +53,9 @@ namespace stats
      * whenever they are read, so adding, removing, or replacing a modifier needs no
      * recalculation and the values always derive from the stored base.
      */
-    struct VitalData
+    class VitalData
     {
+    public:
         /**
          * Constructs a VitalData object with explicit values.
          *
@@ -61,7 +63,7 @@ namespace stats
          * @param baseMin Initial base minimum value.
          * @param baseMax Initial base maximum value.
          */
-        VitalData(int curr, int baseMin, int baseMax);
+        VitalData(int32_t curr, int32_t baseMin, int32_t baseMax);
 
         /**
          * Constructs a VitalData object based on the vital type.
@@ -70,7 +72,7 @@ namespace stats
          * @param baseMin Initial base minimum value.
          * @param baseMax Initial base maximum value.
          */
-        VitalData(VitalType type, int baseMin, int baseMax);
+        VitalData(VitalType type, int32_t baseMin, int32_t baseMax);
 
         /**
          * Constructs a VitalData object with all values explicitly provided.
@@ -81,9 +83,9 @@ namespace stats
          * @param maxMods Modifiers affecting the maximum value.
          * @param minMods Modifiers affecting the minimum value.
          */
-        VitalData(int curr,
-                  int baseMin,
-                  int baseMax,
+        VitalData(int32_t curr,
+                  int32_t baseMin,
+                  int32_t baseMax,
                   const std::vector<rpg::Modifier>& maxMods,
                   const std::vector<rpg::Modifier>& minMods);
 
@@ -118,7 +120,7 @@ namespace stats
          *
          * @return The current value of the vital.
          */
-        int getCurrent() const;
+        int32_t getCurrent() const;
 
         /**
          * Sets the current value of the vital. The value is clamped into the
@@ -126,49 +128,49 @@ namespace stats
          *
          * @param curr The new current value.
          */
-        void setCurrent(int curr);
+        void setCurrent(int32_t curr);
 
         /**
          * Returns the effective minimum value: the base minimum with its modifiers applied.
          *
          * @return The effective minimum value of the vital.
          */
-        int getCurrentMin() const;
+        int32_t getCurrentMin() const;
 
         /**
          * Returns the effective maximum value: the base maximum with its modifiers applied.
          *
          * @return The effective maximum value of the vital.
          */
-        int getCurrentMax() const;
+        int32_t getCurrentMax() const;
 
         /**
          * Returns the base minimum value before modifiers.
          *
          * @return The base minimum value of the vital.
          */
-        int getBaseMin() const { return baseMin; }
+        int32_t getBaseMin() const { return baseMin; }
 
         /**
          * Returns the base maximum value before modifiers.
          *
          * @return The base maximum value of the vital.
          */
-        int getBaseMax() const { return baseMax; }
+        int32_t getBaseMax() const { return baseMax; }
 
         /**
          * Sets the base minimum value before modifiers.
          *
          * @param baseMin The new base minimum value.
          */
-        void setBaseMin(int baseMin) { this->baseMin = baseMin; }
+        void setBaseMin(int32_t baseMin) { this->baseMin = baseMin; }
 
         /**
          * Sets the base maximum value before modifiers.
          *
          * @param baseMax The new base maximum value.
          */
-        void setBaseMax(int baseMax) { this->baseMax = baseMax; }
+        void setBaseMax(int32_t baseMax) { this->baseMax = baseMax; }
 
         /**
          * Returns the modifiers for the specified target.
@@ -181,9 +183,9 @@ namespace stats
 
     private:
 
-        int current{0};   ///< Current value.
-        int baseMin;      ///< Base minimum value before modifiers.
-        int baseMax;      ///< Base maximum value before modifiers.
+        int32_t current{0};   ///< Current value.
+        int32_t baseMin;      ///< Base minimum value before modifiers.
+        int32_t baseMax;      ///< Base maximum value before modifiers.
         std::vector<rpg::Modifier> maxModifiers; ///< Modifiers affecting the maximum value.
         std::vector<rpg::Modifier> minModifiers; ///< Modifiers affecting the minimum value.
     };

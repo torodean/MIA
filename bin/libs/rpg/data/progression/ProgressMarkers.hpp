@@ -2,11 +2,12 @@
  * @file ProgressMarkers.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A container class for managing multiple progress markers and their values.
+ * @brief A container class for managing multiple progress markers and their values.
  */
 #pragma once
 
 #include <unordered_map>
+#include <cstdint>
 
 #include "ProgressMarker.hpp"
 #include "ProgressValue.hpp"
@@ -49,9 +50,9 @@ namespace progress
          *        progressMarker The ProgressMarker object.
          * @param value The value to add.
          */
-        void add(const std::string& name, unsigned int value);
-        void add(uint32_t id, unsigned int value);
-        void add(const ProgressMarker& progressMarker, unsigned int value);
+        void add(const std::string& name, int32_t value);
+        void add(uint32_t id, int32_t value);
+        void add(const ProgressMarker& progressMarker, int32_t value);
 
         /**
          * Removes a specified progress marker from the container.
@@ -74,9 +75,9 @@ namespace progress
          *        progressMarker The ProgressMarker object.
          * @param value The signed value to update .
          */
-        void update(const std::string& name, unsigned int value);
-        void update(uint32_t id, unsigned int value);
-        void update(const ProgressMarker& progressMarker, unsigned int value);
+        void update(const std::string& name, int32_t value);
+        void update(uint32_t id, int32_t value);
+        void update(const ProgressMarker& progressMarker, int32_t value);
 
         /**
          * Checks if the container has at least the specified value of a progress marker.
@@ -88,9 +89,9 @@ namespace progress
          * @param value The required value.
          * @return True if the container has enough; false otherwise.
          */
-        bool has(const std::string& name, unsigned int value) const;
-        bool has(uint32_t id, unsigned int value) const;
-        bool has(const ProgressMarker& progressMarker, unsigned int value) const;
+        bool has(const std::string& name, int32_t value) const;
+        bool has(uint32_t id, int32_t value) const;
+        bool has(const ProgressMarker& progressMarker, int32_t value) const;
 
         /**
          * Dumps the container's contents to the provided output stream.

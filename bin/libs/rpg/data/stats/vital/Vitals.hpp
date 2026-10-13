@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <cstdint>
 
 #include "Modifier.hpp"
 #include "Vital.hpp"
@@ -58,9 +59,9 @@ namespace stats
          * @param baseMin The base minimum value.
          * @param baseMax The base maximum value.
          */
-        void add(const std::string& name, int current, int baseMin, int baseMax);
-        void add(uint32_t id, int current, int baseMin, int baseMax);
-        void add(const Vital& vital, int current, int baseMin, int baseMax);
+        void add(const std::string& name, int32_t current, int32_t baseMin, int32_t baseMax);
+        void add(uint32_t id, int32_t current, int32_t baseMin, int32_t baseMax);
+        void add(const Vital& vital, int32_t current, int32_t baseMin, int32_t baseMax);
 
         /**
          * Updates the current value of a Vital Data object. The value is clamped into
@@ -72,13 +73,13 @@ namespace stats
          *        vital The Vital object.
          * @param value The new current value.
          */
-        void update(const std::string& name, int value);
-        void update(uint32_t id, int value);
-        void update(const Vital& vital, int value);
+        void update(const std::string& name, int32_t value);
+        void update(uint32_t id, int32_t value);
+        void update(const Vital& vital, int32_t value);
         
         /**
          * Adds a modifier to a vital's max or min value. This uses the target to determine
-         * which value to modify. The modifier value is an int, which suits the ADD_MAX and
+         * which value to modify. The modifier value is an int32_t, which suits the ADD_MAX and
          * SET types; MULTIPLY modifiers (a double multiplier bonus) are attached through
          * the Modifier overloads.
          *
@@ -170,14 +171,14 @@ namespace stats
          * Overloads allow checking by Vital object, Vital ID, or Vital name.
          *
          * @param name The name (std::string)
-         *        id The ID (uint32_t)
+         *        id The ID (int32_t)
          *        vital The vital (Vital object)
          * @param value The required amount.
          * @return True if the current vital has enough; false otherwise.
          */
-        bool has(const std::string& name, int value) const;
-        bool has(uint32_t id, int value) const;
-        bool has(const Vital& vital, int value) const;
+        bool has(const std::string& name, int32_t value) const;
+        bool has(uint32_t id, int32_t value) const;
+        bool has(const Vital& vital, int32_t value) const;
 
         /**
          * Dumps the container contents to a stream, primarily for debugging.

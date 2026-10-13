@@ -7,6 +7,8 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
+
 #include "Modifier.hpp"
 
 namespace stats
@@ -26,7 +28,7 @@ namespace stats
          *
          * @param baseValue Initial base value.
          */
-        AttributeData(int baseValue);
+        AttributeData(int32_t baseValue);
 
         /**
          * Constructs an AttributeData object with a base value and modifiers.
@@ -34,7 +36,7 @@ namespace stats
          * @param baseValue Initial base value.
          * @param mods Modifiers affecting the current value.
          */
-        AttributeData(int baseValue, const std::vector<rpg::Modifier>& mods);
+        AttributeData(int32_t baseValue, const std::vector<rpg::Modifier>& mods);
 
         /**
          * Adds a modifier to the attribute. A modifier with the same source, source
@@ -57,14 +59,14 @@ namespace stats
          *
          * @return The current value of the attribute, including modifier effects.
          */
-        int getCurrent() const;
+        int32_t getCurrent() const;
 
         /**
          * Sets the base value of the attribute.
          *
          * @param value The value to set the base to.
          */
-        void setBaseValue(int value);
+        void setBaseValue(int32_t value);
 
         /**
          * Returns the base value before modifiers.
@@ -82,7 +84,7 @@ namespace stats
 
     private:
 
-        int baseValue{0};   ///< Base value of the attribute before modifiers.
+        int32_t baseValue{0};                 ///< Base value of the attribute before modifiers.
         std::vector<rpg::Modifier> modifiers; ///< Modifiers affecting the current value.
     };
 } // namespace stats

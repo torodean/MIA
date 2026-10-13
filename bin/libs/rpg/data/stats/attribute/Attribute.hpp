@@ -2,13 +2,14 @@
  * @file Attribute.hpp
  * @author Antonius Torode
  * @date 07/11/2025
- * Description: Base Attribute class for character attributes with categorized 
- *     types representing different behavior patterns.
+ * @brief Base Attribute class for character attributes with categorized 
+ *        types representing different behavior patterns.
  */
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
+
 #include <nlohmann/json.hpp>
 
 #include "Modifies.hpp"
@@ -25,20 +26,20 @@ namespace stats
         /**
          * Constructs an Attribute with specified properties.
          *
-         * @param id[uint32_t] - Unique identifier for the Attribute.
-         * @param name[const std::string&] Human-readable name of the Attribute.
-         * @param description[const std::string&] A brief description of the Attribute.
-         * @param baseValue[int] - The base attribute value.
-         * @param modifies[std::vector<rpg::Modifies>] - The modifications this attribute applies.
+         * @param id Unique identifier for the Attribute.
+         * @param name Human-readable name of the Attribute.
+         * @param description A brief description of the Attribute.
+         * @param baseValue The base attribute value.
+         * @param modifies The modifications this attribute applies.
          */
         Attribute(uint32_t id,
                   const std::string& name,
                   const std::string& description,
-                  int baseValue = 0,
+                  int32_t baseValue = 0,
                   const std::vector<rpg::Modifies>& modifies = {});
 
         /// Getters for the various data members.
-        int getBaseValue() const;
+        int32_t getBaseValue() const;
         const std::vector<rpg::Modifies>& getModifies() const;
 
         /**
@@ -65,7 +66,7 @@ namespace stats
 
     private:
     
-        int baseValue{0};               ///< Base value of the Attribute.
+        int32_t baseValue{0};                ///< Base value of the Attribute.
         std::vector<rpg::Modifies> modifies; ///< This stores which other rpg objects this attribute modifies.
     };
 } // namespace stats

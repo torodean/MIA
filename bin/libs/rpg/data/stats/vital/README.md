@@ -7,7 +7,7 @@ This folder contains all of the vital related classes for this rpg system.
 ## Structure
 - **Vital**: The `Vital.hpp` file defines a base `Vital` class representing a single character resource (e.g., health, mana, rage). Each vital has a behavior type (`DEPLETIVE` or `ACCUMULATIVE`), a name, description, current/max/min values, and supports JSON serialization. It includes utility functions for converting between enum types and strings.
 
-- **VitalData**: The `VitalData.hpp` file defines the `VitalData` struct, which stores the dynamic state of a `Vital` instance, including the current value and the base minimum and maximum values.
+- **VitalData**: The `VitalData.hpp` file defines the `VitalData` class, which stores the dynamic state of a `Vital` instance, including the current value and the base minimum and maximum values.
 It supports modifier-based adjustments using the Modifier system and computes the effective minimum and maximum from the base values and their modifiers whenever they are read.
 The file also defines the `VitalDataTarget` enum for specifying modifier application targets (`CURRENT`, `CURRENT_MIN`, `CURRENT_MAX`) and provides utility functions for enum-string conversion.
 

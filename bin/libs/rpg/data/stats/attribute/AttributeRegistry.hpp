@@ -2,7 +2,7 @@
  * @file AttributeRegistry.hpp
  * @author Antonius Torode
  * @date 07/13/2025
- * Description: A registry class for managing Attribute objects in the RPG system.
+ * @brief A registry class for managing Attribute objects in the RPG system.
  */
 #pragma once
 

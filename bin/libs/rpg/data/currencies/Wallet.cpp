@@ -18,7 +18,7 @@
 
 namespace currency
 {
-    namespace helper_methods 
+    namespace 
     {
         /**
          * Resolves and retrieves a Currency object from the CurrencyRegistry based on a given identifier.
@@ -39,17 +39,17 @@ namespace currency
             return rpg::helper_methods::getFromRegistry<CurrencyRegistry, Currency, T>(identifier);
         }
 
-    } // namespace helper_methods
+    } // namespace
 
 
     CurrencyQuantity& Wallet::get(const std::string& name)
     {
-        const Currency* curr = helper_methods::getFromRegistry(name);
+        const Currency* curr = getFromRegistry(name);
         return get(*curr);
     }
     CurrencyQuantity& Wallet::get(uint32_t id)
     {
-        const Currency* curr = helper_methods::getFromRegistry(id);
+        const Currency* curr = getFromRegistry(id);
         return get(*curr);
     }
     CurrencyQuantity& Wallet::get(const Currency& currency)
@@ -67,17 +67,17 @@ namespace currency
     }
     
     // add() methods...
-    void Wallet::add(const std::string& name, uint32_t quantity)
+    void Wallet::add(const std::string& name, int32_t quantity)
     {
-        const Currency* curr = helper_methods::getFromRegistry(name);
+        const Currency* curr = getFromRegistry(name);
         add(*curr, quantity);
     }    
-    void Wallet::add(uint32_t id, uint32_t quantity)
+    void Wallet::add(uint32_t id, int32_t quantity)
     {
-        const Currency* curr = helper_methods::getFromRegistry(id);
+        const Currency* curr = getFromRegistry(id);
         add(*curr, quantity);
     }
-    void Wallet::add(const Currency& currency, uint32_t quantity)
+    void Wallet::add(const Currency& currency, int32_t quantity)
     {
         auto it = dataStore.find(currency.getID());
         if (it == dataStore.end()) 
@@ -86,12 +86,12 @@ namespace currency
         }
         else
         {
-            if (it->second.getQuantity() > std::numeric_limits<unsigned int>::max() - quantity)
+            if (it->second.getQuantity() > std::numeric_limits<int32_t>::max() - quantity)
             {
                 MIA_THROW(error::ErrorCode::Exceeded_RPG_Quantity,
                           "Quantity overflow for currency " + currency.getName());
             }
-            unsigned int newQuantity = it->second.getQuantity() + quantity;
+            int32_t newQuantity = it->second.getQuantity() + quantity;
             it->second.set(newQuantity);
         }
     }    
@@ -100,12 +100,12 @@ namespace currency
     // remove() methods...
     void Wallet::remove(const std::string& name)
     {
-        const Currency* curr = helper_methods::getFromRegistry(name);
+        const Currency* curr = getFromRegistry(name);
         remove(*curr);
     }
     void Wallet::remove(uint32_t id)
     {
-        const Currency* curr = helper_methods::getFromRegistry(id);
+        const Currency* curr = getFromRegistry(id);
         remove(*curr);
     }
     void Wallet::remove(const Currency& currency)
@@ -121,17 +121,17 @@ namespace currency
     
     
     // update() methods...
-    void Wallet::update(const std::string& name, unsigned int amount)
+    void Wallet::update(const std::string& name, int32_t amount)
     {
-        const Currency* curr = helper_methods::getFromRegistry(name);
+        const Currency* curr = getFromRegistry(name);
         update(*curr, amount);
     }
-    void Wallet::update(uint32_t id, unsigned int amount)
+    void Wallet::update(uint32_t id, int32_t amount)
     {
-        const Currency* curr = helper_methods::getFromRegistry(id);
+        const Currency* curr = getFromRegistry(id);
         update(*curr, amount);
     }
-    void Wallet::update(const Currency& currency, unsigned int amount)
+    void Wallet::update(const Currency& currency, int32_t amount)
     {
         auto it = dataStore.find(currency.getID());
         if (it == dataStore.end())
@@ -145,17 +145,17 @@ namespace currency
       
 
     // has() methods...
-    bool Wallet::has(const std::string& name, unsigned int quantity) const
+    bool Wallet::has(const std::string& name, int32_t quantity) const
     {
-        const Currency* curr = helper_methods::getFromRegistry(name);
+        const Currency* curr = getFromRegistry(name);
         return has(*curr, quantity);
     }
-    bool Wallet::has(uint32_t id, unsigned int quantity) const
+    bool Wallet::has(uint32_t id, int32_t quantity) const
     {
-        const Currency* curr = helper_methods::getFromRegistry(id);
+        const Currency* curr = getFromRegistry(id);
         return has(*curr, quantity);
     }
-    bool Wallet::has(const Currency& currency, unsigned int quantity) const
+    bool Wallet::has(const Currency& currency, int32_t quantity) const
     {
         auto it = dataStore.find(currency.getID());
         if (it == dataStore.end())
@@ -219,11 +219,11 @@ namespace currency
             if (sep == std::string::npos) continue;
 
             uint32_t id;
-            uint32_t qty;
+            int32_t qty;
             try
             {
                 id = static_cast<uint32_t>(std::stoul(token.substr(0, sep)));
-                qty = static_cast<uint32_t>(std::stoul(token.substr(sep + 1)));
+                qty = static_cast<int32_t>(std::stoul(token.substr(sep + 1)));
             }
             catch (...)
             {
