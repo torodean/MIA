@@ -2,40 +2,45 @@
  * @file MIAConfig_T.cpp
  * @author Antonius Torode
  * @date 6/15/25
- * Description: Unit tests for MIAConfig class using Google Test.
+ * @brief Unit tests for MIAConfig class using Google Test.
  */
 
-#include <gtest/gtest.h>
-#include "MIAConfig.hpp"
-#include "Constants.hpp"
-#include "MIAException.hpp"
 
 #include <fstream>
 #include <cstdio>
 #include <filesystem>
 
+#include <gtest/gtest.h>
+
+#include "MIAConfig.hpp"
+#include "Constants.hpp"
+#include "MIAException.hpp"
+
 using namespace config;
 using namespace constants;
 
 
-// Utility to create a temporary key-value config file for testing.
-std::string createTempConfigFile(const std::string& content) 
+namespace
 {
-    std::string tempFileName = "test_config.cfg";
-    std::ofstream out(tempFileName);
-    out << content;
-    out.close();
-    
-    // Return absolute path using std::filesystem
-    return std::filesystem::absolute(tempFileName).string();
-}
+    // Utility to create a temporary key-value config file for testing.
+    std::string createTempConfigFile(const std::string& content) 
+    {
+        std::string tempFileName = "test_config.cfg";
+        std::ofstream out(tempFileName);
+        out << content;
+        out.close();
+        
+        // Return absolute path using std::filesystem
+        return std::filesystem::absolute(tempFileName).string();
+    }
 
 
-// Clean up temporary config file.
-void removeTempConfigFile(const std::string& path) 
-{
-    std::remove(path.c_str());
-}
+    // Clean up temporary config file.
+    void removeTempConfigFile(const std::string& path) 
+    {
+        std::remove(path.c_str());
+    }
+} // namespace
 
 
 class MIAConfigTest : public ::testing::Test 
@@ -62,8 +67,8 @@ protected:
     }
 };
 
+
 /**
- * @test MIAConfigTest.LoadAndRetrieveValues
  * @brief Verifies that MIAConfig loads a key-value configuration file and correctly
  *        retrieves values using the typed getter methods.
  *
@@ -89,8 +94,8 @@ TEST_F(MIAConfigTest, LoadAndRetrieveValues)
     EXPECT_EQ(config.getVector("names", ','), expectedNames);
 }
 
+
 /**
- * @test MIAConfigTest.ReloadAndGetType
  * @brief Verifies that the configuration type is preserved and that reload()
  *        re-parses the configuration file successfully.
  *
@@ -109,8 +114,8 @@ TEST_F(MIAConfigTest, ReloadAndGetType)
     EXPECT_EQ(config.getString("host"), "localhost");
 }
 
+
 /**
- * @test MIAConfigTest.GetAllPairsAndDump
  * @brief Verifies that configuration entries can be retrieved as a collection
  *        and serialized using dumpConfigMap().
  *
@@ -131,8 +136,8 @@ TEST_F(MIAConfigTest, GetAllPairsAndDump)
     EXPECT_NE(output.find("port=8080"), std::string::npos);
 }
 
+
 /**
- * @test MIAConfigTest.SetConfigFileNameReinitializes
  * @brief Verifies that setConfigFileName() updates the configuration source and
  *        initializes the configuration data.
  *
@@ -147,8 +152,8 @@ TEST_F(MIAConfigTest, SetConfigFileNameReinitializes)
     EXPECT_EQ(config.getInt("port"), 8080);
 }
 
+
 /**
- * @test MIAConfigTest.ExceptionThrownForMissingKey
  * @brief Verifies that accessing undefined configuration keys throws MIAException.
  *
  * The test attempts to retrieve integer, vector, and boolean values for keys
@@ -163,4 +168,3 @@ TEST_F(MIAConfigTest, ExceptionThrownForMissingKey)
     EXPECT_THROW(config.getVector("missing", ','), error::MIAException);
     EXPECT_THROW(config.getBool("undefined"), error::MIAException);
 }
-
