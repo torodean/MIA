@@ -7,6 +7,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #include "Vital.hpp"
 #include "Modifier.hpp"

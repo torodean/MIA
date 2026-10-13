@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <cstdint>
 
 #include "Currency.hpp"
 #include "CurrencyQuantity.hpp"

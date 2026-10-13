@@ -7,6 +7,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 #include "Attribute.hpp"
 #include "AttributeData.hpp"

@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <cstdint>
 
 #include "Modifier.hpp"
 #include "Vital.hpp"
