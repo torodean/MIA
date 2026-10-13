@@ -19,7 +19,7 @@ namespace python_ui
     PythonUIListener::PythonUIListener(PythonModule& module,
                                        ui::EventQueue& queue,
                                        const std::string& getEventsMethodName,
-                                       std::chrono::milliseconds pollIntervalMs,
+                                       uint32_t pollIntervalMs,
                                        unsigned int maxConsecutiveFailuresLimit)
         : uiModule(module),
           eventQueue(queue),
@@ -67,8 +67,8 @@ namespace python_ui
 
         eventQueue.addEvents(toEvents(result));
 
-        if (pollInterval.count() > 0)
-            timing::sleepMilliseconds(static_cast<int>(pollInterval.count()));
+        if (pollInterval > 0)
+            timing::sleepMilliseconds(pollInterval);
     }
 
 

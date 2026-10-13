@@ -2,11 +2,13 @@
  * @file BaseDataObject.hpp
  * @author Antonius Torode
  * @date 07/17/2025
- * Description: Base data object class for rpg data classes.
+ * @brief Base data object class for rpg data classes.
  */
 #pragma once
 
 #include <string>
+
+#include <nlohmann/json.hpp>
 
 namespace rpg
 {
@@ -27,17 +29,13 @@ namespace rpg
          * @param description A brief description of the BaseDataObject.
          */
         BaseDataObject(uint32_t id,
-              const std::string& name,
-              const std::string& description) :
-            id(id),
-            name(name),
-            description(description)
-        { }
+                       const std::string& name,
+                       const std::string& description);
 
         /// Getters for the various data members.
-        uint32_t getID() const { return id; }
-        std::string getName() const { return name; }
-        std::string getDescription() const { return description; }
+        uint32_t getID() const;
+        std::string getName() const;
+        std::string getDescription() const;
 
     protected:
     
@@ -46,15 +44,7 @@ namespace rpg
          *
          * @return A JSON object containing the BaseDataObject's properties.
          */
-        virtual nlohmann::json toJson() const
-        {
-            return
-            {
-                {"id", id},
-                {"name", name},
-                {"description", description}
-            };
-        }
+        virtual nlohmann::json toJson() const;
         
         /**
          * Deserializes a BaseDataObject object from JSON.
@@ -62,15 +52,7 @@ namespace rpg
          * @param json The JSON object containing BaseDataObject properties.
          * @return The constructed BaseDataObject object.
          */
-        static BaseDataObject fromJson(const nlohmann::json& json)
-        {
-            auto id = json.at("id").get<uint32_t>(); // use at() to require id
-            auto name = json.at("name").get<std::string>();
-            auto description = json.value("description", "");
-
-            BaseDataObject baseDataObj(id, name, description);
-            return baseDataObj;
-        }
+        static BaseDataObject fromJson(const nlohmann::json& json);
 
     private:
     

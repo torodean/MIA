@@ -2,12 +2,11 @@
  * @file DataType.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A class to store all the valid/possible data types.
+ * @brief A class to store all the valid/possible data types.
  */
 #pragma once
 
 #include <string>
-#include <iostream>
 
 namespace rpg
 {
@@ -30,18 +29,7 @@ namespace rpg
 	 * @param type The DataType enum value.
 	 * @return std::string The string name of the enum value.
 	 */
-	inline std::string dataTypeToString(DataType type)
-	{
-		switch (type)
-		{
-			case DataType::UNKNOWN:   return "UNKNOWN";
-			case DataType::CURRENCY:  return "CURRENCY";
-			case DataType::VITAL:     return "VITAL";
-			case DataType::ATTRIBUTE: return "ATTRIBUTE";
-			case DataType::PROGRESS:  return "PROGRESS";
-			default:                   return "UNKNOWN";
-		}
-	}
+	std::string dataTypeToString(DataType type);
 	
 	/**
 	 * @brief Converts a string to the corresponding DataType enum value.
@@ -49,13 +37,5 @@ namespace rpg
 	 * @param str The input string representing a DataType name.
 	 * @return DataType The corresponding enum value if matched, otherwise DataType::UNKNOWN.
 	 */
-	inline DataType stringToDataType(const std::string& str)
-	{
-		if (str == "UNKNOWN")   return DataType::UNKNOWN;
-		if (str == "CURRENCY")  return DataType::CURRENCY;
-		if (str == "VITAL")     return DataType::VITAL;
-		if (str == "ATTRIBUTE") return DataType::ATTRIBUTE;
-		if (str == "PROGRESS")  return DataType::PROGRESS;
-		return DataType::UNKNOWN;
-	}
+	DataType stringToDataType(const std::string& str);
 } // namespace rpg
