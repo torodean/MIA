@@ -13,5 +13,5 @@ target_link_libraries( Testing_CORE
 # Expose this library's source directory for #include access by dependent targets.
 target_include_directories( Testing_CORE PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
-# TODO
-#add_test_dir()
+# Add unit tests.
+add_test_dir()
