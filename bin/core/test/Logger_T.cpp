@@ -2,44 +2,52 @@
  * @file Logger_T.cpp
  * @author Antonius Torode
  * @date 06/15/2025
- * Description: Google tests for logger::Logger and free functions in Logger.hpp.
+ * @brief Tests for the Logger and free functions in Logger.hpp.
  */
-
-#include "Logger.hpp"
-#include "Paths.hpp"
-#include <gtest/gtest.h>
+ 
 #include <fstream>
 #include <sstream>
 #include <cstdio>  // For std::remove
 #include <filesystem>
 
+#include <gtest/gtest.h>
 
-// Helper to read entire contents of a file into a string
-std::string readFileContents(const std::string& filename)
-{
-    std::ifstream in(filename);
-    return std::string((std::istreambuf_iterator<char>(in)),
-                        std::istreambuf_iterator<char>());
-}
+#include "Logger.hpp"
+#include "Paths.hpp"
 
-// Remove test log file if it exists
-void cleanupFile(const std::string& filename)
-{
-    std::remove(filename.c_str());
-}
 
-// Extract the first line containing the given substring, without the trailing newline.
-std::string findLine(const std::string& contents, const std::string& substring)
+namespace
 {
-    std::istringstream stream(contents);
-    std::string line;
-    while (std::getline(stream, line))
+    // Helper to read entire contents of a file into a string
+    std::string readFileContents(const std::string& filename)
     {
-        if (line.find(substring) != std::string::npos)
-            return line;
+        std::ifstream in(filename);
+        return std::string((std::istreambuf_iterator<char>(in)),
+                           std::istreambuf_iterator<char>());
     }
-    return "";
-}
+
+
+    // Remove test log file if it exists
+    void cleanupFile(const std::string& filename)
+    {
+        std::remove(filename.c_str());
+    }
+
+
+    // Extract the first line containing the given substring, without the trailing newline.
+    std::string findLine(const std::string& contents, const std::string& substring)
+    {
+        std::istringstream stream(contents);
+        std::string line;
+        while (std::getline(stream, line))
+        {
+            if (line.find(substring) != std::string::npos)
+                return line;
+        }
+        return "";
+    }
+} // namespace
+
 
 /**
  * @brief Verifies that logger::logToFile writes the provided message to the specified file.
@@ -61,6 +69,7 @@ const std::string testFile = std::filesystem::absolute("test_log.log").string();
 
     cleanupFile(testFile);
 }
+
 
 /**
  * @brief Verifies that logger::logMethodCallToFile logs a method call entry containing
@@ -85,6 +94,7 @@ TEST(LoggerFreeFunctions, LogMethodCallToFile_FormatsCorrectly)
     cleanupFile(testFile);
 }
 
+
 /**
  * @brief Verifies that constructing logger::Logger with a filename sets the active log file.
  *
@@ -106,6 +116,7 @@ TEST(LoggerClass, ConstructorWithFilename_UsesGivenFile)
 
     cleanupFile(testFile);
 }
+
 
 /**
  * @brief Verifies that log with specified tags works.
@@ -132,6 +143,7 @@ TEST(LoggerClass, LogWithTags)
 
     cleanupFile(logFile);
 }
+
 
 /**
  * @brief Verifies that setLogFile changes the destination file used for logging.
@@ -165,6 +177,7 @@ TEST(LoggerClass, SetLogFile_ChangesLogFile)
     cleanupFile(file2);
 }
 
+
 /**
  * @test LoggerClass.LogMethodCall_LogsMethodNameAndParams
  * @brief Verifies that Logger::logMethodCall records both the method name and parameters.
@@ -189,6 +202,7 @@ TEST(LoggerClass, LogMethodCall_LogsMethodNameAndParams)
 
     cleanupFile(testFile);
 }
+
 
 /**
  * @brief Verifies that the logToFile tags overload writes the tagged format.
@@ -219,6 +233,7 @@ TEST(LoggerFreeFunctions, LogToFile_WithTags)
     cleanupFile(logFile);
 }
 
+
 /**
  * @brief Verifies that the logToDefaultFile tags overload writes to the default log.
  *
@@ -238,6 +253,7 @@ TEST(LoggerFreeFunctions, LogToDefaultFile_WithTags)
     EXPECT_NE(contents.find("[UNIT_TEST]: unit test - logToDefaultFile tags overload"), std::string::npos)
         << "The test message was not found in " << defaultLogFile;
 }
+
 
 /**
  * @brief Verifies that log with an application name set works.
@@ -278,4 +294,3 @@ TEST(LoggerClass, LogWithAppNameAndTags)
 
     cleanupFile(logFile);
 }
-
