@@ -2,7 +2,7 @@
  * @file ProgressMarker.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: This is the base progression class for all progress markers.
+ * @brief This is the base progression class for all progress markers.
  */
 #pragma once
 
@@ -27,8 +27,8 @@ namespace progress
         
         /**
          * The main constructor for a ProgressMarker object.
-         * @param name[const std::string&] - The name of the progress.
-         * @param description[const std::string&] - The desciption of the progress.
+         * @param name The name of the progress.
+         * @param description The desciption of the progress.
          */
         ProgressMarker(uint32_t id,
                        const std::string& name, 

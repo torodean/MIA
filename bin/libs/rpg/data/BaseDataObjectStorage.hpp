@@ -18,7 +18,7 @@ namespace data
      * Provides lookup, serialization, and dumping mechanisms. Implementations must define
      * how objects are retrieved and serialized.
      *
-     * Designed to be subclassed—base deserialization is intentionally deleted to enforce
+     * Designed to be subclassed. Base deserialization is intentionally deleted to enforce
      * concrete behavior in derived classes.
      */
     template<typename dataType, typename dataStorageType>
@@ -36,7 +36,7 @@ namespace data
          * Overloads support lookup by name, ID, or a reference key object.
          *
          * @param name[const std::string&] - The string identifier of the object.
-         *        id[uint32_t] - The numeric identifier of the object.
+         *        id The numeric identifier of the object.
          *        keyObject[const dataType&] - A key-type object (holding ID and name).
          * @return A reference to the stored data object.
          */
@@ -54,7 +54,7 @@ namespace data
 
         /**
          * Dumps the container contents to a stream, primarily for debugging.
-         * @param os[std::ostream&] - The output stream to write to (defaults to std::cout).
+         * @param os The output stream to write to (defaults to std::cout).
          */
         virtual void dump(std::ostream& os = std::cout) const = 0;
 

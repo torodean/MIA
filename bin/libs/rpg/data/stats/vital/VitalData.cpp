@@ -42,12 +42,12 @@ namespace stats
     }
 
 
-    VitalData::VitalData(int curr, int baseMin, int baseMax)
+    VitalData::VitalData(int32_t curr, int32_t baseMin, int32_t baseMax)
         : current(curr), baseMin(baseMin), baseMax(baseMax) 
     {}
 
 
-    VitalData::VitalData(VitalType type, int baseMin, int baseMax)
+    VitalData::VitalData(VitalType type, int32_t baseMin, int32_t baseMax)
         : baseMin(baseMin), baseMax(baseMax)
     {
         if (type == VitalType::ACCUMULATIVE)
@@ -55,13 +55,13 @@ namespace stats
         else if (type == VitalType::DEPLETIVE)
             current = baseMax;
         else if (type == VitalType::UNKNOWN)
-            current = int( (baseMax - baseMin)/2 ); // Default to half-max.
+            current = int32_t( (baseMax - baseMin)/2 ); // Default to half-max.
     }
 
 
-    VitalData::VitalData(int curr,
-              int baseMin,
-              int baseMax,
+    VitalData::VitalData(int32_t curr,
+              int32_t baseMin,
+              int32_t baseMax,
               const std::vector<rpg::Modifier>& maxMods,
               const std::vector<rpg::Modifier>& minMods)
         : current(curr),
@@ -129,20 +129,20 @@ namespace stats
     }
 
 
-    int VitalData::getCurrent() const
+    int32_t VitalData::getCurrent() const
     {
         // The stored current value must always be read within the effective bounds.
         return std::clamp(current, getCurrentMin(), getCurrentMax());
     }
 
 
-    void VitalData::setCurrent(int curr)
+    void VitalData::setCurrent(int32_t curr)
     {
         current = std::clamp(curr, getCurrentMin(), getCurrentMax());
     }
 
 
-    int VitalData::getCurrentMin() const
+    int32_t VitalData::getCurrentMin() const
     {
         // A minimum may never rise above the effective maximum.
         return std::min(computeModifiedValue(baseMin, minModifiers),
@@ -150,7 +150,7 @@ namespace stats
     }
 
 
-    int VitalData::getCurrentMax() const
+    int32_t VitalData::getCurrentMax() const
     {
         return computeModifiedValue(baseMax, maxModifiers);
     }

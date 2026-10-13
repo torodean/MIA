@@ -2,7 +2,7 @@
  * @file VitalRegistry.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A singleton class to manage static Vital objects loaded from a config file.
+ * @brief A singleton class to manage static Vital objects loaded from a config file.
  */
 #pragma once
 

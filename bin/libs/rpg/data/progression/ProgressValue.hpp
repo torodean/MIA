@@ -2,7 +2,7 @@
  * @file ProgressValue.hpp
  * @author Antonius Torode
  * @date 07/06/2025
- * Description: A container class for managing a value of a progress marker.
+ * @brief A container class for managing a value of a progress marker.
  */
 #pragma once
 
@@ -11,26 +11,26 @@
 namespace progress
 {
     /**
-     * A struct to hold the value of a progress marker.
+     * A class to hold the value of a progress marker.
      */
-    struct ProgressValue
+    class ProgressValue
     {
+    public:
         /// Default constructor.
         ProgressValue() = default;
         
         /// The main constructor.
-        ProgressValue(unsigned int qty) : value(qty) {}
+        ProgressValue(int32_t qty);
         
         /// Getter for the value.
-        unsigned int get() const { return value; }
+        int32_t get() const;
         
         /// Adjusters for the value.
-        void set(unsigned int val) { value = val; }
-        void add(unsigned int val) { value += val; }
-        void subtract(unsigned int val) 
-        { if (val > value) value = 0; value -= val; }
+        void set(int32_t val);
+        void add(int32_t val);
+        void subtract(int32_t val);
             
     private:        
-        unsigned int value{0};  ///< The value of this progress marker.
+        int32_t value{0};  ///< The value of this progress marker.
     };
 } // namespace progress marker

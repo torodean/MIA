@@ -17,15 +17,15 @@
 
 namespace currency
 {
-    void CurrencyQuantity::set(unsigned int value)
+    void CurrencyQuantity::set(int32_t value)
     {
         quantity = value;
     }
 
 
-    void CurrencyQuantity::add(unsigned int value)
+    void CurrencyQuantity::add(int32_t value)
     {
-        if (quantity > std::numeric_limits<unsigned int>::max() - value)
+        if (quantity > std::numeric_limits<int32_t>::max() - value)
         {
             MIA_THROW(error::ErrorCode::Exceeded_RPG_Quantity,
                       "Currency quantity overflow from " + std::to_string(quantity) +
@@ -35,7 +35,7 @@ namespace currency
     }
 
 
-    void CurrencyQuantity::remove(unsigned int value)
+    void CurrencyQuantity::remove(int32_t value)
     {
         if (value > quantity)
         {

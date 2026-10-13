@@ -107,13 +107,13 @@ namespace currency
     }
 
     /**
-     * @brief Verifies adding past the unsigned int maximum throws MIAException.
+     * @brief Verifies adding past the int32_t maximum throws MIAException.
      */
     TEST_F(Wallet_T, AddOverflowThrows)
     {
-        container.add(coin, std::numeric_limits<unsigned int>::max());
+        container.add(coin, std::numeric_limits<int32_t>::max());
         EXPECT_THROW(container.add(coin, 1), error::MIAException)
-            << "Adding beyond max unsigned int should throw a MIAException.";
+            << "Adding beyond max int32_t should throw a MIAException.";
     }
 
     /**

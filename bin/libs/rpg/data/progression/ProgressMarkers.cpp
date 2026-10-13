@@ -69,17 +69,17 @@ namespace progress
     
 
     // add() methods...
-    void ProgressMarkers::add(const std::string& name, uint32_t value)
+    void ProgressMarkers::add(const std::string& name, int32_t value)
     {
         const ProgressMarker* progressMarker = helper_methods::getFromRegistry(name);
         add(*progressMarker, value);
     }
-    void ProgressMarkers::add(uint32_t id, uint32_t value)
+    void ProgressMarkers::add(uint32_t id, int32_t value)
     {
         const ProgressMarker* progressMarker = helper_methods::getFromRegistry(id);
         add(*progressMarker, value);
     }
-    void ProgressMarkers::add(const ProgressMarker& progressMarker, uint32_t value)
+    void ProgressMarkers::add(const ProgressMarker& progressMarker, int32_t value)
     {        
         auto id = progressMarker.getID();
         if (dataStore.find(id) != dataStore.end())            
@@ -111,17 +111,17 @@ namespace progress
     
 
     // update() methods...
-    void ProgressMarkers::update(const std::string& name, unsigned int value)
+    void ProgressMarkers::update(const std::string& name, int32_t value)
     {
         const ProgressMarker* progressMarker = helper_methods::getFromRegistry(name);
         update(*progressMarker, value);
     }
-    void ProgressMarkers::update(uint32_t id, unsigned int value)
+    void ProgressMarkers::update(uint32_t id, int32_t value)
     {
         const ProgressMarker* progressMarker = helper_methods::getFromRegistry(id);
         update(*progressMarker, value);
     }
-    void ProgressMarkers::update(const ProgressMarker& progressMarker, unsigned int value)
+    void ProgressMarkers::update(const ProgressMarker& progressMarker, int32_t value)
     {        
         auto it = dataStore.find(progressMarker.getID());
         if (it == dataStore.end())
@@ -137,17 +137,17 @@ namespace progress
 
 
     // has() methods...
-    bool ProgressMarkers::has(const std::string& name, unsigned int value) const
+    bool ProgressMarkers::has(const std::string& name, int32_t value) const
     {
         const ProgressMarker* progressMarker = helper_methods::getFromRegistry(name);
         return has(*progressMarker, value);
     }
-    bool ProgressMarkers::has(uint32_t id, unsigned int value) const
+    bool ProgressMarkers::has(uint32_t id, int32_t value) const
     {
         const ProgressMarker* progressMarker = helper_methods::getFromRegistry(id);
         return has(*progressMarker, value);
     }
-    bool ProgressMarkers::has(const ProgressMarker& progressMarker, unsigned int value) const
+    bool ProgressMarkers::has(const ProgressMarker& progressMarker, int32_t value) const
     {
         auto it = dataStore.find(progressMarker.getID());
         if (it == dataStore.end())

@@ -53,9 +53,9 @@ namespace stats
          *        Attribute The Attribute object.
          * @param baseValue The initial base value.
          */
-        void add(const std::string& name, int baseValue);
-        void add(uint32_t id, int baseValue);
-        void add(const Attribute& attribute, int baseValue);
+        void add(const std::string& name, int32_t baseValue);
+        void add(uint32_t id, int32_t baseValue);
+        void add(const Attribute& attribute, int32_t baseValue);
 
         /**
          * Updates the base value of an Attribute Data object. The effective current
@@ -66,12 +66,12 @@ namespace stats
          *        Attribute The Attribute object.
          * @param value The new base value.
          */
-        void update(const std::string& name, int value);
-        void update(uint32_t id, int value);
-        void update(const Attribute& attribute, int value);
+        void update(const std::string& name, int32_t value);
+        void update(uint32_t id, int32_t value);
+        void update(const Attribute& attribute, int32_t value);
 
         /**
-         * Adds a modifier to an Attribute's current value. The modifier value is an int,
+         * Adds a modifier to an Attribute's current value. The modifier value is an int32_t,
          * which suits the ADD_MAX and SET types; MULTIPLY modifiers (a double multiplier
          * bonus) are attached through the Modifier overloads.
          *
