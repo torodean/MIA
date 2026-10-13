@@ -1,13 +1,13 @@
-\chapter{Sequencer} \label{sequencer}\index{sequencer}
+\chapter{Sequenced Action Replay Agent (SARA)} \label{chapter:sara}\index{SARA}
 \pagestyle{fancy}
 
-The sequencer is an app contained within MIA for performing key/button simulation sequences. This can be used for Performing mundane tasks automatically and repeatable tasks on a timer while away from the computer. More advanced uses can also be for botting and other repeatable tasks.
+The Sequenced Action Replay Agent (SARA) is an app contained within MIA for performing key/button simulation sequences. This can be used for Performing mundane tasks automatically and repeatable tasks on a timer while away from the computer. More advanced uses can also be for botting and other repeatable tasks.
 
-On Linux, the sequencer requires the \texttt{xdo} features (libxdo and X11), so it is only built when those libraries are found (see section \ref{section:optional_features}). Windows builds provide the input APIs directly and always get the sequencer.
+On Linux, SARA requires the \texttt{xdo} features (libxdo and X11), so it is only built when those libraries are found (see section \ref{section:optional_features}). Windows builds provide the input APIs directly and always get SARA.
 
-\section{Using the Sequencer}
+\section{Using SARA}
 
-The sequencer acquires its programmable sequence functionality from the \texttt{MIASequences.MIA} file. This file will appear similar to the following.
+SARA acquires its programmable sequence functionality from the \texttt{MIASequences.MIA} file. This file will appear similar to the following.
 
 \begin{lstlisting}[style=pythonstyle]
 #============================================================================
@@ -41,7 +41,7 @@ The sequencer acquires its programmable sequence functionality from the \texttt{
 #Sequence definitions below...
 \end{lstlisting}
 
-The sequencer app has two main modes of operation. If ran without the \texttt{--sequence} flag specified, the sequencer will load a front end UI where it prompts the user for a sequence to run. The sequence names are defined when the sequence is created at app initialization based on the \texttt{MIASequences.MIA} file input. If the \texttt{--sequence} flag is specified, the program will instead default to running the sequence entered via the flag. Other options are handled appropriately.
+The SARA app has two main modes of operation. If ran without the \texttt{--sequence} flag specified, SARA will load a front end UI where it prompts the user for a sequence to run. The sequence names are defined when the sequence is created at app initialization based on the \texttt{MIASequences.MIA} file input. If the \texttt{--sequence} flag is specified, the program will instead default to running the sequence entered via the flag. Other options are handled appropriately.
 
 \begin{lstlisting}[style=terminalstyle]
 $ ./MIASequencer -h
@@ -167,6 +167,6 @@ The \texttt{SpecialButton} enumeration defines a set of special, non-alphanumeri
 \noindent When used with \inlinecode{PRESS} or \inlinecode{PRESSHOLD}, the button is specified by name. Matching is case-insensitive. The accepted values are listed above. Keys with an underscore also accept the concatenated form without it.
 
 
-\section{Notes on Using The Sequencer}
+\section{Notes on Using SARA}
 
-The sequencer should still be considered experimental and is under ongoing improvement. It is important to follow the scheme for defining sequences above closely, with all needed parameters defined properly. In particular, no two sequences should share a name; the program does not currently detect or handle duplicate sequence names.
+SARA should still be considered experimental and is under ongoing improvement. It is important to follow the scheme for defining sequences above closely, with all needed parameters defined properly. In particular, no two sequences should share a name; the program does not currently detect or handle duplicate sequence names.
