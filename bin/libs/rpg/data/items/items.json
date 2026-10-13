@@ -1,0 +1,90 @@
+{
+    "WEAPON":
+    [
+        {
+            "id": 1,
+            "name": "Training Sword",
+            "description": "A wooden training sword.",
+            "icon": "training_sword.png",
+            "type": "TWOHAND",
+            "vendorable": true,
+            "sell_price":
+            [
+                {
+                    "type": "CURRENCY",
+                    "name": "Silver Coin",
+                    "amount": 3
+                },
+                {
+                    "type": "CURRENCY",
+                    "name": "Copper Coin",
+                    "amount": 98
+                }
+            ],
+            "rarity": "COMMON",
+            "bop": false,
+            "boe": true,
+            "model": "training_sword.model",
+            "damage_min": 1,
+            "damage_max": 4,
+            "speed": 3.0
+        },
+        {
+            "id": 2,
+            "name": "Training Staff",
+            "description": "A wooden training staff.",
+            "icon": "training_staff.png",
+            "type": "STAFF",
+            "vendorable": true,
+            "sell_price":
+            [
+                {
+                    "type": "CURRENCY",
+                    "name": "Silver Coin",
+                    "amount": 3
+                },
+                {
+                    "type": "CURRENCY",
+                    "name": "Copper Coin",
+                    "amount": 57
+                }
+            ],
+            "rarity": "COMMON",
+            "bop": false,
+            "boe": true,
+            "model": "training_staff.model",
+            "damage_min": 1,
+            "damage_max": 4,
+            "speed": 3.0
+        }
+    ],
+    "CONSUMABLE":
+    [
+        {
+            "id": 1,
+            "name": "Minor Health Potion",
+            "description": "A minor health potion.",
+            "icon": "minor_health_potion.png",
+            "type": "POTION",
+            "vendorable": true,
+            "sell_price":
+            [
+                {
+                    "type": "CURRENCY",
+                    "name": "Copper Coin",
+                    "amount": 68
+                }
+            ],
+            "uses": 1,
+            "effect":
+            [
+                {
+                    "effect_type": "RESTORE",
+                    "target_type": "VITAL",
+                    "target_name": "Health",
+                    "value": 15
+                }
+            ]
+        }
+    ]
+}
