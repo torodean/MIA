@@ -1401,7 +1401,7 @@ endif()
 
 \section{Testing}\label{section:testing}
 
-Unit tests use the \idx{Google Test framework}, which the top-level \idxtt{CMakeLists.txt} requires via \texttt{find\_package(GTest REQUIRED)}. The \texttt{scripts/setup-gtest.sh} script installs it and can be run on its own or as part of \texttt{scripts/setup.sh}.
+Unit tests use the \idx{Google Test framework}, which the top-level \idxtt{CMakeLists.txt} requires via \texttt{find\_package(GTest REQUIRED)} when the test flag (\texttt{-T} is specified during build). The \texttt{scripts/setup-gtest.sh} script installs it and can be run on its own or as part of \texttt{scripts/setup.sh}.
 
 \subsection{Writing and Registering Tests}\label{section:testing_cmake}
 
@@ -1426,6 +1426,16 @@ add_test(NAME SingleKeyListener_T COMMAND SingleKeyListener_T )
 \end{lstlisting}
 Test targets which depend on an optional feature are wrapped in the feature flag (see section \ref{section:optional_features}), so they are only built when the feature's libraries are available.
 
+The \texttt{Testing\_CORE} is a defined CMake component which can be linked to for tests. This component exposes \texttt{GTest::gtest\_main} and \texttt{Error\_CORE} (common components nearly all tests use) so that unit tests can simply link to this and not worry about linking to Google's test framework directly. The \texttt{Testing\_CORE} component also provides helpful test functionality and methods to streamline testing. Using this component, testing CMake can be simplified as follows:
+\begin{lstlisting}[style=makestyle]
+	# Usual linkage.
+	target_link_libraries(myTests_T PRIVATE Error_CORE GTest::gtest\_main)
+	
+	# Simplified with access to test helpers.
+	target_link_libraries(myTests_T PRIVATE Testing_CORE)
+\end{lstlisting}
+This may not always be desired, though it should be rather common throughout the MIA project. This \texttt{Testing\_CORE} feature was added in version 2.113, so any component added before that may or may not be updated to use it.
+
 \subsection{Running Tests}
 
 Tests run through CTest from the build directory:
@@ -1437,3 +1447,5 @@ The \texttt{-T} option of \idxtt{build.sh} also builds and runs the tests.
 \subsection{Continuous Integration}
 
 The workflow in \texttt{.github/workflows/tests.yml} builds and tests the project on every pull request and every push to main. It runs only when files under \texttt{bin/} changed. The build-and-test job runs twice through a matrix, once with all optional dependencies installed and once without any of them, so builds which skip the optional feature flags are tested alongside the full build (see section \ref{section:optional_features}).
+
+

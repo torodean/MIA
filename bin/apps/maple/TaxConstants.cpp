@@ -115,9 +115,9 @@ namespace maple
                << ", standardDeductibleSingle: " << constants.standardDeductibleSingle
                << ", standardDeductibleHeadOfHousehold: " << constants.standardDeductibleHeadOfHousehold
                << ", standardDeductibleMarried: " << constants.standardDeductibleMarried
-               << ", taxBracketSingle: [" << VectorUtils::vectorToString(constants.taxBracketSingle)
-               << "], taxBracketMarried: [" << VectorUtils::vectorToString(constants.taxBracketMarried)
-               << "], taxRateBracket: [" << VectorUtils::vectorToString(constants.taxRateBracket) << "]";
+               << ", taxBracketSingle: [" << vector_utils::vectorToString(constants.taxBracketSingle)
+               << "], taxBracketMarried: [" << vector_utils::vectorToString(constants.taxBracketMarried)
+               << "], taxRateBracket: [" << vector_utils::vectorToString(constants.taxRateBracket) << "]";
        return stream;
                
     }

@@ -15,6 +15,7 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -258,5 +259,29 @@ namespace string_utils
      * @return The text centered within the specified width.
      */
     std::string centerText(const std::string& text, std::size_t width);
+
+    /**
+     * Resizes a string to match the length of another string by prefixing a character.
+     * The smaller string is padded to match the length of the larger.
+     *
+     * @note This method typically expects the larger string to be the first parameter,
+     *       but it will perform a check and swap them if needed.
+     * @note For special cases where the strings are the same size, the second parameter
+     *       is returned.
+     * @param larger The larger string.
+     * @param smaller The smaller string to be resized.
+     * @param pad The character to pad the string to (defaults to space).
+     * @return The resized string with leading pad-characters added.
+     */
+    std::string resizeString(const std::string& larger, 
+                             const std::string& smaller, 
+                             char pad = ' ');
+
+    /**
+     * Creates a string consisting of zeros of the specified length.
+     * @param length The length of the resulting zero string.
+     * @return A string composed entirely of '0' characters.
+     */
+    std::string zeroString(uint32_t length);
 
 } // namespace string_utils

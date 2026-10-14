@@ -30,6 +30,7 @@ TEST(PythonResultConstruction, DefaultIsVoid)
         << "A default constructed result should be Void.";
 }
 
+
 /**
  * @brief Verifies the integer constructor stores the value and type.
  */
@@ -45,6 +46,7 @@ TEST(PythonResultConstruction, IntegerValue)
         << "asInt should return the stored value.";
 }
 
+
 /**
  * @brief Verifies the double constructor stores the value and type.
  */
@@ -59,6 +61,7 @@ TEST(PythonResultConstruction, DoubleValue)
     EXPECT_DOUBLE_EQ(result.asDouble(), 2.5)
         << "asDouble should return the stored value.";
 }
+
 
 /**
  * @brief Verifies both string constructors produce a String result.
@@ -78,6 +81,7 @@ TEST(PythonResultConstruction, StringValue)
         << "asString should return the stored value.";
 }
 
+
 /**
  * @brief Verifies the error factory produces an invalid result with a message.
  */
@@ -91,6 +95,7 @@ TEST(PythonResultError, ErrorFactory)
         << "getError should return the message given to error().";
 }
 
+
 /**
  * @brief Verifies a valid result has an empty error message.
  */
@@ -101,6 +106,7 @@ TEST(PythonResultError, ValidResultHasEmptyError)
     EXPECT_EQ(result.getError(), "")
         << "A valid result should carry no error message.";
 }
+
 
 /**
  * @brief Verifies typed getters throw on the wrong type.

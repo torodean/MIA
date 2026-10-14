@@ -142,6 +142,6 @@ private:
      * restart the sequence looping. Since this is a threaded class, this will 
      * be constructed outside of the sequences when it is needed and used.
      */
-    SingleKeyListener listener{};
+    ui::SingleKeyListener listener{};
     
 }; // class Sara

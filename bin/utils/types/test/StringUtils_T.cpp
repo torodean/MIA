@@ -2,15 +2,16 @@
  * @file StringUtils_T.cpp
  * @author Antonius Torode
  * @date 05/20/2025
- * Description:
- *     This file contains unit tests for the StringUtils module using Google Test.
- *     It verifies the correctness of string manipulation functions such as case
- *     conversion, character removal, substring extraction, format validation,
- *     and other utility operations defined in the `StringUtils` namespace.
  * 
- *     The tests ensure reliable behavior and correctness of the StringUtils
- *     functions across typical use cases.
+ * This file contains unit tests for the StringUtils module using Google Test.
+ * It verifies the correctness of string manipulation functions such as case
+ * conversion, character removal, substring extraction, format validation,
+ * and other utility operations defined in the `StringUtils` namespace.
+ * 
+ * The tests ensure reliable behavior and correctness of the StringUtils
+ * functions across typical use cases.
  */
+ 
 #include <gtest/gtest.h>
 
 // Include the associated files to test.
@@ -39,6 +40,7 @@ namespace string_utils
             << "Check an empty string.";
     }
 
+
     /**
      * Tests for the toUpper(..) method.
      */
@@ -60,6 +62,7 @@ namespace string_utils
             << "Check an empty string.";
     }
 
+
     /**
      * Tests for the removeCharInString(..) nethod.
      */
@@ -80,6 +83,7 @@ namespace string_utils
         EXPECT_EQ(removeCharInString("", '!'), "")
 	        << "Check an empty string.";
     }
+
 
     /**
      * Tests for the findCharInString(..) method.
@@ -105,6 +109,7 @@ namespace string_utils
 	        << "Check that searching an empty string returns -1.";
     }
 
+
     /**
      * Tests for the stringContainsChar(..) method.
      */
@@ -128,6 +133,7 @@ namespace string_utils
         EXPECT_FALSE(stringContainsChar("", 'x'))
 	        << "Check that searching an empty string returns false.";
     }
+
 
     /**
      * Tests for the delimiterString(..) method.
@@ -167,6 +173,7 @@ namespace string_utils
             << "Check behavior using a string ending with the delimiter.";
     }
 
+
     /**
      * Tests for the isDigits(..) method.
      */
@@ -184,6 +191,7 @@ namespace string_utils
         EXPECT_FALSE(isDigits(""))
             << "Check an empty string.";
     }
+
 
     /**
      * Tests for the inputRoll(..) method.
@@ -205,6 +213,7 @@ namespace string_utils
         EXPECT_FALSE(inputRoll(""))
             << "Check an empty string.";
     }
+
 
     /**
      * Tests for the formOfYes(..) method.
@@ -229,6 +238,7 @@ namespace string_utils
         EXPECT_FALSE(formOfYes("hello world!"));
     }
 
+
     /**
      * Tests for the today() method.
      */
@@ -236,6 +246,7 @@ namespace string_utils
     {
         EXPECT_FALSE(today().empty());
     }
+
 
     /**
      * Tests for the shuffleString(..) method.
@@ -283,6 +294,7 @@ namespace string_utils
         }
     }
 
+
     /**
      * Tests for the getBeforeChar(..) method.
      */
@@ -301,6 +313,7 @@ namespace string_utils
             << "Check substring before the first occurrence of a character.";
     }
 
+
     /**
      * Tests for the getAfterChar(..) method.
      */
@@ -318,6 +331,7 @@ namespace string_utils
         EXPECT_EQ(getAfterChar("keyEvElue", 'E'), "vElue")
             << "Check substring after the first occurrence of a character.";
     }
+
 
     /**
      * Tests for the getBetweenXAndY(..) method.
@@ -338,6 +352,7 @@ namespace string_utils
         EXPECT_EQ(getBetweenXAndY("AdataA", 'A', 'A'), "data");
     }
 
+
     /**
      * Tests for the entangleText(..) method.
      */
@@ -349,6 +364,7 @@ namespace string_utils
         EXPECT_EQ(result[0], "a c e ");
         EXPECT_EQ(result[1], " b d f");
     }
+
 
     /**
      * Tests for the stringToIntVector(..) method.
@@ -377,6 +393,7 @@ namespace string_utils
             << "Check mixed characters.";
     }
 
+
     /**
      * Tests for the intVectorToString(..) method.
      */
@@ -404,6 +421,7 @@ namespace string_utils
 	        << "Check non-printable ASCII (e.g., newline).";
     }
 
+
     /**
      * Tests for the invertString(..) method.
      */
@@ -428,6 +446,7 @@ namespace string_utils
 	        << "Check a string with numbers.";
     }
 
+
     /**
      * Tests for the centerText(..) method.
      */
@@ -439,5 +458,32 @@ namespace string_utils
         EXPECT_EQ(centerText("Test", 4), "Test");
         EXPECT_EQ(centerText("Test", 3), "Test");
         EXPECT_EQ(centerText("", 5), "     ");
+    }
+
+
+    /**
+     * Tests for the resizeString(..) method.
+     */
+    TEST(StringUtilsTest, resizeString)
+    {
+        EXPECT_EQ(resizeString("12345", "123"), "  123");
+        EXPECT_EQ(resizeString("123", "12345"), "  123");
+        EXPECT_EQ(resizeString("aaaa", "bbbb"), "bbbb");
+        EXPECT_EQ(resizeString("12345", "123", '0'), "00123");
+    }
+    
+    
+    /**
+     * @brief Tests the zeroString method.
+     */
+    TEST(D3CMath_T, zeroString)
+    {
+        ASSERT_EQ(zeroString(5), "00000");
+        ASSERT_EQ(zeroString(8), "00000000");
+        ASSERT_EQ(zeroString(0), "");
+        
+        // Check a large string.
+        std::string zStr = zeroString(5678);
+        ASSERT_EQ(zStr.size(), 5678);
     }
 } // namespace string_utils

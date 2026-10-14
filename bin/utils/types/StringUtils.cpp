@@ -330,8 +330,8 @@ namespace string_utils
             
         return outputStr;
     }
-    
-    
+
+
     std::string invertString(const std::string& inputStr)
     {
         std::string output;
@@ -346,7 +346,8 @@ namespace string_utils
 
         return output;
     }
-    
+
+
     std::string centerText(const std::string& text, std::size_t width)
     {
         if (text.size() >= width)
@@ -357,5 +358,58 @@ namespace string_utils
         std::size_t right = padding - left;
 
         return std::string(left, ' ') + text + std::string(right, ' ');
+    }
+
+
+    std::string resizeString(const std::string& larger, 
+                             const std::string& smaller, 
+                             char pad)
+    {
+        std::string output;
+        int temp = 0;
+
+        std::string largerString = larger;
+        std::string smallerString = smaller;
+        if (larger.size() < smaller.size())
+        { // The larger string is actually the second parameter.
+            largerString = smaller;
+            smallerString = larger;
+        }
+        
+        // Finds the difference in size of the two strings so we know how much one needs stretched by.
+        int difference = largerString.size() - smallerString.size();
+        
+        if (difference == 0)
+        { // They are already the same size, so return the second string.
+            return smaller;
+        }
+        
+        output.resize(largerString.size());
+        
+        for (int i = output.size(); i >= 0; i--)
+        {
+            if (i > difference - 1)
+            {
+                output[i] = smallerString[smallerString.size() - temp];
+            } 
+            else 
+            {
+                output[i] = pad;
+            }
+            temp++;
+        }
+        return output;
+    }    
+
+
+    std::string zeroString(uint32_t length)
+    {
+        std::string output;
+        output.resize(length);
+        for (uint32_t i = 0; i < length; i++)
+        { //sets all of the numbers in output to zero.
+            output[i] = '0';
+        }
+        return output;
     }
 } // namespace string_utils

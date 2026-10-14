@@ -14,6 +14,7 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <vector>
 #include <string>
 
@@ -81,26 +82,22 @@ namespace math
      * @param number The string representation of the number.
      * @return The sum of all digits in the number.
      */
-    long sumOfDigits(std::string number);
+    long sumOfDigits(const std::string& number);
 
     /**
      * Counts the total number of positive factors of a given number.
      * @param x The number to find factors of.
-     * @return The number of factors of x.
+     * @return The number of factors of x (always positive).
      */
-    int numberOfFactors(long x);
+    uint32_t numberOfFactors(long x);
 
     /**
-     * Checks if a given number is a triangular number.
-     * A triangular number is a number that can be represented as the sum of
-     * consecutive integers starting from 1.
+     * Checks if a given number is a triangular number. A triangular number is a number 
+     * that can be represented as the sum of consecutive integers starting from 1.
      * @param x The number to check.
      * @return True if x is a triangular number, false otherwise.
      */
     bool isTriangleNumber(long x);
-
-    [[deprecated("just use x.size()!")]]    
-    int numOfDigitsString(const std::string& x);
 
     /**
      * Returns the number of digits in a non-zero integer.
@@ -109,7 +106,7 @@ namespace math
      * @param x The integer to evaluate.
      * @return The number of digits in the integer.
      */
-    int numOfDigitsInt(int x);
+    uint32_t numOfDigitsInt(int x);
 
     /**
      * Returns the larger of two integers.
@@ -117,22 +114,13 @@ namespace math
      * @param Two The second integer.
      * @return The larger integer.
      */
-    int setLargerInt(int One, int Two);
-
-    /**
-     * Creates a string consisting of zeros of the specified length.
-     * @param length The length of the resulting zero string.
-     * @return A string composed entirely of '0' characters.
-     * @TODO - Move this to StringUtils
-     */
-    std::string zeroString(int length);
+    int getLargerInt(int One, int Two);
 
     /**
      * Converts a string of digit characters to a vector of integers.
      * Each character '0'–'9' is converted to its integer equivalent 0–9.
      * @param a Input string of digit characters.
      * @return Vector containing the integer values of each character.
-     * @TODO - Move this to StringUtils
      */
     std::vector<int> stringToVector(std::string a);
 
@@ -141,76 +129,82 @@ namespace math
      * Leading zeros are shifted to the end before trimming to handle factor adjustment.
      * @param a Vector of integer digits.
      * @return String representation of the vector without leading zeros.
-     * @TODO - Move this to StringUtils
      */
     std::string vectorToString(std::vector<int> a);
 
     /**
-     * Resizes the second string to match the length of the first string by prefixing zeros.
-     * The first string is the larger one; the second string is padded to match its length.
-     * @param a The larger string.
-     * @param b The smaller string to be resized.
-     * @return The resized string with leading zeros added.
-     * @TODO - Move this to StringUtils
-     */
-    std::string resizeString(const std::string& a, std::string b);
-
-    /**
      * Adds two numeric strings representing non-negative integers and returns their sum as a string.
      * Supports adding two negative numbers but returns an error if only one is negative.
+     * TODO - fix this to allow one positive and one negative number.
      * 
      * @param stringOne First numeric string.
      * @param stringTwo Second numeric string.
-     * @return Sum of the two input strings as a string, with a negative sign if both inputs were negative.
+     * @return Sum of the two input strings as a string.
      */
     std::string addTwoStrings(std::string stringOne, std::string stringTwo);
 
     /**
-     * Prepends a negative sign ('-') to the input string.
-     * @param Total The original numeric string.
+     * Prepends a negative sign ('-') to the input string. The input string should
+     * be a string representation of a numerical integer.
+     * 
+     * @note If the string already starts with '-', nothing is done.
+     * @note If the string is equivalent to zero, no negative sign is added.
+     * @param input The original numeric string.
      * @return A new string with a '-' added at the beginning.
-     * @TODO - Move this to StringUtils
+     * @throws MIAException if a non-integer string is entered.
      */
-    std::string addNegativeSign(std::string Total);
+    std::string addNegativeSign(const std::string& input);
 
     /**
      * Subtracts the second numeric string from the first and returns the result as a string.
      * Handles resizing of inputs and determines the sign of the result.
-     * @param stringOne Minuend numeric string.
-     * @param stringTwo Subtrahend numeric string.
+     *
+     * @param strOne Minuend numeric string.
+     * @param strTwo Subtrahend numeric string.
      * @return Result of the subtraction as a string, including negative sign if needed.
      */
-    std::string subtractTwoStrings(std::string stringOne, std::string stringTwo);
+    std::string subtractTwoStrings(const std::string& strOne, 
+                                   const std::string& strTwo);
 
     /**
      * Multiplies two numeric strings representing integers of any length.
      * Supports negative numbers by adjusting the sign of the result accordingly.
-     * @param stringOne First numeric string.
-     * @param stringTwo Second numeric string.
+     *
+     * @param strOne First numeric string.
+     * @param strTwo Second numeric string.
      * @return Product of the two input strings as a string, with correct sign.
      */
-    std::string multiplyTwoStrings(std::string stringOne, std::string stringTwo);
+    std::string multiplyTwoStrings(const std::string& strOne, 
+                                   const std::string& strTwo);
 
     /**
      * Finds the largest product of x consecutive numbers within a numeric string.
-     * Converts the string digits to integers, then calculates the product of every consecutive sequence of length x.
-     * @param str A string containing the numeric sequence.
+     * Converts the string digits to integers, then calculates the product of every 
+     * consecutive sequence of length x.
+     *
+     * @param input A string containing the numeric sequence.
      * @param x The number of consecutive digits to multiply.
      * @return The largest product of x consecutive digits as a long integer.
+     * @throws MIAException if x > input.size() or input.empty()
      */
-    long largestProductOfXConsecutiveNumbers(std::string string, long x);
+    long largestProductOfXConsecutiveNumbers(const std::string& input, uint32_t x);
 
     /**
-     * Generates the Collatz sequence starting from n and returns the sequence as a space-separated string.
-     * Applies the Collatz rules until reaching 1: if even, divide by 2; if odd, multiply by 3 and add 1.
+     * Generates the Collatz sequence starting from n and returns the sequence as a 
+     * space-separated string. Applies the Collatz rules until reaching 1: if even, 
+     * divide by 2; if odd, multiply by 3 and add 1.
+     *
      * @param n The starting positive integer for the Collatz sequence.
-     * @return A string containing the sequence numbers separated by spaces (excluding the starting number).
+     * @return A string containing the sequence numbers separated by spaces 
+     *         (excluding the starting number).
      */
     std::string productCollatzSequence(long n);
 
     /**
-     * Computes the total number of lattice paths from the top-left to bottom-right corner of an x by y grid.
-     * Only right and down moves are allowed; uses dynamic programming to count paths.
+     * Computes the total number of lattice paths from the top-left to bottom-right corner 
+     * of an x by y grid. Only right and down moves are allowed; uses dynamic programming 
+     * to count paths.
+     *
      * @param x The grid width in steps.
      * @param y The grid height in steps.
      * @return The number of distinct lattice paths as a long integer.
@@ -218,14 +212,16 @@ namespace math
     long latticePathsOfSquare(long x, long y);
 
     /**
-     * Solves the quadratic equation ax² + bx + c = 0 and returns the roots as a string.
+     * @brief Solves the quadratic equation ax² + bx + c = 0 and returns the roots as a string.
+     *
+     * @note The returned string does not explicitly separate the two roots; it shows the 
+     *       formula with "+/-".
      * @param a Coefficient of x²
      * @param b Coefficient of x
      * @param c Constant term
      * @return A string representing the roots in the form "(-b*b/(2*a)) +/- sqrt(discriminant)".
      *         For real roots, includes the square root of the discriminant.
      *         For complex roots, includes the imaginary part with '*i'.
-     * Note: The returned string does not explicitly separate the two roots; it shows the formula with "+/-".
      */
     std::string solveQuadraticFormula(double a, double b, double c);
 

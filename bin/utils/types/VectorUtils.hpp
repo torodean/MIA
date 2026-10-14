@@ -2,10 +2,10 @@
  * @file VectorUtils.hpp
  * @author Antonius Torode
  * @date 03/01/2021
- * Description: 
- *     This file provides a collection of utility functions for vector parsing,
- *     processing, and formatting. It provides helper functions for dealing with
- *     vectors and other useful vector-related features.
+ *  
+ * This file provides a collection of utility functions for vector parsing,
+ * processing, and formatting. It provides helper functions for dealing with
+ * vectors and other useful vector-related features.
  */
 #pragma once
 
@@ -13,7 +13,7 @@
 #include <sstream>
 #include <string>
 
-namespace VectorUtils
+namespace vector_utils
 {
     /**
      * Compares two vectors for equality regardless of element order.
@@ -64,4 +64,4 @@ namespace VectorUtils
 
         return result.str();
     }
-} // namespace types
+} // namespace vector_utils
