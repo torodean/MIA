@@ -1,7 +1,7 @@
-
 # These are needed before Framework_CORE is created.
 add_subdirectory( basic_utilities )
 add_subdirectory( error )
+add_subdirectory( testing )
 
 # Header-only Constants_CORE (no source files).
 set( Constants_INC
@@ -42,4 +42,5 @@ target_link_libraries( Framework_CORE
 # Expose this library's source directory for #include access by dependent targets.
 target_include_directories( Framework_CORE PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
+# Add the tests.
 add_test_dir()

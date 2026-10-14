@@ -1,20 +1,20 @@
 /**
  * @file BasicUtilities_T.cpp
- * @brief Unit tests for BasicUtilities namespace functions using Google Test.
- * 
  * @author Antonius Torode
  * @date 06/15/2025
+ * @brief Unit tests for BasicUtilities' features.
  */
 
-#include "BasicUtilities.hpp"
-#include <gtest/gtest.h>
 #include <filesystem>
 #include <fstream>
+
+#include <gtest/gtest.h>
+
+#include "BasicUtilities.hpp"
 
 namespace basic_utils
 {
     /**
-     * @test BasicUtilitiesTest.FindCharInString
      * @brief Tests the findCharInString function to locate characters in strings.
      */
     TEST(BasicUtilitiesTest, FindCharInString)
@@ -24,8 +24,8 @@ namespace basic_utils
         EXPECT_EQ(findCharInString("", 'a'), -1);
     }
 
+
     /**
-     * @test BasicUtilitiesTest.StripFunctions
      * @brief Tests whitespace trimming functions: lstrip, rstrip, and strip.
      */
     TEST(BasicUtilitiesTest, StripFunctions)
@@ -36,8 +36,8 @@ namespace basic_utils
         EXPECT_EQ(strip(" \t\nabc\n\t "), "abc");
     }
 
+
     /**
-     * @test BasicUtilitiesTest.GetCurrentDateTime
      * @brief Tests that getCurrentDateTime returns a properly formatted timestamp.
      */
     TEST(BasicUtilitiesTest, GetCurrentDateTime)
@@ -52,8 +52,8 @@ namespace basic_utils
         EXPECT_EQ(dt[16], ':');
     }
 
+
     /**
-     * @test BasicUtilitiesTest.EnsureDirectoryExists
      * @brief Tests ensureDirectoryExists function including creation and existence checks.
      */
     TEST(BasicUtilitiesTest, EnsureDirectoryExists)
@@ -75,8 +75,8 @@ namespace basic_utils
         std::filesystem::remove_all(testDir);
     }
 
+
     /**
-     * @test BasicUtilitiesTest.EnsureFileExists
      * @brief Tests ensureFileExists function including file creation and edge cases.
      */
     TEST(BasicUtilitiesTest, EnsureFileExists)

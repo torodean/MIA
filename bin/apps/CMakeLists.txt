@@ -7,7 +7,7 @@ add_subdirectory( maple )
 if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
     # These apps use the virtual key strokes, which use Windows APIs directly; on Linux
     # they need libxdo/X11, so the apps are only built when those are available.
-    add_subdirectory( mia_sequencer )
+    add_subdirectory( sara )
     add_subdirectory( mia_original )
 endif()
 add_subdirectory( mia_test )

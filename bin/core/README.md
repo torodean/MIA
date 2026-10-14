@@ -53,10 +53,13 @@ The `RuntimeContext.hpp` file defines a struct holding application runtime conte
 
 The `basic_utilities/` subfolder contains `BasicUtilities.hpp` and `BasicUtilities.cpp`, which provide lightweight, dependency-free string helpers (such as `findCharInString` and trim functions) used across the core codebase. It has its own `test/` subfolder.
 
+## Testing
+
+The `testing/` subfolder contains the `Testing_CORE` component, which defines and links to common components that MIA tests should have access to. This includes automatically linking tests to the `Error_CORE` component and the Google test framework. It also provides various testing methods and utilities that MIA tests can access. 
+
 ## Tests
 
 The `test/` subfolder holds GoogleTest sources for the core components, with one executable per module (e.g., `CommandOption_T`, `CommandParser_T`, `MIAConfig_T`, `Logger_T`, `AppFramework_T`, `BackgroundTask_T`), declared in its `CMakeLists.txt`. The error component's tests live in `error/test/` (e.g., `MIAException_T`).
-
 
 ---
 
