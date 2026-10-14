@@ -55,7 +55,7 @@ namespace testing
                                 const Needles&... needles)
         {
             return haystack.find(needle) != std::string::npos &&
-                   containsAllStrings(haystack, needle...);
+                   containsAllStrings(haystack, needles...);
         }
 
         /**

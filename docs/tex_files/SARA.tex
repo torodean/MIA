@@ -44,14 +44,14 @@ SARA acquires its programmable sequence functionality from the \texttt{MIASequen
 The SARA app has two main modes of operation. If ran without the \texttt{--sequence} flag specified, SARA will load a front end UI where it prompts the user for a sequence to run. The sequence names are defined when the sequence is created at app initialization based on the \texttt{MIASequences.MIA} file input. If the \texttt{--sequence} flag is specified, the program will instead default to running the sequence entered via the flag. Other options are handled appropriately.
 
 \begin{lstlisting}[style=terminalstyle]
-$ ./MIASequencer -h
+$ ./sara -h
 Base MIA application options:
 	-v, --verbose           Enable verbose output.
 	-d, --debug             Enable debug output at a specified level.
 	-h, --help              Show this help message
 	-l, --logfile           Set a custom logfile.
 
-MIASequencer specific options:
+Sara specific options:
 	-c, --config            Specify a config file to use (default = /etc/mia/MIASequences.MIA)
 	-s, --sequence          Run a sequence, then exit.
 	-t, --test              Enables test mode. This mode will only output the sequence to terminal.

@@ -1,5 +1,5 @@
 /**
- * @file MIASequencer.hpp
+ * @file Sara.hpp
  * @author Antonius Torode
  * @date 12/26/2019
  *
@@ -23,15 +23,15 @@
 #include "Sequences.hpp"
 
 /**
- * @class MIASequencer
+ * @class Sara
  * @brief A component for executing user-defined input automation sequences.
  *
- * The MIASequencer is responsible for loading, parsing, and executing sequences
+ * The Sara is responsible for loading, parsing, and executing sequences
  * of simulated user input defined in a configuration file (default: MIASequences.MIA).
  * These sequences can automate keyboard and mouse interactions by specifying actions
  * like typing, mouse movement, and clicking at specified screen coordinates.
  */
-class MIASequencer : public MIAApplication
+class Sara : public MIAApplication
 {
 public:
     
@@ -39,12 +39,12 @@ public:
     const std::string defaultSequencesFile{"MIASequences.MIA"};
     
     /**
-     * The main constructor of the MIASequencer class. This will construct the command options.
+     * The main constructor of the Sara class. This will construct the command options.
      */
-    MIASequencer();
+    Sara();
 
     /// Default destructor.
-    ~MIASequencer() = default;
+    ~Sara() = default;
     
     /**
      * @brief This will initialize this class by parsing command line arguments for 
@@ -55,7 +55,7 @@ public:
      */
     void initialize(int argc, char* argv[]) override;
     
-    /// Runs the MIASequencer application.
+    /// Runs the Sara application.
     int run() override;
     
     /**
@@ -144,4 +144,4 @@ private:
      */
     SingleKeyListener listener{};
     
-}; // class MIASequencer
+}; // class Sara

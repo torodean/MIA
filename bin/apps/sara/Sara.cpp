@@ -1,8 +1,8 @@
 /**
- * @file MIASequencer.cpp
+ * @file Sara.cpp
  * @author Antonius Torode
  * @date 05/24/2025
- * @brief Implementation of the MIASequencer app.
+ * @brief Implementation of the Sara app.
  */
 
 #include <iostream>
@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 // The associated header file.
-#include "MIASequencer.hpp"
+#include "Sara.hpp"
 
 // Used for error handling and configuration.
 #include "Paths.hpp"
@@ -27,7 +27,7 @@
 #include "Constants.hpp"
 
 
-MIASequencer::MIASequencer() : 
+Sara::Sara() : 
     config(defaultSequencesFile, constants::ConfigType::RAW_LINES),
     sequencesFileOpt("-c", "--config", "Specify a config file to use (default = " +
                      paths::getDefaultConfigDirToUse() + "/" + defaultSequencesFile + ")",
@@ -43,7 +43,7 @@ MIASequencer::MIASequencer() :
 { };
 
 
-void MIASequencer::initialize(int argc, char* argv[])
+void Sara::initialize(int argc, char* argv[])
 {
     try
     {    
@@ -65,14 +65,14 @@ void MIASequencer::initialize(int argc, char* argv[])
     }
     catch (const error::MIAException& ex)
     {
-        std::cerr << "Error during MIASequencer::initialize: " << ex.what() << std::endl;
+        std::cerr << "Error during Sara::initialize: " << ex.what() << std::endl;
     }
     
     loadConfig();
 }
 
 
-void MIASequencer::loadConfig()
+void Sara::loadConfig()
 {    
     sequences::CompleteSequence sequence;
     
@@ -142,7 +142,7 @@ void MIASequencer::loadConfig()
 }
 
 
-sequences::SequenceAction MIASequencer::createAction(std::string key, std::string value)
+sequences::SequenceAction Sara::createAction(std::string key, std::string value)
 {
     sequences::SequenceAction action;
     if (key == "TYPE")
@@ -234,12 +234,12 @@ sequences::SequenceAction MIASequencer::createAction(std::string key, std::strin
 }
 
 
-void MIASequencer::printHelp() const
+void Sara::printHelp() const
 {
     MIAApplication::printHelp();
     
     // This is a dump of the help messages used by the various command options.
-    std::cout << "MIASequencer specific options:" << std::endl
+    std::cout << "SARA specific options:" << std::endl
               << sequencesFileOpt.getHelp() << std::endl
               << sequenceNameOpt.getHelp() << std::endl
               << testOpt.getHelp() << std::endl
@@ -249,13 +249,13 @@ void MIASequencer::printHelp() const
 }
 
 
-void MIASequencer::runSequence(sequences::CompleteSequence& sequence)
+void Sara::runSequence(sequences::CompleteSequence& sequence)
 {
     sequence.performActions(keys, getVerboseMode(), testMode);
 }
 
 
-void MIASequencer::runSequence(const std::string& sequenceName)
+void Sara::runSequence(const std::string& sequenceName)
 {
     auto it = sequences.find(sequenceName);
     if (it != sequences.end())
@@ -265,7 +265,7 @@ void MIASequencer::runSequence(const std::string& sequenceName)
 }
 
 
-void MIASequencer::printSequenceList(std::ostream& out)
+void Sara::printSequenceList(std::ostream& out)
 {
     out << "All valid sequences listed below:" << std::endl;
     for(const auto& sequence : sequences)
@@ -275,7 +275,7 @@ void MIASequencer::printSequenceList(std::ostream& out)
 }
 
 
-void MIASequencer::defaultFrontEnd()
+void Sara::defaultFrontEnd()
 {
     std::string input;
     // Loop over the default interface.
@@ -293,7 +293,7 @@ void MIASequencer::defaultFrontEnd()
 }
 
 
-int MIASequencer::run()
+int Sara::run()
 {
     if (printSequences)
         printSequenceList();
