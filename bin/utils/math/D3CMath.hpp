@@ -135,13 +135,13 @@ namespace math
     /**
      * Adds two numeric strings representing non-negative integers and returns their sum as a string.
      * Supports adding two negative numbers but returns an error if only one is negative.
-     * TODO - fix this to allow one positive and one negative number.
      * 
-     * @param stringOne First numeric string.
-     * @param stringTwo Second numeric string.
+     * @param strOne First numeric string.
+     * @param strTwo Second numeric string.
      * @return Sum of the two input strings as a string.
      */
-    std::string addTwoStrings(std::string stringOne, std::string stringTwo);
+    std::string addTwoStrings(const std::string& strOne, 
+                              const std::string& strTwo);
 
     /**
      * Prepends a negative sign ('-') to the input string. The input string should

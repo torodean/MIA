@@ -441,54 +441,44 @@ namespace math
     }
 
 
-    string addTwoStrings(string stringOne, string stringTwo)
+    string addTwoStrings(const string& strOne, const string& strTwo)
     {
-        int lengthOne = stringOne.size(); 
-        int lengthTwo = stringTwo.size();
-
-        // Set largerLength to the length of the largest string.
-        int largerLength = getLargerInt(lengthOne, lengthTwo);
-        int lengthTotal;
-        int number;
-        int var; 
+        string stringOne = strOne;
+        string stringTwo = strTwo;
+        
+        // Stores whether the result is positive or negative.
         bool isPositive = true;
 
         if(stringOne[0] == '-' && stringTwo[0] == '-')
         { // If both numbers are negative, then their summation is also negative.
             isPositive = false;
-            for(int i=0;i<lengthOne;i++)
-            {
-                stringOne[i] = stringOne[i+1];
-            }
-            for(int i=0;i<lengthTwo;i++)
-            {
-                stringTwo[i] = stringTwo[i+1];
-            }
-            stringOne.resize(lengthOne-1);
-            stringTwo.resize(lengthTwo-1);
-            lengthOne -=1;
-            lengthTwo -=1;
-            largerLength -=1;
+            stringOne = stringOne.substr(1);
+            stringTwo = stringTwo.substr(1);
         }
-        else if(stringOne[0] =='-' || stringTwo[0] == '-')
-        { // If just one of the numbers is negative, the summation could be positive or negative.
-            return "Error. Use the subtract function for one negative number and one positive number.";
+        else if(stringOne[0] =='-')
+        { // If the first number is negative, use the subtraction method. -A + B = B - A.
+            return subtractTwoStrings(strTwo, strOne.substr(1));
         }
+        else if (stringTwo[0] == '-')
+        { // If the second number is negative, use the subtraction method. A - B.
+            return subtractTwoStrings(strOne, strTwo.substr(1));
+        }
+        
+        int lengthOne = stringOne.size(); 
+        int lengthTwo = stringTwo.size();
 
-        // Creates a blank string for the total of the two added strings.
-        string total = string_utils::zeroString(largerLength + 1);
-        lengthTotal = total.size();
+        // Set largerLength to the length of the largest string.
+        int largerLength = getLargerInt(lengthOne, lengthTwo);
+        int lengthTotal = largerLength + 1; // When adding, the max length will be the larger + 1.
+        int number;
+        int var;
 
-        if (lengthOne == lengthTwo)
-        {
-            /*
-             * If the lengths of the starting two strings are equal in length, do nothing, 
-             * otherwise set the lengths equal to each other and make the empty digits before 
-             * the smaller number 0.
-             */
-            ;
-        }
-        else if (lengthOne > lengthTwo)
+        /*
+         * If the lengths of the starting two strings are equal in length, do nothing, 
+         * otherwise set the lengths equal to each other and make the empty digits before 
+         * the smaller number 0.
+         */
+        if (lengthOne > lengthTwo)
         {
             stringTwo = string_utils::resizeString(stringOne, stringTwo, '0');
             lengthTwo = stringTwo.size();
@@ -503,7 +493,7 @@ namespace math
          * Creates an int array for each string to be converted to and then converts the, 
          * to an array of integers using a vector.
          */
-        vector<int> totalArray = stringToVector(total);
+        vector<int> totalArray(largerLength + 1, 0);
         vector<int> stringOneArray = stringToVector(stringOne); 
         vector<int> stringTwoArray = stringToVector(stringTwo);
 
@@ -529,7 +519,7 @@ namespace math
             var--;
         }
 
-        total = vectorToString(totalArray);
+        std::string total = vectorToString(totalArray);
 
         if(!isPositive)
         {
