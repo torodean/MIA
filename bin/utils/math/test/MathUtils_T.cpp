@@ -2,7 +2,7 @@
  * @file MathUtils_T.cpp
  * @author Antonius Torode
  * @date 05/20/2025
- * @brief: Unit tests covering the methods in MathUtils.hpp
+ * @brief Unit tests covering the methods in MathUtils.hpp
  */ 
 
 #include <limits>
@@ -16,7 +16,9 @@
 
 namespace math
 {
-    // Test randomInt within bounds.
+    /*
+     * @brief Test randomInt within bounds.
+     */
     TEST(MathUtils, RandomIntWithinBounds) 
     {
         int min = 1, max = 100, seed = 42;
@@ -35,7 +37,9 @@ namespace math
     }
 
 
-    // Test randomInt returns consistent result with fixed seed and no time usage.
+    /*
+     * @brief Test randomInt returns consistent result with fixed seed and no time usage.
+     */
     TEST(MathUtils, RandomIntConsistentWithSeed) 
     {
         int seed = 123;
@@ -46,7 +50,7 @@ namespace math
 
 
     /*
-     * Tests that random values are not duplicated when using time.
+     * @brief Tests that random values are not duplicated when using time.
      */
     TEST(MathUtils, RandomIntNotDuplicated) 
     {
@@ -58,7 +62,7 @@ namespace math
 
 
     /*
-     * Test that randomChance() works as expected;
+     * @brief Test that randomChance() works as expected;
      */
     TEST(MathUtils, randomChance)
     {
@@ -103,7 +107,9 @@ namespace math
     }
 
 
-    // Test roll function with simple valid inputs.
+    /*
+     * @brief Test roll function with simple valid inputs.
+     */
     TEST(MathUtils, RollSimpleDice) 
     {
         EXPECT_GE(roll("1d6"), 1);
@@ -113,16 +119,19 @@ namespace math
         EXPECT_LE(roll("2d4"), 8);
     }
 
-    /* TODO - this method doesn't handle this currently.
-    // Test roll with invalid input should handle gracefully (depends on implementation, here just test no crash).
+
+    /*
+     * @brief Test roll with invalid input should throw.
+     */
     TEST(MathUtils, RollInvalidInput) 
     {
-        EXPECT_NO_THROW(roll("invalid"));
+        EXPECT_THROW(roll("invalid"), error::MIAException);
     }
-    */
 
 
-    // Test rolldXX returns values within expected range.
+    /*
+     * @brief Test rolldXX returns values within expected range.
+     */
     TEST(MathUtils, RolldXXRange) 
     {
         int seed = 99;
