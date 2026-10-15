@@ -22,7 +22,7 @@ namespace stats
     public:
         /// Default constructor.
         Attribute() = default;
-                
+
         /**
          * Constructs an Attribute with specified properties.
          *
@@ -48,14 +48,14 @@ namespace stats
          * @param modify The Modifies object to add.
          */
         void addModify(const rpg::Modifies& modify);
-        
+
         /**
          * Serializes the Attribute object to JSON.
          *
          * @return A JSON object containing the Attribute's properties.
          */
         nlohmann::json toJson() const;
-        
+
         /**
          * Deserializes an Attribute object from JSON.
          *
@@ -65,7 +65,7 @@ namespace stats
         static Attribute fromJson(const nlohmann::json& j);
 
     private:
-    
+
         int32_t baseValue{0};                ///< Base value of the Attribute.
         std::vector<rpg::Modifies> modifies; ///< This stores which other rpg objects this attribute modifies.
     };

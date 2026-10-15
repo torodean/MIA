@@ -20,14 +20,14 @@ namespace maple
     {
         /// Defines the deductions to use for tax calculations.
         double deductions{0.0};
-        
+
         /// Defines the tax filing status.
         FilingStatus filingStatus{FilingStatus::Single};
-        
+
         /// Defines a list of expense scopes to consider when doing the tax calculations.
         std::vector<std::string> addedTaxExpenses;
     };
-    
+
     /**
      * @brief Constructs a MapleMiscTaxValues object from a configuration object.
      *

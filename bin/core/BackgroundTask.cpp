@@ -18,7 +18,7 @@ namespace threading
 	{ 
 		stop(); 
 	}
-	
+
 
 	void BackgroundTask::start() 
 	{ 
@@ -39,8 +39,8 @@ namespace threading
 	{ 
 		return !stopRequested.load(); 
 	}
-	
-	
+
+
 	void BackgroundTask::setConditionMet(bool value) 
 	{  
 		conditionMet.store(value); 
@@ -51,7 +51,7 @@ namespace threading
 	{ 
 		return conditionMet.load(); 
 	}
-	
+
 
 	void BackgroundTask::toggleCondition()
 	{ 
@@ -60,20 +60,20 @@ namespace threading
 			std::cout << "TOGGLED BACKGROUND CONDITION: " 
 					  << (isConditionMet() ? "1" : "0") << std::endl;
 	}
-	
+
 
 	void BackgroundTask::setContext(const RuntimeContext& ctx) 
 	{ 
 		context = &ctx; 
 	}
-	
-	
+
+
     bool BackgroundTask::hasFailed() const noexcept
     {
         return static_cast<bool>(storedException);
     }
-    
-    
+
+
     std::exception_ptr BackgroundTask::getException() const
     {
         return storedException;
@@ -94,14 +94,14 @@ namespace threading
 
 	void BackgroundTask::doWhenStopped() 
 	{}
-	
-	
-	
+
+
+
     void BackgroundTask::setTaskName(const std::string& newTaskName)
     {
         taskName = newTaskName;
     }
-	
+
 
 	void BackgroundTask::threadLoop() 
 	{
@@ -119,7 +119,7 @@ namespace threading
             storedException = std::current_exception();
             stopRequested.store(true);
 	    }
-	    
+
 		doWhenStopped();
 	}
 } // namespace threading

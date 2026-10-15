@@ -20,7 +20,7 @@ namespace config
 {   
     // Forward declaration of ConfigData class where the configuration data is stored.
     class ConfigData;
-        
+
     /**
      * @class MIAConfig
      * @brief Manages loading configuration files into flexible key-value storage.
@@ -35,12 +35,12 @@ namespace config
     class MIAConfig
     {
     public:
-        
+
         /**
          * Main default constructor for the MIAConfig class.
          */
         MIAConfig();
-        
+
         /**
          * Main constructor for the MIAConfig class which sets the config file and type.
          * After constructed, initialize() must be called to load the configuration file.
@@ -58,14 +58,14 @@ namespace config
          * Main destructor for the MIAConfig class.
          */
         ~MIAConfig();
-        
+
         /**
          * This will iniitalize this object by reading and loading the configuration file into the RawConfigVals map.
          * @param verboseMode[bool] - Enables verbose output.
          * @throws MIAException - Thrown if the config file name is not set or if the config file cannot be opened.
          */
         void initialize(bool verboseMode = false);
-        
+
         /**
          * This will reload the configuration file by calling initialize. This is mainly just semantically different
          * so that the call makes sense in contexts where it is used.
@@ -74,7 +74,7 @@ namespace config
          */
         void reload(bool verboseMode = false)
         { initialize(verboseMode); };
-        
+
         /**
          * Sets the config file name and type for this object and reloads the configuration.
          * @note The file name can be the entire file path or just the name (in which case
@@ -87,27 +87,27 @@ namespace config
         void setConfigFileName(const std::string& configFile, 
                                constants::ConfigType type, 
                                bool verboseMode = false);
-        
+
         /**
          * Gets the config file name for this object.
          * @return [std::string&] - Returns the configFileName value.
          */
          std::string getConfigFileName()
          { return configFileName; }
-         
+
         /**
          * Gets the config file name for this object.
          * @return [std::string&] - Returns the configFileName value.
          */
          std::string getConfigFileFullPath()
          { return configFileFullPath; }       
-         
+
         /**
          * Gets the current configuration type.
          * @return [constants::ConfigType] - The type of configuration data stored.
          */
         constants::ConfigType getConfigType() const;
-         
+
         /**
          * Retrieves the configuration value associated with the given key as an int.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
@@ -145,7 +145,7 @@ namespace config
          * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         std::vector<std::string> getVector(const std::string& key, char delimiter) const;
-        
+
         /**
          * Retrieves the configuration value associated with the given key as a bool.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
@@ -164,7 +164,7 @@ namespace config
          * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         std::vector<int> getIntVector(const std::string& key, char delimiter) const;
-        
+
         /**
          * Dumps all key-value pairs stored in rawConfigValsMap to the specified output stream.
          * Useful for debugging to inspect the current configuration values.
@@ -172,7 +172,7 @@ namespace config
          */
         [[maybe_unused]]
         void dumpConfigMap(std::ostream& os = std::cout) const;
-        
+
         /**
          * Returns all key-value pairs stored in rawConfigValsMap as a vector.
          * This can be used to iterate over all configuration entries.
@@ -180,7 +180,7 @@ namespace config
          * @return std::vector<constants::KeyValuePair> - A vector containing all configuration key-value pairs.
          */
         std::vector<constants::KeyValuePair> getAllConfigPairs() const;        
-        
+
         /**
          * Returns all raw lines stored in the Data object.
          * If the config type does not support raw lines, returns an empty vector.
@@ -189,13 +189,13 @@ namespace config
         std::vector<std::string> getRawLines() const;
 
     private:
-    
+
         /// The name of the configuration file for this object.
         std::string configFileName;
-        
+
         /// The full path of the configuration file for this object.
         std::string configFileFullPath;
-        
+
         /// Stores the configuration data (PIMPL idiom).
         std::unique_ptr<ConfigData> configData;
     }; // class MIAConfig

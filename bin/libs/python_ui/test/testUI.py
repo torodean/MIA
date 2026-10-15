@@ -90,7 +90,7 @@ def getAllEvents():
     uiEvents.clear()
 
     return events
-    
+
 
 def reset():
     """

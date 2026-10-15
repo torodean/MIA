@@ -56,7 +56,7 @@ namespace math
         ASSERT_EQ(numOfDigitsInt(1234), 4);
         ASSERT_EQ(numOfDigitsInt(543678), 6);
         ASSERT_EQ(numOfDigitsInt(-404), 3);
-        
+
         // Special cases.
         ASSERT_EQ(numOfDigitsInt(0), 0);
         ASSERT_EQ(numOfDigitsInt(00000), 0);
@@ -101,25 +101,25 @@ namespace math
     {
         std::string sum = addTwoStrings("15", "32");
         ASSERT_EQ(sum, "47");
-        
+
         sum = addTwoStrings("0", "42");
         ASSERT_EQ(sum, "42");
-        
+
         sum = addTwoStrings("42", "0");
         ASSERT_EQ(sum, "42");
-        
+
         // TODO - this is currently not supported by this method.
         //sum = addTwoStrings("15", "-20");
         //ASSERT_EQ(sum, "-5");
-        
+
         sum = addTwoStrings("0", "0");
         ASSERT_EQ(sum, "0");
-        
+
         sum = addTwoStrings("-12", "-42");
         ASSERT_EQ(sum, "-54");
     }
-    
-    
+
+
     /**
      * @brief Tests the addNegativeSign method.
      */
@@ -131,8 +131,8 @@ namespace math
         ASSERT_EQ(addNegativeSign("00000"), "00000");
         ASSERT_THROW(addNegativeSign(""), error::MIAException);
     }
-    
-    
+
+
     /**
      * @brief Tests the subtractTwoStrings method.
      */
@@ -141,47 +141,47 @@ namespace math
         // Normal larger - smaller subtraction.
         std::string diff = subtractTwoStrings("123456", "2564");
         ASSERT_EQ(diff, "120892");
-        
+
         // smaller - larger subtraction with strings of the same length.
         diff = subtractTwoStrings("15", "32");
         ASSERT_EQ(diff, "-17");        
-        
+
         // larger - smaller subtraction with strings of the same length.
         diff = subtractTwoStrings("32", "12");
         ASSERT_EQ(diff, "20");
-        
+
         // Subtraction where the first is zero and second is positive.
         diff = subtractTwoStrings("0", "42");
         ASSERT_EQ(diff, "-42");
-        
+
         // Subtraction where the first is zero and second is negative.
         diff = subtractTwoStrings("0", "-42");
         ASSERT_EQ(diff, "42");
-        
+
         // Subtraction where the first is positve and second is zero.
         diff = subtractTwoStrings("42", "0");
         ASSERT_EQ(diff, "42");
-        
+
         // Subtraction where the first is negative and second is zero.
         diff = subtractTwoStrings("-42", "0");
         ASSERT_EQ(diff, "-42");
-        
+
         // Positive minus a negative with same size strings.
         diff = subtractTwoStrings("15", "-20");
         ASSERT_EQ(diff, "35");
-        
+
         // Negative minus a positive with same size strings.
         diff = subtractTwoStrings("-12", "42");
         ASSERT_EQ(diff, "-54");
-        
+
         // Negative minus a smaller negative with different size strings.
         diff = subtractTwoStrings("-12", "-442");
         ASSERT_EQ(diff, "430");
-        
+
         // Negative minus a smaller negative number with same size strings.
         diff = subtractTwoStrings("-20", "-12");
         ASSERT_EQ(diff, "-8");       
-         
+
         // Negative minus a larger negative number with same size strings.
         diff = subtractTwoStrings("-12", "-20");
         ASSERT_EQ(diff, "8");
@@ -189,15 +189,15 @@ namespace math
         // Reverse the negative-negative subtraction.
         diff = subtractTwoStrings("-442", "-12");
         ASSERT_EQ(diff, "-430");
-        
+
         // Subtraction with two zero inputs.
         diff = subtractTwoStrings("0", "0");
         ASSERT_EQ(diff, "0");
-        
+
         // Two negative numbers where the first is greater.
         diff = subtractTwoStrings("-12", "-42");
         ASSERT_EQ(diff, "30");
-        
+
         // Borrowing from the next digit.
         diff = subtractTwoStrings("100", "1");
         ASSERT_EQ(diff, "99");
@@ -217,7 +217,7 @@ namespace math
         // No borrowing required.
         diff = subtractTwoStrings("9876", "1234");
         ASSERT_EQ(diff, "8642");
-        
+
         // Positive minus positive with same absolute value strings.
         diff = subtractTwoStrings("42", "42");
         ASSERT_EQ(diff, "0");
@@ -225,7 +225,7 @@ namespace math
         // Negative minus negative with same absolute value strings.
         diff = subtractTwoStrings("-42", "-42");
         ASSERT_EQ(diff, "0");
-        
+
         // Positive minus negative with same absolute value strings.
         diff = subtractTwoStrings("42", "-42");
         ASSERT_EQ(diff, "84");
@@ -233,24 +233,24 @@ namespace math
         // Negative minus positive with same absolute value strings.
         diff = subtractTwoStrings("-42", "42");
         ASSERT_EQ(diff, "-84");
-        
+
         // Try with long numbers.
         diff = subtractTwoStrings("1000000000000000000000000000000", "1");
         ASSERT_EQ(diff, "999999999999999999999999999999");
-        
+
         // Try with long numbers.
         diff = subtractTwoStrings("1000000000000000000000000000000","999999999999999999999999999999");
         ASSERT_EQ(diff, "1");
     }
-    
-    
+
+
     /**
      * @brief Tests the multiplyTwoStrings method.
      */
     TEST(D3CMath_T, multiplyTwoStrings)
     {
         std::string product;
-        
+
         // Multiplication with zero as one of the inputs.
         product = multiplyTwoStrings("0", "0");
         ASSERT_EQ(product, "0");
@@ -258,7 +258,7 @@ namespace math
         ASSERT_EQ(product, "0");
         product = multiplyTwoStrings("42", "0");
         ASSERT_EQ(product, "0");
-        
+
         // Multiplications with positive values.
         product = multiplyTwoStrings("7", "6");
         ASSERT_EQ(product, "42");
@@ -266,7 +266,7 @@ namespace math
         ASSERT_EQ(product, "420");
         product = multiplyTwoStrings("7", "60");
         ASSERT_EQ(product, "420");
-        
+
         // Multiplications with one positive and one negative value.
         product = multiplyTwoStrings("-7", "6");
         ASSERT_EQ(product, "-42");
@@ -280,7 +280,7 @@ namespace math
         ASSERT_EQ(product, "-420");
         product = multiplyTwoStrings("7", "-60");
         ASSERT_EQ(product, "-420");
-        
+
         // Multiplications with negative values.
         product = multiplyTwoStrings("-7", "-6");
         ASSERT_EQ(product, "42");
@@ -288,7 +288,7 @@ namespace math
         ASSERT_EQ(product, "420");
         product = multiplyTwoStrings("-7", "-60");
         ASSERT_EQ(product, "420");
-        
+
         // Multiplication with large values.
         product = multiplyTwoStrings("982137409812734091287340912387", "1279863498127643987126349812734");
         ASSERT_EQ(product, "1257001820964949313913310643837770272853987552233914150936058");
@@ -297,8 +297,8 @@ namespace math
         product = multiplyTwoStrings("-982137409812734091287340912387", "-1279863498127643987126349812734");
         ASSERT_EQ(product, "1257001820964949313913310643837770272853987552233914150936058");
     }
-    
-    
+
+
     /**
      * @brief Tests the largestProductOfXConsecutiveNumbers method.
      */
@@ -353,8 +353,8 @@ namespace math
         EXPECT_EQ(largestProductOfXConsecutiveNumbers(
             "73167176531330624919225119674426574742355349194934", 4), 1512);
     }
-    
-    
+
+
     /**
      * @brief Tests the productCollatzSequence method.
      */
@@ -362,8 +362,8 @@ namespace math
     {
         // TODO
     }
-    
-    
+
+
     /**
      * @brief Tests the latticePathsOfSquare method.
      */
@@ -371,8 +371,8 @@ namespace math
     {
         // TODO
     }
-    
-    
+
+
     /**
      * @brief Tests the solveQuadraticFormula method.
      */
@@ -380,8 +380,8 @@ namespace math
     {
         // TODO
     }
-    
-    
+
+
     /**
      * @brief Tests the isPalindrome method.
      */

@@ -26,5 +26,5 @@ namespace credentials
 	 * @return std::string The password entered by the user.
 	 */
 	std::string password(const std::string& info = "");
-	
+
 } // namespace credentials

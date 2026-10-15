@@ -44,7 +44,7 @@ namespace sequences
 
             case SequenceActionType::CLICKHOLD:
                 return click != virtual_keys::ClickType::UNKNOWN  && timeValue > 0;
-                
+
             case SequenceActionType::PRESSRANDNUM:
                 return (coords.x >= 0 && coords.y >= 0) && (coords.x <= 9 && coords.y <= 9);
 
@@ -122,10 +122,10 @@ namespace sequences
                     break;
             }
         }
-        
+
         if (testMode)
             std::cout << std::endl;
-            
+
         return std::nullopt;
     }
 
@@ -146,11 +146,11 @@ namespace sequences
                 // Update the delayTime if performActions returns an int.
                 if (auto newDelay = action.performAction(keys, verboseMode))
                     delayTime = *newDelay;
-                
+
                 timing::sleepMilliseconds(delayTime);
             }
         }
-        
+
         if (testMode)
             std::cout << std::endl;
     }
@@ -163,45 +163,45 @@ namespace sequences
             case SequenceActionType::TYPE:
                 std::cout << "TYPE:" << strToType;
                 break;
-                
+
             case SequenceActionType::SLEEP:
                 std::cout << "SLEEP:" << timeValue << "ms";
                 break;
-                
+
             case SequenceActionType::MOVEMOUSE:
                 std::cout << "MOVEMOUSE:" << coords.x << "," << coords.y;
                 break;
-                
+
             case SequenceActionType::CLICK:
                 std::cout << "CLICK:" << virtual_keys::clickTypeToString(click);
                 break;
-                
+
             case SequenceActionType::PRESS:
                 std::cout << "PRESS:" << virtual_keys::specialButtonToString(press);
                 break;
-                
+
             case SequenceActionType::TYPEHOLD:
                 std::cout << "TYPE:" << strToType
                           << ";HOLD:" << timeValue << "ms";
                 break;
-                
+
             case SequenceActionType::PRESSHOLD:
                 std::cout << "PRESS:" << virtual_keys::specialButtonToString(press)
                           << ";HOLD:" << timeValue << "ms";
-                
+
             case SequenceActionType::CLICKHOLD:
                 std::cout << "CLICK:" << virtual_keys::clickTypeToString(click)
                           << ";HOLD:" << timeValue << "ms";
                 break;
-                
+
             case SequenceActionType::DELAY:
                 std::cout << "DELAY:" << timeValue << "ms";
                 break;
-                
+
             case SequenceActionType::PRESSRANDNUM:
                 std::cout << "PRESSRANDNUM:" << coords.x << ";" << coords.y;
                 break;
-                            
+
             default:
                 std::cout << "UNKNOWN";
                 break;
@@ -214,7 +214,7 @@ namespace sequences
     {
         std::cout << " -- { " << name << ", DELAY=";
         std::cout << delayTime << "ms";
-        
+
         if (listenerKeyCode != '\0')
             std::cout << ", LISTEN=" << listenerKeyCode;
 

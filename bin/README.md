@@ -7,7 +7,7 @@ This directory contains the primary code for the MIA project and associated libr
 
 - **utils/**  
   Contains reusable utilities and common functionality to support application or feature development.
-  
+
 - **libs/**  
   Contains libraries with core functionality for the various MIA apps and features.
 

@@ -39,14 +39,14 @@ public:
      * Get the debugLevel.
      */
     unsigned int getdebugLevel() const;
-    
+
     /**
      * Log a message using the logger object. This will automatically set the verbose
      * mode based on the verbose flag.
      * @param message The message to log.
      */
     void log(const std::string& message) const;
-    
+
     /**
      * Log a message using the logger object with an optional verboseMode flag. This
      * overload allows the called to set the verbose flag without using the default
@@ -55,7 +55,7 @@ public:
      * @param verbose Whether to print the message to stdout.
      */
     void log(const std::string& message, bool verbose) const;
-    
+
     /**
      * Logs the name of the calling method and optional parameters using the logger object.
      * This is needed here to be called in the LOG_METHOD_CALL() and LOG_METHOD_CALL_WITH_PARAMS()
@@ -69,7 +69,7 @@ public:
     void logMethodCall(const std::string& methodName,
                        const std::string& params = "",
                        bool verbose = false);
-    
+
 protected:
 
     /**
@@ -89,17 +89,17 @@ protected:
      * @return int Exit status code.
      */
     virtual int run() = 0;
-    
+
     /**
      * Prints common help info including verbose and help flags.
      */
     virtual void printHelp() const;
-    
+
     /**
      * Returns the executable name if needed. 
      */
     std::string getExecutableName();
-    
+
     /**
      * @brief Provides read-only access to the runtime context.
      * 
@@ -110,21 +110,21 @@ protected:
      * @return const RuntimeContext& Reference to the runtime context.
      */
     const RuntimeContext& getContext() const;
-    
+
 private:
-  
+
     /// The RuntimeContext for this class - stores common runtime variables.
     RuntimeContext context;
-    
+
     /// Base command options used by the MIAApplication.
     CommandOption verboseOpt;
     CommandOption debugOpt;
     CommandOption helpOpt;
     CommandOption logFileOpt;
-    
+
     /// True if the user specified the help flag in command options.
     bool helpRequested{false};
-    
+
     /// Store the executable name for use in the help message.
     std::string executableName;
 }; // class MIAApplication

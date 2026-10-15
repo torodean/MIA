@@ -23,7 +23,7 @@ namespace files
     protected:
         const std::string testFile = "testfile.txt";
         const std::string copyFileName = "copyfile.txt";
-    
+
         void SetUp() override 
         {
             // Create a test file with known content
@@ -31,7 +31,7 @@ namespace files
             file << "Line 1\nLine 2\nLine 3\n";
             file.close();
         }
-    
+
         void TearDown() override 
         {
             // Cleanup test files
@@ -52,55 +52,55 @@ namespace files
         ofs.close();
         return filename;
     }
-    
+
     // Helper: Remove temp file
     static void removeTempFile(const std::string& filename) 
     {
         std::remove(filename.c_str());
     }
-    
+
     TEST_F(FileUtils_T, GetRandomLineOfFileReturnsLineFromFile) 
     {
         std::vector<std::string> lines = {"Line1", "Line2", "Line3", "Line4"};
         std::string filename = createTempFile(lines);
-        
+
         std::string fileNameParam = filename;
         std::string line = getRandomLineOfFile(fileNameParam);
-        
+
         // The line returned should be one of the lines in the file
         EXPECT_NE(std::find(lines.begin(), lines.end(), line), lines.end());
-        
+
         removeTempFile(filename);
     }
-    
+
     TEST_F(FileUtils_T, GetRandomLineOfFileEmptyFileReturnsError) 
     {
         std::string filename = createTempFile({});
-        
+
         std::string fileNameParam = filename;
         std::string line = getRandomLineOfFile(fileNameParam);
-        
+
         EXPECT_EQ(line, "ERROR");
-        
+
         removeTempFile(filename);
     }
-    
+
     TEST_F(FileUtils_T, PrintRandomLinesFromFilePrintsCorrectNumberOfLines) 
     {
         std::vector<std::string> lines = {"Alpha", "Bravo", "Charlie", "Delta"};
         std::string filename = createTempFile(lines);
-    
+
         // Redirect cout
         std::stringstream buffer;
         std::streambuf* oldCoutBuf = std::cout.rdbuf(buffer.rdbuf());
-    
+
         printRandomLinesFromFile(filename, 3);
-    
+
         // Restore cout
         std::cout.rdbuf(oldCoutBuf);
-    
+
         std::string output = buffer.str();
-    
+
         // Check that output has at least 3 lines printed (3 random lines + 3 newlines)
         std::istringstream iss(output);
         std::string line;
@@ -112,7 +112,7 @@ namespace files
             EXPECT_NE(std::find(lines.begin(), lines.end(), line), lines.end());
         }
         EXPECT_EQ(lineCount, 3);
-    
+
         removeTempFile(filename);
     }
 
@@ -120,12 +120,12 @@ namespace files
     {
         EXPECT_TRUE(fileExists(testFile));
     }
-    
+
     TEST_F(FileUtils_T, FileExistsFalse)
     {
         EXPECT_FALSE(fileExists("nonexistentfile.txt"));
     }
-    
+
     TEST_F(FileUtils_T, ReadAllLines)
     {
         std::vector<std::string> lines = readAllLines(testFile);
@@ -134,19 +134,19 @@ namespace files
         EXPECT_EQ(lines[1], "Line 2");
         EXPECT_EQ(lines[2], "Line 3");
     }
-    
+
     TEST_F(FileUtils_T, WriteLinesToFileAndReadBack)
     {
         std::vector<std::string> linesToWrite = {"A", "B", "C"};
         writeLinesToFile(testFile, linesToWrite);
-    
+
         std::vector<std::string> linesRead = readAllLines(testFile);
         ASSERT_EQ(linesRead.size(), 3);
         EXPECT_EQ(linesRead[0], "A");
         EXPECT_EQ(linesRead[1], "B");
         EXPECT_EQ(linesRead[2], "C");
     }
-    
+
     TEST_F(FileUtils_T, ReadEntireFile)
     {
         std::string content = readEntireFile(testFile);
@@ -154,40 +154,40 @@ namespace files
         EXPECT_NE(content.find("Line 2"), std::string::npos);
         EXPECT_NE(content.find("Line 3"), std::string::npos);
     }
-    
+
     TEST_F(FileUtils_T, AppendLineToFile)
     {
         appendLineToFile(testFile, "Line 4");
-    
+
         std::vector<std::string> lines = readAllLines(testFile);
         ASSERT_EQ(lines.size(), 4);
         EXPECT_EQ(lines.back(), "Line 4");
     }
-    
+
     TEST_F(FileUtils_T, CountLinesInFile)
     {
         size_t lineCount = countLinesInFile(testFile);
         EXPECT_EQ(lineCount, 3);
     }
-    
+
     TEST_F(FileUtils_T, CopyFileSuccess)
     {
         bool copied = copyFile(testFile, copyFileName);
         EXPECT_TRUE(copied);
         EXPECT_TRUE(fileExists(copyFileName));
-    
+
         std::vector<std::string> original = readAllLines(testFile);
         std::vector<std::string> copiedLines = readAllLines(copyFileName);
         EXPECT_EQ(original, copiedLines);
     }
-    
+
     TEST_F(FileUtils_T, CopyFileFailure)
     {
         bool copied = copyFile("nonexistentfile.txt", copyFileName);
         EXPECT_FALSE(copied);
         EXPECT_FALSE(fileExists(copyFileName));
     }
-    
+
     TEST_F(FileUtils_T, DeleteFileSuccess)
     {
         EXPECT_TRUE(fileExists(testFile));
@@ -195,7 +195,7 @@ namespace files
         EXPECT_TRUE(deleted);
         EXPECT_FALSE(fileExists(testFile));
     }
-    
+
     TEST_F(FileUtils_T, DeleteFileFailure)
     {
         bool deleted = deleteFile("nonexistentfile.txt");

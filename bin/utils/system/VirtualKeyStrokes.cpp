@@ -45,8 +45,8 @@ namespace virtual_keys
         display = XOpenDisplay(nullptr);
     #endif
     }
-    
-    
+
+
     VirtualKeyStrokes::~VirtualKeyStrokes()
     {
     #if __linux__
@@ -54,8 +54,8 @@ namespace virtual_keys
         XCloseDisplay(display);
     #endif
     }
-    
-    
+
+
     std::string clickTypeToString(ClickType click) 
     {
         switch (click) 
@@ -70,8 +70,8 @@ namespace virtual_keys
                 return "UNKNOWN"; 
         }
     }
-    
-    
+
+
     ClickType stringToClickType(const std::string& in)
     {
         std::string input = in;
@@ -88,8 +88,8 @@ namespace virtual_keys
         else
             return ClickType::UNKNOWN;
     }
-    
-    
+
+
     std::string specialButtonToString(SpecialButton specialButton) 
     {
         switch (specialButton) 
@@ -110,8 +110,8 @@ namespace virtual_keys
                 return "UNKNOWN"; 
         }
     }
-    
-    
+
+
     SpecialButton stringToSpecialButton(const std::string& in)
     {
         std::string input = in;
@@ -134,8 +134,8 @@ namespace virtual_keys
         else
             return SpecialButton::UNKNOWN;
     }
-    
-    
+
+
     void VirtualKeyStrokes::press(const char& character, int holdTime, bool verboseMode)
     {
 
@@ -173,14 +173,14 @@ namespace virtual_keys
             throw error::MIAException(error::ErrorCode::Invalid_Character_Input, err);
         }
     }
-    
-    
+
+
     void VirtualKeyStrokes::defaultSleep() const
     {
         timing::sleepMilliseconds(globalSleep);
     }
-    
-    
+
+
     void VirtualKeyStrokes::numlock(bool verboseMode)
     {
     #if defined(IS_WINDOWS)
@@ -188,20 +188,20 @@ namespace virtual_keys
         ip.ki.wVk = 0x90; // virtual-key code for the "y" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << "NUM_LOCK" << std::endl;
-    
+
         // Release the "y" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Num_Lock", 0);
     #endif
     }
-	
+
 	void VirtualKeyStrokes::scrollWheelUp(bool verboseMode)
 	{
 	#if defined(IS_WINDOWS)
@@ -251,8 +251,8 @@ namespace virtual_keys
 		xdo_click_window(xdo, CURRENTWINDOW, 5);
 	#endif
 	}
-    
-    
+
+
     void VirtualKeyStrokes::enter(bool verboseMode)
     {    
     #if defined(IS_WINDOWS)
@@ -260,21 +260,21 @@ namespace virtual_keys
         ip.ki.wVk = 0x0D; // virtual-key code for the "ENTER" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << "ENTER" << std::endl;
-    
+
         // Release the "ENTER" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Return", 0);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::pressNumber(int num, int holdTime, bool verboseMode)  
     {
         // Press the "num" key (num must be an int number from 0 to 9.
@@ -282,18 +282,18 @@ namespace virtual_keys
         {
             return; // TODO - this method should not silently return.
         }
-        
+
     #if defined(IS_WINDOWS)        
         int keyCode = 0x30 + num;
-        
+
         ip.ki.wVk = keyCode; // virtual-key code for the "num" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << num << std::endl;
         timing::sleepMilliseconds(holdTime);
-    
+
         // Release the "num" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
@@ -303,8 +303,8 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::pressChar(char ch, int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
@@ -312,7 +312,7 @@ namespace virtual_keys
             return;
 
         bool useShift = std::isupper(static_cast<unsigned char>(ch));
-        
+
         // Convert to uppercase and get ASCII code (VK_A–VK_Z correspond to 'A'–'Z' ASCII values 0x41–0x5A)
         int vkCode = std::toupper(static_cast<unsigned char>(ch)); // VK_A–VK_Z are 0x41–0x5A
 
@@ -347,8 +347,8 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, keyStr, 0);
     #endif
     }
-    
-    
+
+
     //In dev.
     void VirtualKeyStrokes::alt0248()
     {
@@ -357,24 +357,24 @@ namespace virtual_keys
         ip.ki.wVk = VK_LMENU; // virtual-key code for the "alt" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         pressNumber(0);
         pressNumber(2);
         pressNumber(4);
         pressNumber(8);
-    
+
         // Release the "alt" key
         ip.ki.wVk = VK_MENU; // virtual-key code for the "alt" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
     //In dev.
     void VirtualKeyStrokes::alt136()
     {
@@ -383,23 +383,23 @@ namespace virtual_keys
         ip.ki.wVk = VK_MENU; // virtual-key code for the "alt" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         pressNumber(1);
         pressNumber(3);
         pressNumber(6);
-    
+
         // Release the "alt" key
         ip.ki.wVk = VK_MENU;
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::paste()
     {
     #if defined(IS_WINDOWS)
@@ -407,21 +407,21 @@ namespace virtual_keys
         ip.ki.wVk = VK_CONTROL; // virtual-key code for the "ctrl" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         pressChar('v');
-    
+
         // Release the "ctrl" key
         ip.ki.wVk = VK_CONTROL; // virtual-key code for the "ctrl" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
     // Press the "\" key
     void VirtualKeyStrokes::backslash(int holdTime, bool verboseMode)
     {
@@ -430,22 +430,22 @@ namespace virtual_keys
         ip.ki.wVk = 0xE2; // virtual-key code for the "\" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-		
+
         if(verboseMode)
             std::cout << "\\" << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // Release the "/" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
     // Press the "/" key
     void VirtualKeyStrokes::slash(int holdTime, bool verboseMode)
     {
@@ -454,31 +454,31 @@ namespace virtual_keys
         ip.ki.wVk = 0x6F; // virtual-key code for the "/" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-		
+
         if(verboseMode)
             std::cout << "/" << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // Release the "/" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         defaultSleep();
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }    
 
-    
+
     //Prints the current location of the mouse curser after some wait time.
     void VirtualKeyStrokes::findMouseCoords(int wait)
     {
     #if defined(IS_WINDOWS)    
         POINT cursor;
-    
+
         timing::sleepMilliseconds(wait);
         GetCursorPos(&cursor);
-    
+
         std::cout << ".." << std::endl;
         int x = cursor.x, y = cursor.y;
         std::cout << "The mouse curse is at: " << x << ", " << y << std::endl;
@@ -487,71 +487,71 @@ namespace virtual_keys
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
     // Prints the pixel color at a scan of ranges in a 100 x 100 grid from the mouse location.
     void VirtualKeyStrokes::getPixelColor()
     {
     #if defined(IS_WINDOWS)
         POINT cursor;
         GetCursorPos(&cursor);
-    
+
         HDC dc = GetDC(NULL);
         COLORREF color;
         int red=0,green=0,blue=0;
-    
+
         std::cout << "...Scanning." << std::endl;
-    
+
         for (int i=cursor.x;i<cursor.x+100;i+=4)
         {
             for (int j=cursor.y+2;j<cursor.y+100;j+=4)
             {
                 color = GetPixel(dc, i, j);
-    
+
                 getRGB(color, red, green, blue);
-    
+
                 std::cout << "(x,y): " << "(" << i << "," << j << ")" << std::endl;
                 std::cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << std::endl;
             }
         }
         ReleaseDC(NULL, dc);
-    
+
         std::cout << "...Finished." << std::endl;
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
     // Prints the pixel color at the cursor location.
     void VirtualKeyStrokes::getPixelColorAtMouse()
     {
     #if defined(IS_WINDOWS)
         POINT cursor;
         GetCursorPos(&cursor);
-    
+
         HDC dc = GetDC(NULL);
-    
+
         std::cout << "...Scanning." << std::endl;
-    
+
         COLORREF color = GetPixel(dc, cursor.x, cursor.y);
-    
+
         int red = 0, green = 0, blue = 0;
         getRGB(color, red, green, blue);
-    
+
         std::cout << "(x,y): " << "(" << cursor.x << "," << cursor.y << ")" << std::endl;
         std::cout << "Red: " << red << "  --  " << "Green: " << green << "  --  " << "Blue: " << blue << std::endl;
         std::cout << "RGB: (" << red << "," << green << "," << blue << ")" << std::endl;
-    
+
         ReleaseDC(NULL, dc);
-    
+
         std::cout << "...Finished." << std::endl;
     #elif defined(__linux__)
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
     #endif
     }
-    
-    
+
+
 #if defined(IS_WINDOWS)
     void VirtualKeyStrokes::getRGB(COLORREF& color, int& r, int& g, int&b)
     {
@@ -560,8 +560,8 @@ namespace virtual_keys
         b = GetBValue(color);
     }
 #endif
-    
-    
+
+
     void VirtualKeyStrokes::leftclick(int holdTime, bool verboseMode)
     {
 	#if defined(IS_WINDOWS)
@@ -570,11 +570,11 @@ namespace virtual_keys
         Input.type = INPUT_MOUSE;
         Input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
         SendInput(1,&Input,sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << "LEFT CLICK" << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // left up
         ZeroMemory(&Input,sizeof(INPUT));
         Input.type  = INPUT_MOUSE;
@@ -594,8 +594,8 @@ namespace virtual_keys
         timing::sleepMilliseconds(2*globalSleep);
 	#endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::rightclick(int holdTime, bool verboseMode)
     {
 	#if defined(IS_WINDOWS)
@@ -604,11 +604,11 @@ namespace virtual_keys
         Input.type = INPUT_MOUSE;
         Input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
         SendInput(1,&Input,sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << "RIGHT CLICK" << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // right up
         ZeroMemory(&Input,sizeof(INPUT));
         Input.type = INPUT_MOUSE;
@@ -628,8 +628,8 @@ namespace virtual_keys
         timing::sleepMilliseconds(2*globalSleep);
 	#endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::mouseClick(ClickType clickType, int holdTime, bool verboseMode)
     {
         switch(clickType)
@@ -644,8 +644,8 @@ namespace virtual_keys
                 break;
         }
     }
-    
-    
+
+
     void VirtualKeyStrokes::pressSpecialButton(SpecialButton specialButton, int holdTime, bool verboseMode)
     {
         switch(specialButton)
@@ -672,8 +672,8 @@ namespace virtual_keys
                 break;
         }
     }
-    
-    
+
+
     void VirtualKeyStrokes::moveMouseTo(int x, int y)
     {
 	#if defined(IS_WINDOWS)
@@ -683,21 +683,21 @@ namespace virtual_keys
         throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
 	#endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::minus(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
-    
+
         // Press the "-" key
         ip.ki.wVk = VK_OEM_MINUS; // virtual-key code for the "-" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-		
+
         if(verboseMode)
             std::cout << "-" << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // Release the "-" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
@@ -706,21 +706,21 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "minus", 0);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::equal(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
-    
+
         // Press the "=" key
         ip.ki.wVk = VK_OEM_PLUS; // virtual-key code for the "=" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << "=" << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // Release the "=" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
@@ -729,21 +729,21 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "equal", 0);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::space(int holdTime, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
-    
+
         // Press the "space" key
         ip.ki.wVk = VK_SPACE; // virtual-key code for the "space" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << " " << std::endl;
 		timing::sleepMilliseconds(holdTime);
-    
+
         // Release the "space" key
         ip.ki.wVk = VK_SPACE; // virtual-key code for the "space" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
@@ -753,20 +753,20 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "space", 0);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::tab(bool verboseMode)
     {
     #if defined(IS_WINDOWS)
-    
+
         // Press the "tab" key
         ip.ki.wVk = VK_TAB; // virtual-key code for the "tab" key
         ip.ki.dwFlags = 0; // 0 for key press
         SendInput(1, &ip, sizeof(INPUT));
-    
+
         if(verboseMode)
             std::cout << "TAB" << std::endl;
-    
+
         // Release the "tab" key
         ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
         SendInput(1, &ip, sizeof(INPUT));
@@ -775,8 +775,8 @@ namespace virtual_keys
         xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Tab", 0);
     #endif
     }
-    
-    
+
+
     void VirtualKeyStrokes::type(const std::string& word, int holdTime, bool verboseMode)
     {
         int size = word.size();
@@ -787,8 +787,8 @@ namespace virtual_keys
             defaultSleep();
         }
     }
-    
-    
+
+
     void pressRandomNumber(VirtualKeyStrokes& vkeys, 
                            int min_num, 
                            int max_num, 
@@ -798,7 +798,7 @@ namespace virtual_keys
         // If they are equal, the 'random value' will just be the number itself.
         if ( min_num == max_num)
             vkeys.pressNumber(min_num, holdTime, verboseMode);
-            
+
         // Check for valid ranges on the input numbers. 
         if ( min_num < 0 || max_num > 9 || max_num < min_num )
         {
@@ -806,7 +806,7 @@ namespace virtual_keys
                                         + std::to_string(min_num) + ";" + std::to_string(max_num);
             MIA_THROW(error::ErrorCode::Invalid_Parameter, invalidInputErr);
         }
-        
+
         int randomVal = math::randomInt(min_num, max_num);
         vkeys.pressNumber(randomVal, holdTime, verboseMode);
     }

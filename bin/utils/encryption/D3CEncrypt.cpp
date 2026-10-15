@@ -132,31 +132,31 @@ namespace d0s1
         {	
 	        //sets the integet of size to the size of the inputted vector.
             int size = a.size(); 
-	        
+
 	        //creates a variable called factor that is of type long. 
 	        //It is long because it is possible for large inputs that 9 times the size of the vector 
 	        //(the length of the output vector) maye be larger than the maximum int size.
             long factor; 
-	        
+
 	        //Creates a string of total to put the final return into.
             string total; 
-	        
+
 	        //resizes the total string to 9 times the length of the original input because each 
 	        //character will be represented by 9 digits after being crypted.
             total.resize(9*size); 
-	        
+
 	        //Creates a temporary string to be used later.
             string tempText; 
-	        
+
 	        //resizes the tempText string to 9 because it will be used to hold a single character as it's encrypted value.
             tempText.resize(9); 
 
             for(int i=0;i<size;i++)
 	        {
-		        
+
 		        //Sets the tempText variable to the first part of the vector a.
                 tempText=a[i]; 
-		        
+
 		        //Sets the long factor to 9 times i to determine which digit of the vector we are working on.
                 factor = 9*i; 
                 for(int x=0;x<9;x++){
@@ -173,16 +173,16 @@ namespace d0s1
             bool fix=false;
             int random7bitbinary = 0;
             int encodedVec = 0;
-	        
+
 	        //sets the Int of vectorSize to the size of the input.
             int vectorSize = inputVector.size(); 
-	        
+
 	        //Creates a vector of type strings named encoded. 
 	        //It is set to the vectorSize and will be used to store the encoded vectors once they are combined with the random numbers.
             vector<string> encoded (vectorSize); 
             vector<int> randomVector;
             int randomNum;
-	        
+
 	        //reserves enought space within randomVector to place all of the 
 	        //random valiues to be combined with the string vector encoded later.
             randomVector.reserve(vectorSize); 
@@ -254,16 +254,16 @@ namespace d0s1
             bool fix=false;
             int random7bitbinary = 0;
             int encodedVec = 0;
-	        
+
 	        //sets the Int of vectorSize to the size of the input.
             int vectorSize = inputVector.size(); 
-	        
+
 	        //Creates a vector of type strings named encoded. 
 	        //It is set to the vectorSize and will be used to store the encoded vectors once they are combined with the random numbers.
             vector<string> encoded (vectorSize); 
             vector<int> randomVector;
             int randomNum;
-	        
+
 	        //reserves enought space within randomVector to place all of the
 	        //random valiues to be combined with the string vector encoded later.
             randomVector.reserve(vectorSize); 
@@ -272,15 +272,15 @@ namespace d0s1
 	        {
 		        //creates a random number from 0-127 and stores it in the variable randomNum;
                 randomNum=random7bit(); 
-		        
+
 		        //stores the random number that was generated earlier within a vector randomVector 
 		        //that will contain all of the random numbers in the order that they are generated.
                 randomVector[i] = randomNum; 
-		        
+
 		        //converts the random number generated to a binary form but keeps it in base 
 		        //10 so it can be added to the character for part of the crypt process.
                 random7bitbinary = numberToBinary(randomNum); 
-		        
+
 		        //adds the random number in binary form to the original 
 		        //character in binary form, giving a base 3 number.
                 inputVector[i]+=random7bitbinary; 
@@ -495,12 +495,12 @@ namespace d0s1
         {
             vector<int> asciiVec(inputVec.size());
             int val, character, power, twoPower;
-            
+
             for(std::size_t i=0; i<inputVec.size(); i++)
             {
                 character = 0;
                 val = inputVec[i];
-                
+
                 for(int x=6; x>=0; x--)
 		        {
                     power = pow(10, x);
@@ -518,7 +518,7 @@ namespace d0s1
 	        string output;
 	        long size = input.size();
 	        string loopString;
-	        
+
 	        for (long i=0; i<size ; i++)
 	        {
 		        for(int j=0;j<3;j++)
@@ -526,7 +526,7 @@ namespace d0s1
 			        loopString += input[i+j];
 			        //cout << i << "(" << j << ")" << ": " << loopString << endl; //for troubleshooting.
 		        }
-		        
+
 		        if(loopString == "000"){
 			        output += "q";
 		        } else if(loopString == "001"){
@@ -687,12 +687,12 @@ namespace d0s1
 			        output += loopString[0];
 			        i-=2;
 		        }
-		        
+
 		        //cout << output << endl; //for troubleshooting.	
 		        loopString = "";
 		        i+=2;
 	        }
-	        
+
 	        return output;
         }
 
@@ -701,7 +701,7 @@ namespace d0s1
         {
 	        string output;
 	        long size = input.size();
-	        
+
 	        for (long i=0; i<size ; i++)
 	        {
 		        if(input[i] =='q'){
@@ -865,12 +865,12 @@ namespace d0s1
 		        }
 		        //cout << output << endl; //for troubleshooting.	
 	        }
-	        
+
 	        return output;
         }
 
     } // namespace internal
-    
+
 
     string CryptNoRand(string input, bool toSquish)
     {
@@ -883,7 +883,7 @@ namespace d0s1
 	        // TODO - figure out why this is commented out.
 		    //cryptedVector = squish(cryptedVector);
 	    }
-	    
+
         return cryptedVector;
     }
 
@@ -893,23 +893,23 @@ namespace d0s1
         vector<int> inputVector = string_utils::stringToIntVector(input);
         vector<int> baseTwoVector = internal::binaryVector(inputVector);
         string cryptedVector = internal::cryptChars(baseTwoVector);
-	    
+
 	    cout << cryptedVector << endl << endl;
-	    
+
 	    if(toSquish)
 	    {
 		    //cryptedVector = squish(cryptedVector);
 	    }
-	    
+
         return cryptedVector;
     }
-    
-    
+
+
     string DeCrypt(string input, bool squish)
     {	    
 	    if(squish)
 		    input = internal::expand(input);
-                    
+
         vector<string> inputVector = internal::cryptedStringToVector(input);
         vector<string> seperatedRandomVector = internal::seperateRandom(inputVector);
         vector<int> seperatedcharacterVector = internal::seperateBinary(inputVector);
@@ -922,8 +922,8 @@ namespace d0s1
 
         return deCryptedVector;
     }
-    
-    
+
+
     void d0s1CryptRunner()
     {
         cout << "..." << endl;

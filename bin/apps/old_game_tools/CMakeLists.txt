@@ -4,7 +4,7 @@ if(WIN32 OR CYGWIN)
 	set(WoWFishbot_INC WoWFishbot.hpp )
 	add_executable(WoWFishbot ${WoWFishbot_SRC} ${WoWFishbot_INC} )
 	target_link_libraries(WoWFishbot PRIVATE Framework_CORE Error_CORE System_UTIL gdi32 )
-	
+
     # Install the app.
     install_app( WoWFishbot )
 endif()

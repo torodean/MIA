@@ -46,19 +46,19 @@ namespace rpg
     void DataLoader::dump(std::ostream& os) const
     {
         os << "=== DataLoader Contents ===" << std::endl;
-        
+
         os << "CurrencyRegistry:" << std::endl;
         currency::CurrencyRegistry::getInstance().dump(os);
-        
+
         os << "VitalRegistry:" << std::endl;
         stats::VitalRegistry::getInstance().dump(os);
-        
+
         os << "AttributeRegistry:" << std::endl;
         stats::AttributeRegistry::getInstance().dump(os);
-        
+
         os << "ProgressRegistry:" << std::endl;
         progress::ProgressRegistry::getInstance().dump(os);
-        
+
         os << "==========================\n";
     }
 

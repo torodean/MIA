@@ -34,7 +34,7 @@ WoWFishbot::WoWFishbot() :
     configFileOpt("-c", "--config", "Specify a config file to use (default = " +
                                     paths::getDefaultConfigDirToUse() + "/WoWConfig.MIA)",
                                     CommandOption::commandOptionType::STRING_OPTION)
-                                    
+
 { };
 
 
@@ -43,7 +43,7 @@ void WoWFishbot::initialize(int argc, char* argv[])
     try
     {    
         MIAApplication::initialize(argc, argv);
-        
+
         // Set the values from the command line arguments.
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
@@ -53,7 +53,7 @@ void WoWFishbot::initialize(int argc, char* argv[])
     {
         std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
     }
-    
+
     loadConfig();
 }
 
@@ -63,7 +63,7 @@ int WoWFishbot::run()
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__	
 	//Default values.
 	string fishButton = "3", lureButton = "8";
-	
+
 	cout << "...CAUTION! This fishbot was made for educational purposes." << endl;
 	cout << "...WARNING! Use the fishbot at your own risk!" << endl;
 	cout << "...DANGER! Using this fishbot may have negative consequences." << endl;
@@ -83,7 +83,7 @@ int WoWFishbot::run()
 	cout << "...Please enter which button you have set to apply a lure: ";
 	getline(std::cin, lureButton);
 	cout << endl;
-	
+
 	//Arbitrary default values based on my preferred setup.
 	if(fishButton.empty() || fishButton == "\n" || fishButton == "\r")
 	{
@@ -93,7 +93,7 @@ int WoWFishbot::run()
 	{
 		lureButton = "8";
 	}
-	
+
 	WoWFishBot(fishButton, lureButton);
 #else
     throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
@@ -115,29 +115,29 @@ void WoWFishbot::WoWFishBot(string fishButton, string lureButton)
     int counter = 0;
     int red=1,green=1,blue=1;
     int increment = WoWFishBotIncrement;
-    
+
     if(getVerboseMode())
         cout << "increment: " << increment << endl;
-        
+
     int startX = WoWFishBotStartX + increment/2, startY = WoWFishBotStartY;
-    
+
     if(getVerboseMode())
     {
         cout << "startX: " << startX << endl;
         cout << "startY: " << startY << endl;
     }
-    
+
     int endX = WoWFishBotEndX, endY = WoWFishBotEndY;
-    
+
     if(getVerboseMode())
     {
         cout << "endX: " << endX << endl;
         cout << "endY: " << endY << endl;
     }
-    
+
     bool bobberFound = false;
     bool useLure = true;
-    
+
     if(getVerboseMode()) 
         cout << "catchDelay: " << WoWFishBotDelay << endl;
 
@@ -282,7 +282,7 @@ void WoWFishbot::loadConfig()
         << "Continuing with default values."
         << std::endl;
     }
-    
+
     // Optionally print the config values after it is loaded.
     if (getVerboseMode())
         config.dumpConfigMap();
@@ -291,7 +291,7 @@ void WoWFishbot::loadConfig()
 void WoWFishbot::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     cout << "Fishbot specific options:" << endl
          << configFileOpt.getHelp() << endl
          << endl;

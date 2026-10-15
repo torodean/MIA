@@ -24,7 +24,7 @@ namespace currency
     public:
         /// Default constructor.
         Currency() = default;
-        
+
         /**
          * The main constructor for a Currency object.
          * @param id The unique identifier for the currency.
@@ -40,12 +40,12 @@ namespace currency
                  CurrencyType type,
                  bool trade = true,
                  const std::string& icon = "");
-    
+
         /// Getters for the various data members.
         std::string getIconArt() const;
         bool isTradeable() const;
         CurrencyType getCurrencyType() const;
-        
+
         /**
          * Serializes the Currency object into a JSON representation.
          *
@@ -53,7 +53,7 @@ namespace currency
          *         description, type (as a string), and tradeable flag.
          */
         nlohmann::json toJson() const override;
-        
+
         /**
          * Deserializes a Currency object from JSON.
          *
@@ -61,12 +61,12 @@ namespace currency
          * @return The constructed Currency object.
          */
         static Currency fromJson(const nlohmann::json& json);
-        
+
     protected:
 
         CurrencyType type;        ///< The type of currency.
         bool tradeable{true};     ///< Whether this currency is tradeable to other players.
         std::string iconArt{};    ///< The path to the icon art for this currency.
-        
+
     }; // class Currency
 } // namespace currency

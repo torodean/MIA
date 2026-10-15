@@ -48,11 +48,11 @@ namespace currency
             nlohmann::json jsonObject;
             jsonObject["CURRENCY"] = { coin.toJson(), gem.toJson() };
             std::string jsonData = jsonObject.dump();
-            
+
             // Load currencies into registry
             currency::CurrencyRegistry::getInstance().loadFromString(jsonData);
         }
-        
+
         Wallet container;
         Currency coin {1, "Coin", "Standard in-game coin", CurrencyType::COIN};
         Currency gem  {2, "Gem", "Premium currency", CurrencyType::GEM};
@@ -66,7 +66,7 @@ namespace currency
         container.add(coin, 100);
         EXPECT_EQ(container.get(coin).getQuantity(), 100) 
             << "add(coin, 100) should set quantity to 100.";
-        
+
         container.add(coin, 50);
         EXPECT_EQ(container.get(coin).getQuantity(), 150) 
             << "add(coin, 50) should increase quantity to 150.";
@@ -80,11 +80,11 @@ namespace currency
         container.add("Coin", 100);
         EXPECT_EQ(container.get("Coin").getQuantity(), 100) 
             << "add('Coin', 100) should set quantity to 100.";
-        
+
         container.add("Coin", 50);
         EXPECT_EQ(container.get("Coin").getQuantity(), 150) 
             << "add('Coin', 50) should increase quantity to 150.";
-        
+
         EXPECT_THROW(container.add("NonExistent", 10), error::MIAException)
             << "add for non-existent name should throw MIAException.";
     }
@@ -97,11 +97,11 @@ namespace currency
         container.add(1, 100);
         EXPECT_EQ(container.get(1).getQuantity(), 100) 
             << "add(1, 100) should set quantity to 100.";
-        
+
         container.add(1, 50);
         EXPECT_EQ(container.get(1).getQuantity(), 150) 
             << "add(1, 50) should increase quantity to 150.";
-        
+
         EXPECT_THROW(container.add(999, 10), error::MIAException)
             << "add for non-existent ID should throw MIAException.";
     }
@@ -136,7 +136,7 @@ namespace currency
         container.remove("Coin");
         EXPECT_EQ(container.get("Coin").getQuantity(), 0) 
             << "remove('Coin') should remove entry, get returns 0.";
-        
+
         EXPECT_THROW(container.remove("NonExistent"), error::MIAException)
             << "remove for non-existent name should throw MIAException.";
     }
@@ -150,7 +150,7 @@ namespace currency
         container.remove(1);
         EXPECT_EQ(container.get(1).getQuantity(), 0) 
             << "remove(1) should remove entry, get returns 0.";
-        
+
         EXPECT_THROW(container.remove(999), error::MIAException)
             << "remove for non-existent ID should throw MIAException.";
     }
@@ -180,7 +180,7 @@ namespace currency
         container.update(coin, 50);
         EXPECT_EQ(container.get(coin).getQuantity(), 50) 
             << "update(coin, 50) should set quantity to 50.";
-        
+
         container.update(gem, 25); // Non-existent, should add
         EXPECT_EQ(container.get(gem).getQuantity(), 25) 
             << "update(gem, 25) should add and set quantity to 25.";
@@ -195,7 +195,7 @@ namespace currency
         container.update("Coin", 50);
         EXPECT_EQ(container.get("Coin").getQuantity(), 50) 
             << "update('Coin', 50) should set quantity to 50.";
-        
+
         EXPECT_THROW(container.update("NonExistent", 25), error::MIAException)
             << "update for non-existent name should throw MIAException.";
     }
@@ -209,7 +209,7 @@ namespace currency
         container.update(1, 50);
         EXPECT_EQ(container.get(1).getQuantity(), 50) 
             << "update(1, 50) should set quantity to 50.";
-        
+
         EXPECT_THROW(container.update(999, 25), error::MIAException)
             << "update for non-existent ID should throw MIAException.";
     }

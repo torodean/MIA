@@ -40,14 +40,14 @@ namespace rpg
         std::string getDescription() const;
 
     protected:
-    
+
         /**
          * Serializes the BaseDataObject object to JSON.
          *
          * @return A JSON object containing the BaseDataObject's properties.
          */
         virtual nlohmann::json toJson() const;
-        
+
         /**
          * Deserializes a BaseDataObject object from JSON.
          *
@@ -57,7 +57,7 @@ namespace rpg
         static BaseDataObject fromJson(const nlohmann::json& json);
 
     private:
-    
+
         uint32_t id{};             ///< Unique identifier for this BaseDataObject.
         std::string name{};        ///< Name of the BaseDataObject.
         std::string description{}; ///< Description of the BaseDataObject.

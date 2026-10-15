@@ -48,7 +48,7 @@ namespace stats
         VitalData& get(const std::string& name) override;
         VitalData& get(uint32_t id) override;
         VitalData& get(const Vital& vital) override;
-        
+
         /**
          * Adds a new vital with specified values.
          *
@@ -76,7 +76,7 @@ namespace stats
         void update(const std::string& name, int32_t value);
         void update(uint32_t id, int32_t value);
         void update(const Vital& vital, int32_t value);
-        
+
         /**
          * Adds a modifier to a vital's max or min value. This uses the target to determine
          * which value to modify. The modifier value is an int32_t, which suits the ADD_MAX and
@@ -165,7 +165,7 @@ namespace stats
         void remove(const std::string& name);
         void remove(uint32_t id);
         void remove(const Vital& vital);        
-        
+
         /**
          * Checks if the current value has at least the specified quantity.
          * Overloads allow checking by Vital object, Vital ID, or Vital name.
@@ -208,6 +208,6 @@ namespace stats
          * @throws MIAException for various deserialization errors.
          */
         static Vitals deserialize(const std::string& data);
-        
+
     }; // class Vitals
 } // namespace stats

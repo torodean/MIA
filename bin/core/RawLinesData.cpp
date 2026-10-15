@@ -25,7 +25,7 @@ namespace config
             throw error::MIAException(error::ErrorCode::Failed_To_Open_File, err);
         }            
         rawConfigLines.clear();
-        
+
         std::string line;
         while (std::getline(file, line)) 
         {
@@ -36,7 +36,7 @@ namespace config
                 rawConfigLines.push_back(line);
             }
         }
-        
+
         if (verboseMode) 
         {
             std::cout << "Finished loading raw lines from: " << filePath << std::endl;

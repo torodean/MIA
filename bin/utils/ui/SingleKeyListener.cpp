@@ -55,7 +55,7 @@ namespace ui
     #if defined(__linux__)
         if (grabbed) 
             XUngrabKey(display, linuxKeyCode, modifiers, root);
-            
+
         if (display) 
             XCloseDisplay(display);
     #endif
@@ -102,10 +102,10 @@ namespace ui
     {
         char str[2] = {c, '\0'};
         KeySym keysym = XStringToKeysym(str);
-        
+
         if (keysym == NoSymbol) 
             return 0;
-            
+
         return XKeysymToKeycode(display, keysym);
     }
     #endif
@@ -122,7 +122,7 @@ namespace ui
 
     #if defined(IS_WINDOWS)
         SHORT keyState = GetAsyncKeyState(static_cast<unsigned int>(keyCode));
-        
+
         // GetAsyncKeyState() returns a SHORT (16-bit int) with two relevant bits:
         // Bit 15 (0x8000) — high-order bit — is 1 if the key is currently down.
         // Bit 0 (0x0001) — low-order bit — is 1 if the key was pressed since the last call.
@@ -135,7 +135,7 @@ namespace ui
             //std::cout << "Key toggled state: " << isConditionMet() << std::endl;
         }
         lastPressed = pressed;
-        
+
     #elif defined(__linux__)
         if (!display) return;
 
@@ -158,7 +158,7 @@ namespace ui
                               << ", string=" << (keyString ? keyString : "unknown")
                               << std::endl;
                 }
-			    
+
                 if (keyEvent->keycode == linuxKeyCode) 
                     toggleCondition();
             }

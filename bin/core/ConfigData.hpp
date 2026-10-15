@@ -32,7 +32,7 @@ namespace config
          * @brief Virtual destructor to ensure proper cleanup in derived classes.
          */
         virtual ~ConfigData() = default;
-        
+
         /**
          * @brief Retrieves the configuration value for a key as an integer.
          * @param key[const std::string&] - The key to look up.

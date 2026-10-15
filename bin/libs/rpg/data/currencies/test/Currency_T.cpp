@@ -22,7 +22,7 @@ namespace currency
         EXPECT_EQ(stringToCurrencyType("EvEnT"), CurrencyType::EVENT);
         EXPECT_EQ(stringToCurrencyType("gem"), CurrencyType::GEM);
     }
-    
+
     /**
      * @brief Verifies stringToCurrencyType resolves unrecognized, empty, and numeric strings to CurrencyType::UNKNOWN.
      */
@@ -33,7 +33,7 @@ namespace currency
         EXPECT_EQ(stringToCurrencyType("123"), CurrencyType::UNKNOWN);
         EXPECT_EQ(stringToCurrencyType("UnknOWn"), CurrencyType::UNKNOWN);
     }
-    
+
     /**
      * @brief Verifies currencyTypeToString serializes each CurrencyType enum value to its uppercase string name.
      */
@@ -46,7 +46,7 @@ namespace currency
         EXPECT_EQ(currencyTypeToString(CurrencyType::GEM), "GEM");
         EXPECT_EQ(currencyTypeToString(CurrencyType::UNKNOWN), "UNKNOWN");
     }
-    
+
     /**
      * Test fixture for the Currency class. 
      */
@@ -63,7 +63,7 @@ namespace currency
             "gold_icon.png"
         };
     };
-    
+
     /**
      * @brief Verifies the parameterized constructor stores all fields and the getters return them unchanged.
      */
@@ -76,7 +76,7 @@ namespace currency
         EXPECT_TRUE(testCurrency.isTradeable());
         EXPECT_EQ(testCurrency.getIconArt(), "gold_icon.png");
     }
-    
+
     /**
      * @brief Verifies toJson serializes the Currency into the expected field set and values.
      */

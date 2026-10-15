@@ -37,7 +37,7 @@ namespace sequences
         CLICKHOLD,   ///< This will perform a click with the mouse and hold it for a specified time.
         LISTEN,      ///< This will listen for a key press and stop or restart the sequence.
     };
-    
+
     /**
      * This struct represents storage for a valid sequencer action. This action
      * defines a type, which specifies what the action will do, and then containers
@@ -52,19 +52,19 @@ namespace sequences
         virtual_keys::ClickType click{};     ///< A click type (for mouse input).
         virtual_keys::SpecialButton press{}; ///< A special button for pressing. 
         unsigned int keyCode{};              ///< A generic key code.
-        
+
         /// Coordinates (for moving mouse). Also stores the range for the PRESSRANDNUM option.
         math::Coordinate coords{};
-        
+
         /// Returns true if this is a valid action.
         bool isValid();
-        
+
         /**
          * @brief Outputs a human-readable representation of the acvtion to the standard output.
          * Useful for debugging or verifying the sequence contents before execution.
          */
         void dump() const;
-        
+
         /**
          * @brief Executes the stored action based on its type and associated data.
          * 
@@ -82,10 +82,10 @@ namespace sequences
                                          bool verboseMode = false,
                                          bool testMode = false);
     };
-    
+
     /// A list of sequencer actions forming a complete sequence.
     using SequenceActions = std::vector<SequenceAction>;
-    
+
     /**
      * @brief Represents a fully defined input sequence with a name, timing, and actions.
      *
@@ -100,15 +100,15 @@ namespace sequences
         std::string name{};        ///< The name of this sequence.
         int delayTime{1000};       ///< The time between each action (ms).
         SequenceActions actions{}; ///< All actions in this sequence.
-        
+
         /// This stores a key code to listen for in order to stop or restart the sequence.
         char listenerKeyCode{'\0'}; 
-        
+
         /// Returns true if this is a valid sequence.
         bool isValid();
         /// Clear this object.
         void clear();
-        
+
         /**
          * @brief Outputs a human-readable representation of the sequence to the standard output.
          * 
@@ -117,7 +117,7 @@ namespace sequences
          * Useful for debugging or verifying the sequence contents before execution.
          */
         void dump() const;
-        
+
         /**
          * @brief Executes all actions in the sequence in order, applying the defined delay between each.
          *
@@ -133,8 +133,8 @@ namespace sequences
                             bool verboseMode = false,
                             bool testMode = false);
     };
-    
+
     /// Maps sequence names to their corresponding list of actions.
     using sequenceList = std::unordered_map<std::string, CompleteSequence>;
-    
+
 } // namespace sequences

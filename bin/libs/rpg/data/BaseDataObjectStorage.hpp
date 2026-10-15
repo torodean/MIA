@@ -66,7 +66,7 @@ namespace data
          */
         DataStorageMap& getMap()
         { return dataStore; }
-        
+
     protected:
         /// Map of the data ID to the associated data storage instance.
         DataStorageMap dataStore;

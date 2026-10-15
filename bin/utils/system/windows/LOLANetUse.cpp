@@ -52,7 +52,7 @@ void LOLANetUse::NetSessionEnumRunner(int argc, wchar_t *argv[])
 	if (argc == 4){
 		pszUserName = argv[3];
 	}
-	
+
 	// Call the NetSessionEnum function, specifying level 10.
 	do { // begin do
 		nStatus = NetSessionEnum(pszServerName, pszClientName, pszUserName, dwLevel, (LPBYTE*)&pBuf, dwPrefMaxLen, &dwEntriesRead, &dwTotalEntries, &dwResumeHandle);
@@ -81,7 +81,7 @@ void LOLANetUse::NetSessionEnumRunner(int argc, wchar_t *argv[])
 		} else { // Otherwise, indicate a system error.
 			fprintf(stderr, "...A system error has occurred: %d\n", nStatus);
 		}
-		
+
 		// Free the allocated memory.
 		if (pBuf != nullptr){
 			NetApiBufferFree(pBuf);
@@ -96,7 +96,7 @@ void LOLANetUse::NetSessionEnumRunner(int argc, wchar_t *argv[])
 	if (pBuf != nullptr){
 		NetApiBufferFree(pBuf);
 	}
-	
+
 	// Print the final count of sessions enumerated.
 	fprintf(stderr, "\n...Total of %d entries enumerated\n", dwTotalCount);
 }
@@ -126,7 +126,7 @@ void LOLANetUse::NetServerEnumRunner_WKST(int argc, wchar_t *argv[])
 	if (argc == 2){
 		pszDomainName = argv[1];
 	}
-	
+
 	// Call the NetServerEnum function to retrieve information
 	//  for all servers, specifying information level 101.
 	nStatus = NetServerEnum(pszServerName, dwLevel, (LPBYTE *)& pBuf, dwPrefMaxLen,
@@ -275,7 +275,7 @@ void LOLANetUse::NetServerEnumRunner_SERV(int argc, wchar_t *argv[])
 	} else {
 		fprintf(stderr, "...NetServerEnum failed with error: %d\n", nStatus);
 	}
-	
+
 	// Free the allocated buffer.
 	if (pBuf != nullptr){
 		NetApiBufferFree(pBuf);

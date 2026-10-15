@@ -65,13 +65,13 @@ def output_text(text, option=None, color=None, addLabel=False, logFile=None):
         This function uses ANSI escape codes for color formatting. Colors may not display correctly 
         in all environments (e.g., some IDEs or Windows terminals without ANSI support).
     """
-    
+
     text = str(text)  # Ensure text is a string.
-      
+
     # Error case for entering an invalid color. 
     if option is not None and option not in colorCodes:
         output_text(f"Option '{option}' not found. Using default text color.", option="warning", addLabel=True)
-    
+
     # Check input parameters to determine formatting to use.
     if option in colorCodes:
         label = None if option == list(colorCodes.keys())[0] else option.upper()
@@ -87,20 +87,20 @@ def output_text(text, option=None, color=None, addLabel=False, logFile=None):
                 code = colorCodes[option][1]
                 colorFound = True
                 break
-                
+
         # Error case for entering an invalid color.
         if not colorFound:
             output_text(f"Color '{color}' not found. Using default text color.", option="warning", addLabel=True)
-        
+
     else: # Default to the first color code.
         label = None
         code = list(colorCodes.values())[0][1]
-    
+
     # Check for existing label at start of text and append if needed.
     if addLabel and label is not None:
         if not text.lower().startswith(f"{label.lower()}:"):
             text = f"{label.upper()}: {text}"
-    
+
     # Optionally write to log file.
     if logFile is not None:
         timestampedText = f"[{get_current_time()}] {text}"
@@ -114,7 +114,7 @@ def output_text(text, option=None, color=None, addLabel=False, logFile=None):
 def main():
     # Default text
     output_text("This is default text.")
-    
+
     # Each defined option
     output_text("\n-- Here is some text with just the option specified.")
     output_text("This is a warning.", option="warning")

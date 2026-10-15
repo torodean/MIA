@@ -4,7 +4,7 @@
  * @date 9/17/26
  * @brief Implements the features in the SystemSoundTests header file.
  */
- 
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -26,7 +26,7 @@ int testSystemBeeps(bool verboseMode)
 {
 	// Ensure all sounds succeeded for return code.
 	std::vector<bool> soundChecks;
-	
+
 	// Zelda area-unlock jingle.
     soundChecks.push_back(system_sounds::beep(784, 100));
     soundChecks.push_back(system_sounds::beep(740, 100));
@@ -36,7 +36,7 @@ int testSystemBeeps(bool verboseMode)
     soundChecks.push_back(system_sounds::beep(659, 100));
     soundChecks.push_back(system_sounds::beep(831, 100));
     soundChecks.push_back(system_sounds::beep(1047, 500));
-	
+
 	// Return true unless any of the soundChecks is false.
 	if (std::any_of(soundChecks.begin(), soundChecks.end(),
 	    [](bool success){return !success;}))
@@ -60,14 +60,14 @@ int testPlayingSoundFromFile(bool verboseMode)
 #if defined(__CYGWIN__)
 	fullFilePath = paths::cygwinPathToWindowsPath(fullFilePath);
 #endif
-	
+
 	// Plays the sound from the test file.
 	if (verboseMode)
 		std::cout << "Playing sound from file: " << fullFilePath << std::endl;
 	bool status = audio::playSoundFromFile(fullFilePath);
 	if (verboseMode && !status)
 		std::cout << "FAILED playing sound from file!" << std::endl;
-	
+
 	// Returns based on the status of the audio library call.
 	return status ? constants::SUCCESS : constants::FAILURE;
 }
@@ -88,7 +88,7 @@ int testPlayingSoundFromFileWithStop(bool verboseMode)
 #if defined(__CYGWIN__)
 	fullFilePath = paths::cygwinPathToWindowsPath(fullFilePath);
 #endif
-	
+
 	// Plays the sound from the test file.
 	if (verboseMode)
 		std::cout << "Playing sound from file: " << fullFilePath << std::endl;
@@ -99,7 +99,7 @@ int testPlayingSoundFromFileWithStop(bool verboseMode)
 			std::cout << "FAILED playing sound from file!" << std::endl;
 		return constants::FAILURE;
 	}
-	
+
 	// Wait 5 seconds then stop the file.
 	if (verboseMode)
 		std::cout << "Sleeping for 5 seconds..." << std::endl;
@@ -120,7 +120,7 @@ int testPlayingSoundFromFileWithStop(bool verboseMode)
 			std::cout << "FAILED stopping sound from file!" << std::endl;
 		return constants::FAILURE;
 	}
-	
+
 	// If it made it this far, it's a success.
 	return constants::SUCCESS;
 }
@@ -141,7 +141,7 @@ int testPlayingSoundFromFileWithFade(bool verboseMode)
 #if defined(__CYGWIN__)
 	fullFilePath = paths::cygwinPathToWindowsPath(fullFilePath);
 #endif
-	
+
 	// Plays the sound from the test file.
 	if (verboseMode)
 		std::cout << "Playing sound from file: " << fullFilePath << std::endl;
@@ -152,7 +152,7 @@ int testPlayingSoundFromFileWithFade(bool verboseMode)
 			std::cout << "FAILED playing sound from file!" << std::endl;
 		return constants::FAILURE;
 	}
-	
+
 	// Wait 5 seconds then fade out over 5 seconds.
 	if (verboseMode)
 		std::cout << "Sleeping for 5 seconds..." << std::endl;
@@ -173,7 +173,7 @@ int testPlayingSoundFromFileWithFade(bool verboseMode)
 			std::cout << "FAILED stopping sound from file!" << std::endl;
 		return constants::FAILURE;
 	}
-	
+
 	// If it made it this far, it's a success.
 	return constants::SUCCESS;
 }

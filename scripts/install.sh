@@ -11,7 +11,7 @@ if [[ "$uname_out" == "Linux" ]]; then
 	sudo mkdir -p /var/log/mia
 	sudo touch /var/log/mia/MIA.log
 	sudo chmod a+rw /var/log/mia/MIA.log
-	
+
 elif [[ "$uname_out" == CYGWIN* ]]; then
     echo "Running Cygwin install..."
 

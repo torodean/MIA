@@ -42,35 +42,35 @@ namespace d0s1
 
     /// Encrypts a string.
     std::string CryptNoRand(std::string input, bool toSquish);
-    
+
     /**
      * This namespace is for code which is internal to this encryption algorithm.
      */
     namespace internal
     {  
         //Functions from original program.
-        
+
         /// Converts each term in the vector array to a binary representation of that term.
         std::vector<int> binaryVector(std::vector<int> inputVector);
-        
+
         /// Creates a random number between 0-127.
         int random7bit();
-        
+
         /**
          * Changes a number from base 10 format to a binary look but still in base 
          * 10 so that addition in base ten can be used on the binary number.
          */
         int numberToBinary(int num);
-        
+
         /**
          * Converts an integer to a custom a11b12 formatted number. 
          * the first digit is in base 11 and the second in base 12.
          */
         std::string a11b12(int x);
-        
+
         /// Converts a vector<string> (each position holding a string of length 9) to one combined string.
         std::string stringVectorToString(std::vector<std::string> a);
-        
+
         /// Encrypts the characters of a vector array with a random number.
         std::string cryptChars(std::vector<int> inputVector);
         std::string cryptCharsNoRand(std::vector<int> inputVector);
@@ -87,7 +87,7 @@ namespace d0s1
         std::vector<int> converta11b12vecToReg(std::vector<std::string> a);
         std::vector<int> numberVectorToBinaryVector(std::vector<int> a);
         std::vector<int> DeCryptChars(std::vector<int> a, std::vector<int> b);
-        
+
         /**
          * @brief Converts a vector of decimal-encoded 7-bit binary integers to ASCII codes.
          *
@@ -101,7 +101,7 @@ namespace d0s1
         std::vector<int> binaryVecToASCIIVec(const std::vector<int>& inputVec);
 
         // Added functions after MIA implimentation.
-        
+
         /// Shortens the encrypted message created by the d0s1 encryption.
         std::string squish(std::string input);
         /// Expands the encrypted message created by the d0s1 encryption.

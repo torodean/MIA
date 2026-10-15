@@ -55,7 +55,7 @@ namespace ui
 
             return tokens;
         }
-		
+
 #if defined(IS_LINUX)
         /*
          * The lock masks (NumLock, CapsLock, ScrollLock) are included in every
@@ -104,7 +104,7 @@ namespace ui
         }
 #endif
     } // namespace
-    
+
 
     KeybindListener::KeybindListener(const config::MIAConfig& config,
                                      ui::EventQueue& queue,

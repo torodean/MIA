@@ -532,7 +532,7 @@ An example application exists in \texttt{bin/apps/template} which demonstrates h
 class MIATemplate : public MIAApplication
 { // Class details... }
 	\end{lstlisting}
- 
+
 	\item Override \idxtt{initialize()} to add application-specific argument parsing; call the base method to retain common flag handling at the start of the application initialize() implementation.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::initialize(int argc, char* argv[])
@@ -547,11 +547,11 @@ void MIATemplate::initialize(int argc, char* argv[])
 		std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
 		// Handle error appropriately...
 	}
-	
+
 	// Other init code...
 }
 	\end{lstlisting}
- 
+
 	\item Implement the \idxtt{run()} method with the application's main logic.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::run()
@@ -559,7 +559,7 @@ void MIATemplate::run()
 	// Perform app functions...
 }
 	\end{lstlisting}
- 
+
 	\item Use \idxtt{getVerboseMode()} to conditionally enable verbose output (if the verbose flag was used when running the application).
 	\begin{lstlisting}[style=cppstyle]
 if (getVerboseMode())
@@ -573,19 +573,19 @@ if (getdebugLevel() >= 1)
 if (getdebugLevel() >= 2)
 	std::cout << "This is higher level debug output!" << std::endl;
 \end{lstlisting}
- 
+
 	\item Override \idxtt{printHelp()} to add help output specific to the application. Call the base method to retain base application help menu output.
 	\begin{lstlisting}[style=cppstyle]
 void MIATemplate::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     std::cout << "MIATemplate specific options:" << std::endl
               // Add app-specific help output here...
               << std::endl;
 }
 	\end{lstlisting}
- 
+
 	\item Call the \idxtt{log()} method in order to log information.
 	\begin{lstlisting}[style=cppstyle]
 log("This is a message to log");
@@ -594,7 +594,7 @@ log("This is a message to log");
 	\begin{lstlisting}[style=cppstyle]
 log("This is a message to log", true);
 	\end{lstlisting}
- 
+
 	 \item Use the \idxtt{LOG\_METHOD\_CALL()} macro at the start of methods to automatically log method entry points. These macros use the internal logger and respect the verbose mode flag.
 	\begin{lstlisting}[style=cppstyle]
 void MyClass::compute()
@@ -646,7 +646,7 @@ The \idxtt{CommandOption} class stores metadata and behavior for individual comm
 		\item \idxtt{DOUBLE\_OPTION}: A command flag option followed by a double.
 		\item \idxtt{STRING\_OPTION}: A command flag option followed by a string.
 	\end{itemize}
-	
+
 	\item \textbf{Constructor:} Accepts short/long argument forms, a description, data type, and a \texttt{required} flag. This constructor should be called during construction for the application class. This constructor sets the command option flags, description, and the type; all of which are needed during initialization to enable command option output and parsing.
 	\begin{lstlisting}[style=cppstyle]
 MIATemplate::MIATemplate() : 
@@ -656,7 +656,7 @@ MIATemplate::MIATemplate() :
         CommandOption::commandOptionType::BOOL_OPTION)            
 { };
 	\end{lstlisting}
-	
+
 	\item \textbf{Help Output:} \idxtt{getHelp()} returns a formatted string of the form:
 	\begin{lstlisting}
 -s, --long        Description
@@ -666,7 +666,7 @@ MIATemplate::MIATemplate() :
 void MIATemplate::printHelp() const
 {
  MIAApplication::printHelp();
- 
+
  // This is a dump of the help messages used by the various command options.
  std::cout << "MIATemplate specific options:" << std::endl
            << configFileOpt.getHelp() << std::endl
@@ -684,7 +684,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 
         // Set the values from the command line arguments.
         testOpt.getOptionVal<bool>(argc, argv, testMode);
-        
+
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
         config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
@@ -695,7 +695,7 @@ void MIATemplate::initialize(int argc, char* argv[])
     }
 }
 	\end{lstlisting}
-	
+
 	\item \textbf{Error Handling:} Throws \idxtt{MIAException} if a type mismatch occurs or parsing fails.
 \end{itemize}
 
@@ -890,9 +890,9 @@ The \idxtt{paths} namespace offers a centralized interface for accessing directo
 \subsubsection{Runtime Utilities} \label{section:global_constants_utilities}
 \begin{itemize}\itemsep0em
 	\item \idxtt{getExecutableDir()}: Returns the absolute directory of the running executable using platform-specific APIs.
-	
+
 	\item \idxtt{isInstalled()}: Determines whether the application is running from the system-installed location by comparing the executable path with the install directory.
-	
+
 	\item \idxtt{getDefaultConfigDirToUse()}: Selects the configuration directory based on execution context:
 	\begin{itemize}\itemsep0em
 		\item If installed: returns \texttt{SYSTEM\_CONFIG\_FILE\_DIR}.
@@ -952,15 +952,15 @@ The \idxtt{MIAConfig} class provides a flexible and extensible interface for man
 	\item[\idxtt{MIAConfig}] 
 	\hfill \\
 	Acts as the front-end API. It delegates all data handling to the \idxtt{ConfigData} object through a \texttt{std::unique\_ptr}.
-	
+
 	\item[\idxtt{ConfigData}] 
 	\hfill \\
 	Abstract base class defining the required interface for data handling implementations. Includes methods for loading, retrieving, and dumping configuration data.
-	
+
 	\item[\idxtt{KeyValueData}]
 	\hfill \\
 	Implements \texttt{ConfigData}. Parses files formatted with \texttt{key=value} lines into an internal map and supports type conversion and retrieval.
-	
+
 	\item[\texttt{RawLinesData}]
 	\hfill \\
 	Implements \texttt{ConfigData}. Parses files formatted with \texttt{any} format (parsed by line) into an internal vector and supports retrieval for custom parsing.
@@ -1014,14 +1014,14 @@ void MIATemplate::initialize(int argc, char* argv[])
 		// Other code...
 		std::string configFile = defaultConfigFile;
 		configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-		
+
 		// This will call config.initialize().
 		config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE);
 	}
 	// Optionally print the config values after it is loaded.
 	if (getVerboseMode())
 		config.dumpConfigMap();
-	
+
 	loadConfig(); // An app-specific config loader.
 }
 	\end{lstlisting}
@@ -1116,19 +1116,19 @@ For more structured applications, the \idxtt{Logger} class provides an object-or
 \begin{itemize}\itemsep0em
 	\item \texttt{Logger(filename = DEFAULT\_LOG\_FILE)}\\
 	Constructor that initializes logging to the specified file. If not provided, defaults to \texttt{MIA.log}.
-	
+
 	\item \texttt{setLogFile(filename)}\\
 	Changes the log file during runtime. Closes the existing stream and opens a new one.
-	
+
 	\item \texttt{log(message, verbose = false)}\\
 	Logs a message to the current file. If \texttt{verbose} is enabled, also prints to \texttt{stdout}.
-	
+
 	\item \texttt{log(message, tags, verbose = false)}\\
 	Logs a message to the current file with optional tags. The tags are an optional \texttt{vector<string>} parameter which will attach a string to the front of the message in the form of ``[tag1, tag2, ...].'' If \texttt{verbose} is enabled, also prints to \texttt{stdout}.
-	
+
 	\item \texttt{logMethodCall(method, params = "", verbose = false)}\\
 	Logs a method call to the log file. This is intended to be called with method = \texttt{\_\_func\_\_} in order for automatic method detection. The params are optional parameters which can be included which will automatically appear between parenthesis.
-	
+
 	\item \texttt{setApplicationName(appName)}\\
 	Sets an optional application name tag for this object. When set, the name appears after the timestamp in the form of ``[appName]'' and merges with any tags passed to \texttt{log(message, tags, verbose)}.
 
@@ -1344,14 +1344,14 @@ if(BUILD_PYTHON_FEATURES)
 	# Create the test executable.
 	set(test_SRC MIATest.cpp MIATest_main.cpp )
 	set(test_INC MIATest.hpp )
-	
+
 	#  The target name "test" is reserved when CTest testing is enabled.
 	add_executable(miatest ${test_SRC} ${test_INC} )
 	target_link_libraries(miatest PRIVATE Framework_CORE Python_UTIL Python_Plotting_LIB )
-	
+
 	# Install the app.
 	install_app( miatest )
-	
+
 	# Install the python files if needed.
 	install_python_files( MIATest.py )
 endif()
@@ -1430,7 +1430,7 @@ The \texttt{Testing\_CORE} is a defined CMake component which can be linked to f
 \begin{lstlisting}[style=makestyle]
 	# Usual linkage.
 	target_link_libraries(myTests_T PRIVATE Error_CORE GTest::gtest\_main)
-	
+
 	# Simplified with access to test helpers.
 	target_link_libraries(myTests_T PRIVATE Testing_CORE)
 \end{lstlisting}

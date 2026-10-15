@@ -85,7 +85,7 @@ TEST(MIAExceptionTest, MIAThrowMacroAddsContext)
         std::string msg = ex.what();
         EXPECT_NE(msg.find("catastrophic failure"), std::string::npos);
         EXPECT_NE(msg.find("Invalid state"), std::string::npos);
-        
+
         // Google test resolves this to a method named TestBody.
         // See the output of std::cout << __func__ << std::endl;        
         EXPECT_NE(msg.find("in TestBody"), std::string::npos);

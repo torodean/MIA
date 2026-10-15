@@ -15,14 +15,14 @@ namespace progress
                                    const std::string& description) : 
         BaseDataObject(id, name, description)
     { }
-    
+
 
     nlohmann::json ProgressMarker::toJson() const
     {
         nlohmann::json json = BaseDataObject::toJson();
         return json;
     }
-    
+
 
     ProgressMarker ProgressMarker::fromJson(const nlohmann::json& json)
     {

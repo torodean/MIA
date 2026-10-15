@@ -26,11 +26,11 @@ protected:
         nlohmann::json jsonObject;
         jsonObject["VITAL"] = { health.toJson(), mana.toJson(), rage.toJson() };
         std::string jsonData = jsonObject.dump();
-        
+
         // Load currencies into registry.
         VitalRegistry::getInstance().loadFromString(jsonData);
     }
-    
+
     Vitals vitals;
 
     Vital health {1, "Health", "The health of a player.", VitalType::DEPLETIVE};
@@ -74,7 +74,7 @@ TEST_F(Vitals_T, add)
     EXPECT_EQ(data.getCurrent(), 80);
     EXPECT_EQ(data.getCurrentMin(), 0);
     EXPECT_EQ(data.getCurrentMax(), 100);
-    
+
     EXPECT_THROW(vitals.add("Health", 50, 0, 100), error::MIAException); // Already exists
     EXPECT_THROW(vitals.add("invalid", 50, 0, 100), error::MIAException); // Invalid vital
     EXPECT_THROW(vitals.add(1, 150, 0, 100), error::MIAException); // Current > max

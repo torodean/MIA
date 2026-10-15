@@ -35,7 +35,7 @@ public:
 
     /// Default destructor.
     ~MIATemplate() = default;
-    
+
     /**
      * This will initialize this class by parsing command line arguments for configuration options
      * and then loading the config file if provided.
@@ -44,7 +44,7 @@ public:
      * @param argv Array of command line argument strings.
      */
     void initialize(int argc, char* argv[]) override;
-    
+
     /// Runs the MIATemplate application.
     int run() override;
 
@@ -68,25 +68,25 @@ private:
         double doubleValue{0.0};
         std::string stringValue{""};
         std::vector<std::string> listValue{};
-    
+
         /// Used to dump the configuration files read in.
         void printConfigValues() const;
     };
     TemplateConfig configFileVals; 
-    
+
     /// The name of the defauilt config file that this class uses.
     std::string defaultConfigFile{"MIATemplate.MIA"};
-    
+
     /// The configuration loader for this app.
     config::MIAConfig config;
 
     // Command options for this app.
     CommandOption configFileOpt;
     CommandOption testOpt;
-    
+
     /// Stores whether testOpt was specified or not.
     bool testMode{false};
-    
+
     /// Load the configuration variables.
     void loadConfig();
 }; // class MIATemplate

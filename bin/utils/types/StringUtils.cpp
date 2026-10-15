@@ -32,8 +32,8 @@ namespace string_utils
         }
         return output;
     }
-    
-    
+
+
     std::string toUpper(const std::string& input)
     {
         std::string output = input;
@@ -43,41 +43,41 @@ namespace string_utils
         }
         return output;
     }
-    
-    
+
+
     std::string removeCharInString(const std::string& str, char c)
     {
         std::string out = str;
         out.erase(remove(out.begin(), out.end(), c), out.end());
         return out;
     }
-    
-    
+
+
     int findCharInString(const std::string& input, char c)
     {
         return basic_utils::findCharInString(input, c);
     }
-    
-    
+
+
     bool stringContainsChar(const std::string& input, char c)
     {
         if(findCharInString(input, c) == -1)
             return false;
         return true;
     }
-    
-    
+
+
     std::vector<std::string> delimiterString(const std::string& input, const std::string& delimiter, bool verboseMode)
     {
         std::string inputCopy = input;
-        
+
         if(verboseMode)
             std::cout << "input string: " << inputCopy << std::endl;
-            
+
         std::vector<std::string> output;
         size_t pos;
         std::string item;
-        
+
         while ((pos = inputCopy.find(delimiter)) != std::string::npos)
         {
             item = inputCopy.substr(0, pos);
@@ -87,12 +87,12 @@ namespace string_utils
             inputCopy.erase(0, pos + delimiter.length());
         }
         output.push_back(inputCopy);
-        
+
         if(verboseMode)
             std::cout << "delimiter item: " << inputCopy << std::endl;
-            
+
         int outputSize = output.size();
-        
+
         if(verboseMode)
         {
             std::cout << "Contents of output: ";
@@ -104,19 +104,19 @@ namespace string_utils
             }
             std::cout << std::endl;
         }
-        
+
         return output;
     }
-    
-    
+
+
     bool isDigits(const std::string& input)
     {        
         if(!input.empty() && input.find_first_not_of("0123456789") == std::string::npos)
             return true;
         return false;
     }
-    
-    
+
+
     bool inputRoll(const std::string& input)
     {
         if(input.size() <= 6 && input.find('d') != std::string::npos &&
@@ -127,8 +127,8 @@ namespace string_utils
         }
         return false;
     }
-    
-    
+
+
     bool formOfYes(const std::string& input)
     {
         if (toLower(input) == "y" ||
@@ -147,8 +147,8 @@ namespace string_utils
             return false;
         }
     }
-    
-    
+
+
     std::string today()
     {
         std::time_t t = std::time(nullptr);   // get time now
@@ -159,52 +159,52 @@ namespace string_utils
         std::string todaysDate =  month + "-" + day + "-" + year;
         return todaysDate;
     }
-    
-    
+
+
     std::string shuffleString(const std::string& input)
     {
         std::string output = input;
         std::shuffle(output.begin(), output.end(), std::mt19937(std::random_device()()));
         return output;
     }
-    
-    
+
+
     std::string getBeforeChar(std::string line, char c, bool verboseMode)
     {
         int equalSignLocation = findCharInString(line, c);
-    
+
         std::string out = line.substr(0, equalSignLocation);
         if(verboseMode)
             std::cout << "...stringBeforeEqual: " << out << std::endl;
-    
+
         return trim(out);
     }
-    
-    
+
+
     std::string getAfterChar(std::string line, char c, bool verboseMode)
     {
         int semiColonLocation = findCharInString(line, c);
-        
+
         std::string out = line.substr(semiColonLocation+1, line.size()-1);
         if(verboseMode)
             std::cout << "...stringAfterSemiColon: " << out << std::endl;
-    
+
         return trim(out);
     }
-    
-    
+
+
     std::string getBetweenEqualAndSemiColon(std::string line, bool verboseMode)
     {
         int equalSignLocation = findCharInString(line, '=');
         int semiColonLocation = findCharInString(line, ';');
-    
+
         //First remove everything after the semi colon sign. Then keep everything after the equal sign.
         line = line.substr(0,semiColonLocation);
         line = line.substr(equalSignLocation+1, line.size()-1);
-    
+
         if(verboseMode)
             std::cout << "...stringBetweenEqualAndSemiColon: " << line << std::endl;
-    
+
         return line;
     }
 
@@ -213,32 +213,32 @@ namespace string_utils
     {
         int xLocation = findCharInString(line, x);
         int yLocation = findCharInString(line, y);
-        
+
         // Handle the case of a delimiter not being found.
         if (xLocation < 0 || yLocation < 0)
             return "";
-            
+
         if (xLocation == yLocation)
         { // If 'x' == 'y', the second occurance of 'y' is used.
             std::string afterYstr = line.substr(xLocation + 1, line.size());
             yLocation = findCharInString(afterYstr, y) + xLocation + 1;
         }
-        
+
         // Trim the string at the end delimiter, then extract the portion after the start delimiter
         std::string out = line.substr(0, yLocation);
         out = out.substr(xLocation + 1, line.size() - 1);
-    
+
         if (verboseMode)
             std::cout << "...stringBetweenXAndY: " << out << std::endl;
-    
+
         return out;
     }
-    
-    
+
+
     std::vector<std::string> entangleText(const std::string& input)
     {
         int counter = 0;
-    
+
         std::vector<std::string> output;
         std::string strEven, strOdd;
         for (char c : input)
@@ -259,27 +259,27 @@ namespace string_utils
         output.push_back(strOdd);
         return output;
     }
-    
-    
+
+
     bool hasExactlyOneOfEachDelimiter(const std::string& line, char delimiterA, char delimiterB)
     {
         return std::count(line.begin(), line.end(), delimiterA) == 1 &&
                std::count(line.begin(), line.end(), delimiterB) == 1;
     }
-    
-    
+
+
     bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA)
     {
         return std::count(line.begin(), line.end(), delimiterA) == 1;
     }
-    
-    
+
+
     bool contains(const std::string& haystack, const std::string& needle) 
     {
         return haystack.find(needle) != std::string::npos;
     }
-    
-    
+
+
     std::string trim(const std::string& str) 
     {
         // Find the first non-whitespace character
@@ -293,8 +293,8 @@ namespace string_utils
         // Return the trimmed string
         return (first <= last) ? std::string(first, last) : "";
     }
-    
-    
+
+
     std::string charVecToString(const std::vector<char>& charVec)
     {
         return std::string(charVec.begin(), charVec.end());
@@ -305,29 +305,29 @@ namespace string_utils
     {
         return std::vector<char>(str.begin(), str.end());
     }
-    
-    
+
+
     std::vector<int> stringToIntVector(const std::string& inputStr) 
     { 
         std::vector<int> outVec(inputStr.size());
-	    
+
 	    // converts string one into an array of integers.
         for (std::size_t i=0; i<inputStr.size(); i++)
             outVec[i] = inputStr[i];
-            
+
         return outVec;
     }
-    
-    
+
+
     std::string intVectorToString(const std::vector<int>& inputVec)
     {
-    
+
         std::string outputStr;
         outputStr.resize(inputVec.size());
-        
+
         for (std::size_t i=0; i<inputVec.size(); i++)
             outputStr[i] = inputVec[i];
-            
+
         return outputStr;
     }
 
@@ -337,10 +337,10 @@ namespace string_utils
         std::string output;
         std::size_t strSize = inputStr.size();
         output.resize(strSize);
-	    
+
 	    if(strSize == 0)
 		    return "";
-		    
+
         for(std::size_t i=0; i<strSize; i++)
             output[i] = inputStr[strSize-1-i];
 
@@ -375,17 +375,17 @@ namespace string_utils
             largerString = smaller;
             smallerString = larger;
         }
-        
+
         // Finds the difference in size of the two strings so we know how much one needs stretched by.
         int difference = largerString.size() - smallerString.size();
-        
+
         if (difference == 0)
         { // They are already the same size, so return the second string.
             return smaller;
         }
-        
+
         output.resize(largerString.size());
-        
+
         for (int i = output.size(); i >= 0; i--)
         {
             if (i > difference - 1)

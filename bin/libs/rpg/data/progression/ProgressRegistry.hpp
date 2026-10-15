@@ -14,13 +14,13 @@ namespace progress
     class ProgressRegistry : public rpg::Registry<ProgressRegistry, ProgressMarker>
     {        
     protected:
-    
+
         /// Returns the JSON key for the class's data array.
         std::string getJsonKey() const override 
         { 
             return "PROGRESS"; 
         }
-    
+
         /**
          * Parses a JSON object into a ProgressMarker instance.
          * Uses the ProgressMarker constructor to set all fields, preserving encapsulation.
@@ -36,7 +36,7 @@ namespace progress
             ProgressMarker progress(id, name, description);
             return progress;
         }
-        
+
         /**
          * Converts a ProgressMarker object into a human-readable string.
          * Uses public getter methods to access ProgressMarker fields.
@@ -48,6 +48,6 @@ namespace progress
             return "Name: " + progress.getName() +
                    ", Description: " + progress.getDescription();
         }
-        
+
     };
 } // namespace progress

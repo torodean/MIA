@@ -11,7 +11,7 @@
  * The tests ensure reliable behavior and correctness of the StringUtils
  * functions across typical use cases.
  */
- 
+
 #include <gtest/gtest.h>
 
 // Include the associated files to test.
@@ -26,16 +26,16 @@ namespace string_utils
     {
         EXPECT_EQ(toLower("HeLLo"), "hello") 
             << "Check a simple string with upper-case characters.";
-            
+
         EXPECT_EQ(toLower("HeLLo WoRld!"), "hello world!") 
             << "Check multi-word strings with punctuation.";
-            
+
         EXPECT_EQ(toLower("Digits: 1234567"), "digits: 1234567") 
             << "Check that numbers don't change.";
-            
+
         EXPECT_EQ(toLower("SymBoLs: !@#$%^&*"), "symbols: !@#$%^&*") 
             << "Check that symbols don't change.";
-            
+
         EXPECT_EQ(toLower(""), "") 
             << "Check an empty string.";
     }
@@ -48,16 +48,16 @@ namespace string_utils
     {
         EXPECT_EQ(toUpper("HeLLo"), "HELLO") 
             << "Check a simple string with upper-case characters.";
-            
+
         EXPECT_EQ(toUpper("HeLLo WoRld!"), "HELLO WORLD!") 
             << "Check multi-word strings with punctuation.";
-            
+
         EXPECT_EQ(toUpper("Digits: 1234567"), "DIGITS: 1234567") 
             << "Check that numbers don't change.";
-            
+
         EXPECT_EQ(toUpper("SymBoLs: !@#$%^&*"), "SYMBOLS: !@#$%^&*") 
             << "Check that symbols don't change.";
-            
+
         EXPECT_EQ(toUpper(""), "") 
             << "Check an empty string.";
     }
@@ -70,16 +70,16 @@ namespace string_utils
     {
         EXPECT_EQ(removeCharInString("hello world", 'o'), "hell wrld")
 	        << "Check removing a character from a simple string.";
-	        
+
         EXPECT_EQ(removeCharInString("hell0 w0rld", '0'), "hell wrld")
 	        << "Check removing numbers from a string.";
-	        
+
         EXPECT_EQ(removeCharInString("he!!o wor!d", '!'), "heo word")
 	        << "Check removing symbols from a string.";
-	        
+
         EXPECT_EQ(removeCharInString("fish", '!'), "fish")
 	        << "Check a string with no matching characters.";
-	        
+
         EXPECT_EQ(removeCharInString("", '!'), "")
 	        << "Check an empty string.";
     }
@@ -230,7 +230,7 @@ namespace string_utils
         EXPECT_TRUE(formOfYes("IndEeD"));
         EXPECT_TRUE(formOfYes("affirmative"));
         EXPECT_TRUE(formOfYes("indubitably"));
-        
+
         // Check negative cases.
         EXPECT_FALSE(formOfYes(""));
         EXPECT_FALSE(formOfYes("no"));
@@ -257,7 +257,7 @@ namespace string_utils
         std::string shuffled1 = shuffleString(input1);
         // It's possible shuffled == input, but unlikely; just check length here.
         EXPECT_EQ(shuffled1.length(), input1.length());
-        
+
         // Make sure the shuffled string matches one of the possibilities.
         std::string input2 = "abc";
         std::string shuffled2 = shuffleString(input2);
@@ -271,7 +271,7 @@ namespace string_utils
         }
         ASSERT_EQ(matches, 1)
             << "The shuffled string must only match one possible shuffle string.";
-            
+
         // Make sure all possible shuffled strings get made after multiple calls.
         std::vector<uint8_t> counters;
         counters.resize(6);
@@ -340,13 +340,13 @@ namespace string_utils
     {
         EXPECT_EQ(getBetweenXAndY("[data]", '[', ']'), "data");
         EXPECT_EQ(getBetweenXAndY("AdataB", 'A', 'B'), "data");
-        
+
         // Missing marker characters.
         EXPECT_EQ(getBetweenXAndY("data", '[', ']'), "");
         EXPECT_EQ(getBetweenXAndY("[data", '[', ']'), "");
         EXPECT_EQ(getBetweenXAndY("data]", '[', ']'), "");
         EXPECT_EQ(getBetweenXAndY("", '[', ']'), "");
-        
+
         // Duplicate marker characters.    
         EXPECT_EQ(getBetweenXAndY("0data0", '0', '0'), "data");
         EXPECT_EQ(getBetweenXAndY("AdataA", 'A', 'A'), "data");
@@ -471,8 +471,8 @@ namespace string_utils
         EXPECT_EQ(resizeString("aaaa", "bbbb"), "bbbb");
         EXPECT_EQ(resizeString("12345", "123", '0'), "00123");
     }
-    
-    
+
+
     /**
      * @brief Tests the zeroString method.
      */
@@ -481,7 +481,7 @@ namespace string_utils
         ASSERT_EQ(zeroString(5), "00000");
         ASSERT_EQ(zeroString(8), "00000000");
         ASSERT_EQ(zeroString(0), "");
-        
+
         // Check a large string.
         std::string zStr = zeroString(5678);
         ASSERT_EQ(zStr.size(), 5678);

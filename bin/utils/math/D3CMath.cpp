@@ -56,7 +56,7 @@ namespace math
         }
         return sum;
     }
-    
+
 
     uint32_t numberOfFactors(long x)
     {
@@ -70,7 +70,7 @@ namespace math
         }
         return num;
     }
-    
+
 
     bool isTriangleNumber(long x)
     {
@@ -98,14 +98,14 @@ namespace math
     string getLastLine(std::ifstream& in)
     {
         std::ifstream::pos_type pos = in.tellg();
-    
+
         std::ifstream::pos_type lastPos;
         while (in >> std::ws && ignoreline(in, lastPos))
             pos = lastPos;
-    
+
         in.clear();
         in.seekg(pos);
-    
+
         string line;
         getline(in, line);
         return line;
@@ -145,7 +145,7 @@ namespace math
             lineStartString[x] = line[x];
         }
         lineStart = std::stol(lineStartString);
-    
+
         return lineStart;
     }
 
@@ -166,7 +166,7 @@ namespace math
         }
         lineEndString.resize(lineLength - position-2);
         lineEndString.reserve(lineLength - position-2);
-    
+
         for(int x=0;x<lineLength-(position+2);x++)
         {
             lineEndString[x] = line[x+position+2];
@@ -184,22 +184,22 @@ namespace math
         string line;
         std::ifstream myfilein(primeNlocation);
         long max = 2147483647;
-    
+
         if (myfilein.is_open())
         {
             line = getLastLine(myfilein);
         }
         myfilein.close();
-    
+
         myfile.open(primeNlocation, std::ios::app);
-    
+
         if (line.empty())
         {
             myfile << "~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
             myfile << "~~ List of Prime Numbers ~~" << std::endl;
             myfile << "~~~~~~~ DO NOT EDIT ~~~~~~~" << std::endl;
             myfile << "~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl << std::endl;
-    
+
             long fileStart = 2;
             long primeCount = 0;
             for (long i = fileStart; i <= max; i++)
@@ -211,7 +211,7 @@ namespace math
                 }
             }
         } else {
-    
+
             long primeStart = seperateFileEnd(line);
             long primeCount = seperateFileStart(line);
             for (long i = primeStart+1; i <= max; i++)
@@ -223,7 +223,7 @@ namespace math
                 }
             }
         }
-    
+
         myfile.close();
     }
 
@@ -244,16 +244,16 @@ namespace math
     {
         long max = 2147483647;
         long largePrime = 0, primeCount = 0;
-    
+
         string line;
         std::ifstream myfilein(primeNlocation);
-    	
+
         if (myfilein.is_open())
         {
             line = getLastLine(myfilein);
         }
         myfilein.close();
-    
+
         if(!line.empty())
         {
             primeCount = seperateFileStart(line);
@@ -305,8 +305,8 @@ namespace math
         }
         return largePrime;
     }
-    
-    
+
+
     uint32_t numOfDigitsInt(int x)
     {
         uint32_t count;
@@ -325,8 +325,8 @@ namespace math
         }
         return count;
     }
-    
-    
+
+
     int getLargerInt(int One, int Two)
     {
         int largerInt;
@@ -360,11 +360,11 @@ namespace math
         {
             return "0";
         }
-        
+
         bool lastDigitZero = false;
         int lengthTotal = a.size(), count = 0;
         string total = string_utils::zeroString(lengthTotal);
-        
+
         /*
          * If the first number is a 0, this will place it at the end instead of the beginning, 
          * in term multiplying the number by 10. The increase by a factor of 10 will be corrected 
@@ -385,7 +385,7 @@ namespace math
         {
             total[i] = a[i] + 48;
         }
-        
+
         /*
          * Removes the last digit if it is zero, but only if it was moved from the front to the 
          * back, to correct for the increase in factor of 10 that was produced earlier.
@@ -414,21 +414,21 @@ namespace math
         { // String already contains a negative.
             return input;
         }
-        
+
         // Check non-numerical cases.
         if (!string_utils::isDigits(input))
         {
             MIA_THROW(error::ErrorCode::Invalid_Parameter, 
                       "The addNegativeSign method expects the input string to represent an integer.");
         }
-        
+
         // Check if the strings is equivalent to zero.
         std::string zStr = string_utils::zeroString(input.size());
         if (input == zStr)
         { // Zero should be neither positive or negative.
             return input;
         }
-        
+
         int stringLength = input.size();
         string output;
         output.resize(stringLength + 1);
@@ -439,20 +439,20 @@ namespace math
         }
         return output;
     }
-    
-    
+
+
     string addTwoStrings(string stringOne, string stringTwo)
     {
         int lengthOne = stringOne.size(); 
         int lengthTwo = stringTwo.size();
-        
+
         // Set largerLength to the length of the largest string.
         int largerLength = getLargerInt(lengthOne, lengthTwo);
         int lengthTotal;
         int number;
         int var; 
         bool isPositive = true;
-    
+
         if(stringOne[0] == '-' && stringTwo[0] == '-')
         { // If both numbers are negative, then their summation is also negative.
             isPositive = false;
@@ -474,11 +474,11 @@ namespace math
         { // If just one of the numbers is negative, the summation could be positive or negative.
             return "Error. Use the subtract function for one negative number and one positive number.";
         }
-    
+
         // Creates a blank string for the total of the two added strings.
         string total = string_utils::zeroString(largerLength + 1);
         lengthTotal = total.size();
-    
+
         if (lengthOne == lengthTwo)
         {
             /*
@@ -498,7 +498,7 @@ namespace math
             stringOne = string_utils::resizeString(stringTwo, stringOne, '0');
             lengthOne = stringOne.size();
         }
-        
+
         /*
          * Creates an int array for each string to be converted to and then converts the, 
          * to an array of integers using a vector.
@@ -506,7 +506,7 @@ namespace math
         vector<int> totalArray = stringToVector(total);
         vector<int> stringOneArray = stringToVector(stringOne); 
         vector<int> stringTwoArray = stringToVector(stringTwo);
-    
+
         for (int i = 1; i <= lengthTotal - 1; i++)
         { // Adds the two string arrays together and combine them into the total array.
             number = stringOneArray[lengthOne - i] + stringTwoArray[lengthTwo - i];
@@ -514,7 +514,7 @@ namespace math
             totalArray[lengthTotal - 1 - i] += number / 10;
         }
         var = lengthTotal - 1;
-        
+
         /*
          * In some cases, if the two positions added up to 9, then were added to an existing 
          * one in the total array, the number was 10. So this corrects for that.
@@ -528,23 +528,23 @@ namespace math
             }
             var--;
         }
-    
+
         total = vectorToString(totalArray);
-    	
+
         if(!isPositive)
         {
             total = addNegativeSign(total);
         }
-    
+
         return total; // Returns the total of the two strings.
     }
-    
-    
+
+
     string subtractTwoStrings(const string& strOne, const string& strTwo)
     {
         string stringOne = strOne;
         string stringTwo = strTwo;
-        
+
         if(stringOne == stringTwo)
         { // The strings are the same so they cancel out to zero.
             return "0";
@@ -563,7 +563,7 @@ namespace math
                 return addNegativeSign(stringTwo);
             }
         }
-        
+
         // Check if we can simplify the problem any. 
         if (stringOne[0] == '-')
         { // The first string is negative.
@@ -580,16 +580,16 @@ namespace math
         { // Only the second string is negative. A - (-B) = A + B
             return addTwoStrings(stringOne, stringTwo.substr(1));
         }
-    
+
         // If reaching this point, both strings should always be positive values.
         if (stringOne[0] == '-' || stringTwo[0] == '-')
         { // This is a sanity check - should never happen unless the above logic changes.
             MIA_THROW(error::ErrorCode::Catastrophic_Failure);
         }
-        
+
         int lengthOne = stringOne.size(); 
         int lengthTwo = stringTwo.size();
-    
+
         if (lengthOne > lengthTwo)
         { // If the first string has more digits than the second, the difference is positive.
             stringTwo = string_utils::resizeString(stringOne, stringTwo, '0');
@@ -601,7 +601,7 @@ namespace math
             lengthOne = stringOne.size();
         }
         // Now lengthOne == lengthTwo.
-        
+
         /*
          * Creates an int array for each string to be converted to and then converts 
          * the, to an array of integers using a vector.
@@ -609,9 +609,9 @@ namespace math
         vector<int> totalArray(lengthOne, 0);
         vector<int> stringOneArray = stringToVector(stringOne);
         vector<int> stringTwoArray = stringToVector(stringTwo);
-        
+
         bool isPositive = false;
-        
+
         // Check which string is the larger number to determine sign of output.
 		for(int i=0; i<lengthOne; i++)
 		{
@@ -626,12 +626,12 @@ namespace math
 				break;
 			}
 		}
-    
+
         if(!isPositive)
         { // Make the first string array the larger value always - add sign later.
             std::swap(stringOneArray, stringTwoArray);
         }
-        
+
         int borrow = 0;
         for (int i = lengthOne - 1; i >= 0; --i)
         { // Start at last digit and move towards the first.
@@ -647,28 +647,28 @@ namespace math
             }
             totalArray[i] = diff;
         }
-    
+
         string difference = vectorToString(totalArray);
 
         if(!isPositive)
         { // Apply the negative sign if the answer should be negative.
             difference = addNegativeSign(difference);
         }
-    
+
         return difference; // Returns the difference two strings.
     } // string subtractTwoStrings()
-    
-    
+
+
     string multiplyTwoStrings(const string& strOne, const string& strTwo)
     {
         string stringOne = strOne;
         string stringTwo = strTwo;
-        
+
         if(stringOne == "0" || stringTwo == "0")
         { // Handle the trivial case of zero multiplication.
             return "0";
         }
-    
+
         // Determine the sign of the output.
         bool isPositive;
         if(stringOne[0] == '-' && stringTwo[0] == '-')
@@ -691,7 +691,7 @@ namespace math
         {
             isPositive = true;
         }
-        
+
         int lengthOne = stringOne.size();
         int lengthTwo = stringTwo.size();
         int largerLength = getLargerInt(lengthOne, lengthTwo);
@@ -701,11 +701,11 @@ namespace math
         int origLengthTwo = lengthTwo;
         int number;
         int temp;
-                
+
         // Creates a blank string for the total of the two added strings.
         string total = string_utils::zeroString(largerLength *2);
         lengthTotal = total.size();
-    
+
         if (lengthOne == lengthTwo)
         {
             /*
@@ -727,11 +727,11 @@ namespace math
             stringOne = string_utils::resizeString(stringTwo, stringOne, '0');
             lengthOne = stringOne.size();
         }
-    
+
         vector<int> totalArray = stringToVector(total), stringOneArray =
                 stringToVector(stringOne), stringTwoArray = stringToVector(
                 stringTwo);
-    
+
         /*
          * Multiplies the 2 vectors together and combines them in the totalArray. Each 
          * position in the total vector can have multiple digits, which will be fixed later.
@@ -758,7 +758,7 @@ namespace math
                 }
             }
         }
-    
+
         /*
          * Fixes any areas in the array that have more than one digit by taking the 
          * number of tens and adding it to the next place holder while making the 
@@ -774,9 +774,9 @@ namespace math
                 totalArray[lengthTotal-1-j-i] += number%10;
                 number=number/10;
             }
-    
+
         }
-    
+
         // Converts the vector back into a string and returns it.
         total = vectorToString(totalArray);
         if(!isPositive)
@@ -785,8 +785,8 @@ namespace math
         }
         return total;
     }
-    
-    
+
+
     long largestProductOfXConsecutiveNumbers(const string& input, uint32_t x)
     {
         if (x == 0 && !input.empty()) // input.empty() is a special case handled below.
@@ -803,19 +803,19 @@ namespace math
             std::string errorStr = errorStream.str();
             MIA_THROW(error::ErrorCode::Invalid_Parameter, errorStr);
         }
-        
+
         uint32_t length = input.size();
         uint32_t temp = 0;
         long max = 0;
         std::vector<int> num;
         num.resize(length);
-        
+
         for (uint32_t i = 0; i < length; i++)
         {
             // "-48" converts the ascii number of 0,1,2,3,... (48,49,50,51,... in ascii) to a regular int.
             num[i] = (input[i] - 48);
         }
-        
+
         for (uint32_t p = 0; p <= length - x; p++)
         {
             temp = num[p];
@@ -835,7 +835,7 @@ namespace math
     string productCollatzSequence(long n)
     {
         string sequence, temp;
-    
+
         if(n == 1)
         {
             std::cout << "1" << std::endl;
@@ -857,8 +857,8 @@ namespace math
         }
     return sequence;
     }
-    
-    
+
+
     long latticePathsOfSquare(long x, long y)
     {
         long space[x + 1][y + 1];
@@ -886,8 +886,8 @@ namespace math
     {
     	return primeNlocation;
     }
-    
-    
+
+
     string solveQuadraticFormula(double a, double b, double c)
     {
     	string answer;
@@ -911,20 +911,20 @@ namespace math
     	}
     	return answer;
     }
-    
+
     /* Still working on these.
     string intToBinaryStr(int input, int bits){
     	string binary = bitset<8>(input).to_string(); //to binary.
     	return binary;
     }
-    
+
     unsigned long binaryStrToInt(string input, int bits){
         unsigned long decimal = bitset<8>(input).to_ulong //to decimal.
     	return decimal;
     }
     */
-    
-    
+
+
     bool isPalindrome(long number)
     {
         int size = log10(number) + 1;

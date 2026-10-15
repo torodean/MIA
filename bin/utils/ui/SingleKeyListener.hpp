@@ -45,7 +45,7 @@ namespace ui
          * @param keyCode The key code to listen for (platform-specific).
          */
         SingleKeyListener(char keyCode);
-        
+
         /**
          * @brief Destructor for SingleKeyListener.
          *
@@ -54,7 +54,7 @@ namespace ui
          * and closing the X display connection.
          */
         ~SingleKeyListener();
-        
+
         /**
          * @brief Sets the key code to be monitored by the key listener.
          *
@@ -65,7 +65,7 @@ namespace ui
          * @param code The key code to be assigned for listening.
          */
         void setKeyCode(char code);
-        
+
         /**
          * @brief Indicates whether the listener is active and bound to a valid key.
          *
@@ -73,7 +73,7 @@ namespace ui
          */
         bool isActive()
         { return keyCode != '\0'; }
-        
+
         /**
          * @brief Initializes the key listener by registering the key grab with the system.
          *
@@ -85,7 +85,7 @@ namespace ui
          * @throws MIAException if !isActive() (if setKeyCode() has not been called first).
          */
         void initialize();
-        
+
     protected:
         /**
          * @brief Monitors the configured key for press events and toggles a condition when detected.
@@ -101,27 +101,27 @@ namespace ui
          * @throws MIAException if !isActive() (if setKeyCode() has not been called first).
          */
         void run() override;
-        
+
     private:
 
         /// Storage for the key-code used by this listener.
         char keyCode{'\0'};
-        
+
     #if defined(IS_WINDOWS)
 
         bool lastPressed{false};
-        
+
     #elif defined(__linux__)
         /// Storage for the int key-code used by this listener.
 	    unsigned int linuxKeyCode{0};
-	    
+
         /**
          * @brief Converts a single ASCII character to its corresponding X11 keycode.
          * @param c[char] - The character to convert (must be a single printable ASCII character).
          * @return [unsigned int] - The X11 keycode as an unsigned int, or 0 if the character has no corresponding keycode.
          */
         unsigned int charToKeyCode(char c);
-        
+
         /**
          * @brief Pointer to the X11 display connection used for listening to input events.
          *
@@ -129,7 +129,7 @@ namespace ui
          * Used internally for issuing fake mouse events via the XTest extension.
          */
         Display *display;
-          
+
         static constexpr unsigned int modifiers = AnyModifier;
         Window root;
         bool grabbed{false}; // To track if key was grabbed

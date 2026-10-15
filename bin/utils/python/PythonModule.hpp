@@ -221,7 +221,7 @@ private:
     {
         return toPython(std::string(value));
     }
-    
+
     /**
      * Creates a new Python list from a C++ vector of any supported element
      * type. Each element is converted by its own toPython overload, so the

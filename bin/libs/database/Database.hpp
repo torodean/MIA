@@ -35,7 +35,7 @@ public:
 	 * can be established.
 	 */
     Database() = default;
-	
+
 	/**
 	 * Constructs a Database object with the specified username, hostname, and port.
 	 *
@@ -46,7 +46,7 @@ public:
 	Database(const std::string& username, const std::string& hostname, unsigned short port)
 		: credentials(username, hostname, port)
 	{ }
-	
+
 	/**
 	 * Constructs a Database object using a DatabaseCredentials object.
 	 *
@@ -54,10 +54,10 @@ public:
 	 */
 	Database(const DatabaseCredentials& credentials) : credentials(credentials)
 	{ };
-	
+
     /// The main destructor for a Database object.
     ~Database();
-	
+
 	/**
 	 * Sets the credentials for this Database object.
 	 *
@@ -135,7 +135,7 @@ public:
      * @param tableName the table to delete
      */
     void deleteTable(const std::string& tableName);
-	
+
 	/**
 	 * @brief Sets the given RuntimeContext into this instance's context pointer.
 	 * 
@@ -148,10 +148,10 @@ public:
 	{ context = &ctx; }
 
 protected:
-	
+
 	/// The runtime context object to enable application output.
 	const RuntimeContext* context{nullptr};
-	
+
 private:
 
     /**
@@ -162,7 +162,7 @@ private:
 
     DatabaseCredentials credentials;  ///< Credentials used to login to a database.
     std::string database;             ///< The database name to login to.
-	
+
     /// MySQL values for the connection.
     sql::Driver *driver{};
     sql::Connection *con{};

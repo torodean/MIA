@@ -143,9 +143,9 @@ Power
 	- Bow
 	- Mace
 	- Crossbow 
-	
-	
-	
+
+
+
 ## Reputation Levels
 - Hunted
 - Despised

@@ -58,7 +58,7 @@ namespace rpg_sim
      * @param player The player data.
      */
     void fightMobAutomated(rpg::Player& player);
-    
+
     /*
      * Creates a random Mob appropriate for the player to face. This uses the
      * rpg::Player class because a mob/boss could potentially have all the same
@@ -72,19 +72,19 @@ namespace rpg_sim
      * @param player The player data.
      */
     rpg::Player createMob(rpg::Player& player);
-    
+
     /**
      * Displays the status of a mob.
      * @param mob The mob data to display.
      * 
      */
     void displayMobStatus(rpg::Player& mob);
-    
+
     /**
      * Displays the various fight simulator options.
      */
     void displayFightSimOptions();
-    
+
     /**
      * Simulates a player attacking a mob. This is a physical attack,
      * so the attack damage is increased by strength value.
@@ -93,7 +93,7 @@ namespace rpg_sim
      * @return true if the fight should continue, false otherwise.
      */
     bool playerAttacksMob(rpg::Player& player, rpg::Player& mob);
-    
+
     /**
      * Simulates a mob attacking a player. This is a physical attack,
      * so the attack damage is increased by strength value.
@@ -102,7 +102,7 @@ namespace rpg_sim
      * @return true if the fight should continue, false otherwise.
      */
     bool mobAttacksPlayer(rpg::Player& player, rpg::Player& mob);
-    
+
     /**
      * Simulates a player attacking a mob with a spell. This is a magic attack,
      * so the attack damage is increased by the players intellect value. This
@@ -113,7 +113,7 @@ namespace rpg_sim
      * @return true if the fight should continue, false otherwise.
      */
     bool castSpellAgainstMob(rpg::Player& player, rpg::Player& mob);
-    
+
     /**
      * Simulates a player healing themselves. The heal amount is increased by the
      * players intellect value. This also consumes mana based on how much is healed.
@@ -123,7 +123,7 @@ namespace rpg_sim
      * @param player The player data.
      */
     void heal(rpg::Player& player);
-    
+
     /**
      * Simulates a player fleeing from a mob. The stronger the mob is, the harder
      * it is to flee.
@@ -153,7 +153,7 @@ namespace rpg_sim
         shortRest,   ///< A short rest, recovers a small amount of vitals.
         longRest     ///< A long rest, recovers all vitals.
     };
-    
+
     /// Converts a RestType value to a string.
     std::string restTypeToString(RestType type);
 
@@ -176,20 +176,20 @@ namespace rpg_sim
      * @param player The player whose attributes are increased.
      */
     void levelUp(rpg::Player& player);
-    
+
     /**
      * Checks if the player is dead.
      * @param player The player data.
      * @return true if the player is dead, false otherwise.
      */
     bool isDead(rpg::Player& player);
-    
+
     /**
      * Revives the player with 1 health.
      * @param player The player data.
      */
     void revive(rpg::Player& player);
-    
+
     /**
      * Saves the game state and player data to a file..
      * @param player The player data.

@@ -4,7 +4,7 @@
  * @date 06/15/2025
  * @brief Tests for the Logger and free functions in Logger.hpp.
  */
- 
+
 #include <fstream>
 #include <sstream>
 #include <cstdio>  // For std::remove

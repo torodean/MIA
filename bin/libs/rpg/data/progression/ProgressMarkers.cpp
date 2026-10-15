@@ -40,8 +40,8 @@ namespace progress
             return rpg::helper_methods::getFromRegistry<ProgressRegistry, ProgressMarker, T>(identifier);
         }
     } // namespace helper_methods
-    
-    
+
+
     // get() methods...
     ProgressValue& ProgressMarkers::get(const std::string& name)
     {
@@ -66,7 +66,7 @@ namespace progress
         else 
             return it->second;
     }
-    
+
 
     // add() methods...
     void ProgressMarkers::add(const std::string& name, int32_t value)
@@ -84,7 +84,7 @@ namespace progress
         auto id = progressMarker.getID();
         if (dataStore.find(id) != dataStore.end())            
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);
-            
+
         dataStore.emplace(id, ProgressValue(value));
     }
 
@@ -108,7 +108,7 @@ namespace progress
 
         dataStore.erase(it);
     }
-    
+
 
     // update() methods...
     void ProgressMarkers::update(const std::string& name, int32_t value)
@@ -172,7 +172,7 @@ namespace progress
                << "\n";
         }
     }
-    
+
 
     std::string ProgressMarkers::serialize() const
     {
@@ -189,7 +189,7 @@ namespace progress
         oss << "[PROGRESS_END]";
         return oss.str();
     }
-    
+
 
     ProgressMarkers ProgressMarkers::deserialize(const std::string& data)
     {

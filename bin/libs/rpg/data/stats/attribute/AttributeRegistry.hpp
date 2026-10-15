@@ -24,7 +24,7 @@ namespace stats
         {
             return "ATTRIBUTE";
         }
-        
+
     protected:
 
         /**
@@ -49,7 +49,7 @@ namespace stats
                 << "Name: " << obj.getName() 
                 << ", Description: " << obj.getDescription()
                 << ", BaseValue: " << obj.getBaseValue();
-            
+
             const auto& modifies = obj.getModifies();
             if (!modifies.empty())
             {
@@ -65,7 +65,7 @@ namespace stats
                 }
                 oss << "]";
             }
-            
+
             return oss.str();
         }
     };

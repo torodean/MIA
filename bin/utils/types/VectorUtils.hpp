@@ -34,12 +34,12 @@ namespace vector_utils
     {
         if (a.size() != b.size()) 
             return false;
-            
+
         std::sort(a.begin(), a.end());
         std::sort(b.begin(), b.end());
         return a == b;
     }
-    
+
     /**
      * Converse a vector of values to a string. Each element of the vector is
      * separated by a comma delimiter.

@@ -4,7 +4,7 @@
  * @date 06/25/2025
  * @brief Tests for the SingleKeyListener class and associated methods.
  */
- 
+
 #include <gtest/gtest.h>
 
 #include "SingleKeyListener.hpp"
@@ -116,7 +116,7 @@ namespace ui
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         EXPECT_TRUE(task.isConditionMet());
-            
+
         task.stop();
     }
 } // namespace ui

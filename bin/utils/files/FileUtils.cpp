@@ -4,7 +4,7 @@
  * @date 03/07/2021
  * @brief Implementation for the FileUtils methods.
  */
- 
+
 // Include the associated header file.
 #include "FileUtils.hpp"
 
@@ -31,7 +31,7 @@ namespace files
     {
         if (string_utils::toLower(input) == "mp3") return FileType::Mp3;
         if (string_utils::toLower(input) == "wav") return FileType::Wav;
-        
+
         return FileType::Unknown;
     }
 
@@ -41,7 +41,7 @@ namespace files
     {
         FileMetaData data;
         data.fullFilePath = fileName;
-        
+
         // Find the last '.' in the filename to determine the file Extension.
         std::vector<std::string> tokens = string_utils::delimiterString(fileName, ".");
         if (tokens.size() == 1)
@@ -55,7 +55,7 @@ namespace files
             std::string fileExtension = tokens.back();
             data.type = stringToFileType(fileExtension);
         }
-        
+
         // Get the file name.
         if (string_utils::stringContainsChar(fileName, '\\'))
         { // Windows file path.
@@ -70,13 +70,13 @@ namespace files
         else
         { // No directory dividers, so assume the entire thing is the path.
             data.fileName = fileName;
-            
+
             if (verboseMode)
                 std::cerr << "WARNING: Full file path for file " 
                           << fileName << " not known!" << std::endl;
             data.fullFilePath = ""; // Clear the full path.
         }
-        
+
         return data;
     }
 
@@ -127,23 +127,23 @@ namespace files
     {
         // Grabs the file.
         std::ifstream file(filePath, std::ifstream::in);
-    
+
         // Checks if the file exists and runs the code.
         if (file.good())
         {
             string line;
             std::vector<string> lines;
-    
+
             while(getline(file,line))
             {
                 //cout << line << endl;
                 lines.push_back(line);
             }
-    
+
             int listSize = lines.size();
             srand(time(nullptr));
             int randomNum;
-    
+
             for(int i=0; i<numberOfLines; i++)
             {
                 randomNum = rand() % listSize;
@@ -173,7 +173,7 @@ namespace files
         string line;
         while (std::getline(file, line))
             lines.push_back(line);
-        
+
         return lines;
     }
 

@@ -41,7 +41,7 @@ namespace stats
     {
         modifies.push_back(modify);
     }
-    
+
 
     nlohmann::json Attribute::toJson() const
     {
@@ -58,7 +58,7 @@ namespace stats
 
         return json;
     }
-    
+
 
     Attribute Attribute::fromJson(const nlohmann::json& json)
     {

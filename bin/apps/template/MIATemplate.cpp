@@ -36,7 +36,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 
         // Set the values from the command line arguments.
         testOpt.getOptionVal<bool>(argc, argv, testMode);
-        
+
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
         config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
@@ -45,7 +45,7 @@ void MIATemplate::initialize(int argc, char* argv[])
     {
         std::cerr << "Error during MIATemplate::initialize: " << ex.what() << std::endl;
     }
-    
+
     loadConfig();
 }
 
@@ -68,7 +68,7 @@ void MIATemplate::loadConfig()
         << "Continuing with default values."
         << std::endl;
     }
-    
+
     // Optionally print the config values after it is loaded.
     if (getVerboseMode())
         config.dumpConfigMap();
@@ -77,7 +77,7 @@ void MIATemplate::loadConfig()
 void MIATemplate::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     // This is a dump of the help messages used by the various command options.
     std::cout << "MIATemplate specific options:" << std::endl
               << configFileOpt.getHelp() << std::endl
@@ -107,7 +107,7 @@ int MIATemplate::run()
 {
     LOG_METHOD_CALL(); // Used for testing log file calls.
     std::cout << "Loading MIATemplate app!" << std::endl;
-    
+
     if(testMode)
     {
         std::cout << "Test mode running!" << std::endl;
@@ -121,7 +121,7 @@ int MIATemplate::run()
     {
         std::cout << "Press ENTER to continue..." << std::endl;
         std::cin.get(); // Waits for ENTER key
-        
+
         // This success method demonstrates the optional TerminalColors.
         std::cout << terminal_colors::green << "Success! Well done." << terminal_colors::reset << std::endl;
         configFileVals.printConfigValues();

@@ -14,11 +14,11 @@ namespace currency
     class CurrencyRegistry : public rpg::Registry<CurrencyRegistry, Currency>
     {        
     protected:
-    
+
         /// Returns the JSON key for the class's data array.
         std::string getJsonKey() const override 
         { return "CURRENCY"; }
-    
+
         /**
          * Parses a JSON object into a Currency instance.
          * Uses the Currency constructor to set all fields, preserving encapsulation.
@@ -37,7 +37,7 @@ namespace currency
             Currency currency(id, name, description, type, tradeable, icon);
             return currency;
         }
-        
+
         /**
          * Converts a Currency object into a human-readable string.
          * Uses public getter methods to access Currency fields.
@@ -52,6 +52,6 @@ namespace currency
                    ", Description: " + currency.getDescription() +
                    ", Icon: " + currency.getIconArt();
         }
-        
+
     };
 } // namespace currency

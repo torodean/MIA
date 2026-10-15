@@ -91,7 +91,7 @@ namespace maple
             }
         }
     } // namespace
-    
+
     FilingStatus stringToFilingStatus(const std::string& str)
     {
         const std::string lowerStr = string_utils::toLower(str);
@@ -102,11 +102,11 @@ namespace maple
             return FilingStatus::Married;
         else if (lowerStr == "head of household")
             return FilingStatus::HeadOfHousehold;
-            
+
         std::string err = "Invalid filing status: " + str;
         MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
     }
-    
+
     std::ostream& operator<<(std::ostream &stream, const TaxRateConstants& constants)
     {
         stream << "medicareTaxRate: " << constants.medicareTaxRate
@@ -119,7 +119,7 @@ namespace maple
                << "], taxBracketMarried: [" << vector_utils::vectorToString(constants.taxBracketMarried)
                << "], taxRateBracket: [" << vector_utils::vectorToString(constants.taxRateBracket) << "]";
        return stream;
-               
+
     }
 
 
@@ -140,8 +140,8 @@ namespace maple
 
         return brackets;
     }
-    
-    
+
+
     TaxRateConstants createTaxRateConstantsFromConfig(const config::MIAConfig& config,
                                                       const std::string& optionalSuffix, 
                                                       bool printWarnings)

@@ -41,7 +41,7 @@ MIAWorkout::MIAWorkout() :
                                 CommandOption::commandOptionType::DOUBLE_OPTION),
     weeklyOpt("-w", "--weekly", "Generate workouts for an entire week.",
                                 CommandOption::commandOptionType::BOOL_OPTION)
-                                    
+
 { };
 
 
@@ -55,7 +55,7 @@ void MIAWorkout::initialize(int argc, char* argv[])
         difficultyOpt.getOptionVal<double>(argc, argv, difficulty);
         weeklyOpt.getOptionVal<bool>(argc, argv, weekly);
         outputFileOpt.getOptionVal<std::string>(argc, argv, workoutOutputFilePath);
-        
+
         std::string configFile = defaultConfigFile;
         configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
         config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
@@ -64,7 +64,7 @@ void MIAWorkout::initialize(int argc, char* argv[])
     {
         std::cerr << "Error during MIAWorkout::initialize: " << ex.what() << std::endl;
     }
-    
+
     loadConfig();
 }
 
@@ -74,7 +74,7 @@ void MIAWorkout::loadConfig()
     {
         if (workoutOutputFilePath != "") // Otherwise it was set via a command option.
             workoutOutputFilePath = config.getString("workoutOutputFilePath");
-        
+
         // Get config values.
         toughness = config.getDouble("toughness");
         minNumOfExercises = config.getDouble("minNumOfExercises");
@@ -89,7 +89,7 @@ void MIAWorkout::loadConfig()
         << "Continuing with default values."
         << std::endl;
     }
-    
+
     if (getVerboseMode())
         config.dumpConfigMap();
 }
@@ -97,7 +97,7 @@ void MIAWorkout::loadConfig()
 void MIAWorkout::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     cout << "MIAWorkout specific options:" << endl
          << configFileOpt.getHelp() << endl
          << outputFileOpt.getHelp() << endl
@@ -126,7 +126,7 @@ double MIAWorkout::minNumModifier(double min, double max, double difficulty)
     //adjusts the min compared to max.
     //Set such that new curves are similar to old workout generation functions.
     double minModifier = 1.9;
-    
+
 
     return (-((-max + min*minModifier)/(10.0*pow(10.0,(1.0/3.0))*minModifier)))*pow(difficulty,(2.0/3.0)) + min;
 }
@@ -161,7 +161,7 @@ void MIAWorkout::generateWorkout()
         out.open(outputFile);
         out << outputFileText;
     }
-    
+
     // All the exercises are stored in the config file.
     std::vector<constants::KeyValuePair> exercisesList = config.getAllConfigPairs();
 
@@ -170,7 +170,7 @@ void MIAWorkout::generateWorkout()
     vector<double> workoutWeight;
     vector<string> workoutUnit;
     int maxNumOfExercises = 0; // Counter for number of exercises. Doubles as a counter.
-    
+
     // Sets the workout file variables and the weighted value.
     for(const auto& exercise : exercisesList)
     {
@@ -265,7 +265,7 @@ void MIAWorkout::generateWorkout()
             std::cout << "minNumOfSetsModifier: " << minNumOfSetsModifier << std::endl;
             std::cout << "numOfSets: " << numOfSets << std::endl;
         }
-            
+
         if(weekly)
         {
             out << "...Number of sets: " << numOfSets << endl << endl;
@@ -355,15 +355,15 @@ void MIAWorkout::generateWorkout()
                     }
                 }
             }
-            
+
             set++;
             numOfSets--;
-            
+
             if(weekly) //prints results.
                 out << endl;
             else
                 cout << endl;
-                
+
         }
         if(difficulty == 0.0)
         {
@@ -380,7 +380,7 @@ void MIAWorkout::generateWorkout()
             out << endl;
         else
             cout << endl;
-            
+
         timesToGenerate--;
     }
     cout << "...Workout generation completed." << endl;

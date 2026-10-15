@@ -4,7 +4,7 @@
  * @date 06/05/2025
  * @brief This file tests the CharacterMarkovModel implementation of the AbstractMarkovModel.
  */
- 
+
 #include <vector>
 #include <string>
 
@@ -20,7 +20,7 @@ namespace markov_models
     namespace
     {
         using vector_utils::unorderedVectorEquals;
-    
+
         // Test sequences to use as data.
         const std::vector<std::string> sequences = 
         { "hello", "fish", "sift", "tilt", "lot" };
@@ -43,7 +43,7 @@ namespace markov_models
         EXPECT_TRUE(unorderedVectorEquals<char>(allElements, model.getAllStates()));
         for (const auto& c : allElements)
             EXPECT_TRUE(model.hasState(c));
-        
+
         // Test non-default constructor(s).
         CharacterMarkovModel model2(sequences);
         // The vectors may be out of order, so using unorderedVectorEquals(..).

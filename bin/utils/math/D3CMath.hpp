@@ -38,10 +38,10 @@ namespace math
         long primeNumberN(long n);
         void primeNumberNpopulate(); // populates all prime numbers, this can be used to populate a list of all primes to increase the efficiency of primeNumberN();
         void primeNumberNerase();
-    
+
         //std::string intToBinaryStr(int input, int bits);
         //unsigned long binaryStrToInt(std::string input, int bits);
-    
+
         /**
         * Determines if a number is prime or not.
         * @tparam numberType - the type of parameter to use (int, long, short, etc)

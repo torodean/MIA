@@ -33,8 +33,8 @@ namespace math
             EXPECT_LE(val, max);
         }
     }
-    
-    
+
+
     // Test randomInt returns consistent result with fixed seed and no time usage.
     TEST(MathUtils, RandomIntConsistentWithSeed) 
     {
@@ -43,8 +43,8 @@ namespace math
         int val2 = randomInt(1, 100000, seed, false);
         EXPECT_EQ(val1, val2);
     }
-    
-    
+
+
     /*
      * Tests that random values are not duplicated when using time.
      */
@@ -55,8 +55,8 @@ namespace math
         int val2 = randomInt(1, 100000, seed, true);
         EXPECT_NE(val1, val2);
     }
-    
-    
+
+
     /*
      * Test that randomChance() works as expected;
      */
@@ -65,11 +65,11 @@ namespace math
         // Border/edge cases.
         EXPECT_TRUE(randomChance(1.0));
         EXPECT_FALSE(randomChance(0.0));
-        
+
         // Error cases.
         EXPECT_THROW(randomChance(-0.1), error::MIAException);
         EXPECT_THROW(randomChance(1.1), error::MIAException);
-        
+
         /*
          * Normal use cases.
          * Since these are inherently variable/random, we can run a thousand times
@@ -92,7 +92,7 @@ namespace math
                 if (randomChance(static_cast<double>(j)/10.0))
                     chances[j]++; // Increment if a true was returned.
         }
-        
+
         for (size_t j=1; j<10; j++)
         { // Check the expected results.
             double sigma = std::sqrt( ( (j/10.0)*( 1.0-(j/10.0) ) ) / static_cast<double>(iterations) );
@@ -101,18 +101,18 @@ namespace math
             EXPECT_LE(chances[j], j*static_cast<double>(iterations)/10.0 + allowedVariance);
         }
     }
-    
-    
+
+
     // Test roll function with simple valid inputs.
     TEST(MathUtils, RollSimpleDice) 
     {
         EXPECT_GE(roll("1d6"), 1);
         EXPECT_LE(roll("1d6"), 6);
-    
+
         EXPECT_GE(roll("2d4"), 2);
         EXPECT_LE(roll("2d4"), 8);
     }
-    
+
     /* TODO - this method doesn't handle this currently.
     // Test roll with invalid input should handle gracefully (depends on implementation, here just test no crash).
     TEST(MathUtils, RollInvalidInput) 
@@ -120,8 +120,8 @@ namespace math
         EXPECT_NO_THROW(roll("invalid"));
     }
     */
-    
-    
+
+
     // Test rolldXX returns values within expected range.
     TEST(MathUtils, RolldXXRange) 
     {
@@ -134,7 +134,7 @@ namespace math
             EXPECT_LE(val, sides);
         }
     }
-    
+
 
     /**
      * @brief Verifies saturatingAdd returns the normal sum for in-range inputs.
@@ -146,7 +146,7 @@ namespace math
         EXPECT_EQ(saturatingAdd(5, -10), -5);
         EXPECT_EQ(saturatingAdd(-5, -5), -10);
     }
-    
+
 
     /**
      * @brief Verifies saturatingAdd caps positive overflow at INT_MAX.
@@ -158,7 +158,7 @@ namespace math
         EXPECT_EQ(saturatingAdd(max - 5, 10), max);
         EXPECT_EQ(saturatingAdd(0, max), max);
     }
-    
+
 
     /**
      * @brief Verifies saturatingAdd caps negative overflow at INT_MIN.

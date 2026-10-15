@@ -29,10 +29,10 @@ namespace d0s2
 
     /// Message is the original message and PW is the password used.
     std::string EncryptPW(std::string message, std::string password);
-    
+
     /// Message is the original message and PW is the password used.
     std::string DecryptPW(const std::string& message, std::string password);
-    
+
     /**
      * This namespace is for code which is internal to this encryption algorithm.
      */
@@ -52,7 +52,7 @@ namespace d0s2
          * @return [std::string] - A string consisting of `PW` repeated `PWNeeded` times, followed by the first `PWRemainder` characters of `PW`.
          */
         std::string PWRepeat(std::string PW, int PWNeeded, int PWRemainder);
-        
+
         /**
          * @brief Converts a vector of string representations of characters into a vector of corresponding integer values.
          *
@@ -66,7 +66,7 @@ namespace d0s2
          * @return A vector of integers where each element is the numeric equivalent of the corresponding string input.
          */
         std::vector<int> messageVectorStringToInt(std::vector<std::string> messageVector);
-        
+
         /**
          * @brief Combines two integer vectors element-wise by addition.
          *
@@ -143,7 +143,7 @@ namespace d0s2
          * @return The original message string obtained by reversing the encoding process.
          */
         std::string PWmessageUnCombine(std::string message, std::string PW);
-        
+
     } // namespace internal
 } // namespace d0s2
 

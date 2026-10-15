@@ -28,9 +28,9 @@ namespace markov_models
     class AbstractMarkovModel
     {
     public:
-    
+
         virtual ~AbstractMarkovModel() = default;
-    
+
         /**
          * Trains the model using the given sequences of states.
          * @param sequences[const std::vector<std::vector<T>>&] - A vector of input sequences.
@@ -60,7 +60,7 @@ namespace markov_models
          */
         inline std::vector<T> getAllStates() const
         { return markov_models::getStates(probabilityMatrix); };
-        
+
         /**
          * Prints the model's probability matrix to the provided output stream.
          * @param os The output stream to print to.
@@ -102,9 +102,9 @@ namespace markov_models
          */
         inline T sampleNextState(const T& state) const
         { return markov_models::sampleNextState(probabilityMatrix, state); };
-        
+
     private:
-        
+
         /// Storage for the main probability matrix of this class.
         ProbabilityMatrix<T> probabilityMatrix;
     };
