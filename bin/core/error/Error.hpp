@@ -42,7 +42,7 @@ namespace error
         RPC_S_Server_Unavailable = 1722,      ///< The RPC server is unavailable.
         NErr_User_Not_Found = 2221,           ///< The user name could not be found.
         No_Browser_Servers_Found = 6118,      ///< Unavailable list of servers for this workgroup.
-        
+
         /*
          * MIA Program/application specific errors. These are errors specific to MIA's
          * application design and features which are not fitting in a more specific
@@ -66,7 +66,7 @@ namespace error
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
         Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.
         Out_Of_Order_Method_Calls = 31434,    ///< A sequence of methods was called out of order.
-        
+
         /*
          * Operating-system-specific related Errors. These define errors which are relevant to 
          * the os-specific features, and features being developed differently on different OS's.
@@ -75,7 +75,7 @@ namespace error
         Linux_Only_Feature = 31500,           ///< This feature is only supported on Linux.
         Windows_Only_Feature = 31501,         ///< Windows only feature.
         OS_Not_Supported = 31502,             ///< Unsupported OS for this feature.
-        
+
         /*
          * VLC-related errors. 361XX
          */
@@ -83,14 +83,14 @@ namespace error
         VLC_Failed_To_Create_Media = 36101,   ///< Failed to create media object for libvlc.
         VLC_Failed_To_Create_Player = 36102,  ///< Failed to create player object for libvlc.
         VLC_Failed_To_Play_Audio = 36103,     ///< Failed to play audio using libvlc.
-        
+
         /*
          * JSON related errors. 362XX
          */
         JSON_Failed_To_Parse_String = 36200,  ///< Failed to parse a json string.
         JSON_Key_Not_Found = 36201,           ///< The json key was not found.
         JSON_Key_Not_Array_Type = 36202,      ///< The json key was not the expected array type.
-        
+
         /*
          * RPG error codes. 371XX
          */
@@ -100,7 +100,7 @@ namespace error
         Serialization_Key_Not_Found = 37103,  ///< A Serialization key was not found.
         Exceeded_RPG_Quantity = 37104,        ///< An RPG quantity exceeded the maximum storable value.
         Insufficient_RPG_Quantity = 37105,    ///< An RPG quantity removal exceeded the available amount.
-        
+
         /*
          * Database error codes. 38XXX
          */ 

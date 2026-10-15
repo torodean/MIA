@@ -4,7 +4,7 @@
  * @date 05/26/2025
  * Description: This file implements the main logging features for MIA apps and code.
  */
- 
+
 #include <string>
 #include <iostream>
 #include <filesystem>
@@ -165,8 +165,8 @@ namespace logger
     { 
         openLogFile();
     }
-    
-    
+
+
     Logger::~Logger()
     {
         if (logStream.is_open())
@@ -178,7 +178,7 @@ namespace logger
     {
         if (logStream.is_open())
             logStream.close();
-            
+
         currentLogFileName = filename;
         openLogFile();
     }
@@ -192,7 +192,7 @@ namespace logger
                       << (applicationName.empty() ? "" : " [" + applicationName + "]")
                       << ": " << message
                       << std::endl;
-            
+
         if (verbose)
             std::cout << message << std::endl;
     }
@@ -234,8 +234,8 @@ namespace logger
     { 
         return currentLogFileName; 
     }
-    
-    
+
+
     void Logger::setApplicationName(const std::string& appName)
     {
         applicationName = appName;

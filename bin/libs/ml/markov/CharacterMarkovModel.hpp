@@ -28,7 +28,7 @@ namespace markov_models
          * If used, the trainFromStrings() method should be called to train the data. 
          */
         CharacterMarkovModel() = default;
-        
+
         /**
          * The main constructor for this object. This will call the appropriate
          * train() method to generate and fill the probabilityMatrix.
@@ -36,10 +36,10 @@ namespace markov_models
          *     to use for training and generating the probabilityMatrix.
          */
         CharacterMarkovModel(const std::vector<std::string>& sequences);
-        
+
         /// Default destructor.
         ~CharacterMarkovModel() = default;
-        
+
         /**
          * This method will convert an input vector of sequences into a
          * std::vector<std::vector<char>>, then call the train() method in the base
@@ -48,6 +48,6 @@ namespace markov_models
          *     to use for training and generating the probabilityMatrix.
          */
         void trainFromStrings(const std::vector<std::string>& sequences);
-        
+
     }; // class CharacterMarkovModel
 } // namespace markov_models

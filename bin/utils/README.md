@@ -22,12 +22,12 @@ This folder contains reusable utility libraries that provide common functionalit
 
 - **ml/**  
   Contains utilities, models, and components related to machine learning, artificial intelligence, and neural networks. Intended to support the development and integration of intelligent behaviors and predictive systems within the application. "ml" is short for "machine-learning".
-  
+
 - **security/**  
   This contains utilities related to security such as credential handling, authentication, etc.
-  
+
 - **python/**  
   This contains utilities related to loading python modules so that python code can be written and included in the MIA project.
-  
+
 - **ui/**  
   This contains utilities for user interface input: event types, a shared event queue, key listeners which detect key presses and key combinations, etc.

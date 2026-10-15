@@ -25,7 +25,7 @@ int Database::connect()
         /* Create a connection */
         driver = get_driver_instance();
         sql::SQLString hostname("tcp://" + credentials.getHostname() + ":" + std::to_string(credentials.getPort()));
-		
+
         if (context != nullptr && context->verboseMode)
             std::cout << "MySQL hostname value being set as: " << hostname << std::endl;
 
@@ -34,7 +34,7 @@ int Database::connect()
             con = driver->connect(hostname, credentials.getUsername(), credentials::password("database connection"));
 		else
             con = driver->connect(hostname, credentials.getUsername(), credentials.getPassword());
-		    
+
         /* Connect to the MySQL test database */
         con->setSchema(database);
     }
@@ -136,7 +136,7 @@ void Database::printExceptionInfo(sql::SQLException& e)
 {
     if (e.getErrorCode() == 0)
         return;
-	
+
     std::cout << "# ERR: SQLException in " << __FILE__
          << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl
          << "# ERR: " << e.what()

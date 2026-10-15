@@ -35,7 +35,7 @@ namespace maple
         std::string scope{ALL_SCOPE};    ///< The scenario this handler applies to.
         std::vector<std::string> tags{}; ///< Any additional tags to give this source.
     };
-    
+
     /**
      * @brief Turns a MoneyHandlerSource object into a string via an std::ostream.
      * 
@@ -85,7 +85,7 @@ namespace maple
          */
         size_t size() const;
     }; // struct MoneyHandler
-    
+
     /**
      * @brief Turns a MoneyHandler object into a string via an std::ostream.
      * 

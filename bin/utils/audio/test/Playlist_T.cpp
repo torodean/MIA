@@ -2,7 +2,7 @@
  * @file Playlist_T.cpp
  * @author Antonius Torode
  * @date 09/18/2026
- * @brief Unit tests for the Playlist class using Google Test.
+ * @brief Unit tests for the Playlist class.
  *
  * The tests use track metadata with distinct file paths to tell the tracks
  * apart. The shuffle tests assert bounds and non-repetition properties rather
@@ -17,19 +17,25 @@
 namespace audio
 {
     /**
-     * @brief Constructs the metadata for a test track.
-     *
-     * @param n The index used to generate a distinct file path.
-     * @return The metadata of the test track.
+     * Internal test commands intended to be specific to this file only.
      */
-    static files::FileMetaData makeTrack(int n)
+    namespace
     {
-        files::FileMetaData track;
-        track.fullFilePath = "/music/track" + std::to_string(n) + ".mp3";
-        track.fileName = "track" + std::to_string(n);
-        track.type = files::FileType::Mp3;
-        return track;
-    }
+        /**
+         * @brief Constructs the metadata for a test track.
+         *
+         * @param n The index used to generate a distinct file path.
+         * @return The metadata of the test track.
+         */
+        static files::FileMetaData makeTrack(int n)
+        {
+            files::FileMetaData track;
+            track.fullFilePath = "/music/track" + std::to_string(n) + ".mp3";
+            track.fileName = "track" + std::to_string(n);
+            track.type = files::FileType::Mp3;
+            return track;
+        }
+    } // namespace
 
 
     /**

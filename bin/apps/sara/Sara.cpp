@@ -54,12 +54,12 @@ void Sara::initialize(int argc, char* argv[])
         sequenceNameOpt.getOptionVal<std::string>(argc, argv, sequenceName);
         loopModeOpt.getOptionVal<bool>(argc, argv, loopMode);
         printSequencesOpt.getOptionVal<bool>(argc, argv, printSequences);
-        
+
         // Set and load the config file.
         std::string sequencesFile = defaultSequencesFile;
         sequencesFileOpt.getOptionVal<std::string>(argc, argv, sequencesFile);
         config.setConfigFileName(sequencesFile, constants::ConfigType::RAW_LINES); // handles config.initialize().
-    
+
         // By this point, verbose, debug, etc are all set.
         listener.setContext(getContext());
     }
@@ -67,7 +67,7 @@ void Sara::initialize(int argc, char* argv[])
     {
         std::cerr << "Error during Sara::initialize: " << ex.what() << std::endl;
     }
-    
+
     loadConfig();
 }
 
@@ -75,7 +75,7 @@ void Sara::initialize(int argc, char* argv[])
 void Sara::loadConfig()
 {    
     sequences::CompleteSequence sequence;
-    
+
     // The config stores all non-comment and non-empty lines from the config file.
     std::vector<std::string> lines = config.getRawLines();
     for (auto& line : lines)
@@ -86,7 +86,7 @@ void Sara::loadConfig()
         {
             // Get the key value on the line.
             key = string_utils::getBeforeChar(line, '=');
-                
+
             // Get the value of the key.
             value = string_utils::getAfterChar(line, '=');  
         }
@@ -94,7 +94,7 @@ void Sara::loadConfig()
         {
             key = string_utils::trim(line);
         }
-        
+
         // Check if this is the start of end of a sequence.
         if (key == "SEQUENCENAME")
         {
@@ -222,14 +222,14 @@ sequences::SequenceAction Sara::createAction(std::string key, std::string value)
     {    
         action.actionType = sequences::SequenceActionType::UNKNOWN;
     }
-    
+
     if (getVerboseMode())
     {
         std::cout << "Action created: ";
         action.dump();
         std::cout << std::endl;
     }
-    
+
     return action;
 }
 
@@ -237,7 +237,7 @@ sequences::SequenceAction Sara::createAction(std::string key, std::string value)
 void Sara::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     // This is a dump of the help messages used by the various command options.
     std::cout << "SARA specific options:" << std::endl
               << sequencesFileOpt.getHelp() << std::endl
@@ -286,7 +286,7 @@ void Sara::defaultFrontEnd()
 
         if (input.empty()) 
             continue;
-            
+
         // Run the sequence.
         do { runSequence(input); } while (loopMode);
     }
@@ -297,7 +297,7 @@ int Sara::run()
 {
     if (printSequences)
         printSequenceList();
-    
+
     // This would indicate no sequenceNameOpt specified.
     if (sequenceName.empty())
     {
@@ -310,24 +310,24 @@ int Sara::run()
         if (it != sequences.end())
         {
             sequences::CompleteSequence& sequence = it->second;
-            
+
             // If this is false, then a LISTEN value is not set for this sequence.
             if (sequence.listenerKeyCode != '\0')
             {
                 std::cout << "Press the '" << sequence.listenerKeyCode 
                           << "' key to start/stop the sequence." << std::endl;
-                          
+
                 listener.setKeyCode(sequence.listenerKeyCode);
                 listener.initialize();
                 listener.start();
-                
+
                 /*
                  * Make sure the listener did not throw any failures. It only does this from
                  * the above methods.
                  */
                 if (listener.hasFailed())
                     listener.rethrowExceptionIfAny();
-                
+
                 do // Perform the sequence (and loop if needed). 
                 {
                     // Start with the sequence off until the condition is met.

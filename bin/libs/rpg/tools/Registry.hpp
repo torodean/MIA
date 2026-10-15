@@ -67,7 +67,7 @@ namespace rpg
             file >> data;
             loadFromJson(data);
         }
-        
+
         /**
          * Loads objects from a JSON string.
          * Useful for testing or dynamic configuration without file I/O.
@@ -124,12 +124,12 @@ namespace rpg
         }        
 
     protected:
-    
+
         /**
          * Default constructor. TODO - I forgot why this was protected.
          */
         Registry() = default;
-        
+
         /**
          * Returns the JSON key for the derived class's data array.
          * Must be implemented by derived classes.
@@ -150,7 +150,7 @@ namespace rpg
          * @return String representation of the object.
          */
         virtual std::string toString(const Type& obj) const = 0;
-        
+
         /**
          * Loads objects from a JSON object by extracting the array for the derived class's key.
          * @param data The JSON object containing the array.

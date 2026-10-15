@@ -92,7 +92,7 @@ def verify_versions_match(version1, version2):
     if version1 != version2:
         print(f"Version mismatch: LaTeX = {version1}, CMake = {version2}")
         sys.exit(1)
-        
+
 
 # --- Execution ---
 

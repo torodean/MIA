@@ -31,14 +31,14 @@ namespace math
     {
         if (min == max)
             return min;
-            
+
         if(max < min)
         {
             if(verboseMode)
                 cout << "...Max value smaller than min, adjusting appropriately by returning min." << endl;
             return min;
         }
-        
+
         if(verboseMode)
             cout << "...Calculating random value between " << min << " and " << max << "." << endl;
 
@@ -53,19 +53,19 @@ namespace math
         std::mt19937 rng(effectiveSeed);
         std::uniform_int_distribution<int> dist(min, max);
         int random = dist(rng);
-        
+
         if(verboseMode)
             cout << "...random value is " << random << "." << endl;
         return random;
     }
-    
-    
+
+
     bool randomChance(double probability)
     {
         if (probability < 0.0 || probability > 1.0)
             MIA_THROW(error::Invalid_Parameter, 
                       "Parameter must be between 0.0 and 1.0 in randomChance() method.");
-                      
+
         static bool seeded = false;
         if (!seeded)
         { // Ensure variability between calls.
@@ -74,14 +74,19 @@ namespace math
         }
         return (static_cast<double>(std::rand()) / RAND_MAX) < probability;
     }
-    
-    
+
+
     int roll(const std::string& input, bool verboseMode)
     {
+        if (!string_utils::inputRoll(input))
+        { // The input string is not the expected format.
+            MIA_THROW(error::Invalid_Parameter, "The roll method expects an input format of #d##");
+        }
+    
         int numOfDice = std::stoi(string_utils::getBeforeChar(input, 'd'));
         int sizeOfDice = std::stoi(string_utils::getAfterChar(input, 'd'));
         int totalRolled = 0;
-    
+
         if (verboseMode)
             cout << endl;
         for(int i=0; i<numOfDice; i++)
@@ -91,11 +96,11 @@ namespace math
         }
         if (verboseMode)
             cout << "Total Rolled: " << totalRolled << endl << endl;
-        
+
         return totalRolled;
     }
-    
-    
+
+
     int rolldXX(int xx, int seed, bool verboseMode)
     {
         int rand = randomInt(1, xx, seed, true);

@@ -27,7 +27,7 @@ namespace maple
         Married,          ///< Filing jointly as a married couple.
         HeadOfHousehold   ///< Filing as head of household.
     };
-    
+
     /**
      * @brief Converts a string representation of a filing status to a FilingStatus enum.
      *
@@ -47,12 +47,12 @@ namespace maple
     {
         /// Default constructor.
         TaxRateConstants() = default;
-        
+
         /// Various tax rates.
         double medicareTaxRate{0.0145};  ///< The medicare tax rate.
         double oasdiTaxRate{0.062};      ///< The OASDI tax rate.
         double salesTax{0.0625};         ///< The state sales tax (default is TX).
-        
+
         /**
          * This defines the tax brackets for someone filing as single.
          * Each value represents the lower bound of the indexed tax bracket,
@@ -81,13 +81,13 @@ namespace maple
         std::vector<double> taxRateBracket{
             0.0, 0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37
         };
-        
+
         /// Various standard deductible values.
         double standardDeductibleSingle{12950.0};          ///< Single deductible.
         double standardDeductibleHeadOfHousehold{19400.0}; ///< Head of Household deductible.
         double standardDeductibleMarried{25900.0};         ///< Married deductible.
     }; // struct TaxRateConstants
-    
+
     /**
      * @brief Turns a TaxRateConstants object into a string via an std::ostream.
      * 

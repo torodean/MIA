@@ -29,10 +29,10 @@ namespace stats
             nlohmann::json jsonObject;
             jsonObject["ATTRIBUTE"] = { wisdom.toJson(), dexterity.toJson(), strength.toJson() };
             std::string jsonData = jsonObject.dump();
-        
+
             // Load currencies into registry
             AttributeRegistry::getInstance().loadFromString(jsonData);
-            
+
             // Initialize attributes object with test data
             attributes.add(wisdom, 100);
             attributes.add(dexterity, 50);
@@ -40,7 +40,7 @@ namespace stats
         }
 
         Attributes attributes;
-        
+
         Attribute wisdom{1, "Wisdom", "The wisdom of a player.", 100};
         Attribute dexterity{2, "Dexterity", "The dexterity of a player.", 50};
         Attribute strength{3, "Strength", "The strength of a player.", 75};

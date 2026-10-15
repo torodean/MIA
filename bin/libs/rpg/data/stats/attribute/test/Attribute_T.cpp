@@ -90,7 +90,7 @@ namespace stats
         attr.addModify(sampleModify);
         ASSERT_EQ(attr.getModifies().size(), 1) << "Modifies vector should contain one element after adding";
         EXPECT_EQ(attr.getModifies()[0], sampleModify) << "Added modify should match the sample";
-        
+
         // Add another modify to test vector growth
         rpg::Modifies anotherMod(rpg::DataType::VITAL, "Mana", rpg::ModifyType::MULTIPLY, 2.0);
         attr.addModify(anotherMod);

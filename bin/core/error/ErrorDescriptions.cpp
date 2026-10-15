@@ -10,7 +10,7 @@
 namespace error
 {
     const std::unordered_map<ErrorCode, std::string> errorDescriptions = {
-        
+
         /*
          * Program and System level errors. 
          */
@@ -25,7 +25,7 @@ namespace error
         { RPC_S_Server_Unavailable, "The RPC server is unavailable." },
         { NErr_User_Not_Found, "The user name could not be found." },
         { No_Browser_Servers_Found, "The list of servers for this workgroup is not currently available." }, 
-        
+
         /*
          * MIA Program/application specific errors.
          */
@@ -46,7 +46,7 @@ namespace error
         { Invalid_Type_Requested, "Invalid type for template argument." },
         { Invalid_Configuration_Call, "Invalid configuration call." },
         { Out_Of_Order_Method_Calls, "A sequence of methods was called out of order." },
-        
+
         /*
          * Operating-system-specific related Errors.
          * 315XX error codes.
@@ -54,7 +54,7 @@ namespace error
         { Windows_Only_Feature, "This feature is only implemented for Windows." },
         { Linux_Only_Feature, "This feature is only implemented for Linux." },
         { OS_Not_Supported, "This feature is not supported on this OS." },
-        
+
         /*
          * VLC-related errors. 361XX
          */
@@ -62,14 +62,14 @@ namespace error
         {VLC_Failed_To_Create_Media, "Failed to create media object for libvlc."},
         {VLC_Failed_To_Create_Player, "Failed to create player object for libvlc."},
         {VLC_Failed_To_Play_Audio, "Failed to play audio using libvlc."},
-        
+
         /*
          * JSON related errors. 362XX
          */
         {JSON_Failed_To_Parse_String, "Failed to parse a json string."},
         {JSON_Key_Not_Found, "The json key was not found."},
         {JSON_Key_Not_Array_Type, "The json key was not the expected array type."},
-        
+
         /*
          * RPG error codes. 371XX
          */
@@ -91,7 +91,7 @@ namespace error
          */
         { Py_Module_Load_Failure, "A Python module failed to load in the embedded interpreter." },
         { Py_Unexp_Return_Type_Request, "The expected return value requested for a python call does not match." },
-        
+
         // A catch all for any un-programmed errors.
         { Catastrophic_Failure, "A catastrophic failure occurred." }
     };

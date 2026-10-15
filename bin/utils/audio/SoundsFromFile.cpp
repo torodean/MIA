@@ -4,7 +4,7 @@
  * @date 09/17/2026
  * @brief Implements the methods from the associated header file.
  */
- 
+
 #include <iostream>
 #include <thread>
 #include <atomic>
@@ -131,7 +131,7 @@ namespace audio
                       << ": " << errorText << std::endl;
             return false;
         }
-        
+
         if (fileMetaData.type == files::FileType::Mp3)
             error = mciSendString("play mp3 wait", NULL, 0, NULL);
         else if (fileMetaData.type == files::FileType::Wav)
@@ -146,9 +146,9 @@ namespace audio
 
         // All appeared to have succeeded.
         return true;
-        
+
     #elif defined(IS_LINUX)
-    
+
         // Create an instance of vlc to use.
         libvlc_instance_t* instance = libvlc_new(0, nullptr);
         if (!instance)
@@ -165,7 +165,7 @@ namespace audio
             libvlc_release(instance);
             return false;
         }    
-        
+
         // Create the player to actually play the media.
         libvlc_media_player_t* player = libvlc_media_player_new_from_media(media);
         libvlc_media_release(media);
@@ -175,7 +175,7 @@ namespace audio
             libvlc_release(instance);
             return false;
         }
-        
+
         // Force full volume.
         libvlc_audio_set_volume(player, 100);
 
@@ -221,9 +221,9 @@ namespace audio
         libvlc_release(instance);
 
         return true;
-        
+
     #endif
-    
+
         return false;
     }
 
@@ -237,7 +237,7 @@ namespace audio
     namespace audio_thread
     {
     #if defined(IS_WINDOWS)
-    
+
         std::thread soundThread;
         std::atomic<bool> soundPlaying = false;
         std::atomic<bool> fadeRequested = false;
@@ -255,16 +255,16 @@ namespace audio
                 soundAlias = "mp3";
             else if (audio_thread::currentFileType == files::FileType::Wav)
                 soundAlias = "wav";
-            
+
             return soundAlias;
         }
-        
+
     #elif defined(IS_LINUX)
-        
+
         libvlc_instance_t* vlcInstance = nullptr;
         libvlc_media_player_t* vlcPlayer = nullptr;
         std::mutex vlcPlayerMutex;   // protect access to the above
-        
+
     #endif
     } // namespace audio_thread
 
@@ -272,7 +272,7 @@ namespace audio
     bool playSoundFromFileAsync(const std::string& fileName)
     {
     #if defined(IS_WINDOWS)
-    
+
         // Check if the file is a supported type.
         files::FileMetaData fileMetaData = files::getFileMetaData(fileName);
         if (!isASupportedType(fileMetaData))
@@ -280,7 +280,7 @@ namespace audio
             std::cerr << "Unsupported file type specified!" << std::endl;
             return false;
         }
-        
+
         // Check if a sound is already playing.
         if (audio_thread::soundPlaying)
         {
@@ -325,7 +325,7 @@ namespace audio
                 audio_thread::soundPlaying = false;
                 return;
             }
-            
+
             // Get the file type of the currently playing audio for the audio commands.
             std::string soundAlias = audio_thread::getSoundAlias();
 
@@ -338,7 +338,7 @@ namespace audio
                 mciGetErrorString(error, errorText, sizeof(errorText));
                 std::cerr << "Failed to play sound file: " << errorText << std::endl;
             }
-            
+
             // Continue while no stop condition is defined.
             while (audio_thread::soundPlaying.load())
             {          
@@ -350,7 +350,7 @@ namespace audio
                     audio_thread::soundPlaying = false;
                     break;
                 }
-                
+
                 // Handle the fade out by adjusting the volume to zero.
                 if (audio_thread::fadeRequested)
                 {
@@ -376,16 +376,16 @@ namespace audio
 
                         timing::sleepMilliseconds(stepTime);
                     }
-                    
+
                     audio_thread::fadeRequested = false; // Reset value.
                     audio_thread::fadeTimeMS = 0; // Reset value.
                     audio_thread::soundPlaying = false; // Trigger the stop.
                 } // if (audio_thread::fadeRequested)
-                    
+
                 // Sleep between polls.
                 timing::sleepMilliseconds(5);
             }
-            
+
             // Stop the audio.            
             std::string stopCommand = "stop " + soundAlias;
             error = mciSendString(stopCommand.c_str(), NULL, 0, NULL); 
@@ -404,16 +404,16 @@ namespace audio
                 mciGetErrorString(error, errorText, sizeof(errorText));
                 std::cerr << "Failed to close sound file: " << errorText << std::endl;
             }
-            
+
             audio_thread::soundPlaying = false;
         });
 
         return true;
-        
+
     #elif defined(IS_LINUX)
 
         std::lock_guard<std::mutex> lock(audio_thread::vlcPlayerMutex);
-        
+
         // Create an instance of vlc to use.
         audio_thread::vlcInstance = libvlc_new(0, nullptr);
         if (!audio_thread::vlcInstance)
@@ -430,7 +430,7 @@ namespace audio
             libvlc_release(audio_thread::vlcInstance);
             return false;
         }
-        
+
         // Create the player to actually play the media.
         audio_thread::vlcPlayer = libvlc_media_player_new_from_media(media);
         libvlc_media_release(media);
@@ -440,7 +440,7 @@ namespace audio
             libvlc_release(audio_thread::vlcInstance);
             return false;
         }
-        
+
         // Force full volume.
         libvlc_audio_set_volume(audio_thread::vlcPlayer, 100);
 
@@ -456,7 +456,7 @@ namespace audio
 
         // Success. Playback should continue in the background.
         return true;
-        
+
     #endif
         return false;
     }
@@ -465,11 +465,11 @@ namespace audio
     bool stopSound(uint32_t fadeOutMs, bool verboseMode)
     {
     #if defined(IS_WINDOWS)
-    
+
         // Return false if no sound is playing.
         if (!audio_thread::soundPlaying)
             return true;
-        
+
         /* 
          * For a real fade, set the atomic fade-specific flags and let the audio thread 
          * perform the volume ramp + stop. For the zero-fade case just signal the worker.
@@ -488,19 +488,19 @@ namespace audio
             audio_thread::fadeRequested = true;
             audio_thread::fadeTimeMS = fadeOutMs;
         }
-        
+
         if (audio_thread::soundThread.joinable())
             audio_thread::soundThread.join();   // Wait for clean close.
 
         return true;
-        
+
     #elif defined(IS_LINUX)
 
         std::lock_guard<std::mutex> lock(audio_thread::vlcPlayerMutex);
-        
+
         if (!audio_thread::vlcPlayer)
             return true;   // Nothing playing means automatic success.
-            
+
         if (fadeOutMs > 0)
         {
             // Simple linear fade-out (volume goes from 100 → 0)

@@ -2,69 +2,78 @@
  * @file Timing_T.cpp
  * @author Antonius Torode
  * @date 05/20/2025
- * Description: Unit tests for the Timing class, verifying sleep functionality across 
- *    various time units (milliseconds, seconds, minutes) using Google Test. The test
- *    values tested here always allow a small time 'leeway' around what should actually
- *    be returned in order to account for any overhead interactions.
+ *
+ * Unit tests for the Timing class, verifying sleep functionality across 
+ * various time units (milliseconds, seconds, minutes) using Google Test. The test
+ * values tested here always allow a small time 'leeway' around what should actually
+ * be returned in order to account for any overhead interactions.
  */
 
-#include <gtest/gtest.h>
 #include <chrono>
+
+#include <gtest/gtest.h>
 
 // Include the associated headers we are testing.
 #include "Timing.hpp"
 
 namespace timing
 {
-    /*
-     * Timing tests compare elapsed wall-clock time against a tight window (e.g. [95, 115) ms). OS
-     * scheduler jitter (worse on Windows) can push a single run outside the window even when the
-     * sleep is correct. Retrying up to this many times absorbs that jitter so a borderline run is
-     * not reported as a failure. Tests with a wide margin do not need it.
-     */
-    static constexpr int maxAttempts = 5;
-
     /**
-     * @brief Tests that a sleep function completes within the expected duration range.
-     *
-     * The sleep function is attempted up to maxAttempts times to account for
-     * cross-platform timing variation. The test succeeds if any attempt completes
-     * within the specified range and fails after all attempts fall outside it.
-     *
-     * @tparam SleepFunction The callable type used to perform the sleep.
-     * @param sleepFunction The sleep function to execute and measure.
-     * @param minMilliseconds The minimum acceptable elapsed time, inclusive.
-     * @param maxMilliseconds The maximum acceptable elapsed time, exclusive.
-     * @param description A description of the sleep operation used in the failure message.
+     * These are internal methods which are intended to only be needed for this file.
      */
-    template <typename SleepFunction>
-    void expectSleepDuration(
-        SleepFunction sleepFunction,
-        int minMilliseconds,
-        int maxMilliseconds,
-        const std::string& description)
+    namespace
     {
-        for (int attempt = 1; attempt <= maxAttempts; ++attempt)
+        /*
+         * Timing tests compare elapsed wall-clock time against a tight window (e.g. [95, 115) ms). OS
+         * scheduler jitter (worse on Windows) can push a single run outside the window even when the
+         * sleep is correct. Retrying up to this many times absorbs that jitter so a borderline run is
+         * not reported as a failure. Tests with a wide margin do not need it.
+         */
+        static constexpr int maxAttempts = 5;
+
+        /**
+         * @brief Tests that a sleep function completes within the expected duration range.
+         *
+         * The sleep function is attempted up to maxAttempts times to account for
+         * cross-platform timing variation. The test succeeds if any attempt completes
+         * within the specified range and fails after all attempts fall outside it.
+         *
+         * @tparam SleepFunction The callable type used to perform the sleep.
+         * @param sleepFunction The sleep function to execute and measure.
+         * @param minMilliseconds The minimum acceptable elapsed time, inclusive.
+         * @param maxMilliseconds The maximum acceptable elapsed time, exclusive.
+         * @param description A description of the sleep operation used in the failure message.
+         */
+        template <typename SleepFunction>
+        void expectSleepDuration(
+            SleepFunction sleepFunction,
+            int minMilliseconds,
+            int maxMilliseconds,
+            const std::string& description)
         {
-            auto start = std::chrono::steady_clock::now();
-            sleepFunction();
-            auto end = std::chrono::steady_clock::now();
+            for (int attempt = 1; attempt <= maxAttempts; ++attempt)
+            {
+                auto start = std::chrono::steady_clock::now();
+                sleepFunction();
+                auto end = std::chrono::steady_clock::now();
 
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+                auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-            if (elapsed >= minMilliseconds && elapsed < maxMilliseconds)
-                return;
+                if (elapsed >= minMilliseconds && elapsed < maxMilliseconds)
+                    return;
 
-            if (attempt == maxAttempts)
-                FAIL() << description
-                       << " timing out of range after "
-                       << maxAttempts << " attempts. "
-                       << "Last measured: " << elapsed << " ms. "
-                       << "Expected: [" << minMilliseconds
-                       << " ms, " << maxMilliseconds << " ms).";
+                if (attempt == maxAttempts)
+                    FAIL() << description
+                           << " timing out of range after "
+                           << maxAttempts << " attempts. "
+                           << "Last measured: " << elapsed << " ms. "
+                           << "Expected: [" << minMilliseconds
+                           << " ms, " << maxMilliseconds << " ms).";
+            }
         }
-    }
-    
+    } // namespace
+
+
     /**
      * @brief Verifies sleepMilliseconds blocks for approximately the requested duration.
      */
@@ -72,6 +81,7 @@ namespace timing
     {
         expectSleepDuration([] { sleepMilliseconds(100); }, 95, 115, "sleepMilliseconds(100)");
     }
+
 
     /**
      * @brief Verifies sleepSeconds blocks for approximately one whole second.
@@ -82,6 +92,7 @@ namespace timing
         expectSleepDuration([] { sleepSeconds(1); }, 995, 1100, "sleepSeconds(1)");
     }
 
+
     /**
      * @brief Verifies sleepSeconds accepts a fractional second value and blocks for that duration.
      */
@@ -90,6 +101,7 @@ namespace timing
         // Windows requires the end time difference to be rather long to succeed.
         expectSleepDuration([] { sleepSeconds(0.2); }, 195, 215, "sleepSeconds(0.2)");
     }
+
 
     /**
      * @brief Verifies sleepMinutes(0) returns immediately rather than blocking.
@@ -104,6 +116,7 @@ namespace timing
         EXPECT_LT(elapsed, 50);
     }
 
+
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class sleeps for the requested 
      * number of milliseconds.
@@ -115,6 +128,7 @@ namespace timing
         expectSleepDuration([&] { ASSERT_TRUE(sleeper.sleep(100, timingUnit::time_ms)); }, 
                             95, 115, "sleeper.sleep(100, timingUnit::time_ms))");
     }
+
 
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class sleeps for the requested 
@@ -128,7 +142,8 @@ namespace timing
         expectSleepDuration([&] { ASSERT_TRUE(sleeper.sleep(1, timingUnit::time_sec)); }, 
                             995, 1100, "sleeper.sleep(1, timingUnit::time_sec))");
     }
-    
+
+
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class sleeps for the requested 
      * number of fractional seconds.
@@ -140,7 +155,8 @@ namespace timing
         expectSleepDuration([&] { ASSERT_TRUE(sleeper.sleep(0.2, timingUnit::time_sec)); }, 
                             195, 215, "sleeper.sleep(0.2, timingUnit::time_sec))");
     }
-    
+
+
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class sleeps for the requested 
      * number of fractional hours.
@@ -153,7 +169,8 @@ namespace timing
         expectSleepDuration([&] { ASSERT_TRUE(sleeper.sleep(0.000027778, timingUnit::time_hour)); }, 
                             95, 115, "sleeper.sleep(0.2, timingUnit::time_sec))");
     }
-    
+
+
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class returns immediately for 
      * a zero duration.
@@ -171,7 +188,8 @@ namespace timing
         EXPECT_TRUE(wasNotInterrupted);
         EXPECT_LT(elapsed, 50);
     }
-    
+
+
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class can be interrupted for
      * an integer duration.
@@ -201,7 +219,8 @@ namespace timing
         EXPECT_LT(elapsed, 75)
             << "The total elapsed time should not be much more than 50ms.";
     }
-    
+
+
     /**
      * @brief Tests that sleep() from the InterruptableSleeper class can be interrupted for
      * an double duration.
@@ -231,7 +250,8 @@ namespace timing
         EXPECT_LT(elapsed, 75)
             << "The total elapsed time should not be much more than 50ms.";
     }
-    
+
+
     /**
      * @brief Tests that a sleep following an interruption completes normally.
      */

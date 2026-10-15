@@ -81,7 +81,7 @@ void RPGFiddler::initialize(int argc, char* argv[])
 void RPGFiddler::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     // This is a dump of the help messages used by the various command options.
     std::cout << "RPGFiddler specific options:" << std::endl
               << saveFileOpt.getHelp() << std::endl
@@ -92,8 +92,8 @@ void RPGFiddler::printHelp() const
 int RPGFiddler::run()
 {
     LOG_METHOD_CALL(); // Used for testing log file calls.
-    
+
     rpg_sim::runSimulator(player, fullSaveFilePath);
-    
+
     return constants::SUCCESS;
 }

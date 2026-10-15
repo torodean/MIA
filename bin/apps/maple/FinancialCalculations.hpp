@@ -36,7 +36,7 @@ namespace maple
         Monthly,  ///< By month.
         Unknown   ///< Unset.
     };
-    
+
     /**
      * @brief Converts a Cadence value to its string representation.
      *
@@ -44,7 +44,7 @@ namespace maple
      * @return The string representation of the cadence.
      */
     std::string cadenceToString(Cadence cadence);
-    
+
     /**
      * This is an object which stores values calculated in the calculateTaxesOperation
      * method. This allows these values to be accessible elsewhere without having to
@@ -55,10 +55,10 @@ namespace maple
     {
         /// Set to true once the values are set.
         bool initialized{false};
-        
+
         /// The cadence appropriate for these constants.
         Cadence cadence{Cadence::Unknown};
-    
+
         double grossIncome{0.0};
         double deductible{0.0};
         double preTaxIncome{0.0};
@@ -75,7 +75,7 @@ namespace maple
         double estimatedSpedingMoney{0.0};
         double estimatedSalesTaxToSpend{0.0};
     };
-    
+
     /**
      * @brief Converts annual tax operation return values to monthly values.
      *
@@ -87,7 +87,7 @@ namespace maple
      * @return A copy of the values converted to a monthly cadence.
      */
     TaxOperationReturns annualToMonthly(const TaxOperationReturns& annual);
-    
+
     /**
      * @brief Calculates various tax values based on the input income and tax constants.
      *
@@ -102,7 +102,7 @@ namespace maple
                                                 const TaxRateConstants& federalConstants,
                                                 const TaxRateConstants& stateConstants,
                                                 const MapleMiscTaxValues& miscTaxValues);
-                                 
+
      /**
       * Dumps/prints the data contained in a TaxOperationReturns object.
       * @param return The values to print.

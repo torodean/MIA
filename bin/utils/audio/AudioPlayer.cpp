@@ -103,7 +103,7 @@ namespace audio
         else
             logger::logToDefaultFile(logMessage, tags);
     }
-    
+
 #endif
 
 

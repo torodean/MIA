@@ -11,7 +11,7 @@ git config core.hooksPath .githooks
 
 if [[ "$uname_out" == "Linux" ]]; then
     echo "Running Linux setup..."
-	
+
 	sudo apt-get update
 	sudo apt-get install -y cmake
 	sudo apt-get install -y libxdo-dev

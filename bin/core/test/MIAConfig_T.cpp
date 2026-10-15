@@ -29,7 +29,7 @@ namespace
         std::ofstream out(tempFileName);
         out << content;
         out.close();
-        
+
         // Return absolute path using std::filesystem
         return std::filesystem::absolute(tempFileName).string();
     }

@@ -36,13 +36,13 @@ public:
     {
         if (stopRequested.load())
             return;
-            
+
         ++runCount;
-        
+
         // Stop after running 3 times
         if (runCount >= 3) 
             stopRequested = true;
-            
+
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 

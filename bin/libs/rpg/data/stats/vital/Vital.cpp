@@ -38,7 +38,7 @@ namespace stats
         json["baseMax"] = baseMax;
         return json;
     }
-    
+
 
     Vital Vital::fromJson(const nlohmann::json& json)
     {

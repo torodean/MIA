@@ -2,71 +2,94 @@
  * @file MarkovModels_T.cpp
  * @author Antonius Torode
  * @date 06/05/2025
- * Description: 
- *     This file is for testing the moethods in the MarkovModels file(s).
+ * @brief This file is for testing the moethods in the MarkovModels file(s).
  */
 
 #include <gtest/gtest.h>
+
 #include "MarkovModels.hpp"
 
-using namespace markov_models;
-
-// Test data setup
-const std::vector<std::vector<char>> charSequences = {
-    {'a', 'b', 'a', 'c'},
-    {'a', 'b', 'b'},
-    {'b', 'a'}
-};
-
-TEST(GenerateProbabilityMatrixTest, BasicProbabilityCalculation) 
+namespace markov_models
 {
-    auto matrix = generateProbabilityMatrix(charSequences);
+    namespace
+    {
+        // Test data setup.
+        const std::vector<std::vector<char>> charSequences = {
+            {'a', 'b', 'a', 'c'},
+            {'a', 'b', 'b'},
+            {'b', 'a'}
+        };
+    } // namespace
 
-    ASSERT_TRUE(matrix.contains('a'));
-    ASSERT_TRUE(matrix.contains('b'));
 
-    double aa = matrix['a']['a'];
-    double ab = matrix['a']['b'];
-    double ac = matrix['a']['c'];
-    EXPECT_NEAR(aa + ab + ac, 1.0, 1e-9);
+    /**
+     * @brief TODO
+     */
+    TEST(GenerateProbabilityMatrixTest, BasicProbabilityCalculation) 
+    {
+        auto matrix = generateProbabilityMatrix(charSequences);
 
-    double ba = matrix['b']['a'];
-    double bb = matrix['b']['b'];
-    EXPECT_NEAR(ba + bb, 1.0, 1e-9);
-}
+        ASSERT_TRUE(matrix.contains('a'));
+        ASSERT_TRUE(matrix.contains('b'));
 
-TEST(GetTransitionsTest, ExistingAndMissingState) 
-{
-    auto matrix = generateProbabilityMatrix(charSequences);
+        double aa = matrix['a']['a'];
+        double ab = matrix['a']['b'];
+        double ac = matrix['a']['c'];
+        EXPECT_NEAR(aa + ab + ac, 1.0, 1e-9);
 
-    const auto& transitions = getTransitions(matrix, 'a');
-    EXPECT_GT(transitions.size(), 0);
-    EXPECT_TRUE(transitions.contains('b'));
+        double ba = matrix['b']['a'];
+        double bb = matrix['b']['b'];
+        EXPECT_NEAR(ba + bb, 1.0, 1e-9);
+    }
 
-    const auto& missing = getTransitions(matrix, 'z');
-    EXPECT_EQ(missing.size(), 0);
-}
 
-TEST(HasStateTest, DetectsPresence) 
-{
-    auto matrix = generateProbabilityMatrix(charSequences);
-    EXPECT_TRUE(hasState(matrix, 'a'));
-    EXPECT_FALSE(hasState(matrix, 'z'));
-}
+    /**
+     * @brief TODO
+     */
+    TEST(GetTransitionsTest, ExistingAndMissingState) 
+    {
+        auto matrix = generateProbabilityMatrix(charSequences);
 
-TEST(GetStatesTest, ExtractsAllStates) 
-{
-    auto matrix = generateProbabilityMatrix(charSequences);
-    auto states = getStates(matrix);
+        const auto& transitions = getTransitions(matrix, 'a');
+        EXPECT_GT(transitions.size(), 0);
+        EXPECT_TRUE(transitions.contains('b'));
 
-    EXPECT_NE(std::find(states.begin(), states.end(), 'a'), states.end());
-    EXPECT_NE(std::find(states.begin(), states.end(), 'b'), states.end());
-}
+        const auto& missing = getTransitions(matrix, 'z');
+        EXPECT_EQ(missing.size(), 0);
+    }
 
-TEST(ClearMatrixTest, EmptiesMatrix) 
-{
-    auto matrix = generateProbabilityMatrix(charSequences);
-    clearMatrix(matrix);
-    EXPECT_TRUE(matrix.empty());
-}
 
+    /**
+     * @brief TODO
+     */
+    TEST(HasStateTest, DetectsPresence) 
+    {
+        auto matrix = generateProbabilityMatrix(charSequences);
+        EXPECT_TRUE(hasState(matrix, 'a'));
+        EXPECT_FALSE(hasState(matrix, 'z'));
+    }
+
+
+    /**
+     * @brief TODO
+     */
+    TEST(GetStatesTest, ExtractsAllStates) 
+    {
+        auto matrix = generateProbabilityMatrix(charSequences);
+        auto states = getStates(matrix);
+
+        EXPECT_NE(std::find(states.begin(), states.end(), 'a'), states.end());
+        EXPECT_NE(std::find(states.begin(), states.end(), 'b'), states.end());
+    }
+
+
+    /**
+     * @brief Tests that the clearMatrix method correctly clears the matrix.
+     */
+    TEST(ClearMatrixTest, EmptiesMatrix) 
+    {
+        auto matrix = generateProbabilityMatrix(charSequences);
+        clearMatrix(matrix);
+        EXPECT_TRUE(matrix.empty());
+    }
+} // namespace markov_models

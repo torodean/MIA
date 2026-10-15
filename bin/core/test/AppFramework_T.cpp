@@ -63,7 +63,7 @@ TEST(AppFramework, ValidAppRunsCorrectly)
     // Test runApp's return value for correctness.
     int ret = runApp<ValidApp>(argc, argv);
     EXPECT_EQ(ret, 42);
-	
+
 	// Check if runApp called the appropriate methods the appropriate number of times.
 	EXPECT_EQ(ValidApp::initializeCalled, 1);
     EXPECT_EQ(ValidApp::ranCalled, 1);

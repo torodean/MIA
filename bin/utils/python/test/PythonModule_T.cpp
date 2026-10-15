@@ -68,6 +68,7 @@ TEST_F(PythonModule_T, MissingModuleThrows)
         << "Constructing a module which cannot be imported should throw.";
 }
 
+
 /**
  * @brief Verifies the thrown exception carries the expected error code.
  */
@@ -85,6 +86,7 @@ TEST_F(PythonModule_T, MissingModuleErrorCode)
     }
 }
 
+
 /**
  * @brief Verifies hasMethod finds methods which exist and misses those which do not.
  */
@@ -95,6 +97,7 @@ TEST_F(PythonModule_T, PresentAndMissingMethod)
     EXPECT_FALSE(module->hasMethod("missingMethod"))
         << "hasMethod should not find a method which does not exist.";
 }
+
 
 /**
  * @brief Verifies calling a method with no arguments reaches Python and returns void.
@@ -108,6 +111,7 @@ TEST_F(PythonModule_T, NoArgumentVoidReturn)
     EXPECT_EQ(result.getType(), PythonResult::Type::Void)
         << "A method returning None should produce a Void result.";
 }
+
 
 /**
  * @brief Verifies an integer return value comes back through asInt.
@@ -124,6 +128,7 @@ TEST_F(PythonModule_T, IntegerReturn)
         << "add(2, 3) should return 5.";
 }
 
+
 /**
  * @brief Verifies a double return value comes back through asDouble.
  */
@@ -139,6 +144,7 @@ TEST_F(PythonModule_T, DoubleReturn)
         << "multiply(2.5, 4.0) should be 10.0.";
 }
 
+
 /**
  * @brief Verifies a string return value comes back through asString.
  */
@@ -152,6 +158,7 @@ TEST_F(PythonModule_T, StringReturn)
         << "A str return should produce a String result.";
     EXPECT_EQ(result.asString(), "Hello, Antonius!");
 }
+
 
 /**
  * @brief Verifies a list of strings return value comes back through asStrings.
@@ -168,6 +175,7 @@ TEST_F(PythonModule_T, StringsReturn)
     EXPECT_EQ(result.asStrings(), expectedStrings);
 }
 
+
 /**
  * @brief Verifies a mixed string and integer argument list works with no dedicated overload.
  */
@@ -181,6 +189,7 @@ TEST_F(PythonModule_T, MixedArgumentTypes)
         << "describe should mix the string and integer arguments.";
 }
 
+
 /**
  * @brief Verifies calling a missing method returns an error result instead of throwing.
  */
@@ -193,6 +202,7 @@ TEST_F(PythonModule_T, MissingMethodIsErrorResult)
     EXPECT_NE(result.getError().find("not found"), std::string::npos)
         << "The error message should mention the method was not found.";
 }
+
 
 /**
  * @brief Verifies a Python-side exception surfaces as an error result with the message.
@@ -208,6 +218,7 @@ TEST_F(PythonModule_T, PythonTypeErrorIsErrorResult)
     EXPECT_NE(result.getError().find("can only concatenate str"), std::string::npos)
         << "The error message should carry the Python exception text.";
 }
+
 
 /**
  * @brief Verifies two modules can be alive and called at the same time.
@@ -227,6 +238,7 @@ TEST_F(PythonModule_T, TwoModulesAlive)
         << "The second module should be independently usable.";
 }
 
+
 /**
  * @brief Verifies a vector of integers is converted to a Python list.
  */
@@ -244,6 +256,7 @@ TEST_F(PythonModule_T, VectorIntArgument)
         << "sumVals should receive the vector as a Python list and calculate its sum.";
 }
 
+
 /**
  * @brief Verifies a vector of doubles is converted to a Python list.
  */
@@ -258,6 +271,7 @@ TEST_F(PythonModule_T, VectorDoubleArgument)
     EXPECT_EQ(result.asString(), "Values list:[1.5, 2.5, 3.5]; Sum:7.5")
         << "sumVals should receive the doubles and calculate their sum.";
 }
+
 
 /**
  * @brief Verifies a vector of floats converts through the templated list converter.
@@ -274,6 +288,7 @@ TEST_F(PythonModule_T, VectorFloatArgument)
         << "sumVals should receive the floats and calculate their sum.";
 }
 
+
 /**
  * @brief Verifies a vector of longs converts through the templated list converter.
  */
@@ -288,6 +303,7 @@ TEST_F(PythonModule_T, VectorLongArgument)
     EXPECT_EQ(result.asString(), "Values list:[10, 20, 30]; Sum:60")
         << "sumVals should receive the longs and calculate their sum.";
 }
+
 
 /**
  * @brief Verifies narrower integer vector types convert through the same template.
@@ -312,6 +328,7 @@ TEST_F(PythonModule_T, VectorNarrowIntArguments)
     EXPECT_EQ(longLongs.asString(), "Values list:[7, 8, 9]; Sum:24")
         << "vector<long long> should convert element by element.";
 }
+
 
 /**
  * @brief Verifies a vector of strings converts through the templated list converter.

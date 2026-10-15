@@ -20,18 +20,18 @@ namespace progress
     public:
         /// Default constructor.
         ProgressValue() = default;
-        
+
         /// The main constructor.
         ProgressValue(int32_t qty);
-        
+
         /// Getter for the value.
         int32_t get() const;
-        
+
         /// Adjusters for the value.
         void set(int32_t val);
         void add(int32_t val);
         void subtract(int32_t val);
-            
+
     private:        
         int32_t value{0};  ///< The value of this progress marker.
     };

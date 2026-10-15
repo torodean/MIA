@@ -29,17 +29,17 @@ namespace maple
                 "Enables test mode. This mode will allow various testing during development.",
                 CommandOption::commandOptionType::BOOL_OPTION)
     {}
-    
+
 
     void Maple::initialize(int argc, char* argv[])
     {
         try
         {
             MIAApplication::initialize(argc, argv);
-            
+
             // Set the values from the command line arguments.
             testOpt.getOptionVal<bool>(argc, argv, testMode);
-            
+
             // Set and load the config file.
             std::string configFile = defaultConfigFile;
             configOpt.getOptionVal<std::string>(argc, argv, configFile);
@@ -50,12 +50,12 @@ namespace maple
         {
             std::cerr << "Error during Maple::initialize: " << ex.what() << std::endl;
         }
-        
+
         // TODO - handle error case. Currently loadConfig always returns true.
         (void)loadConfig();
     }
-    
-    
+
+
     void Maple::test()
     {
         std::cout << "Federal Tax Constants: {" << federalTaxConstants << "}" << std::endl;
@@ -66,22 +66,22 @@ namespace maple
         std::cout << "----------------------" << std::endl;
         std::cout << "Expenses: {" << expenses << "}" << std::endl;
     }
-    
+
 
     int Maple::run()
     {        
         defaultFrontEnd();        
         return constants::ReturnCode::SUCCESS;
     }
-    
-    
+
+
     void Maple::defaultFrontEnd()
     {
         std::string input;
-        
+
         std::cout << "Valid operations are as follows:" << std::endl;
         printOperationsList();
-        
+
         // Loop over the default interface.
         while (true) 
         {
@@ -90,7 +90,7 @@ namespace maple
 
             if (input.empty()) 
                 continue;
-                
+
             // Perform the operation.
             if (string_utils::isDigits(input) &&   // Ensure an int was entered.
                 !runOperation(static_cast<MapleOperations>(std::stoi(input))) )  // Attempt to run the operation.
@@ -99,8 +99,8 @@ namespace maple
             }
         }
     }
-    
-    
+
+
     std::string operationToDesc(MapleOperations operation)
     {
         std::string output;
@@ -127,8 +127,8 @@ namespace maple
         }
         return output;
     }
-    
-    
+
+
     std::string formatDesc(MapleOperations operation,
                        const std::string& name,
                        const std::string& desc)
@@ -139,7 +139,7 @@ namespace maple
                << " - " << desc;
        return stream.str();
     }
-    
+
     void Maple::printOperationsList()
     {
         std::cout << "--------------------------------------------" << std::endl;
@@ -147,12 +147,12 @@ namespace maple
             std::cout << operationToDesc(static_cast<MapleOperations>(i)) << std::endl;
         std::cout << "--------------------------------------------" << std::endl;
     }
-    
-    
+
+
     bool Maple::runOperation(MapleOperations operation)
     {
         // Storage for operation containers.
-        
+
         switch(operation)
         {
             case PrintOpList: 
@@ -180,12 +180,12 @@ namespace maple
         }
         return true;
     }
-    
+
 
     void Maple::printHelp() const
     {
         MIAApplication::printHelp();
-    
+
         // This is a dump of the help messages used by the various command options.
         std::cout << "Maple specific options:" << std::endl
                   << configOpt.getHelp() << std::endl
@@ -197,13 +197,13 @@ namespace maple
     bool Maple::loadConfig()
     {
         bool printWarnings = getVerboseMode();
-    
+
         federalTaxConstants = createTaxRateConstantsFromConfig(config, "_federal", printWarnings);
         stateTaxConstants = createTaxRateConstantsFromConfig(config, "_state", printWarnings);
         income = createMoneyHandlerFromConfig(config, "income", printWarnings);
         expenses = createMoneyHandlerFromConfig(config, "expense", printWarnings);
         miscTaxValues = createMapleMiscTaxFromConfig(config, "tax", printWarnings);
-        
+
         return true;
     }
 } // namespace Maple

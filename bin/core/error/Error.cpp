@@ -32,21 +32,21 @@ namespace error
     int returnError(int errorCode, const std::string& details)
     {    
         const std::string& baseMessage = getErrorDescription(static_cast<ErrorCode>(errorCode));
-    
+
         // Print error message with optional appended details
         if (!details.empty())
             cout << "...ERROR " << errorCode << ": " << baseMessage << " " << details << endl;
         else 
             cout << "...ERROR " << errorCode << ": " << baseMessage << endl;
-    
+
         return errorCode;
     }
-    
+
     void errorInfoRun(bool all)
     {
         cout << "..." << endl;
         int error = 0;
-        
+
         if(all)
         {
             errorInfo(-1);
@@ -59,11 +59,11 @@ namespace error
             errorInfo(error);
         }
     }
-    
+
     void errorInfo(int errorCode)
     {
         cout << "..." << endl;
-    
+
         auto description = getErrorDescription(static_cast<ErrorCode>(errorCode));
         if (!description.empty()) 
         {
@@ -74,7 +74,7 @@ namespace error
             cout << "...Invalid or unknown error code entered: " << errorCode << endl;
             cout << "...Full list of programmed error codes follows:" << endl;
             cout << "..." << endl;
-    
+
             for (const auto& [code, desc] : errorDescriptions) 
             {
                 cout << "..." << static_cast<int>(code) << ": " << desc << endl;

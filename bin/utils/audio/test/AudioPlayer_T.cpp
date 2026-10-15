@@ -10,10 +10,11 @@
  * app, so these tests never start a playback thread.
  */
 
-#include <gtest/gtest.h>
 #include <filesystem>
 #include <fstream>
 #include <cstdio>
+
+#include <gtest/gtest.h>
 
 // Include the associated header file for methods to test.
 #include "AudioPlayer.hpp"
@@ -45,7 +46,8 @@ namespace audio
         {
             player.fallbackLogFileName = fileName;
         }
-    };
+    }; // class AudioPlayerFallbackLogTestAccess
+
 
     /**
      * @brief Verifies a default constructed player starts in a quiet, default state.
@@ -229,7 +231,7 @@ namespace audio
         std::remove(badAudioFile.c_str());
 
         // The contents are not an audio format, so libVLC fails to probe the file.
-        { std::ofstream out(badAudioFile); out << "this is not an audio file"; }
+        { std::ofstream out(badAudioFile); out << "This is not an audio file."; }
 
         /*
          * The context must outlive the player since BackgroundTask stores a
@@ -272,7 +274,7 @@ namespace audio
         std::remove(badAudioFile.c_str());
 
         // The contents are not an audio format, so libVLC fails to probe the file.
-        { std::ofstream out(badAudioFile); out << "this is not an audio file"; }
+        { std::ofstream out(badAudioFile); out << "This is not an audio file."; }
 
         audio::AudioPlayer player;
         AudioPlayerFallbackLogTestAccess::setFallbackLogFile(player, logFile);

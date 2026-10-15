@@ -49,12 +49,12 @@ namespace currency
                     "tradeable": false
                 }
             ]})"_json;
-    
+
             std::ofstream file("test_currency.json");
             file << data.dump(4);
             file.close();
         }
-    
+
         /**
          * @brief Removes the temp file after the test suite finishes.
          */
@@ -71,10 +71,10 @@ namespace currency
             registry = &dynamic_cast<CurrencyRegistry&>(CurrencyRegistry::getInstance());
             registry->loadFromFile("test_currency.json");
         }
-    
+
         CurrencyRegistry* registry;
     }; // class CurrencyRegistry_T
-    
+
     /**
      * @brief Verifies loadFromFile populates the registry and getByID returns the full currency definition.
      */
@@ -88,7 +88,7 @@ namespace currency
         EXPECT_TRUE(gold->isTradeable());
         EXPECT_EQ(gold->getIconArt(), "gold.png");
     }
-    
+
     /**
      * @brief Verifies getByName resolves a currency and reports its ID, type, tradeable flag, and description.
      */
@@ -101,7 +101,7 @@ namespace currency
         EXPECT_FALSE(gem->isTradeable());
         EXPECT_EQ(gem->getDescription(), "");
     }
-    
+
     /**
      * @brief Verifies dump writes the name and tradeable flag of each loaded currency to the stream.
      */
@@ -110,7 +110,7 @@ namespace currency
         std::ostringstream oss;
         registry->dump(oss);
         std::string output = oss.str();
-    
+
         EXPECT_NE(output.find("Name: Gold"), std::string::npos);
         EXPECT_NE(output.find("Name: Blue Amethyst"), std::string::npos);
         EXPECT_NE(output.find("Tradeable: true"), std::string::npos);

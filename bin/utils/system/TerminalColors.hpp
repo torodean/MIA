@@ -63,7 +63,7 @@ namespace terminal_colors
     inline std::ostream& def(std::ostream& os)    { return os << "\033[" << ColorCode::FG_DEFAULT << "m"; }
     inline std::ostream& bgdef(std::ostream& os)  { return os << "\033[" << ColorCode::BG_DEFAULT << "m"; }
     inline std::ostream& reset(std::ostream& os)  { return os << "\033[" << ColorCode::RESET      << "m"; }
-    
+
     /**
      * @class ColorChanger
      * @brief Utility class for applying ANSI color codes to terminal output streams.
@@ -85,7 +85,7 @@ namespace terminal_colors
          */
         ColorChanger(ColorCode cCode) : code(cCode)
         { }
-        
+
         /**
          * @brief Overloaded stream insertion operator.
          *
@@ -98,7 +98,7 @@ namespace terminal_colors
          */
         friend std::ostream& operator<<(std::ostream& os, const ColorChanger& mod) 
         { return os << "\033[" << mod.code << "m"; }
-        
+
     private:    
         ColorCode code; ///< ANSI color code to apply.
     }; // class ColorChanger 

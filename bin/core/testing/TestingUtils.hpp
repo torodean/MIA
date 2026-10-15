@@ -101,4 +101,19 @@ namespace testing
         obj.dump(os);
         return containsAllStrings(os.str(), needles...);
     }
+    
+    /**
+     * This will create a temporary test file with a unique file name. The contents
+     * of the file are the lines contained in the input vector.
+     * @param lines The lines to write to the file.
+     * @return The file name of the created file.
+     */
+    std::string createTempTestFile(const std::vector<std::string>& lines);
+    
+    /**
+     * @brief Removes a file. This simply wraps std::remove() and is here primarily
+     *        as a helper to tests so they don't necessarily need to include <filesystem>.
+     * @param filename The file to remove.
+     */
+    void removeFile(const std::string& filename);
 } // namespace testing

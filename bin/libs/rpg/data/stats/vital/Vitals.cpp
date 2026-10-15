@@ -67,8 +67,8 @@ namespace stats
         else 
             return it->second;
     }
-    
-    
+
+
     // add(..) methods.
     void Vitals::add(const std::string& name, int32_t current, int32_t baseMin, int32_t baseMax)
     {
@@ -115,8 +115,8 @@ namespace stats
 
         it->second.setCurrent(value);
     }
-    
-    
+
+
     // addModifier(..) methods.
     void Vitals::addModifier(const std::string& name,
                              uint32_t sourceID,
@@ -219,7 +219,7 @@ namespace stats
             // The data is not found so no need to remove anything.
             return;
         }
-        
+
         // removeModifier() matches on source ID and type only, so the value here is a placeholder.
         rpg::Modifier mod = rpg::Modifier(sourceID, sourceType, 0);
 
@@ -246,7 +246,7 @@ namespace stats
 
         dataStore.erase(it);
     }
-    
+
     bool Vitals::has(const std::string& name, int32_t value) const    
     {
         const Vital* vital = getVitalFromRegistry(name);
@@ -262,10 +262,10 @@ namespace stats
         auto it = dataStore.find(vital.getID());
         if (it == dataStore.end())
             return false;
-            
+
         if (it->second.getCurrent() >= value)
             return true;
-            
+
         return false;
     }
 
@@ -281,8 +281,8 @@ namespace stats
                << "\n";
         }
     }
-    
-    
+
+
     std::string Vitals::serialize() const
     {
         std::stringstream ss;
@@ -313,7 +313,7 @@ namespace stats
         ss << "[VITALS_END]"; // End of serialized content
         return ss.str();
     }
-    
+
 
     Vitals Vitals::deserialize(const std::string& data)
     {
@@ -364,7 +364,7 @@ namespace stats
                 MIA_THROW(error::ErrorCode::Invalid_RPG_Data, "Invalid vital values format");
 
             const Vital* vital = getVitalFromRegistry(id);
-        
+
             if (!vital)
                 MIA_THROW(error::ErrorCode::Undefined_RPG_Value);
 

@@ -33,7 +33,7 @@ if( BUILD_PYTHON_FEATURES AND (WIN32 OR CYGWIN OR BUILD_XDO_FEATURES) )
 
     # Install the app.
     install_app( miatest )
-    
+
     # Install the python files if needed.
     install_python_files( MIATest.py testUI.py )
 endif()

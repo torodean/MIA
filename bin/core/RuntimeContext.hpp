@@ -26,10 +26,10 @@ struct RuntimeContext
 {
     /// The basic logger for this an application to use.
     logger::Logger logger;
-    
+
     /// Stores verboseMode.
     bool verboseMode{false};
-    
+
     /// Stores debug level.
     unsigned int debugLevel{0};
 };

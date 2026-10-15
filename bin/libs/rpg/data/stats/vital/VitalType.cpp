@@ -4,7 +4,7 @@
  * @date 10/12/2026
  * @brief Storage for various vital types used for character vitals.
  */
- 
+
 // Include the associated header file.
 #include "VitalType.hpp"
 

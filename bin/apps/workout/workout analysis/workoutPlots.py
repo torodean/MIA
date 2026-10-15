@@ -24,26 +24,26 @@ def numMaxModifier(min, max, difficulty):
 	Returns the modifier that determines the maximum of a thing allowed based on difficulty.
 	'''
 	return ( (max-min)/( 10.0**(4.0/3.0) ) )*difficulty**(2.0/3.0)+min
-	
+
 def numMaxModifierOLD(min, max, difficulty):
 	'''
 	Returns the modifier that determines the maximum of a thing allowed based on difficulty.
 	'''
 	return (max-min)/100.0 * difficulty + min
-	
+
 def numMinModifier(min, max, difficulty):
 	'''
 	Returns the modifier that determines the manimum of a thing allowed based on difficulty.
 	'''
 	return ( (max - min*val)/(10.0**(4.0/3.0)* val) )*difficulty**(2.0/3.0) + min
-	
+
 def numMinModifierOLD(min, max, difficulty):
 	'''
 	Returns the modifier that determines the manimum of a thing allowed based on difficulty.
 	'''
 	return (max-min)/200.0 * difficulty + min
-	
-	
+
+
 def numAverage(min, max, difficulty):
 	'''
 	Inputs are minNumOfExercises and maxNumOfExercises and difficulty.
@@ -51,9 +51,9 @@ def numAverage(min, max, difficulty):
 	'''
 	maxModifier = numMaxModifier(min, max, difficulty)
 	minModifier = numMinModifier(min, max, difficulty)
-	
+
 	return (maxModifier+minModifier)/2.0
-	
+
 def numAverageOLD(min, max, difficulty):
 	'''
 	Inputs are minNumOfExercises and maxNumOfExercises and difficulty.
@@ -61,17 +61,17 @@ def numAverageOLD(min, max, difficulty):
 	'''
 	maxModifier = numMaxModifierOLD(min, max, difficulty)
 	minModifier = numMinModifierOLD(min, max, difficulty)
-	
+
 	return (maxModifier+minModifier)/2.0
-	
-	
+
+
 def numOfRepsMin(toughness, difficulty):
 	'''
 	Inputs are difficulty and toughness.
 	Returns the min number of reps performed for a given difficulty.
 	'''
 	return (toughness*difficulty*weight)/2.0 + weight
-	
+
 def numOfRepsMax(toughness, difficulty):
 	'''
 	Inputs are difficulty and toughness.
@@ -86,10 +86,10 @@ def numOfRepsAverage(difficulty, toughness):
 	'''
 	repsMin = numOfRepsMin(toughness, difficulty)
 	repsMax = numOfRepsMax(toughness, difficulty)
-	
+
 	return (repsMax + repsMin)/2.0
-	
-	
+
+
 def actualDifficulty(workouts, reps, sets):
 	'''
 	Inputs are workouts, reps, and sets.
@@ -99,7 +99,7 @@ def actualDifficulty(workouts, reps, sets):
 
 #Create the difficulty array for plotting.
 difficulty = np.arange(100)
-	
+
 #Set all of the average values for plotting.
 aveExercises = numAverage(minNumOfExercises, maxNumOfExercises, difficulty)
 aveSets = numAverage(minNumOfSets, maxNumOfSets, difficulty)
@@ -128,7 +128,7 @@ actDifficultyMax = actualDifficulty(maxExercises, maxReps, maxSets)
 actDifficultyMaxOLD = actualDifficulty(maxExercisesOLD, maxReps, maxSetsOLD)
 actDifficultyMin = actualDifficulty(minExercises, minReps, minSets)
 actDifficultyMinOLD = actualDifficulty(minExercisesOLD, minReps, minSetsOLD)
-	
+
 #Plot the number of exercises per difficulty.
 plt.xlabel('Difficulty')
 plt.ylabel('Number of Exercises')
@@ -167,7 +167,7 @@ plt.plot(difficulty, minReps,color="blue", label='Minimum Reps')
 plt.fill_between(difficulty, maxReps, minReps, color='grey', alpha='0.2')
 plt.legend()
 plt.show()
-	
+
 #Plots the real world difficulties for new and old values.
 plt.xlabel('Input Difficulty Parameter')
 plt.ylabel('Relative Real World Workout Difficulty')
@@ -190,4 +190,3 @@ plt.legend()
 plt.show()
 
 
-	

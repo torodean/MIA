@@ -30,7 +30,7 @@
 
 namespace virtual_keys
 {
-    
+
     /**
      * @enum ClickType
      * @brief Represents the various mouse click types.
@@ -43,7 +43,7 @@ namespace virtual_keys
         RIGHT_CLICK,  ///< Represents a right click.
         MIDDLE_CLICK  ///< Represents a middle click.
     };
-    
+
     /**
      * @brief Converts a ClickType enum value to its corresponding human-readable string.
      * @param clickType The ClickType to convert.
@@ -57,7 +57,7 @@ namespace virtual_keys
      * @return The matching ClickType, or ClickType::UNKNOWN if no match is found.
      */
     ClickType stringToClickType(const std::string& input);
-    
+
     /**
      * @enum SpecialButton
      * @brief Represents the various 'special' button types (non-alpha-numeric). Typically,
@@ -74,7 +74,7 @@ namespace virtual_keys
 		SCROLL_DOWN,
 		SCROLL_UP
     };
-        
+
     /**
      * @brief Converts a SpecialButton enum value to its corresponding human-readable string.
      * @param specialButton The SpecialButton to convert.
@@ -88,7 +88,7 @@ namespace virtual_keys
      * @return The matching SpecialButton, or SpecialButton::UNKNOWN if no match is found.
      */
     SpecialButton stringToSpecialButton(const std::string& input); 
-        
+
     /**
      * This class is for sending virtual key strokes and simulating user input.
      * This class is cross platform.
@@ -96,17 +96,17 @@ namespace virtual_keys
     class VirtualKeyStrokes
     {
     public:       
-    
+
         /**
          * Main default constructor for the VirtualKeyStrokes class.
          */
         VirtualKeyStrokes();
-    
+
         /**
          * Main destructor for the VirtualKeyStrokes object.
          */
         ~VirtualKeyStrokes();
-    
+
         /**
          * This will simulate a key press.
          * @param character the key to press.
@@ -115,7 +115,7 @@ namespace virtual_keys
          * @throw Throws if an unsupported character is entered.
          */
         void press(const char& character, int holdTime = 0, bool verboseMode = false);
-    
+
         /**
          * This will simulate the key presses for a string.
          * @param character[const std::string&] the string to simulate key presses for.
@@ -123,7 +123,7 @@ namespace virtual_keys
          * @param verboseMode If true, prints the pressed number to standard output.
          */
         void type(const std::string& word, int holdTime = 0, bool verboseMode = false);
-    
+
         /**
          * @brief Simulates a mouse click of the specified type.
          * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
@@ -131,7 +131,7 @@ namespace virtual_keys
          * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
          */
         void mouseClick(ClickType clickType, int holdTime = 0, bool verboseMode = false);        
-        
+
         /**
          * @brief Simulates a mouse click of the specified type.
          * @param clickType The type of mouse click to perform (e.g., LEFT_CLICK, RIGHT_CLICK, etc.).
@@ -139,10 +139,10 @@ namespace virtual_keys
          * @param verboseMode If true, enables verbose output describing the action performed. Default is false.
          */
         void pressSpecialButton(SpecialButton specialButton, int holdTime = 0, bool verboseMode = false);
-    
+
         void leftclick(int holdTime = 0, bool verboseMode = false);        
         void rightclick(int holdTime = 0, bool verboseMode = false);
-		
+
 		/**
 		 * Simulates a single mouse scroll wheel step upward
 		 * (away from the user).
@@ -158,14 +158,14 @@ namespace virtual_keys
 		 * @param verboseMode If true, prints the action to stdout.
 		 */
 		void scrollWheelDown(bool verboseMode);
-    
+
         /**
          * This will move the users mouse to a specific coordinate.
          * @param x The horizontal coordinate to use.
          * @param y The vertical coordinate to use.
          */
         void moveMouseTo(int x, int y);
-    
+
         void minus(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the minus key.
         void equal(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the equal key.
         void space(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the space key.
@@ -174,7 +174,7 @@ namespace virtual_keys
         void numlock(bool verboseMode = false);                       ///< Simulates press of the numlock key.
         void backslash(int holdTime = 0, bool verboseMode = false);   ///< Simulates press of the backslash key.
         void slash(int holdTime = 0, bool verboseMode = false);       ///< Simulates press of the slash key.
-    
+
         /** 
          * Sleeps for the default globalSleep time used by the VirtuakKeyStrokes class. The purpose
          * of this sleep is to give the OS time to catch up. There were some slight issues when
@@ -195,7 +195,7 @@ namespace virtual_keys
          * @param verboseMode If true, prints the pressed number to standard output.
          */
         void pressNumber(int num, int holdTime = 0, bool verboseMode = false);
-        
+
         /**
          * @brief Simulates pressing an alphabetic key (a–z or A–Z) using virtual key codes.
          *
@@ -208,14 +208,14 @@ namespace virtual_keys
          * @param verboseMode If true, prints the pressed character to standard output.
          */
         void pressChar(char ch, int holdTime = 0, bool verboseMode = false);
-        
+
         void alt0248();
         void alt136();
         void paste();
-    
+
         // Other useful functions.
         void findMouseCoords(int waitTime);
-        
+
         /**
          * @brief Scans and prints RGB color values of pixels in a 100x100 grid offset from the mouse cursor.
          *
@@ -226,7 +226,7 @@ namespace virtual_keys
          * Useful for scanning a region rather than a single pixel.
          */
         void getPixelColor();
-        
+
         /**
          * @brief Retrieves and prints the RGB color values of the pixel under the mouse cursor.
          *
@@ -237,22 +237,22 @@ namespace virtual_keys
          * color, and `getRGB` to extract the red, green, and blue components.
          */
         void getPixelColorAtMouse();
-        
+
     #if defined(IS_WINDOWS)
         void getRGB(COLORREF& color, int& r, int& g, int& b);
     #endif
-    
+
     private:
-    
+
         /// Global time to sleep between each key press (in ms).
         int globalSleep = 10;
-    
+
     #if defined(IS_WINDOWS)
-    
+
         INPUT ip;
-        
+
     #elif defined(__linux__)
-    
+
         /**
          * This pointer is used for the xdotool which can simulate key strokes on linux through X11.
          * Useful docs of the library and related files can be found here"
@@ -261,7 +261,7 @@ namespace virtual_keys
          * https://wiki.linuxquestions.org/wiki/List_of_keysyms
          */
         xdo_t *xdo;
-        
+
         /**
          * @brief Pointer to the X11 display connection used for simulating input events.
          *
@@ -269,10 +269,10 @@ namespace virtual_keys
          * Used internally for issuing fake mouse events via the XTest extension.
          */
         Display *display;
-        
+
     #endif
     }; // class VirtualKeyStrokes
-    
+
     /**
      * @brief Simulates pressing a random number key between two values (0–9) using virtual key codes.
      *

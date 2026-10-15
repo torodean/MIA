@@ -4,7 +4,7 @@
  * @date 08/19/2026
  * @brief Implementations for the API defined in the associated header file.
  */
- 
+
 // The associated header file.
 #include "MoneyHandler.hpp"
 
@@ -54,12 +54,12 @@ namespace maple
     {
         return sources.size();
     }
-    
+
 
     std::ostream& operator<<(std::ostream& stream, const MoneyHandler& money)
     {
         bool first = true;
-        
+
         for (const auto& source : money.sources)
         {
             if (first)
@@ -78,12 +78,12 @@ namespace maple
     {
         std::string want = string_utils::toLower(scope);
         double total = 0.0;
-        
+
         for (const auto& source : money.sources)
         {
             if (source.scope != want)
                 continue;
-                
+
             if (std::all_of(constrainingTags.begin(), constrainingTags.end(),
                 [&](const std::string& tag)
                 {
@@ -173,7 +173,7 @@ namespace maple
             std::string scope;
             std::string name;
             std::vector<std::string> tags;
-            
+
             if (underscore == std::string::npos)
             {
                 scope = ALL_SCOPE;

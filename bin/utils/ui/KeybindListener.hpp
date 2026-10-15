@@ -340,7 +340,7 @@ namespace ui
          * a key stuck in the held state.
          */
         void reconcileHeldKeys();
-        
+
         /// Maps each grabbed X11 keycode back to its character, filled by initialize().
         std::map<unsigned int, char> charByKeycode;
 

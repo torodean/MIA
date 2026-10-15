@@ -45,7 +45,7 @@ namespace
 
         return fullFilePath;
     }
-    
+
     /**
      * @brief Sleeps for a specified number of seconds, optionally displaying a countdown.
      *
@@ -75,7 +75,7 @@ namespace
             timing::sleepSeconds(1);
         }
     }
-    
+
     /**
      * @brief Starts audio playback and reports failure if unsuccessful.
      *
@@ -106,7 +106,7 @@ namespace
         }
         return true;
     }
-    
+
     /**
      * @brief Same as startAudio() except without the first verbose message
      * so that a custom message can be used before this instead.
@@ -129,7 +129,7 @@ namespace
         }
         return true;
     }
-    
+
     /**
      * @brief Stops audio playback and reports failure if unsuccessful.
      *
@@ -153,7 +153,7 @@ namespace
         }
         return true;
     }
-    
+
     /**
      * @brief Verifies that the audio player is no longer playing.
      *
@@ -353,7 +353,7 @@ int testAudioPlayerRestart(bool verboseMode)
         player.rethrowExceptionIfAny();
         return constants::FAILURE;
     }
-    
+
     // Wait 5 seconds to audibly make sure the audio restarted.
     if (verboseMode)
         std::cout << "Waiting 5 seconds to verify the audio restarted..." << std::endl;
@@ -406,7 +406,7 @@ int testAudioPlayerChangeFileWhilePlaying(bool verboseMode)
         player.rethrowExceptionIfAny();
         return constants::FAILURE;
     }
-    
+
     // Sleep for a couple seconds before cleaning up.
     if (verboseMode)
         std::cout << "Playing the original audio for 3 more seconds..." << std::endl;
@@ -443,7 +443,7 @@ int testAudioPlayerPlaylistSequential(bool verboseMode)
         std::cout << "Playing playlist: short file then long file." << std::endl;
     if (!startAudioNoMsg(player, verboseMode))
         return constants::FAILURE;
-    
+
     // Print a status timer.
     if (verboseMode)
         std::cout << "The playlist is about 34 seconds long..." << std::endl;
@@ -628,7 +628,7 @@ int testAudioPlayerPlaylistSkip(bool verboseMode)
         player.rethrowExceptionIfAny();
         return constants::FAILURE;
     }
-    
+
     // Waits a few before stopping.
     if (verboseMode)
         std::cout << "Playing the restored track for 5 seconds..." << std::endl;

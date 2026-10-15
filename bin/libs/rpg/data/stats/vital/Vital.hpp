@@ -58,7 +58,7 @@ namespace stats
          * @return A JSON object containing the Vital's properties.
          */
         nlohmann::json toJson() const override;
-        
+
         /**
          * Deserializes a Vital object from JSON.
          *
@@ -68,7 +68,7 @@ namespace stats
         static Vital fromJson(const nlohmann::json& json);
 
     private:
-    
+
         VitalType type{VitalType::UNKNOWN}; ///< Behavior type of the Vital.
         int32_t baseMin{0};                ///< Minimum value of the Vital.
         int32_t baseMax{100};              ///< Maximum value of the Vital.

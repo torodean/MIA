@@ -67,8 +67,8 @@ namespace stats
         else
             return it->second;
     }
-    
-    
+
+
     // add() methods...
     void Attributes::add(const std::string& name, int32_t baseValue)
     {
@@ -85,11 +85,11 @@ namespace stats
         auto id = attribute.getID();
         if (dataStore.find(id) != dataStore.end())            
             MIA_THROW(error::ErrorCode::Duplicate_RPG_Value);
-            
+
         dataStore.emplace(id, AttributeData(baseValue));
     }
-    
-    
+
+
     // update() methods...
     void Attributes::update(const std::string& name, int32_t value)
     {
@@ -114,8 +114,8 @@ namespace stats
             it->second.setBaseValue(value);
         }
     }
-    
-    
+
+
     // addModifier() methods...
     void Attributes::addModifier(const std::string& name,
                                  uint32_t sourceID,
@@ -181,7 +181,7 @@ namespace stats
         it->second.addModifier(mod);
     }
 
-    
+
     // removeModifier() methods...
     void Attributes::removeModifier(const std::string& name, 
                                     uint32_t sourceID, 
@@ -207,14 +207,14 @@ namespace stats
             // The data is not found so no need to remove anything.
             return;
         }
-        
+
         // removeModifier() matches on source ID and type only, so the value here is a placeholder.
         rpg::Modifier mod = rpg::Modifier(sourceID, sourceType, 0);
 
         it->second.removeModifier(mod);
     }
 
-    
+
     // remove() methods...
     void Attributes::remove(const std::string& name)
     {
@@ -272,7 +272,7 @@ namespace stats
         ss << "[ATTRIBUTES_END]";
         return ss.str();
     }
-    
+
 
     Attributes Attributes::deserialize(const std::string& data)
     {

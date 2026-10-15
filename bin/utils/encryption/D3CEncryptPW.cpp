@@ -5,7 +5,7 @@
  * @date October, 2014
  * @brief An old encryption program (d0s2) re-adapted for use with MIA.
  */
- 
+
 #include <string>
 #include <cmath>
 #include <iostream>
@@ -45,8 +45,8 @@ namespace d0s2
 
             return output;
         }
-        
-        
+
+
         // TODO - Figure out why this only supports up to 14 (this is very old code).
         std::vector<int> messageVectorStringToInt(std::vector<std::string> messageVector)
         {
@@ -75,10 +75,10 @@ namespace d0s2
             int size = messageVectorValues.size();
             total.resize(size);
             total.reserve(size);
-            
+
             for(int i=0; i<size; i++)
                 total[i] = messageVectorValues[i] + PWVectorValues[i];
-                
+
             return total;
         }
 
@@ -92,7 +92,7 @@ namespace d0s2
             int size = messageVectorValues.size();
             for(int i=0;i<size;i++)
                 total[i] = messageVectorValues[i] - PWVectorValues[i];
-                
+
             return total;
         }
 
@@ -164,7 +164,7 @@ namespace d0s2
 
             return output;
         }
-        
+
 
         std::vector<std::string> normalStringToVector(std::string input)
         {
@@ -177,7 +177,7 @@ namespace d0s2
 
             return output;
         }
-        
+
 
         std::string PWmessageCombine(std::string message, std::string PW)
         {
@@ -208,10 +208,10 @@ namespace d0s2
     std::string EncryptPW(std::string message, std::string PW)
     {
         PW = string_utils::invertString(PW);
-	    
+
 	    //CM stands for crypted message, which is the string that will be returned by the function.
         std::string CM; 
-	    
+
 	    //creates variables with the length for each string. 
 	    //PWNeeded is used to determine how many times the password needs to be repeated in order to meet the length fo the message. 
 	    //PWRemainder determines the remaining letters after the password is used to fill on the log.
@@ -231,20 +231,20 @@ namespace d0s2
         CM = internal::PWmessageCombine(message, PW);
 
 	    //CM = d0s1::squish(CM);
-	    
+
         return CM;
     }
 
 
     std::string DecryptPW(const std::string& message, std::string PW){  	
         PW = string_utils::invertString(PW);
-	    
+
 	    //message = d0s1::expand(message);
 	    std::cout << message << std::endl;
-	    
+
 	    //DM stands for decrypted message, which is the string that will be returned by the function.
         std::string DM; 
-	    
+
 	    //creates variables with the length for each string. 
 	    //PWNeeded is used to determine how many times the password needs to be repeated in order to meet the length fo the message. 
 	    //PWRemainder determines the remaining letters after the password is used to fill on the log.

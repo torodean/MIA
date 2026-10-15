@@ -55,7 +55,7 @@ namespace rpg
         auto description = json.value("description", "");
 
         BaseDataObject baseDataObj(id, name, description);
-        
+
         return baseDataObj;
     }
 } // namespace rpg

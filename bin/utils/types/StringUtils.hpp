@@ -15,6 +15,7 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -27,7 +28,7 @@ namespace string_utils
      * @return A lower case copy of the input.
      */
     std::string toLower(const std::string& input);
-    
+
     /**
      * @brief Converts a string to upper case.
      *
@@ -118,7 +119,7 @@ namespace string_utils
      * @return Substring before `c`.
      */
     std::string getBeforeChar(std::string line, char c, bool verboseMode = false);
-    
+
     /**
      * Returns the substring of `line` that appears after the first occurrence of character `c`.
      * If `c` is not found, returns an empty string.
@@ -129,7 +130,7 @@ namespace string_utils
      * @return Substring after `c`.
      */
     std::string getAfterChar(std::string line, char c, bool verboseMode = false);
-    
+
     /**
      * Extracts and returns the substring between the first '=' and the first ';' in the input string.
      * It first trims the string at the ';' and then extracts the portion after the '='.
@@ -165,7 +166,7 @@ namespace string_utils
      * @return The first element is the first half, and second element the second half.
      */
     std::vector<std::string> entangleText(const std::string& input);
-    
+
     /**
      * Checks if the given line contains exactly one occurrence of each specified delimiter.
      *
@@ -175,7 +176,7 @@ namespace string_utils
      * @return True if the line contains exactly one occurrence of delimiterA and exactly one occurrence of delimiterB; otherwise false.
      */
      bool hasExactlyOneOfEachDelimiter(const std::string& line, char delimiterA, char delimiterB);
-     
+
     /**
      * Checks if the given line contains exactly one occurrence of a specified delimiter.
      *
@@ -184,7 +185,7 @@ namespace string_utils
      * @return True if the line contains exactly one occurrence of the delimiter; otherwise false.
      */
      bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA);
-     
+
     /**
      * @brief Checks if one string contains another substring.
      * @param haystack The string to search within.
@@ -192,14 +193,14 @@ namespace string_utils
      * @return true if 'needle' is found within 'haystack'; false otherwise.
      */
     bool contains(const std::string& haystack, const std::string& needle);
-    
+
     /**
      * @brief Removes leading and trailing whitespace characters from the given string.
      * @param str The string to trim.
      * @return The trimmed string.
      */
     std::string trim(const std::string& str);
-    
+
     /**
      * Converts a vector of characters into a single concatenated string.
      * @param charVec The vector of characters to convert.
@@ -213,7 +214,7 @@ namespace string_utils
      * @return A vector containing each character from the string.
      */
     std::vector<char> stringToCharVec(const std::string& str);
-    
+
     /**
      * @brief Converts a string into a vector of integer values.
      *
@@ -224,7 +225,7 @@ namespace string_utils
      * @return A vector of integers representing the ASCII values of the input string's characters.
      */
     std::vector<int> stringToIntVector(const std::string& inputStr);
-    
+
     /**
      * @brief Converts a vector of integers to a string.
      *
@@ -236,7 +237,7 @@ namespace string_utils
      * @return A string composed of characters corresponding to the input integers.
      */
     std::string intVectorToString(const std::vector<int>& inputVec);
-    
+
     /**
      * @brief Returns the reversed version of the input string.
      *
@@ -246,7 +247,7 @@ namespace string_utils
      * @return A new string which is the reverse of inputStr.
      */
     std::string invertString(const std::string& inputStr);
-    
+
     /**
      * @brief Centers text within a field of the specified width.
      *
@@ -258,5 +259,29 @@ namespace string_utils
      * @return The text centered within the specified width.
      */
     std::string centerText(const std::string& text, std::size_t width);
+
+    /**
+     * Resizes a string to match the length of another string by prefixing a character.
+     * The smaller string is padded to match the length of the larger.
+     *
+     * @note This method typically expects the larger string to be the first parameter,
+     *       but it will perform a check and swap them if needed.
+     * @note For special cases where the strings are the same size, the second parameter
+     *       is returned.
+     * @param larger The larger string.
+     * @param smaller The smaller string to be resized.
+     * @param pad The character to pad the string to (defaults to space).
+     * @return The resized string with leading pad-characters added.
+     */
+    std::string resizeString(const std::string& larger, 
+                             const std::string& smaller, 
+                             char pad = ' ');
+
+    /**
+     * Creates a string consisting of zeros of the specified length.
+     * @param length The length of the resulting zero string.
+     * @return A string composed entirely of '0' characters.
+     */
+    std::string zeroString(uint32_t length);
 
 } // namespace string_utils

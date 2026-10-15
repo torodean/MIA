@@ -65,7 +65,7 @@ namespace currency
         else 
             return it->second;
     }
-    
+
     // add() methods...
     void Wallet::add(const std::string& name, int32_t quantity)
     {
@@ -118,8 +118,8 @@ namespace currency
         }
         dataStore.erase(it);
     }
-    
-    
+
+
     // update() methods...
     void Wallet::update(const std::string& name, int32_t amount)
     {
@@ -142,7 +142,7 @@ namespace currency
         }
         it->second.set(amount);
     }
-      
+
 
     // has() methods...
     bool Wallet::has(const std::string& name, int32_t quantity) const
@@ -182,7 +182,7 @@ namespace currency
         }
     }
 
-    
+
     std::string Wallet::serialize() const 
     {
         std::ostringstream oss;
@@ -193,8 +193,8 @@ namespace currency
         oss << "[WALLET_END]";
         return oss.str();
     }
-    
-    
+
+
     Wallet Wallet::deserialize(const std::string& data) 
     {
         size_t start = data.find("[WALLET_BEGIN]");

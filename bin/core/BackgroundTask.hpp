@@ -43,7 +43,7 @@ namespace threading
          * @brief Destructor ensures the thread is properly stopped and joined.
          */
         virtual ~BackgroundTask();
-        
+
         /**
          * @brief Deleted copy and move constructors and assignment operators.
          *
@@ -84,13 +84,13 @@ namespace threading
          * @return true if the conditionMet flag is set; otherwise false.
          */
         bool isConditionMet() const;
-        
+
         /**
          * @brief Toggles the conditionMet flag between true and false.
          * Useful for handling state changes triggered by events such as key presses.
          */
         void toggleCondition();
-        
+
         /**
          * @brief Sets the given RuntimeContext into this instance's context pointer.
          * 
@@ -100,7 +100,7 @@ namespace threading
          * @param ctx The RuntimeContext to point to.
          */
         void setContext(const RuntimeContext& ctx);
-        
+
         /**
          * @brief Returns true if the background task has failed due to an uncaught exception.
          *
@@ -112,7 +112,7 @@ namespace threading
          * @return true if an exception was stored from the worker thread.
          */
         bool hasFailed() const noexcept;
-        
+
         /**
          * @brief Returns any exception that was thrown in the worker thread.
          *
@@ -139,10 +139,10 @@ namespace threading
         void rethrowExceptionIfAny() const;
 
     protected:
-        
+
         /// The runtime context object to enable application output.
         const RuntimeContext* context{nullptr};
-        
+
         /**
          * @brief Task logic should be implemented here in derived classes.
          *
@@ -157,13 +157,13 @@ namespace threading
 
         /// Flag indicating if a stop has been requested.
         std::atomic<bool> stopRequested{false};
-        
+
         /**
          * Flag indicating if some condition has been met. This can be used to toggle some
          * conditional state or value without having to request the thread to stop.
          */
         std::atomic<bool> conditionMet{false};
-        
+
         /**
          * @brief Sets the taskName for this object.
          * @param newTaskName The name to set the taskName to. 
@@ -173,7 +173,7 @@ namespace threading
     private:
         /// An optional name to mark this task - used in error and status messages.
         std::string taskName;
-        
+
         /**
          * @brief Internal method that repeatedly invokes run() until stopped.
          */
@@ -181,7 +181,7 @@ namespace threading
 
         /// The worker thread that executes the task.
         std::thread worker;
-        
+
         /// Stores any exception that were thrown in the worker thread.
         std::exception_ptr storedException;
     }; // class BackgroundTask 

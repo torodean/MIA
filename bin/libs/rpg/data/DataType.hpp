@@ -22,7 +22,7 @@ namespace rpg
 		ATTRIBUTE,  ///< Represnts an Attribute object.
 		PROGRESS,   ///< Represents a progress marker object.
 	};
-	
+
 	/**
 	 * @brief Converts a DataType enum value to its string representation.
 	 * 
@@ -30,7 +30,7 @@ namespace rpg
 	 * @return std::string The string name of the enum value.
 	 */
 	std::string dataTypeToString(DataType type);
-	
+
 	/**
 	 * @brief Converts a string to the corresponding DataType enum value.
 	 * 

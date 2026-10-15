@@ -44,7 +44,7 @@ void MIATest::initialize(int argc, char* argv[])
     try
     {    
         MIAApplication::initialize(argc, argv);
-       
+
         bool testHelp = false;
         testHelpOpt.getOptionVal<bool>(argc, argv, testHelp);
         if (testHelp)
@@ -95,7 +95,7 @@ void MIATest::printTestHelp()
 void MIATest::printHelp() const
 {
     MIAApplication::printHelp();
-   
+
     // This is a dump of the help messages used by the various command options.
     std::cout << "MIATest specific options:" << std::endl
               << testHelpOpt.getHelp() << std::endl

@@ -151,7 +151,7 @@ private:
 
     /// The string value, when type is String.
     std::string stringValue;
-    
+
     /// The vector of string values, when the type is a list of strings.
     std::vector<std::string> stringValues;
 

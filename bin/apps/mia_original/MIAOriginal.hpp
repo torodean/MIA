@@ -30,14 +30,14 @@ public:
 
     /// Default destructor.
     ~MIAOriginal() = default;
-    
+
     /**
      * This will initialize this class by parsing command line arguments.
      * @param argc Number of command line arguments.
      * @param argv Array of command line argument strings.
      */
     void initialize(int argc, char* argv[]) override;
-    
+
     /// Runs the MIAOriginal application.
     int run() override;
 
@@ -49,16 +49,16 @@ protected:
     void printHelp() const override;
 
 private:
-    
+
     // Command options for this app.
     CommandOption defaultCommandOpt;
 
     /// String to store a default command to run.
     std::string defaultCommand{};
-    
+
     /// Create an instance of various utility classes.
     Commands cmd;
-    
+
     /**
      * Prints the splash screen for MIA. Prints the original MIA splash screen.
      */
@@ -94,13 +94,13 @@ private:
      * Displays information regarding the Net functions.
      */
     static void helpNet();
-    
+
     /**
      * Takes the input command by the user and runs the corresponding feature.
      * @param input is the command to perform
      */
     void performMIACommand(std::string& input);
-    
+
     /**
      * Outputs an excuse for not being able to perform a command. Has a 20% chance to do so.
      * @return returns true if an excuse was output.

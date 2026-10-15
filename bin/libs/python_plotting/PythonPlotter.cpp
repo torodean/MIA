@@ -7,7 +7,7 @@
 
 // Includes the associated header file.
 #include "PythonPlotter.hpp"
- 
+
 #include <iostream>
 
 namespace py_plotting
@@ -15,8 +15,8 @@ namespace py_plotting
     PythonPlotter::PythonPlotter() :
         pythonModule(moduleName, __FILE__)
     {}
-    
-    
+
+
     void PythonPlotter::setVerboseOutput(bool val)
     {
         PythonResult result = pythonModule.call("setVerbose", val);
@@ -57,8 +57,8 @@ namespace py_plotting
         if (!result.isValid())
             (void)reportCallError("setFigureSize", result);
     }
-    
-    
+
+
     std::string ColorToString(const Color color)
     {
         switch(color)
@@ -75,8 +75,8 @@ namespace py_plotting
             default:            return "Unknown";
         }
     }
-    
-    
+
+
     std::string getPythonFormattedLineStyle(const LineStyle style)
     {
         switch (style)
@@ -88,8 +88,8 @@ namespace py_plotting
             default:                 return "Unknown";
         }
     }
-    
-    
+
+
     bool validateColorString(const std::string& color)
     {
         if (color.empty() || color[0] != '#')
@@ -109,8 +109,8 @@ namespace py_plotting
         return true;
     }
 
-    
-    
+
+
     std::string getPythonFormattedColor(const PlotColor& color)
     {
         if (std::holds_alternative<Color>(color))

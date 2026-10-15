@@ -4,7 +4,7 @@
  * @date 05/22/2025
  * Description: This file implements the utilities for parsing command options.
  */
- 
+
 #include <string>
 #include <stdexcept>
 #include <cstring>

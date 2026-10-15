@@ -43,6 +43,7 @@ namespace math
      * @param input Input string. Must be of the form #d#, #d##, ##d##, etc.
      * @param verboseMode Enables verbose output (default = false).
      * @return The total dice roll.
+     * @throws MIAException when the input does not fit the expected format.
      */
     int roll(const std::string &input, bool verboseMode = false);
 

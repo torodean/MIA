@@ -31,7 +31,7 @@ namespace config
 
         std::string line;
         std::vector<std::string> lines;
-        
+
         while (std::getline(file, line)) 
         {            
             if (!line.empty() && line[0] != '#' && line.size()>2)
@@ -45,7 +45,7 @@ namespace config
 		    std::cout << std::endl;
 
         file.close();
-        
+
         int size = lines.size();
         int equalSignLocation;        
         std::string variable, value;
@@ -54,7 +54,7 @@ namespace config
             equalSignLocation = basic_utils::findCharInString(lines[i], '=');
             if (equalSignLocation <= 0 || equalSignLocation >= static_cast<int>(lines[i].size()) - 1)
                 continue; // or log malformed line
-                
+
             variable = basic_utils::strip(lines[i].substr(0, equalSignLocation));
             value = lines[i].substr(equalSignLocation+1,lines[i].size()-1);
 
@@ -64,7 +64,7 @@ namespace config
 
             rawConfigValsMap[variable] = basic_utils::strip(value);
         }
-        
+
         if (verboseMode) 
         {
             std::cout << "Finished loading raw lines from: " << filePath << std::endl;
@@ -123,7 +123,7 @@ namespace config
             std::string err = "Can't find key in configuration map: " + key;
             throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
         }
-            
+
         return it->second;
     }
 
@@ -145,7 +145,7 @@ namespace config
         {
             result.push_back(item);
         }
-        
+
         return result;
     }
 
@@ -158,10 +158,10 @@ namespace config
             std::string err = "Can't find key in configuration map: " + key;
             throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
         }
-            
+
         std::string val = it->second;
         std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-        
+
         // Check for different forms of true.
         return (val == "true" || val == "1" || val == "yes" || val == "on");
     }
@@ -193,7 +193,7 @@ namespace config
         }
         return result;
     }
-    
+
     std::vector<constants::KeyValuePair> KeyValueData::getAllConfigPairs() const
     {
         std::vector<constants::KeyValuePair> pairs;

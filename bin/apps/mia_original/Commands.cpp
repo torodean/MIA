@@ -400,27 +400,27 @@ void Commands::primeNumberNeraseRunner()
 void Commands::buttonSpamRunner(bool enableTab)
 {
     VirtualKeyStrokes key;
-	
+
 	string button;
 
 	cout << "...Enter a button sequence you would like spammed: ";
 	getline(std::cin, button);
 	cout << endl;
-	
+
 	string amountStr;
 
 	cout << "...How many times would you like it spammed? ";
 	getline(std::cin, amountStr);
 	cout << endl;
-	
+
 	int pause;
-	
+
 	cout << "...How long between each key press (in ms)? ";
 	std::cin >> pause;
 	cout << endl;
-	
+
 	int amount = atoi(amountStr.c_str());
-	
+
 	cout << "...Preparing to spam " << button << " " << amountStr << " times." << endl;
 	cout << "...Beginning in 5 seconds." << endl;
 	cout << endl;
@@ -428,7 +428,7 @@ void Commands::buttonSpamRunner(bool enableTab)
 	if (enableTab)
 	{
         timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
-    
+
         for (int i=0;i<amount;i++)
         {
             key.type(button);
@@ -440,7 +440,7 @@ void Commands::buttonSpamRunner(bool enableTab)
 	else
 	{
         timing::sleepMilliseconds(5); //Waits 5 seconds before beginning.
-    
+
         for (int i=0;i<amount;i++)
         {
             key.type(button);
@@ -454,15 +454,15 @@ void Commands::minecraftDigRunner()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     VirtualKeyStrokes key;
-	
+
 	string input;
 
 	cout << "...How long would you like to dig for (in seconds)? ";
 	getline(std::cin, input);
 	cout << endl;
-	
+
 	int time = atoi(input.c_str());
-	
+
 	cout << "...Beginning in 5 seconds." << endl;
 	key.minecraftDig(time);
 #else
@@ -475,70 +475,70 @@ void Commands::exploreMinecraft()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     VirtualKeyStrokes key;
-	
+
 	int stepSize = 100, delayStartTime = 5000;
 	double percentComplete = 0.0,  counter = 0.0;
 	int breakTime;
-	
+
 	int startx, startz, stopx, stopz;
-	
+
 	cout << "...Please enter the lower numbers as the starting values." << endl;
 	cout << endl;
-	
+
 	cout << "...Enter a starting X coordinate (integer): ";
 	std::cin >> startx;
 	cout << endl;
-	
+
 	cout << "...Enter an ending X coordinate (integer): ";
 	std::cin >> stopx;
 	cout << endl;
-	
+
 	cout << "...Enter a starting Z coordinate (integer): ";
 	std::cin >> startz;
 	cout << endl;
-	
+
 	cout << "...Enter an ending Z coordinate (integer): ";
 	std::cin >> stopz;
 	cout << endl;
-	
+
 	cout << "...Enter the intermidiate time between steps in milliseconds (integer): ";
 	std::cin >> breakTime;
 	cout << endl;
-	
+
 	double totalSteps = ((stopx-startx)*1.0/(stepSize*1.0)+1)*((stopz-startz)*1.0/(stepSize*1.0)+1);
 	cout << "...totalSteps: " << totalSteps << endl;
-	
+
 	cout << "...Beginning in " << delayStartTime << " milliseconds." << endl;
 	cout << endl;
-	
+
 	Sleep(delayStartTime);
-	
+
 	cout << "...Sleeping between each loop for " << breakTime << " milliseconds." << endl;
 
-	
+
 	for(int x=startx; x <= stopx; x++)
 	{
 		for(int z=startz; z <= stopz; z++)
 		{
-			
+
 			key.slash();
 			key.type("tp d0sag3 ");
-			
+
 			key.type(std::to_string(x));
 			key.space();
-			
+
 			key.type("100");
 			key.space();
-			
+
 			key.type(std::to_string(z));
 
 			key.enter();
-			
+
 			counter += 1.0;
 			percentComplete = counter*100.0/totalSteps;
 			cout << "...Percentage Complete: " << percentComplete << " %" << endl;
 			Sleep(breakTime);
-			
+
 			z+=stepSize-1;
 		}		
 		x+=stepSize-1;
@@ -554,27 +554,27 @@ void Commands::duplicateLetterRunner()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     VirtualKeyStrokes keys;
-	
+
 	cout << "...INSTRUCTIONS: Please have the contents of the letter copied to your clipboard." << endl;
 	cout << "...INSTRUCTIONS: After entering final parameters, move mouse curser to the WoW 'send' button." << endl;
 
 	cout << endl;
-	
+
 	int copies;
 	cout << "...Please enter the number of letters you want duplicated: ";
 	std::cin >> copies;
 	std::cin.ignore();
 	cout << endl;
-	
+
 	string recipient;
 	cout << "...Please enter the recipient you want the letters sent to: ";
 	getline(std::cin, recipient);
 	cout << endl;
-	
+
 	cout << "...Beginning in 5000 milliseconds (5s)." << endl;
 	cout << endl;
 	keys.duplicateLetter(copies, recipient);
-	
+
 	cout << "...Finished duplicating letters." << endl;
 #else
     throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
@@ -586,22 +586,22 @@ void Commands::unloadLetterRunner()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     VirtualKeyStrokes keys;
-	
+
 	cout << "...INSTRUCTIONS: Please have your WoW inbox open." << endl;
 	cout << "...INSTRUCTIONS: Please set MIAConfig variables appropriately (see manual)." << endl;
 
 	cout << endl;
-	
+
 	int copies;
 	cout << "...Please enter the number of letters you want unloaded: ";
 	std::cin >> copies;
 	std::cin.ignore();
 	cout << endl;
-	
+
 	cout << "...Beginning in 5000 milliseconds (5s)." << endl;
 	cout << endl;
 	keys.unloadLetters(copies);
-	
+
 	cout << "...Finished unloading letters." << endl;
 #else
     throw error::MIAException(error::ErrorCode::Windows_Only_Feature);
@@ -705,23 +705,23 @@ void Commands::runNetSessionEnum()
 	LOLANetUse lola;
 	string server;
 	int argc = 4;  //set to 4 indicating that all fields [0] -> [3] of argv are filled.
-	
+
 	cout << "...Please enter a server address for me to gather information about." << endl;
 	cout << endl;
 	getline(std::cin, server);
 	cout << endl;
-	
+
 	const size_t len = server.length() + 1;
 	cout << "Server len: " << len << endl;
     wchar_t w_server[len];
 
     swprintf(w_server, len, L"%s", server.c_str());
-	
+
 	cout << "...Loading NetSessionEnumRunner." << endl;
-	
+
 	wchar_t *argv[] = {nullptr, w_server, nullptr, nullptr};
 	lola.NetSessionEnumRunner(argc, argv);
-	
+
 	cout << "..." << endl;
 	cout << "...NetSessionEnumRunner Finished." << endl;
 #else
@@ -737,12 +737,12 @@ void Commands::runNetServerEnum(char mode)
 	LOLANetUse lola;
 	string domain;
 	int argc = 2;  //set to 2 indicating that all fields [0] -> [1] of argv are filled.
-	
+
 	cout << "...Please enter a domain for me to gather information about." << endl;
 	cout << endl;
 	getline(std::cin, domain);
 	cout << endl;
-	
+
 	const size_t len = domain.length() + 1;
     wchar_t w_domain[len];
 
@@ -750,7 +750,7 @@ void Commands::runNetServerEnum(char mode)
 
 	wchar_t *argv[] = {nullptr, w_domain};
 	cout << "...Loading NetServerEnum." << endl;
-	
+
 	if(mode == 'w')
 	{
 		lola.NetServerEnumRunner_WKST(argc, argv);
@@ -759,7 +759,7 @@ void Commands::runNetServerEnum(char mode)
 	{
 		lola.NetServerEnumRunner_SERV(argc, argv);
 	}
-	
+
 	cout << "..." << endl;
 	cout << "...NetServerEnum Finished!." << endl;
 #else
@@ -775,22 +775,22 @@ void Commands::runNetWkstaGetInfo()
 	LOLANetUse lola;
 	string wkst;
 	int argc = 2;  //set to 4 indicating that all fields [0] -> [1] of argv are filled.
-	
+
 	cout << "...Please enter a workstation address for me to gather information about." << endl;
 	cout << endl;
 	getline(std::cin, wkst);
 	cout << endl;
-	
+
 	const size_t len = wkst.length() + 1;
     wchar_t w_wkst[len];
 
     swprintf(w_wkst, len, L"...%s", wkst.c_str());
-	
+
 	cout << "...Loading NetWkstaGetInfo." << endl;
-	
+
 	wchar_t *argv[] = {nullptr, w_wkst};
 	lola.NetWkstaGetInfoRunner(argc, argv);
-	
+
 	cout << "..." << endl;
 	cout << "...NetSessionEnum Finished." << endl;
 #else
@@ -806,22 +806,22 @@ void Commands::runNetRemoteComputerSupports()
 	LOLANetUse lola;
 	string wkst;
 	int argc = 2;  //set to 4 indicating that all fields [0] -> [1] of argv are filled.
-	
+
 	cout << "...Please enter a workstation address for me to gather information about." << endl;
 	cout << endl;
 	getline(std::cin, wkst);
 	cout << endl;
-	
+
 	const size_t len = wkst.length() + 1;
     wchar_t w_wkst[len];
 
     swprintf(w_wkst, len, L"...%s", wkst.c_str());
-	
+
 	cout << "...Loading NetRemoteComputerSupports." << endl;
-	
+
 	wchar_t *argv[] = {NULL, w_wkst};
 	lola.NetRemoteComputerSupportsRunner(argc, argv);
-	
+
 	cout << "..." << endl;
 	cout << "...NetRemoteComputerSupports Finished." << endl;
 #else
@@ -837,22 +837,22 @@ void Commands::runNetUserEnum()
 	LOLANetUse lola;
 	string wkst;
 	int argc = 2;  //set to 4 indicating that all fields [0] -> [1] of argv are filled.
-	
+
 	cout << "...Please enter a server for me to gather information about." << endl;
 	cout << endl;
 	getline(std::cin, wkst);
 	cout << endl;
-	
+
 	const size_t len = wkst.length() + 1;
     wchar_t w_wkst[len];
 
     swprintf(w_wkst, len, L"...%s", wkst.c_str());
-	
+
 	cout << "...Loading NetUserEnum." << endl;
-	
+
 	wchar_t *argv[] = {nullptr, w_wkst};
 	lola.NetUserEnumRunner(argc, argv);
-	
+
 	cout << "..." << endl;
 	cout << "...NetUserEnum Finished." << endl;
 #else

@@ -41,7 +41,7 @@ namespace rpg
         { 
             return "dummy"; 
         }
-        
+
         DummyObject parseJson(const nlohmann::json& j) override 
         {
             return DummyObject{ j.at("id").get<uint32_t>(), j.at("name").get<std::string>() };

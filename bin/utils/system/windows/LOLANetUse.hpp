@@ -11,7 +11,7 @@ class LOLANetUse
 	public:
 		LOLANetUse();
 		~LOLANetUse();
-		
+
 		//Functions adapted to work from the old LOLA Program.
 		void NetSessionEnumRunner(int argc, wchar_t *argv[]); 
 		void NetServerEnumRunner_WKST(int argc, wchar_t *argv[]); 

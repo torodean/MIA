@@ -40,7 +40,7 @@ def sumVals(values):
 def joinVals(values):
     """Returns the strings joined together with no separator."""
     return "".join(values)
-    
+
 
 def returnList():
     """Returns a list of three strings."""

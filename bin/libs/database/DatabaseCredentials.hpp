@@ -20,10 +20,10 @@ class DatabaseCredentials
 public:
     /// Main default constructor for a Credentials object.
     DatabaseCredentials() = default;
-	
+
 	/// Main default constructor for a Credentials object.
     ~DatabaseCredentials() = default;
-	
+
 	/**
      * Constructs a Credentials object with specified username, hostname, and port.
      *
@@ -36,7 +36,7 @@ public:
 				        unsigned short port) : 
 		username(user), hostname(host), port(port)
     { };
-	
+
 	/**
      * Constructs a Credentials object with specified username, hostname, and port.
      * This will also set a password stored as plain text. This constructor should only
@@ -98,7 +98,7 @@ public:
         username.clear();
         port = 0;
     };
-    
+
     /// Getter for the password. Should only be used for testing.
     std::string getPassword()
     { return password; }

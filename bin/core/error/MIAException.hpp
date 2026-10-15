@@ -38,7 +38,7 @@ namespace error
         { 
             cachedWhatMessage = getErrorDescription(code) + (details.empty() ? "" : (" " + details));
         }
-        
+
         /**
          * @brief Constructs a MIAException with the given error code and message.
          * @param code The ErrorCode indicating the type of error.
@@ -49,21 +49,21 @@ namespace error
         { 
             cachedWhatMessage = getErrorDescription(code) + (std::string(details).empty() ? "" : (" " + std::string(details)));
         }
-    
+
         /**
          * @brief Returns a C-style character string describing the error.
          * @return The error message as a null-terminated C string.
          */
         const char* what() const noexcept override
         { return cachedWhatMessage.c_str(); }
-    
+
         /**
          * @brief Returns the associated ErrorCode for this exception.
          * @return The ErrorCode value representing the error.
          */
         ErrorCode getCode() const noexcept
         { return errorCode; }
-    
+
     private:
         std::string generateFullErrorMsg()
         { return getErrorDescription(errorCode) + " " + errorDetails; }

@@ -17,8 +17,8 @@ namespace markov_models
     {
         trainFromStrings(sequences);
     }
-    
-    
+
+
     void CharacterMarkovModel::trainFromStrings(const std::vector<std::string>& sequences)    
     {
         std::vector<std::vector<char>> trainingVec;

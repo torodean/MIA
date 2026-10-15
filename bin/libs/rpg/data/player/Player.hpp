@@ -27,19 +27,19 @@ namespace rpg
          * @return Reference to the currency container.
          */
         currency::Wallet& getWallet() { return wallet; }
-        
+
         /**
          * Gets the player's vitals.
          * @return Reference to the vitals.
          */
         stats::Vitals& getVitals() { return vitals; }
-        
+
         /**
          * Gets the player's attributes.
          * @return Reference to the attributes.
          */
         stats::Attributes& getAttributes() { return attributes; }
-        
+
         /**
          * Gets the player's progress.
          * @return Reference to the progress.
@@ -52,7 +52,7 @@ namespace rpg
          * @return True if successful, false if the file cannot be opened.
          */
         bool saveToFile(const std::string& filename) const;
-        
+
         /**
          * Loads the player's data from a file.
          * The file is expected to contain serialized blocks for each data type.

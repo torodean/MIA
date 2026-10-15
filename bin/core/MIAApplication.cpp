@@ -42,15 +42,15 @@ void MIAApplication::initialize(int argc, char* argv[])
     {
         // Set the executable name.
         executableName = argv[0];
-        
+
         // Sets the application name in the logger to prepend to log messages.
         context.logger.setApplicationName(executableName);
-        
+
         // Set the command option parameters for verbose and help.
         verboseOpt.getOptionVal<bool>(argc, argv, context.verboseMode);
         debugOpt.getOptionVal<unsigned int>(argc, argv, context.debugLevel);
         helpOpt.getOptionVal<bool>(argc, argv, helpRequested);
-        
+
         // Load (optionally if specified) the custom log file. 
         std::string customLogFile;
         logFileOpt.getOptionVal<std::string>(argc, argv, customLogFile);

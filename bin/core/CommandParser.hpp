@@ -38,7 +38,7 @@ namespace command_parser
                         const std::string& longArg,
                         int& outValue,
                         bool required = false);
-                        
+
     /**
      * Parses an unsigned integer option from command-line arguments.
      * @param argc[int] - Argument count.
@@ -86,5 +86,5 @@ namespace command_parser
                            const std::string& longArg,
                            std::string& outValue,
                            bool required = false);
-                          
+
 } // namespace command_parser

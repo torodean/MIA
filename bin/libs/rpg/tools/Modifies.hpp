@@ -88,7 +88,7 @@ namespace rpg
         std::string targetName;    ///< Name of the target object (e.g., "Health").
         ModifyType modifyType;     ///< Type of modification (e.g., ADD_MAX, MULTIPLY, SET).
         double modifyValuePer;     ///< Value applied. Potentially per unit (e.g., 5 per point of attribute).
-        
+
         /// How this modifier combines with others on the target.
         ModifierStackPolicy stackPolicy{ModifierStackPolicy::REPLACE}; 
 

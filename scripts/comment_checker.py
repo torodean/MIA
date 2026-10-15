@@ -29,13 +29,13 @@ def check_file_header(file_path, lines):
     """
     Check if the file has a proper header with @file and @author, and replace 'File:' with 
     '@file', 'Author:' with '@author', and 'Date:' or 'Created on:' with '@date' if found.
-    
+
     This function scans the file for a header comment starting with '/**' and ending with 
     '*/'. It checks for the presence of '@file' followed by the file name and '@author' 
     followed by a name. If 'File:' or 'Author:' are found, they are replaced with '@file' 
     and '@author', respectively, and the changes are saved to the file. Modified lines are 
     printed in green text.
-    
+
     @param file_path The path to the file being checked.
     @param lines The list of lines in the file.
     @return A list of strings describing any issues found with the header.
@@ -45,7 +45,7 @@ def check_file_header(file_path, lines):
     file_name = os.path.basename(file_path)
     modified = False
     modified_lines = lines.copy()  # Create a copy to modify
-    
+
     for i, line in enumerate(lines, 1):
         if line.rstrip('\n').startswith("/**"):
             header_found = True
@@ -55,10 +55,10 @@ def check_file_header(file_path, lines):
                 header_lines.append(lines[i-1].rstrip('\n'))
                 i += 1
             header_lines.append(lines[i-1].rstrip('\n'))  # Include the closing '*/'
-            
+
             header_text = " ".join(header_lines)
             original_header = header_lines.copy()
-            
+
             # Check and replace 'File:' with '@file'
             for j, h_line in enumerate(header_lines):
                 if re.search(r"File:\s*" + re.escape(file_name), h_line, re.IGNORECASE):
@@ -67,7 +67,7 @@ def check_file_header(file_path, lines):
                     modified = True
                 elif re.search(r"File:", h_line, re.IGNORECASE):
                     issues.append(f"{file_path}:{header_start_idx + j + 1}: Incorrect file name in '@file' (expected '@file {file_name}')")
-            
+
             # Normalize @file:, @author:, @date: → remove colon (with or without space)
             for j, h_line in enumerate(header_lines):
                 updated_line = re.sub(r"(@file|@date|@author)\s*:", r"\1", h_line)
@@ -75,14 +75,14 @@ def check_file_header(file_path, lines):
                     header_lines[j] = updated_line
                     modified_lines[header_start_idx + j] = updated_line + "\n"
                     modified = True
-        
+
             # Check and replace 'Author:' with '@author'
             for j, h_line in enumerate(header_lines):
                 if re.search(r"Author:\s*[\w\s]+", h_line, re.IGNORECASE):
                     header_lines[j] = h_line.replace("Author:", "@author")
                     modified_lines[header_start_idx + j] = header_lines[j] + "\n"
                     modified = True
-                    
+
             date_patterns = [r"Creation date:", r"Date:", r"Created on:"]
             date_regex = re.compile(r"(" + "|".join(date_patterns) + r")\s*(.+)", re.IGNORECASE)
 
@@ -95,37 +95,37 @@ def check_file_header(file_path, lines):
                     header_lines[j] = date_regex.sub(r"@date \2", h_line)
                     modified_lines[header_start_idx + j] = header_lines[j] + "\n"
                     modified = True
-            
+
             # Re-check header after modifications
             header_text = " ".join(header_lines)
             if not re.search(r"@file\s+" + re.escape(file_name), header_text, re.IGNORECASE):
                 issues.append(f"{file_path}:{header_start_idx + 1}: Missing or incorrect @file in header (expected '@file {file_name}')")
             if not re.search(r"@author\s+[\w\s]+", header_text, re.IGNORECASE):
                 issues.append(f"{file_path}:{header_start_idx + 1}: Missing @author in header")
-            
+
             # Print modified lines in green
             if modified:
                 print(termcolor.colored(f"Modified {file_path}:", "green"))
                 for j, (orig, new) in enumerate(zip(original_header, header_lines)):
                     if orig != new:
                         print(termcolor.colored(f"Line {header_start_idx + j + 1}: {orig} -> {new}", "green"))
-                
+
                 # Write modified lines back to the file
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.writelines(modified_lines)
-            
+
             break
-    
+
     if not header_found:
         issues.append(f"{file_path}:1: No header comment found")
-    
+
     return issues
 
 
 def is_docstring_start(line):
     """
     Check if a line starts a docstring.
-    
+
     @param line The line to check.
     @return True if the line starts a docstring, False otherwise.
     """
@@ -135,7 +135,7 @@ def is_docstring_start(line):
 def is_docstring_end(line):
     """
     Check if a line ends a docstring.
-    
+
     @param line The line to check.
     @return True if the line ends a docstring, False otherwise.
     """
@@ -145,38 +145,38 @@ def is_docstring_end(line):
 def is_method_declaration(line):
     """
     Check if a line is a method declaration.
-    
+
     Identifies method signatures by looking for a word followed by '()'. The word(s) 
     before the method name are assumed to be the return type (if present). Parameters 
     are parsed as pairs of words (type, name) separated by commas, handling multi-word 
     types like char*[]. Supports constructors, destructors, and methods with const, 
     override, final, or = default qualifiers.
-    
+
     @param line The line to check.
     @return (bool, str, str) indicating if it's a method, the return type (or 
         empty for constructors/destructors), and the full signature.
     """
     stripped = line.strip()
-    
+
     # Split the line into words, preserving parentheses and commas
     words = stripped.replace('(', ' ( ').replace(')', ' ) ').replace(',', ' , ').split()
-    
+
     # Find the method name: a word followed by ( or ()
     method_name_idx = -1
     for i, word in enumerate(words):
         if word == '(' and i > 0:
             method_name_idx = i - 1
             break
-    
+
     if method_name_idx == -1 or words[method_name_idx + 1] != '(':
         return False, "", ""
-    
+
     method_name = words[method_name_idx]
-    
+
     # Check if it's a destructor or constructor (no return type)
     is_destructor = method_name.startswith('~')
     is_constructor = method_name_idx > 0 and words[method_name_idx - 1].endswith('::') and words[method_name_idx - 1].replace('::', '') == method_name
-    
+
     # Extract return type (word(s) before method name, if not constructor/destructor)
     return_type = ""
     if not (is_destructor or is_constructor):
@@ -186,13 +186,13 @@ def is_method_declaration(line):
                 break
             return_type_words.insert(0, words[i])
         return_type = ' '.join(return_type_words) if return_type_words else ""
-    
+
     # Extract parameters between ( and )
     param_start_idx = method_name_idx + 1
     param_end_idx = words.index(')', param_start_idx) if ')' in words[param_start_idx:] else -1
     if param_end_idx == -1:
         return False, "", ""
-    
+
     params = []
     i = param_start_idx + 1
     while i < param_end_idx:
@@ -210,7 +210,7 @@ def is_method_declaration(line):
                 break
         else:
             break
-    
+
     # Reconstruct the signature up to the end of the declaration
     signature_end_idx = param_end_idx + 1
     while signature_end_idx < len(words) and words[signature_end_idx] in ('const', 'override', 'final', '= default'):
@@ -218,18 +218,18 @@ def is_method_declaration(line):
     signature = ' '.join(words[:signature_end_idx]).replace(' , ', ', ').replace(' ( ', '(').replace(' ) ', ')')
     if stripped.endswith(';') or stripped.endswith('}'):
         signature += stripped[-1]
-    
+
     # Verify it's a method (has () and reasonable structure)
     if '(' not in signature or ')' not in signature:
         return False, "", ""
-    
+
     return True, return_type, signature
 
 
 def extract_parameter_types(signature):
     """
     Extract parameter types from a method signature.
-    
+
     @param signature The method signature.
     @return A list of parameter types.
     """
@@ -261,7 +261,7 @@ def extract_parameter_types(signature):
 def format_colored_signature(signature, return_type, param_types):
     """
     Format a method signature with line number in blue and types in red.
-    
+
     @param signature The method signature.
     @param return_type The return type of the method.
     @param param_types List of parameter types.
@@ -279,12 +279,12 @@ def format_colored_signature(signature, return_type, param_types):
 def extract_methods_and_docstrings(lines):
     """
     Extract methods and their preceding docstrings from the lines.
-    
+
     This function parses the input lines to identify method declarations and their associated 
     docstrings. It prints each method's line number in blue and parameter/return types in red 
     as it processes them. Method declarations include class methods, inline methods, destructors, 
     and methods with override, final, or default qualifiers.
-    
+
     @param lines The list of lines from the file to parse.
     @return A list of dictionaries containing method info (docstring, method signature, 
         and line numbers).
@@ -318,7 +318,7 @@ def extract_methods_and_docstrings(lines):
                 in_method = True
                 method_start_line = i
                 method_lines = [stripped]
-                
+
                 # Print line number in blue, types in red
                 param_types = extract_parameter_types(signature)
                 colored_signature = format_colored_signature(signature, return_type, param_types)
@@ -346,10 +346,10 @@ def extract_methods_and_docstrings(lines):
 def extract_parameters(method):
     """
     Extract parameters from a method signature.
-    
+
     Parses the method signature to extract parameter names and types, handling complex types 
     like pointers and arrays.
-    
+
     @param method The method signature to parse.
     @return A list of tuples (param_type, param_name) for each parameter.
     """
@@ -357,11 +357,11 @@ def extract_parameters(method):
     param_match = re.search(r"\(([^)]*)\)", method)
     if not param_match:
         return params
-    
+
     param_str = param_match.group(1).strip()
     if not param_str:
         return params
-    
+
     # Split parameters, handling types with spaces, pointers, and arrays
     param_list = []
     current_param = ""
@@ -377,24 +377,24 @@ def extract_parameters(method):
             elif char in ">]":
                 bracket_count -= 1
     params = [p.strip() for p in param_list if p.strip()]
-    
+
     result = []
     for param in params:
         param_parts = re.match(r"^(.*?[\w*]+(?:\s*\[\])?)\s+(\w+)\s*(?:=.*)?$", param)
         if param_parts:
             param_type, param_name = param_parts.groups()
             result.append((param_type.strip(), param_name))
-    
+
     return result
 
 
 def is_constructor(method, file_path):
     """
     Determine if a method is a constructor.
-    
+
     Checks if the method name matches the class name (ClassName::ClassName) or the file name 
     (for .hpp files).
-    
+
     @param method The method signature to check.
     @param file_path The path to the file containing the method.
     @return True if the method is a constructor, False otherwise.
@@ -403,11 +403,11 @@ def is_constructor(method, file_path):
     if not method_name_match:
         return False
     method_name = method_name_match.group(1)
-    
+
     # Check for ClassName::ClassName
     if re.search(r"(\w+)::\1\s*\(", method):
         return True
-    
+
     # Check if method name matches file name (for .hpp files, parameterless or not)
     file_name = file_path.split('/')[-1].replace('.hpp', '')
     param_match = re.search(r"\(([^)]*)\)", method)
@@ -459,40 +459,40 @@ def check_return_type(file_path, method, docstring_text, docstring_line):
 def check_docstrings(file_path, methods):
     """
     Check if methods in .hpp files have proper docstrings with @param and @return.
-    
+
     This function verifies that each method has a docstring, that all parameters are documented 
     with '@param name Description' where type matches the declared type, and that non-void, 
     non-constructor methods have '@return Description'. It skips docstring checks 
     for .cpp files and ignores constructors when checking for @return.
-    
+
     @param file_path The path to the file being checked.
     @param methods A list of dictionaries containing method info (docstring, method signature, 
     and line numbers).
     @return A list of strings describing any issues found with the docstrings.
     """
     issues = []
-    
+
     for method_info in methods:
         docstring = method_info["docstring"]
         method = method_info["method"]
         docstring_line = method_info["docstring_line"]
         method_line = method_info["method_line"]
-        
+
         if not docstring:
             issues.append(f"{file_path}:{method_line}: Method '{method}' has no docstring")
             continue
-        
+
         # Join docstring lines for easier regex processing
         docstring_text = " ".join(docstring)
-        
+
         # Extract and check parameters
         params = extract_parameters(method)
         issues.extend(check_parameters(file_path, method, docstring_text, docstring_line, params))
-        
+
         # Check return type if not a constructor
         if not is_constructor(method, file_path):
             issues.extend(check_return_type(file_path, method, docstring_text, docstring_line))
-    
+
     return issues
 
 
@@ -507,7 +507,7 @@ def has_pragma_once(file_path, lines):
     for i, line in enumerate(lines, 1):
         if line.strip() == "#pragma once":
             return []
-    
+
     red_msg = termcolor.colored("Missing '#pragma once' directive", 'red')
     return [f"{file_path}:1: {red_msg}"]
 
@@ -517,53 +517,53 @@ def check_files_in_directory(directory):
     """
     Check .cpp and .hpp files in the directory and subdirectories for header compliance, and .hpp 
     files for docstring compliance.
-    
+
     This function iterates through all .cpp and .hpp files in the specified directory and its 
     subdirectories. It checks file headers for proper '@file' and '@author' tags in all files, 
     and checks method docstrings for proper '@param' and '@return' tags in .hpp files only.
-    
+
     @param directory The directory to check for .cpp and .hpp files.
     @return A list of strings describing any issues found with headers or docstrings.
     """
     issues = []
-    
+
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith((".cpp", ".hpp")):
                 file_path = os.path.join(root, file)
                 with open(file_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
-                
+
                 # Check file header for all files
                 issues.extend(check_file_header(file_path, lines))
-                
+
                 # TODO - this doesn't quite work yet.
                 # Check docstrings only for .hpp files
                 if file_path.endswith('.hpp'):
                     issues.extend(has_pragma_once(file_path, lines))
                 #    methods = extract_methods_and_docstrings(lines)
                 #    issues.extend(check_docstrings(file_path, methods))
-    
+
     return issues
 
 
 def main():
     """
     Parse command-line arguments and check C++ files for docstring compliance.
-    
+
     This function uses argparse to accept a directory path as a command-line argument,
     then checks all .cpp and .hpp files in that directory and its subdirectories for
     proper docstrings and header comments.
-    
+
     @return Prints issues or a success message to the console.
     """
     parser = argparse.ArgumentParser(description="Check C++ files for proper docstrings and header comments.")
     parser.add_argument('-d', "--directory", nargs="?", default="./", 
                        help="Directory to check for .cpp and .hpp files (default: current directory)")
     args = parser.parse_args()
-    
+
     issues = check_files_in_directory(args.directory)
-    
+
     if issues:
         print("\nIssues found:")
         print("---------------")

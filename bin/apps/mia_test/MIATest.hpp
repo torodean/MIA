@@ -33,7 +33,7 @@ public:
 
     /// Default destructor.
     ~MIATest() = default;
-    
+
     /**
      * This will initialize this class by parsing command line arguments for configuration options
      * and then loading the config file if provided.
@@ -42,27 +42,27 @@ public:
      * @param argv Array of command line argument strings.
      */
     void initialize(int argc, char* argv[]) override;
-    
+
     /// Runs the MIATest application.
     int run() override;
-    
+
 protected:
 
     /**
      * Prints help info for optional config file.
      */
     void printHelp() const override;
-    
+
 private:
 
     /// Prints a list of the test cases.
     void printTestHelp();
-    
+
     /// A command option to print the various test cases.
     CommandOption testHelpOpt;
     /// A command option to optionally run a specific test.
     CommandOption testIndexOpt;
-    
+
     /// Storage for the command line index entered.
     int testIndexToRun{-1};
 

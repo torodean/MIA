@@ -25,7 +25,7 @@ namespace progress
          * Default constructor.
          */
         ProgressMarkers() = default;
-        
+
         /**
          * Gets the ProgressValue associated with the given identifier. If the data object is not found
          * in the objects map, a default constructed data object will be returned.
@@ -39,7 +39,7 @@ namespace progress
         ProgressValue& get(const std::string& name) override;
         ProgressValue& get(uint32_t id) override;
         ProgressValue& get(const ProgressMarker& progressMarker) override;
-        
+
         /**
          * Adds a specified progress marker to the container.
          * Overloads allow adding by ProgressMarker object, progress marker ID, or progress marker name.
@@ -65,7 +65,7 @@ namespace progress
         void remove(const std::string& name);
         void remove(uint32_t id);
         void remove(const ProgressMarker& progressMarker);
-        
+
         /**
          * Updates a specified value of a progress marker.
          * Overloads allow updating by ProgressMarker object, progress marker ID, or progress marker name.
@@ -98,7 +98,7 @@ namespace progress
          * @param os The output stream to write to (defaults to std::cout).
          */
         void dump(std::ostream& os = std::cout) const override;
-        
+
         /**
          * Serializes the contents of the ProgressMarkers to a compact string.
          * The serialized format is enclosed between unique [PROGRESS_BEGIN] and [PROGRESS_END] markers
@@ -109,7 +109,7 @@ namespace progress
          * @return A string representing the serialized state of the container.
          */
         std::string serialize() const override;
-        
+
         /**
          * Deserializes a ProgressMarkers from a string containing serialized data.
          * The method searches for a block enclosed between [PROGRESS_BEGIN] and [PROGRESS_END],
@@ -122,5 +122,5 @@ namespace progress
         static ProgressMarkers deserialize(const std::string& data);
 
     }; // class ProgressMarkers
-    
+
 } // namespace progress

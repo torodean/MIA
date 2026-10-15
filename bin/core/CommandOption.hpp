@@ -39,7 +39,7 @@ public:
         STRING_OPTION,        ///< std::string
         UNKNOWN_OPTION        ///< unknown type
     };
-    
+
     /**
      * Constructs a CommandOption with specified short option, long option, description, and option type.
      * @param shortArg[const std::string&] - Short form of the option (e.g., "-c").
@@ -74,7 +74,7 @@ public:
         else
             return "  " + shortArg + ", " + longArg + std::string(spaces, ' ') + description;
     }
-    
+
     /**
      * Templated method to retrieve the parsed command-line option value.
      * Dispatches to the correct command_parser method based on the template type.
@@ -149,10 +149,10 @@ private:
 
     /// Human-readable description of the command-line option, shown in help output.
     std::string description;
-    
+
     /// The type of command option value this argument expects.
     commandOptionType type;
-    
+
     // Is this command option required where it is used?
     bool requiredOption{false};
 };

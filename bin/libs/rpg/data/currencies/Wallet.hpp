@@ -27,7 +27,7 @@ namespace currency
          * Default constructor.
          */
         Wallet() = default;
-        
+
         /**
          * Gets the CurrencyQuantity associated with the given identifier. If the data object is not found
          * in the objects map, a default constructed data object will be returned.
@@ -41,7 +41,7 @@ namespace currency
         CurrencyQuantity& get(const std::string& name) override;
         CurrencyQuantity& get(uint32_t id) override;
         CurrencyQuantity& get(const Currency& currency) override;
-        
+
         /**
          * Adds a specified currency to the container.
          * Overloads allow adding by Currency object, currency ID, or currency name.
@@ -68,7 +68,7 @@ namespace currency
         void remove(const std::string& name);
         void remove(uint32_t id);
         void remove(const Currency& currency);
-        
+
         /**
          * Updates a specified quantity of a currency.
          * Overloads allow updating by Currency object, currency ID, or currency name.
@@ -101,7 +101,7 @@ namespace currency
          * @param os The output stream to write to (defaults to std::cout).
          */
         void dump(std::ostream& os = std::cout) const override;
-        
+
         /**
          * Serializes the contents of the Wallet to a compact string.
          * The serialized format is enclosed between unique [WALLET_BEGIN] and [WALLET_END] markers
@@ -112,7 +112,7 @@ namespace currency
          * @return A string representing the serialized state of the container.
          */
         std::string serialize() const override;
-        
+
         /**
          * Deserializes a Wallet from a string containing serialized data.
          * The method searches for a block enclosed between [WALLET_BEGIN] and [WALLET_END],
@@ -125,5 +125,5 @@ namespace currency
         static Wallet deserialize(const std::string& data);
 
     }; // class Wallet
-    
+
 } // namespace currency

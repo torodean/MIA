@@ -43,9 +43,9 @@ namespace config
                 break;
         }
     }
-    
+
     MIAConfig::~MIAConfig() = default;
-    
+
     void MIAConfig::setConfigFileName(const std::string& configFile, constants::ConfigType type, bool verboseMode)
     {
         configFileName = configFile;
@@ -60,7 +60,7 @@ namespace config
         }
         reload(verboseMode);
     }
-    
+
     void MIAConfig::initialize(bool verboseMode)
     {
         // Check if the configuration file has been set.
@@ -79,10 +79,10 @@ namespace config
         {
             configFileFullPath = paths::getDefaultConfigDirToUse() + "/" + configFileName;
         }
-        
+
         configData->load(configFileFullPath, verboseMode);
     }
-    
+
     constants::ConfigType MIAConfig::getConfigType() const
     {
         return configData->getType();

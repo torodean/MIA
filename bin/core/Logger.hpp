@@ -96,7 +96,7 @@ namespace logger
     class Logger
     {
     public:
-    
+
         /**
          * @brief Default constructor for Logger. This will initialize the log file name
          * to DEFAULT_LOG_FILE.
@@ -105,7 +105,7 @@ namespace logger
          * Ensures that logging is ready to use immediately after construction.
          */
         Logger();
-        
+
         /**
          * Construct a Logger with a specific log file name. This will open the log file 
          * as logStream to use for logging.
@@ -135,7 +135,7 @@ namespace logger
          */
         void log(const std::string& message,
                  bool verbose = false) const;        
-                 
+
         /**
          * Log a message using the Logger's current log file.
          * Optionally prints the message to stdout if verbose is true.
@@ -170,7 +170,7 @@ namespace logger
          * @return The current log file name.
          */
         std::string getLogFile() const;
-        
+
         /**
          * Sets the optional applicationName variable to be prepended to logs. When this is
          * set, the log messages will be prepended with the application name. To disable this
@@ -179,25 +179,25 @@ namespace logger
          * timestamp) surrounded by brackets (i.e., <timestamp> [appName]: logMessage).
          */
         void setApplicationName(const std::string& appName);
-        
+
         /**
          * Clears the applicationName.
          */
         void clearApplicationName();
 
     private:
-    
+
         /// The log file for this object. This can be a full path or just a file name.
         std::string currentLogFileName;
         /// The full path to the log file. This is auto-set in openLogFile()
         std::string currentLogFileFullPath;
-        
+
         /**
          * The optional application name to tag log messages with. When this is set via 
          * setApplicationName(), the app name will appear attached to the log messages.
          */
         std::string applicationName;
-        
+
         /**
          * Output file stream used for writing log messages.
          * Declared mutable to allow logging from const methods without altering the logical state.
@@ -213,6 +213,6 @@ namespace logger
          * @see paths::getDefaultLogDirToUse()
          */
         void openLogFile();
-        
+
     }; // class Logger
 } // namespace logger

@@ -29,7 +29,7 @@ public:
 
     /// Default destructor.
     ~RPGFiddler() = default;
-    
+
     /**
      * This will initialize this class by parsing command line arguments for configuration options
      * and then loading the config file if provided.
@@ -38,7 +38,7 @@ public:
      * @param argv Array of command line argument strings.
      */
     void initialize(int argc, char* argv[]) override;
-    
+
     /// Runs the RPGFiddler application.
     int run() override;
 

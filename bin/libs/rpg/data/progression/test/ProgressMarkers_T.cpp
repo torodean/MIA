@@ -67,7 +67,7 @@ namespace progress
     {
         ProgressMarkers markers;
         markers.add("Quest1", 100);
-        
+
         ProgressValue& valueByName = markers.get("Quest1");
         EXPECT_EQ(valueByName.get(), 100) << "get by name should return correct value";
 
@@ -87,7 +87,7 @@ namespace progress
     TEST_F(ProgressMarkers_T, AddMethods)
     {
         ProgressMarkers markers;
-        
+
         markers.add("Quest1", 50);
         EXPECT_EQ(markers.get("Quest1").get(), 50) << "add by name should set initial value";
 
@@ -174,8 +174,8 @@ namespace progress
         EXPECT_TRUE(output.find("Quest1") != std::string::npos) << "Dump should contain Quest1 name";
         EXPECT_TRUE(output.find("Quest2") != std::string::npos) << "Dump should contain Quest2 name";
     }
-    
-    
+
+
     /*
      * Tests the serialize and deserialize methods.
      */
@@ -195,8 +195,8 @@ namespace progress
         EXPECT_EQ(deserialized.get("Quest1").get(), 100) << "deserialize should restore Quest1 value";
         EXPECT_EQ(deserialized.get("Quest2").get(), 200) << "deserialize should restore Quest2 value";
     }
-    
-    
+
+
     /*
      * Tests that the deserialize method fails when the markers are not found.
      */
@@ -205,15 +205,15 @@ namespace progress
         // No markers.
         std::string serialized = "2:200;1:100";
         ASSERT_THROW(ProgressMarkers::deserialize(serialized), error::MIAException);
-        
+
         // Only starting marker.
         serialized = "[PROGRESS_BEGIN]2:200;1:100";
         ASSERT_THROW(ProgressMarkers::deserialize(serialized), error::MIAException);
-        
+
         // Only ending marker.
         serialized = "2:200;1:100[PROGRESS_END]";
         ASSERT_THROW(ProgressMarkers::deserialize(serialized), error::MIAException);
-        
+
         // Both markers should succeed.
         serialized = "[PROGRESS_BEGIN]2:200;1:100[PROGRESS_END]";
         ASSERT_NO_THROW(ProgressMarkers::deserialize(serialized));

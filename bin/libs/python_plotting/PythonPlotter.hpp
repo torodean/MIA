@@ -34,7 +34,7 @@ namespace py_plotting
         white,
         gray
     };
-    
+
     /**
      * @brief Converts a predefined Color to its string representation.
      * @note Returns "Unknown" if an unsupported color is entered.
@@ -42,13 +42,13 @@ namespace py_plotting
      * @return The color name as a string.
      */
     std::string ColorToString(const Color color);
-    
+
     /**
      * The python plots can take a color by name or a hex-color code (string).
      * This variant will hold one or the other of those.
      */
     using PlotColor = std::variant<Color, std::string>;
-    
+
     /**
      * @brief Validates a hexadecimal color string.
      * @note Valid colors must begin with '#' and contain 3, 4, 6, or 8
@@ -57,7 +57,7 @@ namespace py_plotting
      * @return true if the string is a valid hexadecimal color, false otherwise.
      */
     bool validateColorString(const std::string& color);
-    
+
     /**
      * @brief Converts a plot color to the format expected by the Python plotting module.
      * @param color The plot color, either a predefined Color or a custom hexadecimal
@@ -65,7 +65,7 @@ namespace py_plotting
      * @return The color formatted as a string for use by the Python plotting module.
      */
     std::string getPythonFormattedColor(const PlotColor& color);
-    
+
     /**
      * The valid line styles of the python plots.
      */
@@ -76,7 +76,7 @@ namespace py_plotting
         dashed,   ///< Corresponds to python's '--' line style.
         dashdot   ///< Corresponds to python's '-.' line style.
     };
-    
+
     /**
      * @brief Converts a LineStyle to the corresponding Python line style string.
      * @note Returns "Unknown" if an unsupported type is entered.
@@ -84,7 +84,7 @@ namespace py_plotting
      * @return The Python-formatted line style string.
      */
     std::string getPythonFormattedLineStyle(const LineStyle style);
-    
+
     /**
      * Storage for metadata relevant for a line being plotted.
      * @tparam Type Numerical type of the data vectors.
@@ -191,7 +191,7 @@ namespace py_plotting
          */
         PythonPlotter();
         ~PythonPlotter() = default;
-        
+
         /**
          * @brief A simple method that just plots x vs y.
          * @note The vectors must be equal in size for this method to work.
@@ -207,7 +207,7 @@ namespace py_plotting
         {
             static_assert(std::is_arithmetic_v<Type>, 
                 "Data vector must contain a numerical type.");
-                
+
             if (x.size() != y.size())
                 return false;
 
@@ -217,7 +217,7 @@ namespace py_plotting
 
             return true;
         }
-        
+
         /**
          * @brief Plots one or more lines.
          * @note Each line is plotted against its own xValues, or against the
@@ -337,11 +337,11 @@ namespace py_plotting
 
         /// Enables verbose output in the python modules.
         void setVerboseOutput(bool val);           
-        
+
     private:
         /// The name of the python module which contains the plotting methods.
         std::string moduleName{"PythonPlotter"};
-        
+
         /**
          * The python module loader. This is constructed using the moduleName
          * set directly above and using the __FILE__ caller location since the

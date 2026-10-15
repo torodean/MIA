@@ -26,7 +26,7 @@ namespace currency
         EVENT,
         GEM,
      };
-     
+
      /**
      * Converts a string to a CurrencyType enum.
      * @param typeStr The string representation of the type.
@@ -36,7 +36,7 @@ namespace currency
     {
         std::string str = typeStr;
         std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-    
+
         if (str == "COIN") return CurrencyType::COIN;
         if (str == "FIAT") return CurrencyType::FIAT;
         if (str == "TOKEN") return CurrencyType::TOKEN;
@@ -44,7 +44,7 @@ namespace currency
         if (str == "GEM") return CurrencyType::GEM;
         return CurrencyType::UNKNOWN;
     }
-    
+
      /**
      * Converts a CurrencyType to an std::string.
      * @param type The string representation of the type.

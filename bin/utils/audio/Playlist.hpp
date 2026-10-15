@@ -106,12 +106,12 @@ namespace audio
          *         unchanged).
          */
         bool back();
-        
+
         /**
          * @brief Returns a const reference to the full list of tracks.
          */
         const std::vector<files::FileMetaData>& getTracks() const;
-        
+
         /**
          * @brief Returns the current track index.
          * @return The index of the track that is playing (or is next), or 0 if empty.

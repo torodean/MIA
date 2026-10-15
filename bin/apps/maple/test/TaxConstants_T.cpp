@@ -4,11 +4,11 @@
  * @date 08/20/2026
  * @brief Tests for the TaxConstants storage class and associated methods.
  */
- 
+
 #include <string>
 #include <filesystem>
 #include <limits>
- 
+
 #include <gtest/gtest.h>
 
 // Associated header to test.
@@ -40,30 +40,30 @@ namespace maple
             constants.taxBracketSingle = {0.0, 1000.0, 11000.0};
             constants.taxBracketMarried = {0.0, 2000.0, 22000.0};
             constants.taxRateBracket = {0.0, 0.10, 0.50};
-            
+
             testDataFolder = paths::getCppFileDirAtCompileTime(__FILE__) + "/test_files";
         }
-        
+
         void SetUp() override
         {
             // Construct and load the config from a test file.
             std::string configFile = testDataFolder + "/taxConstants.MIA";
-            
+
             ASSERT_TRUE(std::filesystem::exists(configFile))
                 << "Cannot find test config file at: " << configFile << std::endl;
             config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE);
             config.initialize();
         }
-        
+
         /**
          * A custom constants object with simplified values for testing.
          * These values are set in the constructor.
          */
         TaxRateConstants constants;
-        
+
         /// The folder location for the test data used by this file.
         std::string testDataFolder;
-        
+
         /// A config object for parsing a test config file.
         config::MIAConfig config;
     }; // class TaxConstants_T
@@ -85,8 +85,8 @@ namespace maple
         ASSERT_EQ(brackets[2].rate, 0.50);
         ASSERT_EQ(brackets[2].lowerBound, 11000.0);
     }
-    
-    
+
+
     /**
      * @brief This will test if the toTaxBrackets method correctly constructs a 
      * TaxBrackets object for a married filing status.
@@ -103,8 +103,8 @@ namespace maple
         ASSERT_EQ(brackets[2].rate, 0.50);
         ASSERT_EQ(brackets[2].lowerBound, 22000.0);
     }
-    
-    
+
+
     /**
      * @brief This will construct a TaxRateConstants from a config object (which is
      * constructed from a test file), then ensure that all of the values are set as expected.
@@ -116,7 +116,7 @@ namespace maple
         const std::vector<double> expectedSingle{0.0, 1000.0, inf};
         const std::vector<double> expectedMarried{0.0, 2000.0, inf};
         const std::vector<double> expectedRates{0.00, 0.10, 0.50};
-        
+
         // Create the constants and compare to what matches the file values.
         constants = createTaxRateConstantsFromConfig(config);
         ASSERT_EQ(constants.medicareTaxRate, 0.075);
@@ -129,8 +129,8 @@ namespace maple
         ASSERT_EQ(constants.standardDeductibleHeadOfHousehold, 15000.0);
         ASSERT_EQ(constants.standardDeductibleMarried, 20000.0);
     }
-    
-    
+
+
     /**
      * @brief This will construct a TaxRateConstants from a config object (which is
      * constructed from a test file), then ensure that all of the values are set as expected.
@@ -144,7 +144,7 @@ namespace maple
         const std::vector<double> expectedSingle{0.0, 2000.0, inf};
         const std::vector<double> expectedMarried{0.0, 4000.0, inf};
         const std::vector<double> expectedRates{0.00, 0.20, 0.70};
-        
+
         // Create the constants and compare to what matches the file values.
         constants = createTaxRateConstantsFromConfig(config, "_custom");
         ASSERT_EQ(constants.medicareTaxRate, 0.035);

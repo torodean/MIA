@@ -27,7 +27,7 @@ public:
 
     /// Default destructor.
     ~MIAWorkout() = default;
-    
+
     /**
      * This will initialize this class by parsing command line arguments for configuration options
      * and then loading the config file if provided.
@@ -36,7 +36,7 @@ public:
      * @param argv Array of command line argument strings.
      */
     void initialize(int argc, char* argv[]) override;
-    
+
     /// Runs the MIAWorkout.
     int run() override;
 
@@ -53,10 +53,10 @@ private:
      * Returns a workout generated based on the difficulty.
      */
     void generateWorkout();
-    
+
     /// The name of the defauilt config file that this class uses.
     std::string defaultConfigFile{"MIAWorkout.MIA"};
-    
+
     /// The configuration loader for this app.
     config::MIAConfig config;
 
@@ -65,10 +65,10 @@ private:
     CommandOption outputFileOpt;
     CommandOption difficultyOpt;
     CommandOption weeklyOpt;
-    
+
     /// The output file path.
     std::string workoutOutputFilePath{""};
-    
+
     /// The difficulty
     double difficulty{1.0};
     /// Whether or not to print an entire week of workouts.
@@ -79,7 +79,7 @@ private:
     double minNumOfExercises{3.0}, maxNumOfExercises{std::numeric_limits<double>::infinity()};
     /// The min and max number of exercises.
     double minNumOfSets{3.0}, maxNumOfSets{std::numeric_limits<double>::infinity()};
-    
+
     /// Load the configuration variables.
     void loadConfig();
 

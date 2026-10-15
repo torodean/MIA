@@ -25,7 +25,7 @@ namespace maple
                                                     bool printWarnings)
     {
         MapleMiscTaxValues taxValues;
-        
+
         try
         {
             taxValues.deductions = config.getDouble(prefix + "_deductions");
@@ -41,7 +41,7 @@ namespace maple
                           << " - " << prefix + "_addedexpenses"
                           << std::endl;
         }
-        
+
         return taxValues;
     }
 } // namespace maple

@@ -24,7 +24,7 @@ namespace progress
     public:
         /// Default constructor.
         ProgressMarker() = default;
-        
+
         /**
          * The main constructor for a ProgressMarker object.
          * @param name The name of the progress.
@@ -33,7 +33,7 @@ namespace progress
         ProgressMarker(uint32_t id,
                        const std::string& name, 
                        const std::string& description);
-        
+
         /**
          * Serializes the ProgressMarker object into a JSON representation.
          *
@@ -41,7 +41,7 @@ namespace progress
          *         and description.
          */
         nlohmann::json toJson() const override;
-        
+
         /**
          * Deserializes a ProgressMarker object from JSON.
          *
@@ -49,6 +49,6 @@ namespace progress
          * @return The constructed ProgressMarker object.
          */
         static ProgressMarker fromJson(const nlohmann::json& json);
-        
+
     }; // class ProgressMarker
 } // namespace progress

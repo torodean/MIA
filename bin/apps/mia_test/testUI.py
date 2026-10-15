@@ -73,7 +73,7 @@ def decrement():
     the button click to the C++ backend.
     """
     addEvent("decrement")
-    
+
 def closeUI():
     addEvent("stop")
     root.destroy()
@@ -187,7 +187,7 @@ def createUI():
         command=increment
     )
     plusButton.pack(side=tk.LEFT, padx=5)
-    
+
     # Handles when the window is deleted.
     root.protocol("WM_DELETE_WINDOW", closeUI)
 

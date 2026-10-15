@@ -2,7 +2,7 @@
  * @file MathUtils_T.cpp
  * @author Antonius Torode
  * @date 05/20/2025
- * @brief: Unit tests covering the methods in MathUtils.hpp
+ * @brief Unit tests covering the methods in MathUtils.hpp
  */ 
 
 #include <limits>
@@ -16,7 +16,9 @@
 
 namespace math
 {
-    // Test randomInt within bounds.
+    /*
+     * @brief Test randomInt within bounds.
+     */
     TEST(MathUtils, RandomIntWithinBounds) 
     {
         int min = 1, max = 100, seed = 42;
@@ -33,9 +35,11 @@ namespace math
             EXPECT_LE(val, max);
         }
     }
-    
-    
-    // Test randomInt returns consistent result with fixed seed and no time usage.
+
+
+    /*
+     * @brief Test randomInt returns consistent result with fixed seed and no time usage.
+     */
     TEST(MathUtils, RandomIntConsistentWithSeed) 
     {
         int seed = 123;
@@ -43,10 +47,10 @@ namespace math
         int val2 = randomInt(1, 100000, seed, false);
         EXPECT_EQ(val1, val2);
     }
-    
-    
+
+
     /*
-     * Tests that random values are not duplicated when using time.
+     * @brief Tests that random values are not duplicated when using time.
      */
     TEST(MathUtils, RandomIntNotDuplicated) 
     {
@@ -55,21 +59,21 @@ namespace math
         int val2 = randomInt(1, 100000, seed, true);
         EXPECT_NE(val1, val2);
     }
-    
-    
+
+
     /*
-     * Test that randomChance() works as expected;
+     * @brief Test that randomChance() works as expected;
      */
     TEST(MathUtils, randomChance)
     {
         // Border/edge cases.
         EXPECT_TRUE(randomChance(1.0));
         EXPECT_FALSE(randomChance(0.0));
-        
+
         // Error cases.
         EXPECT_THROW(randomChance(-0.1), error::MIAException);
         EXPECT_THROW(randomChance(1.1), error::MIAException);
-        
+
         /*
          * Normal use cases.
          * Since these are inherently variable/random, we can run a thousand times
@@ -92,7 +96,7 @@ namespace math
                 if (randomChance(static_cast<double>(j)/10.0))
                     chances[j]++; // Increment if a true was returned.
         }
-        
+
         for (size_t j=1; j<10; j++)
         { // Check the expected results.
             double sigma = std::sqrt( ( (j/10.0)*( 1.0-(j/10.0) ) ) / static_cast<double>(iterations) );
@@ -101,28 +105,33 @@ namespace math
             EXPECT_LE(chances[j], j*static_cast<double>(iterations)/10.0 + allowedVariance);
         }
     }
-    
-    
-    // Test roll function with simple valid inputs.
+
+
+    /*
+     * @brief Test roll function with simple valid inputs.
+     */
     TEST(MathUtils, RollSimpleDice) 
     {
         EXPECT_GE(roll("1d6"), 1);
         EXPECT_LE(roll("1d6"), 6);
-    
+
         EXPECT_GE(roll("2d4"), 2);
         EXPECT_LE(roll("2d4"), 8);
     }
-    
-    /* TODO - this method doesn't handle this currently.
-    // Test roll with invalid input should handle gracefully (depends on implementation, here just test no crash).
+
+
+    /*
+     * @brief Test roll with invalid input should throw.
+     */
     TEST(MathUtils, RollInvalidInput) 
     {
-        EXPECT_NO_THROW(roll("invalid"));
+        EXPECT_THROW(roll("invalid"), error::MIAException);
     }
-    */
-    
-    
-    // Test rolldXX returns values within expected range.
+
+
+    /*
+     * @brief Test rolldXX returns values within expected range.
+     */
     TEST(MathUtils, RolldXXRange) 
     {
         int seed = 99;
@@ -134,7 +143,7 @@ namespace math
             EXPECT_LE(val, sides);
         }
     }
-    
+
 
     /**
      * @brief Verifies saturatingAdd returns the normal sum for in-range inputs.
@@ -146,7 +155,7 @@ namespace math
         EXPECT_EQ(saturatingAdd(5, -10), -5);
         EXPECT_EQ(saturatingAdd(-5, -5), -10);
     }
-    
+
 
     /**
      * @brief Verifies saturatingAdd caps positive overflow at INT_MAX.
@@ -158,7 +167,7 @@ namespace math
         EXPECT_EQ(saturatingAdd(max - 5, 10), max);
         EXPECT_EQ(saturatingAdd(0, max), max);
     }
-    
+
 
     /**
      * @brief Verifies saturatingAdd caps negative overflow at INT_MIN.

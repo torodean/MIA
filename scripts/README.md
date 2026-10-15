@@ -7,6 +7,9 @@ This folder contains utility scripts used for managing, deploying, and maintaini
 ### `common.sh`
 Shared variables and platform detection sourced by the other scripts in this directory. Not meant to be run directly.
 
+### `empty_line_formatter.py`
+Recursively removes whitespace from otherwise empty lines in files. This script will parse a folder and all subfolders for empty lines throughout files. The files are specified by specific file extensions.
+
 ### `increment_version.py`
 Automatically increments the documentation and application's version number. Typically used as part of the release pipeline to ensure versioning consistency. This script is called when the commitAll.sh script in the top level directory is ran.
 

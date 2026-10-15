@@ -4,7 +4,7 @@
  * @date 08/16/2026
  * @brief This file implements various financial calculations.
  */
- 
+
 // Associated header file.
 #include "FinancialCalculations.hpp"
 
@@ -26,8 +26,8 @@ namespace maple
                                                                toTaxBrackets(constants, status),
                                                                deductible);
     }
-    
-    
+
+
     std::string cadenceToString(Cadence cadence)
     {
         switch (cadence)
@@ -38,8 +38,8 @@ namespace maple
             default:               return "Unknown";
         }
     }
-    
-    
+
+
     TaxOperationReturns annualToMonthly(const TaxOperationReturns& annual)
     {
         // Do nothing if it's already monthly.
@@ -48,7 +48,7 @@ namespace maple
         else if (annual.cadence == Cadence::Unknown)
             MIA_THROW(error::ErrorCode::Invalid_Parameter, 
                       "Invalid cadence when converting TaxOperationReturns!");
-            
+
         TaxOperationReturns monthly = annual;
 
         monthly.cadence = Cadence::Monthly;
@@ -80,7 +80,7 @@ namespace maple
                                                 const MapleMiscTaxValues& miscTaxValues)
     {
         TaxOperationReturns returns;
-        
+
         // Find the appropriate deductible value to use.
         double standardDeductible = 0.0;
         switch(miscTaxValues.filingStatus)
@@ -103,7 +103,7 @@ namespace maple
             returns.deductible = standardDeductible;
         else
             returns.deductible = miscTaxValues.deductions;            
-        
+
         returns.grossIncome = getTotalMoney(income, "all");
 
         // Pre-tax contributions come from expenses tagged "pretax" are monthly.
@@ -133,19 +133,19 @@ namespace maple
                                                                 federalConstants.medicareTaxRate);
         returns.oasdiTaxOwed = math::finance::getFlatRateTax(returns.grossIncome, 
                                                              federalConstants.oasdiTaxRate);
-        
+
         returns.totalIncomeEarned = returns.grossIncome; // TODO - delete this as it is now redundant.
         returns.totalTaxesOwed = returns.federalTaxesOwed + returns.stateTaxesOwed + 
                                  returns.medicareTaxOwed + returns.oasdiTaxOwed;
         returns.totalTakeHomeIncome = returns.grossIncome - returns.totalTaxesOwed;
-        
+
         std::vector<std::string> taxExpenseScopes = miscTaxValues.addedTaxExpenses;
         taxExpenseScopes.push_back("all");
         returns.yearlyExpenses = getTotalMoney(expenses, taxExpenseScopes) * 12.0;
         returns.estimatedSpedingMoney = returns.totalTakeHomeIncome - returns.yearlyExpenses;
         returns.estimatedSalesTaxToSpend = math::finance::getFlatRateTax(returns.estimatedSpedingMoney, 
                                                                          stateConstants.salesTax);
-        
+
         returns.cadence = Cadence::Annual;
         returns.initialized = true;
         return returns;
@@ -156,7 +156,7 @@ namespace maple
                                   std::ostream& stream)
     {
         std::string cadence = string_utils::toUpper(cadenceToString(returns.cadence));
-        
+
         // Sets the doubles at 2 decimal places.
         stream << std::fixed << std::setprecision(2);
 
@@ -175,7 +175,7 @@ namespace maple
                << std::right << std::setw(12) << returns.deductible << std::endl;
         stream << std::left  << std::setw(38) << "  Taxable Income:"
                << std::right << std::setw(12) << returns.taxableIncome << std::endl;
-               
+
         stream << "TAXES:" << std::endl;
         stream << std::left  << std::setw(38) << "  Total Taxes Owed:"
                << std::right << std::setw(12) << returns.totalTaxesOwed << std::endl;
@@ -187,11 +187,11 @@ namespace maple
                << std::right << std::setw(12) << returns.oasdiTaxOwed << std::endl;
         stream << std::left  << std::setw(38) << "   - State Taxes Owed:"
                << std::right << std::setw(12) << returns.stateTaxesOwed << std::endl;
-               
+
         stream << "SUMMARY:" << std::endl;
         stream << std::left  << std::setw(38) << "  Take-home Pay After Taxes:"
                << std::right << std::setw(12) << returns.totalTakeHomeIncome << std::endl;
-        
+
         stream << "SPENDING/SAVINGS:" << std::endl;
         stream << std::left  << std::setw(38) << "  Total Expenses:"
                << std::right << std::setw(12) << returns.yearlyExpenses << std::endl;

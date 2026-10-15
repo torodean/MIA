@@ -42,13 +42,13 @@ namespace paths
 {
     // Path to the main configuration directory when installed.
     inline const std::string SYSTEM_CONFIG_FILE_DIR = DEFAULT_SYSTEM_CONFIG_FILE_DIR;
-    
+
     // Path to the main configuration file when installed.
     inline const std::string SYSTEM_CONFIG_FILE = DEFAULT_SYSTEM_CONFIG_FILE;
-    
+
     // Path to the configuration directory located in the repo directory (for testing).
     inline const std::string REPO_CONFIG_FILE_DIR = DEFAULT_REPO_CONFIG_FILE_DIR;    
-    
+
     // Path to the configuration file from the repo directory (for testing).
     inline const std::string REPO_CONFIG_FILE = DEFAULT_REPO_CONFIG_FILE;
 
@@ -72,7 +72,7 @@ namespace paths
 
     // Path to the python module directory when installed.
     inline const std::string SYSTEM_PYTHON_DIR = PYTHON_INSTALL_LOCATION;
-    
+
     /**
      * @brief Retrieves the directory of the currently running executable.
      * For Linux:
@@ -98,7 +98,7 @@ namespace paths
         return path.substr(0, path.find_last_of('/'));
     #endif
     }
-    
+
     /**
      * @brief Get the directory of the cpp file this was called from at compile time.
      * 
@@ -115,9 +115,9 @@ namespace paths
     {
         std::size_t pos = thisFilesPath.find_last_of('/');
         return (pos == std::string::npos) ? "" : thisFilesPath.substr(0, pos);
-         
+
     }
-    
+
     /**
      * Determines whether the application is running from a system-installed location
      * or from the repository (development/testing) directory.
@@ -145,7 +145,7 @@ namespace paths
 
         return std::mismatch(installPath.begin(), installPath.end(), execPath.begin()).first == installPath.end();
     }
-    
+
     /**
      * Returns the default configuration directory path based on the runtime context.
      *
@@ -175,7 +175,7 @@ namespace paths
             }
         }
     }    
-    
+
     /**
      * Returns the default log directory path based on the runtime context.
      *
@@ -235,7 +235,7 @@ namespace paths
 
         return getCppFileDirAtCompileTime(thisFilesPath);
     }
-	
+
 #if defined(__CYGWIN__)
     /**
      * @brief Converts a Cygwin path to a Windows path.

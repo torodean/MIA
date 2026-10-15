@@ -25,7 +25,7 @@ namespace currency
     std::string Currency::getIconArt() const { return iconArt; }
     bool Currency::isTradeable() const { return tradeable; }
     CurrencyType Currency::getCurrencyType() const { return type; }
-    
+
 
     nlohmann::json Currency::toJson() const
     {

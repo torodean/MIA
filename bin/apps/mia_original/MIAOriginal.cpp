@@ -68,7 +68,7 @@ void MIAOriginal::initialize(int argc, char* argv[])
 void MIAOriginal::printHelp() const
 {
     MIAApplication::printHelp();
-    
+
     // This is a dump of the help messages used by the various command options.
     cout << "MIAOriginal specific options:" << endl
               << defaultCommandOpt.getHelp() << endl
@@ -103,7 +103,7 @@ void MIAOriginal::printSplash()
     cout << ".............................................................................." << endl;
     cout << "..." << endl;
     cout << "... Greetings! I am MIA.                                                   ..." << endl;
-    
+
 }
 
 
