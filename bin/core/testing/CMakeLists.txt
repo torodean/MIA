@@ -1,9 +1,9 @@
 # Create Testing_CORE.
 set( Testing_SRC
      TestingUtils.cpp )
-set( Testing_SRC
+set( Testing_INC
      TestingUtils.hpp )
-add_library( Testing_CORE ${Testing_SRC} ${Testing_SRC} )
+add_library( Testing_CORE ${Testing_SRC} ${Testing_INC} )
 target_link_libraries( Testing_CORE
                    PUBLIC                # Allows these to propogate upstream to tests.
                        Error_CORE        # For Error and Exception handling.

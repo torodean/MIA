@@ -2,130 +2,137 @@
  * @file FileUtils_T.cpp
  * @author Antonius Torode
  * @date 05/21/2025
- * Description: Unit tests for FileUtils methods using Google Test.
+ * @brief Unit tests for FileUtils methods using Google Test.
  */
 
-#include <gtest/gtest.h>
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
 #include <cstdio>  // for remove()
 
+#include <gtest/gtest.h>
+
 // Include the header we are testing methods for.
 #include "FileUtils.hpp"
+#include "TestingUtils.hpp"
 
-namespace fs = std::filesystem;
 
 namespace files
 {
+    /**
+     * @brief TODO
+     */
     class FileUtils_T : public ::testing::Test 
     {
     protected:
-        const std::string testFile = "testfile.txt";
-        const std::string copyFileName = "copyfile.txt";
+        std::string testFile;
+        const std::vector<std::string> fileLines = {"Line 1", "Line 2", "Line 3"};
 
         void SetUp() override 
         {
-            // Create a test file with known content
-            std::ofstream file(testFile);
-            file << "Line 1\nLine 2\nLine 3\n";
-            file.close();
+            // Create a test file with known content.
+            testFile = testing::createTempTestFile(fileLines);
         }
 
         void TearDown() override 
         {
-            // Cleanup test files
-            if (fs::exists(testFile)) fs::remove(testFile);
-            if (fs::exists(copyFileName)) fs::remove(copyFileName);
+            // Cleanup test files.
+            testing::removeFile(testFile);
         }
     }; // class FileUtils_T
 
-    // Helper: Create a temp file with given lines
-    static std::string createTempFile(const std::vector<std::string>& lines) 
-    {
-        std::string filename = "temp_test_file.txt";
-        std::ofstream ofs(filename);
-        for (const auto& line : lines) 
-        {
-            ofs << line << "\n";
-        }
-        ofs.close();
-        return filename;
-    }
 
-    // Helper: Remove temp file
-    static void removeTempFile(const std::string& filename) 
-    {
-        std::remove(filename.c_str());
-    }
-
+    /**
+     * @brief Tests that getRandomLineOfFile returns a line from the file.
+     */
     TEST_F(FileUtils_T, GetRandomLineOfFileReturnsLineFromFile) 
     {
         std::vector<std::string> lines = {"Line1", "Line2", "Line3", "Line4"};
-        std::string filename = createTempFile(lines);
+        std::string filename = testing::createTempTestFile(lines);
 
         std::string fileNameParam = filename;
         std::string line = getRandomLineOfFile(fileNameParam);
 
-        // The line returned should be one of the lines in the file
+        // The line returned should be one of the lines in the file.
         EXPECT_NE(std::find(lines.begin(), lines.end(), line), lines.end());
 
-        removeTempFile(filename);
+        testing::removeFile(filename);
     }
 
+
+    /**
+     * @brief TODO
+     */
     TEST_F(FileUtils_T, GetRandomLineOfFileEmptyFileReturnsError) 
     {
-        std::string filename = createTempFile({});
+        std::string filename = testing::createTempTestFile({});
 
         std::string fileNameParam = filename;
         std::string line = getRandomLineOfFile(fileNameParam);
 
         EXPECT_EQ(line, "ERROR");
 
-        removeTempFile(filename);
+        testing::removeFile(filename);
     }
 
+
+    /**
+     * @brief TODO
+     */
     TEST_F(FileUtils_T, PrintRandomLinesFromFilePrintsCorrectNumberOfLines) 
     {
         std::vector<std::string> lines = {"Alpha", "Bravo", "Charlie", "Delta"};
-        std::string filename = createTempFile(lines);
+        std::string filename = testing::createTempTestFile(lines);
 
-        // Redirect cout
+        // Redirect cout.
         std::stringstream buffer;
         std::streambuf* oldCoutBuf = std::cout.rdbuf(buffer.rdbuf());
 
         printRandomLinesFromFile(filename, 3);
 
-        // Restore cout
+        // Restore cout.
         std::cout.rdbuf(oldCoutBuf);
 
         std::string output = buffer.str();
 
-        // Check that output has at least 3 lines printed (3 random lines + 3 newlines)
+        // Check that output has at least 3 lines printed (3 random lines + 3 newlines).
         std::istringstream iss(output);
         std::string line;
         int lineCount = 0;
         while (std::getline(iss, line))
         {
             ++lineCount;
-            // Each line should be one of the original lines
+            // Each line should be one of the original lines.
             EXPECT_NE(std::find(lines.begin(), lines.end(), line), lines.end());
         }
         EXPECT_EQ(lineCount, 3);
 
-        removeTempFile(filename);
+        testing::removeFile(filename);
     }
 
+
+    /**
+     * @brief Tests that fileExists returns true for existing file.
+     */
     TEST_F(FileUtils_T, FileExistsTrue)
     {
         EXPECT_TRUE(fileExists(testFile));
     }
 
+
+    /**
+     * @brief Tests that fileExists returns false for non-existent file.
+     */
     TEST_F(FileUtils_T, FileExistsFalse)
     {
         EXPECT_FALSE(fileExists("nonexistentfile.txt"));
     }
 
+
+    /**
+     * @brief Tests that readAllLines reads all of the file lines correctly.
+     */
     TEST_F(FileUtils_T, ReadAllLines)
     {
         std::vector<std::string> lines = readAllLines(testFile);
@@ -135,6 +142,10 @@ namespace files
         EXPECT_EQ(lines[2], "Line 3");
     }
 
+
+    /**
+     * @brief Tests that writeLinesToFile overwrites the file and writes the lines.
+     */
     TEST_F(FileUtils_T, WriteLinesToFileAndReadBack)
     {
         std::vector<std::string> linesToWrite = {"A", "B", "C"};
@@ -147,6 +158,10 @@ namespace files
         EXPECT_EQ(linesRead[2], "C");
     }
 
+
+    /**
+     * @brief Tests that all lines appear in readEntireFile's output.
+     */
     TEST_F(FileUtils_T, ReadEntireFile)
     {
         std::string content = readEntireFile(testFile);
@@ -155,6 +170,10 @@ namespace files
         EXPECT_NE(content.find("Line 3"), std::string::npos);
     }
 
+
+    /**
+     * @brief Tests that appendLineToFile correctly appens a line to a file.
+     */
     TEST_F(FileUtils_T, AppendLineToFile)
     {
         appendLineToFile(testFile, "Line 4");
@@ -164,14 +183,23 @@ namespace files
         EXPECT_EQ(lines.back(), "Line 4");
     }
 
+
+    /**
+     * @brief Tests that countLinesInFile returns the correct number of lines for a test file.
+     */
     TEST_F(FileUtils_T, CountLinesInFile)
     {
         size_t lineCount = countLinesInFile(testFile);
         EXPECT_EQ(lineCount, 3);
     }
 
+
+    /**
+     * @brief Tests that copyFile works as it should by copying the file and its contents.
+     */
     TEST_F(FileUtils_T, CopyFileSuccess)
     {
+        const std::string copyFileName = "copiedTestfile.txt";
         bool copied = copyFile(testFile, copyFileName);
         EXPECT_TRUE(copied);
         EXPECT_TRUE(fileExists(copyFileName));
@@ -179,15 +207,25 @@ namespace files
         std::vector<std::string> original = readAllLines(testFile);
         std::vector<std::string> copiedLines = readAllLines(copyFileName);
         EXPECT_EQ(original, copiedLines);
+        testing::removeFile(copyFileName);
     }
 
+
+    /**
+     * @brief Tests that copyFile returns correctly for non-existent files.
+     */
     TEST_F(FileUtils_T, CopyFileFailure)
     {
+        const std::string copyFileName = "copiedTestfile.txt";
         bool copied = copyFile("nonexistentfile.txt", copyFileName);
         EXPECT_FALSE(copied);
         EXPECT_FALSE(fileExists(copyFileName));
     }
 
+
+    /**
+     * @brief Tests that deleteFile correctly can delete a file.
+     */
     TEST_F(FileUtils_T, DeleteFileSuccess)
     {
         EXPECT_TRUE(fileExists(testFile));
@@ -196,6 +234,10 @@ namespace files
         EXPECT_FALSE(fileExists(testFile));
     }
 
+
+    /**
+     * @brief Tests that deleteFile returns false when the file to delete does not exist.
+     */
     TEST_F(FileUtils_T, DeleteFileFailure)
     {
         bool deleted = deleteFile("nonexistentfile.txt");
