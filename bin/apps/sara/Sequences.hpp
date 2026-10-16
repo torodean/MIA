@@ -54,7 +54,7 @@ namespace sequences
         unsigned int keyCode{};              ///< A generic key code.
 
         /// Coordinates (for moving mouse). Also stores the range for the PRESSRANDNUM option.
-        math::Coordinate coords{};
+        math::Coordinate<int> coords{};
 
         /// Returns true if this is a valid action.
         bool isValid();
