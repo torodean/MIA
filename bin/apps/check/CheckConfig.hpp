@@ -49,6 +49,9 @@ namespace check
      * semi-colon (";") delimiter, and each element of the positions are separated
      * by a comma (",") delimiter. Each position expects a string of the format:
      * "<x-position>,<y-position>,<piece type>,<piece color>"
+     * @param input The input string to parse.
+     * @return A vector of PieceStartingPos objects constructed from the input.
+     * @throws MIAException if the string is malformed.
      */
     std::vector<PieceStartingPos> stringToStartingPosition(const std::string& input);
     
@@ -58,12 +61,15 @@ namespace check
      * to be converted to a string. Each position is converted to a string of the 
      * format: "<x-position>,<y-position>,<piece type>,<piece color>", and each
      * position is separated by a semi-colon (";") delimiter.
+     * @param positions A Vector of piece positions.
+     * @param A string representation of the piece positions.
      */
     std::string positionsToString(const std::vector<PieceStartingPos>& positions);
      
     /**
      * This will construct a CheckConfig object from the MIAConfig by pulling out
      * and parsing all necessary values.
+     * @throws MIAException for various malformed configuration components.
      */
     CheckConfig constructConfig(const config::MIAConfig& config);
 } // namespace check
