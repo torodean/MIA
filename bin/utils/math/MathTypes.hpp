@@ -2,8 +2,7 @@
  * @file MathTypes.hpp
  * @author Antonius Torode
  * @date 06/18/2025
- * Description: This file provides a collection of general types used for various
- *     mathematical purposes.
+ * @brief This file provides a collection of general types used for various mathematical purposes.
  */
 #pragma once
 
@@ -11,13 +10,18 @@ namespace math
 {
     /**
      * @brief Represents a 2D coordinate with named integer components.
+     * @tparam Type The type for each component of the coordinate.
      */
+    template<typename Type>
     struct Coordinate 
     {
+        // Default constructor.
+        Coordinate() = default;
+    
         /// Main constructor which takes and sets two integer coordinate values.
-        Coordinate(int x_val = 0, int y_val = 0) : x(x_val), y(y_val) {}
+        Coordinate(Type x_val, Type y_val) : x(x_val), y(y_val) {}
 
-        int x; ///< Storage for the X coordinate value.
-        int y; ///< Storage for the Y coordinate value.
+        Type x; ///< Storage for the X coordinate value.
+        Type y; ///< Storage for the Y coordinate value.
     };
 } // namespace math
