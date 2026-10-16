@@ -284,4 +284,10 @@ namespace string_utils
      */
     std::string zeroString(uint32_t length);
 
+    /**
+     * Converts a string to a uint8_t, validating the range (0 <= x < 256).
+     * @param input The input string to convert.
+     * @throws MIAException if the input is outside the valid range.
+     */
+    uint8_t stringToUint8(const std::string& input);
 } // namespace string_utils
