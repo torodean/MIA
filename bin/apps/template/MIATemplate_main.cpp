@@ -2,14 +2,12 @@
  * @file MIATemplate_main.cpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: This is the main executable file for the MIATemplate.
+ * @brief This is the main executable file for the MIATemplate.
  */
 
-#include <string>
-
-// The MIA Application Framework templates
+// The MIA Application Framework.
 #include "AppFramework.hpp"
-// The file containing the fishbot app.
+// The file containing the MIATemplate application class.
 #include "MIATemplate.hpp"
 
 MIA_MAIN(MIATemplate)
