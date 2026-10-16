@@ -35,7 +35,7 @@ namespace check
             
             for (std::string& part : parts)
             { // Trim any white space from the parts.
-                part = string_utils::trim(part)
+                part = string_utils::trim(part);
             }
 
             PieceStartingPos pos;
