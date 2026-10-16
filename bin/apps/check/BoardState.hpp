@@ -43,7 +43,7 @@ namespace check
          * @param rows The number of rows of the board.
          */
         BoardState(uint8_t columns, uint8_t rows);
-        
+
         /**
          * Determines whether a square is occupied or not.
          *
@@ -62,17 +62,17 @@ namespace check
          *         is not occupied.
          */
         std::optional<check::Piece> getPieceOnSquare(uint8_t xPos, uint8_t yPos) const;
-        
+
         /**
          * Returns whomever's turn it is in the current board state.
          */
         PlayerTurn whosTurnIsIt() const;
-        
+
         /**
          * Advance the turn to the next player.
          */
         void advanceTurn();
-        
+
         /**
          * @brief Moves the piece on one square to another square.
          *
@@ -163,7 +163,7 @@ namespace check
          * @param yPos The y-coordinate (row) of the input square.
          */
         uint16_t coordToIndex(uint8_t xPos, uint8_t yPos);
-    
+
         /// Stores which players turn it is. 
         PlayerTurn whosTurn{PlayerTurn::FirstPlayer};
 
