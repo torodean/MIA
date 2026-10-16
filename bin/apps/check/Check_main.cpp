@@ -10,4 +10,4 @@
 // The file containing the check application class.
 #include "Check.hpp"
 
-MIA_MAIN(Check)
+MIA_MAIN(check::Check)
