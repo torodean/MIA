@@ -16,70 +16,77 @@
 
 #include "Constants.hpp"
 
-Check::Check() : 
-    config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
-    configFileOpt("-c", "--config", "Specify a config file to use (default = " +
-                                paths::getDefaultConfigDirToUse() + defaultConfigFile,
-                                CommandOption::commandOptionType::STRING_OPTION)                      
-{ };
-
-
-void Check::initialize(int argc, char* argv[])
+namespace check
 {
-    try
-    {    
-        MIAApplication::initialize(argc, argv);
+    Check::Check() : 
+        config(defaultConfigFile, constants::ConfigType::KEY_VALUE),
+        configFileOpt("-c", "--config", "Specify a config file to use (default = " +
+                                    paths::getDefaultConfigDirToUse() + defaultConfigFile,
+                                    CommandOption::commandOptionType::STRING_OPTION)                      
+    { };
 
-        std::string configFile = defaultConfigFile;
-        configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
-        config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
-    }
-    catch (const error::MIAException& ex)
+
+    void Check::initialize(int argc, char* argv[])
     {
-        std::cerr << "Error during Check::initialize: " << ex.what() << std::endl;
+        try
+        {    
+            MIAApplication::initialize(argc, argv);
+
+            std::string configFile = defaultConfigFile;
+            configFileOpt.getOptionVal<std::string>(argc, argv, configFile);
+            config.setConfigFileName(configFile, constants::ConfigType::KEY_VALUE); // handles config.initialize().
+        }
+        catch (const error::MIAException& ex)
+        {
+            std::cerr << "Error during Check::initialize: " << ex.what() << std::endl;
+        }
+
+        loadConfig();
     }
 
-    loadConfig();
-}
 
-
-void Check::loadConfig()
-{
-    LOG_METHOD_CALL(); // Used for testing log file calls.
-    try
+    void Check::loadConfig()
     {
-        // Load configuration here.
-        // TODO - load config values.
+        try
+        { // Load configuration here.
+            configValues = constructConfig(config);
+            
+            /*
+             * The verboseMode can be overwridden from the config file. The desired behavior
+             * here is to enable verbose mode if it is on anywhere (command line or config).
+             */
+            configValues.verboseMode = configValues.verboseMode || getVerboseMode();
+        }
+        catch (error::MIAException& ex)
+        {
+            std::cerr << "Error loading in configuration file value(s): " << ex.what();
+            // TODO - rethrow here.
+        }
+
+        if (configValues.verboseMode)
+        { // Optionally print the config values after it is loaded.
+            config.dumpConfigMap();
+        }
     }
-    catch (error::MIAException& ex)
+
+
+    void Check::printHelp() const
     {
-        std::cerr << "Error loading in configuration file value(s): " << ex.what();
-        // TODO - rethrow here.
+        MIAApplication::printHelp();
+
+        // This is a dump of the help messages used by the various command options.
+        std::cout << "Check specific options:" << std::endl
+                  << configFileOpt.getHelp() << std::endl
+                  << std::endl;
     }
 
-    // Optionally print the config values after it is loaded.
-    if (getVerboseMode())
-        config.dumpConfigMap();
-}
 
+    int Check::run()
+    {
+        std::cout << "Loading Check app!" << std::endl;
 
-void Check::printHelp() const
-{
-    MIAApplication::printHelp();
+        // TODO
 
-    // This is a dump of the help messages used by the various command options.
-    std::cout << "Check specific options:" << std::endl
-              << configFileOpt.getHelp() << std::endl
-              << std::endl;
-}
-
-
-int Check::run()
-{
-    LOG_METHOD_CALL(); // Used for testing log file calls.
-    std::cout << "Loading Check app!" << std::endl;
-
-    // TODO
-
-    return constants::SUCCESS;
-}
+        return constants::SUCCESS;
+    }
+} // namespace check
