@@ -10,16 +10,10 @@
 #include <optional>
 
 #include "MathTypes.hpp"
+#include "Piece.hpp"
 
 namespace check
 {
-    // Placeholder here until it's created.
-    struct Piece
-    {
-        PieceType type{PieceType::None};
-        Color color{Color::white};
-    };
-
     /**
      * This class represents the state of a single square on the game board.
      */
