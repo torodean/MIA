@@ -20,6 +20,9 @@
 
 // Include the core utilities for some re-defined methods.
 #include "BasicUtilities.hpp"
+// Used for error handling.
+#include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace string_utils
 {
@@ -411,5 +414,16 @@ namespace string_utils
             output[i] = '0';
         }
         return output;
+    }
+
+    uint8_t stringToUint8(const std::string& input)
+    {
+        const int value = std::stoi(input);
+        if (value < 0 || value > 255)
+		{
+			std::string err = "stringToUint8() input out of uint8_t range: " + input;
+            MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
+		}
+		return static_cast<uint8_t>(value);
     }
 } // namespace string_utils
