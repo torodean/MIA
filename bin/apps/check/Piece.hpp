@@ -48,11 +48,16 @@ namespace check
      */
     PieceType stringToPieceType(const std::string& type);
 
-    /// Defines an enum for the colors of pieces.
+    /**
+     * The order here matters. The players are assigned an index, and their
+     * colors correspond to that index. So player 1 = white, 2 = black, etc...
+     */
     enum class Color : uint8_t
     {
         White,      ///< The usual white color.
         Black,      ///< The usual black color.
+        Red,
+        Green,
     };
 
     /**
