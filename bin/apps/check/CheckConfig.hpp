@@ -59,11 +59,11 @@ namespace check
      * format: "<x-position>,<y-position>,<piece type>,<piece color>", and each
      * position is separated by a semi-colon (";") delimiter.
      */
-     std::string positionsToString(const std::vector<PieceStartingPos>& positions);
+    std::string positionsToString(const std::vector<PieceStartingPos>& positions);
      
-     /**
-      * This will construct a CheckConfig object from the MIAConfig by pulling out
-      * and parsing all necessary values.
-      */
-     CheckConfig constructConfig(const config::MIAConfig& config);
+    /**
+     * This will construct a CheckConfig object from the MIAConfig by pulling out
+     * and parsing all necessary values.
+     */
+    CheckConfig constructConfig(const config::MIAConfig& config);
 } // namespace check
