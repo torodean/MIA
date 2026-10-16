@@ -476,7 +476,7 @@ namespace string_utils
     /**
      * @brief Tests the zeroString method.
      */
-    TEST(D3CMath_T, zeroString)
+    TEST(StringUtilsTest, zeroString)
     {
         ASSERT_EQ(zeroString(5), "00000");
         ASSERT_EQ(zeroString(8), "00000000");
@@ -485,5 +485,37 @@ namespace string_utils
         // Check a large string.
         std::string zStr = zeroString(5678);
         ASSERT_EQ(zStr.size(), 5678);
+    }    
+
+
+	/**
+     * Covers the stringToUint8 method: valid inputs at the range boundaries, 
+	 * and every failure mode it should reject.
+     */
+    TEST(StringUtilsTest, StringToUint8)
+    {
+        // Valid values parse to the exact uint8_t value.
+        EXPECT_EQ(stringToUint8("0"), static_cast<uint8_t>(0));
+        EXPECT_EQ(stringToUint8("1"), static_cast<uint8_t>(1));
+        EXPECT_EQ(stringToUint8("42"), static_cast<uint8_t>(42));
+        EXPECT_EQ(stringToUint8("255"), static_cast<uint8_t>(255));
+
+        // Values below zero are rejected instead of wrapping.
+        EXPECT_THROW(stringToUint8("-1"), error::MIAException);
+
+        // Values above 255 are rejected instead of truncating.
+        EXPECT_THROW(stringToUint8("256"), error::MIAException);
+        EXPECT_THROW(stringToUint8("300"), error::MIAException);
+
+        // Non-numeric strings are rejected.
+        EXPECT_THROW(stringToUint8("abc"), error::MIAException);
+        EXPECT_THROW(stringToUint8(""), error::MIAException);
+
+        /*
+		 * Partially numeric strings are rejected, not silently truncated
+		 * to their leading digits by std::stoi.
+		 */
+        EXPECT_THROW(stringToUint8("12abc"), error::MIAException);
+        EXPECT_THROW(stringToUint8("1 2"), error::MIAException);
     }
 } // namespace string_utils

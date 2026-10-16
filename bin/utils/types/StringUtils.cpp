@@ -20,6 +20,9 @@
 
 // Include the core utilities for some re-defined methods.
 #include "BasicUtilities.hpp"
+// Used for error handling.
+#include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace string_utils
 {
@@ -311,7 +314,7 @@ namespace string_utils
     { 
         std::vector<int> outVec(inputStr.size());
 
-	    // converts string one into an array of integers.
+        // converts string one into an array of integers.
         for (std::size_t i=0; i<inputStr.size(); i++)
             outVec[i] = inputStr[i];
 
@@ -338,8 +341,8 @@ namespace string_utils
         std::size_t strSize = inputStr.size();
         output.resize(strSize);
 
-	    if(strSize == 0)
-		    return "";
+        if(strSize == 0)
+            return "";
 
         for(std::size_t i=0; i<strSize; i++)
             output[i] = inputStr[strSize-1-i];
@@ -411,5 +414,36 @@ namespace string_utils
             output[i] = '0';
         }
         return output;
+    }
+
+    uint8_t stringToUint8(const std::string& input)
+    {
+        /*
+         * The std::stoi method will parse strings that start with integers and stop
+         * once a non-numerical character is hit without throwing (e.g., "123abc" gets
+         * parsed as 123). This first checks that all input characters are digits so
+         * this is avoided.
+         */
+        if (!isDigits(input))
+        {
+            std::string err = "stringToUint8() input can only contain positive integers: " + input;
+            MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
+        }
+
+        int value = 0;
+        try
+        { // stoi throws for non numerical values or values out of int range.
+            value = std::stoi(input);
+        }
+        catch(const std::exception& ex)
+        {
+            MIA_THROW(error::ErrorCode::Invalid_Parameter, ex.what());
+        }
+        if (value < 0 || value > 255)
+        {
+            std::string err = "stringToUint8() input out of uint8_t range: " + input;
+            MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
+        }
+        return static_cast<uint8_t>(value);
     }
 } // namespace string_utils

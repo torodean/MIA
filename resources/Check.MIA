@@ -1,0 +1,27 @@
+#============================================================================
+# Name        : Check.MIA
+# Author      : Antonius Torode
+# Created on  : 10/16/2025
+# Description : MIA config for the CHECK application.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# Misc Options.
+verboseMode=true
+
+# Defines the board size.
+board_size_x=5
+board_size_y=6
+
+# Player state to start.
+number_of_players=2
+whos_turn_is_it=1
+
+# Starting board state (position).
+starting_state=0,0,king,white;4,5,king,black;4,0,queen,white;0,5,queen,black;0,1,pawn,white;1,1,pawn,white;2,1,pawn,white;3,1,pawn,white;4,1,pawn,white;0,4,pawn,black;1,4,pawn,black;2,4,pawn,black;3,4,pawn,black;4,4,pawn,black;2,0,knight,white;2,5,knight,black

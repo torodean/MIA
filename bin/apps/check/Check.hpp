@@ -10,59 +10,65 @@
 
 // Used for the configuration.
 #include "MIAConfig.hpp"
+#include "CheckConfig.hpp"
 // Used for common app setup.
 #include "MIAApplication.hpp"
 // Used for command options.
 #include "CommandOption.hpp"
 
 
-/**
- * The main application class for the Custom House-made Engine for Chess Knowledge (CHECK) app.
- * This class is intended to be used with the MIA_MAIN macro and satisfies MIA application
- * requirements. 
- */
-class Check : public MIAApplication
+namespace check
 {
-public:
-
     /**
-     * The main constructor of the Check class. This will construct the command options.
+     * The main application class for the Custom House-made Engine for Chess Knowledge (CHECK) app.
+     * This class is intended to be used with the MIA_MAIN macro and satisfies MIA application
+     * requirements. 
      */
-    Check();
+    class Check : public MIAApplication
+    {
+    public:
 
-    /// Default destructor.
-    ~Check() = default;
+        /**
+         * The main constructor of the Check class. This will construct the command options.
+         */
+        Check();
 
-    /**
-     * This will initialize this class by parsing command line arguments for configuration options
-     * and then loading the config file provided.
-     *
-     * @param argc Number of command line arguments.
-     * @param argv Array of command line argument strings.
-     */
-    void initialize(int argc, char* argv[]) override;
+        /// Default destructor.
+        ~Check() = default;
 
-    /// Runs the Check application.
-    int run() override;
+        /**
+         * This will initialize this class by parsing command line arguments for configuration options
+         * and then loading the config file provided.
+         *
+         * @param argc Number of command line arguments.
+         * @param argv Array of command line argument strings.
+         */
+        void initialize(int argc, char* argv[]) override;
 
-protected:
+        /// Runs the Check application.
+        int run() override;
 
-    /**
-     * Prints help info for optional config file.
-     */
-    void printHelp() const override;
+    protected:
 
-private:
+        /**
+         * Prints help info for optional config file.
+         */
+        void printHelp() const override;
 
-    /// The name of the defauilt config file that this class uses.
-    std::string defaultConfigFile{"Check.MIA"};
+    private:
 
-    /// The configuration loader for this app.
-    config::MIAConfig config;
+        /// The name of the defauilt config file that this class uses.
+        std::string defaultConfigFile{"Check.MIA"};
 
-    // Command options for this app.
-    CommandOption configFileOpt;
+        /// The configuration loader for this app.
+        config::MIAConfig config;
+        /// The configuration values for this application.
+        CheckConfig configValues;
 
-    /// Load the configuration variables.
-    void loadConfig();
-}; // class Check
+        // Command options for this app.
+        CommandOption configFileOpt;
+
+        /// Load the configuration variables.
+        void loadConfig();
+    }; // class Check
+} // namespace check
