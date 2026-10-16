@@ -427,7 +427,7 @@ namespace string_utils
         if (!isDigits(input))
         {
             std::string err = "stringToUint8() input can only contain positive integers: " + input;
-            MIA_THROW(error::ErrorCode::Invalid_Parameter, err));
+            MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
         }
 
         int value = 0;
