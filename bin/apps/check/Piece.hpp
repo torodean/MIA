@@ -27,13 +27,52 @@ namespace check
         Knight,     ///< The Knight.
         Rook,       ///< The Rook.
     }; // enum PieceType
-    
+
+    /**
+     * Converts a piece type into its string representation.
+     * @note This produces all-lowercase output.
+     * @param type The piece type to convert.
+     * @return The string representation of the piece type, matching the
+     *         enumerator name (e.g. PieceType::Knight becomes "knight").
+     *         PieceType::None becomes "none".
+     */
+    std::string pieceTypetoString(PieceType type);
+
+    /**
+     * Converts a string into a piece type. Matching is case insensitive,
+     * so "knight", "Knight", and "KNIGHT" all resolve to PieceType::Knight.
+     *
+     * @param type The string representation of a piece type.
+     * @return The matching piece type.
+     * @throws MIAException if the string does not match any piece type.
+     */
+    PieceType stringToPieceType(const std::string& type);
+
     /// Defines an enum for the colors of pieces.
     enum class Color : uint8_t
     {
         White,      ///< The usual white color.
         Black,      ///< The usual black color.
     };
+
+    /**
+     * Converts a color into its string representation.
+     * @note This produces all-lowercase output.
+     * @param color The color to convert.
+     * @return The string representation of the color, matching the
+     *         enumerator name (e.g. Color::White becomes "white").
+     */
+    std::string colorToString(Color color);
+
+    /**
+     * Converts a string into a color. Matching is case insensitive, so
+     * "white", "White", and "WHITE" all resolve to Color::White.
+     *
+     * @param color The string representation of a color.
+     * @return The matching color.
+     * @throws MIAException if the string does not match any color.
+     */
+    Color stringToColor(const std::string& color);
 
     /**
      * This is a storage class to represent one piece. It is a highly
