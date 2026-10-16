@@ -287,7 +287,7 @@ namespace string_utils
     /**
      * Converts a string to a uint8_t, validating the range (0 <= x < 256).
      * @param input The input string to convert.
-     * @throws MIAException if the input is outside the valid range.
+     * @throws MIAException if the input is outside the valid range or not a number.
      */
     uint8_t stringToUint8(const std::string& input);
 } // namespace string_utils
