@@ -18,16 +18,10 @@
 
 #include "MathTypes.hpp"
 #include "SquareState.hpp"
+#include "PlayerState.hpp"
 
 namespace check
 {
-    /// Enum to store which player's turn it is.
-    enum class PlayerTurn
-    {
-        FirstPlayer,  ///< Represents it being the first player's turn.
-        SecondPlayer  ///< Represents it being the second player's turn.
-    };
-
     /**
      * This class represents the state of the entire game board. This is
      * a collection of SquareState objects, with one representing each square
@@ -66,12 +60,14 @@ namespace check
         /**
          * Returns whomever's turn it is in the current board state.
          */
-        PlayerTurn whosTurnIsIt() const;
+        uint8_t whosTurnIsIt() const;
 
         /**
          * Advance the turn to the next player.
+         * @param skipahead An optional value to skip-ahead. This is added to support
+         *        game variations with player/turn skips.
          */
-        void advanceTurn();
+        void advanceTurn(uint8_t skipAhead = 1);
 
         /**
          * @brief Moves the piece on one square to another square.
@@ -164,8 +160,8 @@ namespace check
          */
         uint16_t coordToIndex(uint8_t xPos, uint8_t yPos);
 
-        /// Stores which players turn it is. 
-        PlayerTurn whosTurn{PlayerTurn::FirstPlayer};
+        /// Stores the player state for this board configuration (e.g., whos turn it is). 
+        PlayerState playerState;
 
         /// Stores the x size of the board (number of columns).
         uint8_t xSize;
