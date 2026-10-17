@@ -36,7 +36,6 @@ top, so (0, 0) is the bottom-left square. This applies to event strings,
 board state strings, and every public method taking a col/row pair.
 """
 import tkinter as tk
-from PIL import Image, ImageTk
 
 #########################
 # CONFIGURATION VARIABLES
