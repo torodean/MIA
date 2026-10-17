@@ -80,4 +80,13 @@ namespace check
         out.startingPosition = stringToStartingPosition(config.getString("starting_state"));
         return out;
     }
+
+
+    std::vector<std::string> positionsToStateStrings(
+        const std::vector<PieceStartingPos>& positions)
+    {
+        std::string stateStringWhole = positionsToString(positions);
+        std::vector<std::string> output = string_utils::delimiterString(stateStringWhole, ';');
+        return output;
+    }
 } // namespace check

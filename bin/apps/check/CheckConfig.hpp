@@ -71,5 +71,16 @@ namespace check
      * and parsing all necessary values.
      * @throws MIAException for various malformed configuration components.
      */
-    CheckConfig constructConfig(const config::MIAConfig& config);
+    CheckConfig constructConfig(const config::MIAConfig& config);    
+    
+    /**
+     * Converts a CheckConfig into a vector of state strings. Each state string is
+     * of the format "<x-position>,<y-position>,<piece type>,<piece color>". These
+     * state strings are what the setBoardState(cells) method in the python module
+     * expects.
+     * @param input The input CheckConfig to parse.
+     * @return A vector of strings constructed from the input.
+     */
+    std::vector<std::string> positionsToStateStrings(
+        const std::vector<PieceStartingPos>& positions);
 } // namespace check

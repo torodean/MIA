@@ -256,18 +256,23 @@ def validateCell(r, c, pieceType):
 def createUI(rows, cols):
     """
     Creates the UI with an empty rows x cols board.
-    @param rows The number of rows (n).
     @param cols The number of columns (m).
+    @param rows The number of rows (n).
     """
+    if verboseMode:
+        print(f"Creating UI of size {cols} x {rows}")
+    
     global root, boardUI, uiEvents
     if root is not None:
         root.destroy()
     root = tk.Tk()
-    root.title("CHECK")
+    root.title("CHECK: Custom House-made Engine for Chess Knowledge")
     boardUI = ChessBoard(root, rows, cols)
     uiEvents = []
     # Handles when the window is deleted.
     root.protocol("WM_DELETE_WINDOW", closeUI)
+
+    root.update()
 
 
 def registerPiece(name, glyph):

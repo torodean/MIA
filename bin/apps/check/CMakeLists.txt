@@ -18,6 +18,7 @@ target_link_libraries( check
                        Py_UI_LIB      # For UI interfacing.
                        Math_UTIL      # For coordinate handling.
                        Types_UTIL     # For string manipulation and parsing.
+                       System_UTIL    # For timing.
                      )
 
 # Install the app.
