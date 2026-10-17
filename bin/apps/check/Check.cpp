@@ -27,7 +27,7 @@ namespace check
                                     paths::getDefaultConfigDirToUse() + defaultConfigFile,
                                     CommandOption::commandOptionType::STRING_OPTION),
         module(defaultModuleName, __FILE__),
-        listener(module, queue)
+        listener(module, queue, "getAllEvents", 10)
     { };
 
 
@@ -88,28 +88,43 @@ namespace check
 
     int Check::run()
     {
+        std::cout << "WARNING!! THIS APP IS IN DEV!" << std::endl;
         std::cout << "Loading Check app!" << std::endl;
 
         // Start the UI listener.
         listener.start();
         
+        // Set the python module settings.
         module.call("setVerbose", configValues.verboseMode);
-        module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
+        
+        // Create the UI.
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
+        
+        // Register pieces.
+        module.call("registerPiece", "knight", "\u265E");
+        
+        // Setup the starting board position.
+        module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
+        
+        // Update the UI with the board position.
+        module.call("updateUI");
         
         while (listener.isRunning())
         {
-            std::cout << "Listener is Running, sleeping for 1 second!" << std::endl;
-            timing::sleepSeconds(1);
-            listener.rethrowExceptionIfAny();
             // Read whatever events the listener has polled so far.
-            ui::EventStorage storage = queue.getAllEvents();
+            storage = queue.getAllEvents();
 
             for (const ui::Event& event : storage.getEvents())
             {
                 // TODO - handle events here.
                 std::cout << "Event received: " << event.getName() << std::endl;
+                if (event.getName() == "stop")
+                { // Signals that the UI was exited.
+                    listener.stop();
+                    return constants::SUCCESS;
+                }
             }
+            listener.rethrowExceptionIfAny();
         }
         return constants::SUCCESS;
     }

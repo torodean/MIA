@@ -82,11 +82,13 @@ namespace check
          * The defaultModuleName is the default python ui module to use.
          * The PythonModule handles loading in the python UI.
          * The EventQueue stores events the UI produces.
+         * The EventStorage stores the events retreived from the queue.
          * The PythonUIListener handles monitoring and filling the UI queue.
          */
         std::string defaultModuleName{"check"};
         PythonModule module;
         ui::EventQueue queue;
+        ui::EventStorage storage;
         python_ui::PythonUIListener listener;
     }; // class Check
 } // namespace check

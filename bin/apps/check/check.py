@@ -4,30 +4,37 @@
 @author  Antonius Torode
 @date    10/15/2026
 
-Python UI for the Custom House-made Engine for Chess Knowledge (CHECK) board. 
+Python UI for the Custom House-made Engine for Chess Knowledge (CHECK)
+board.
 Used by the C++ backend through PythonModule.
 
-The UI renders an N x M board of square cells with labeled borders and supports
+The UI renders an N x M board of square cells with labeled borders and
+supports
 dragging pieces between squares. All game logic lives in the C++ backend:
 the UI never decides whether a move is legal. When a piece is dropped the UI
 snaps it back to its origin square and queues a drop event; the backend then
 calls movePiece() to make the move official.
 
 Event formats (the C++ side parses these):
-  Events (space-separated values, squares are 0-indexed row col):
-    "pickup <row> <col>"
-    "drop <fromRow> <fromCol> <toRow> <toCol>"
+   Events (space-separated values, squares are 0-indexed col row):
+    "pickup <col> <row>"
+    "drop <fromCol> <fromRow> <toCol> <toRow>"
     "stop"
-  Board state (one string per occupied cell, comma-separated):
-    "<row>,<col>,<type>,<color>"
-  Position methods accept and return lists of state strings. An empty list
-  is an empty board.
+   Board state (one string per occupied cell, comma-separated):
+    "<col>,<row>,<type>,<color>"
+   Position methods accept and return lists of state strings. An empty list
+   is an empty board.
 
 The polling listener calls getAllEvents() repeatedly. getAllEvents() pumps
 the tkinter event loop before returning, so the UI stays responsive as long
 as the backend keeps polling. updateUI() can also be called explicitly.
+
+Square coordinates use a cartesian layout with the origin at the
+bottom-left
+square. Columns (x) increase left to right and rows (y) increase bottom to
+top, so (0, 0) is the bottom-left square. This applies to event strings,
+board state strings, and every public method taking a col/row pair.
 """
-import copy
 import tkinter as tk
 
 #########################
@@ -57,7 +64,11 @@ BACKGROUND = "#EEEED2"
 uiEvents = []
 
 # Registered piece types mapped to their glyphs.
-glyphs = {"king": "\u265A", "queen": "\u265B", "pawn": "\u265F"}
+glyphs = {
+    "king": "\u265A",
+    "queen": "\u265B",
+    "pawn": "\u265F"
+}
 
 # The root window and the board widget. Both are None until createUI().
 root = None
@@ -85,12 +96,12 @@ class ChessBoard(tk.Frame):
     events via the module-level addEvent().
     """
 
-    def __init__(self, master, rows, cols):
+    def __init__(self, master, cols, rows):
         super().__init__(master)
         self.rows = rows
         self.cols = cols
-        self.board = [[None] * cols for _ in range(rows)]
-        self.pieceItems = [[None] * cols for _ in range(rows)]
+        self.board = [[None] * rows for _ in range(cols)]
+        self.pieceItems = [[None] * rows for _ in range(cols)]
         self.highlightItems = []
         self.drag = None
         width = cols * CELL + 2 * MARGIN
@@ -110,10 +121,13 @@ class ChessBoard(tk.Frame):
         """
         Draws the N x M grid of square cells.
         """
-        for r in range(self.rows):
-            for c in range(self.cols):
-                color = LIGHT if (r + c) % 2 == 0 else DARK
-                x0, y0 = self.origin(r, c)
+        if (verboseMode):
+            print("Drawing Board!")
+
+        for col in range(self.cols):
+            for row in range(self.rows):
+                color = LIGHT if (col + row) % 2 == 0 else DARK
+                x0, y0 = self.topLeftPixel(col, row)
                 self.canvas.create_rectangle(x0, y0, x0 + CELL, y0 + CELL, fill=color, outline="")
 
     def drawBorderLabels(self):
@@ -121,36 +135,42 @@ class ChessBoard(tk.Frame):
         Draws the labeled border: files (a, b, c, ...) below the columns
         and ranks (1, 2, 3, ...) to the left, counting up from the bottom.
         """
+        if (verboseMode):
+            print("Drawing border labels on board!")
+
         font = ("Segoe UI", int(CELL * 0.18))
-        for r in range(self.rows):
+        for row in range(self.rows):
             x = MARGIN - MARGIN // 2
-            y = MARGIN + r * CELL + CELL // 2
-            self.canvas.create_text(x, y, text=str(self.rows - r), fill=LABEL_FG, font=font)
-        for c in range(self.cols):
-            x = MARGIN + c * CELL + CELL // 2
+            y = MARGIN + row * CELL + CELL // 2
+            self.canvas.create_text(x, y, text=str(self.rows - row), fill=LABEL_FG, font=font)
+        for col in range(self.cols):
+            x = MARGIN + col * CELL + CELL // 2
             y = MARGIN + self.rows * CELL + MARGIN // 2
-            self.canvas.create_text(x, y, text=chr(ord("a") + c), fill=LABEL_FG, font=font)
+            self.canvas.create_text(x, y, text=chr(ord("a") + col), fill=LABEL_FG, font=font)
 
     def drawPieces(self):
         """
         Redraws every piece from the board data.
         """
-        for r in range(self.rows):
-            for c in range(self.cols):
-                if self.pieceItems[r][c] is not None:
-                    self.canvas.delete(self.pieceItems[r][c])
-                    self.pieceItems[r][c] = None
-        for r in range(self.rows):
-            for c in range(self.cols):
-                piece = self.board[r][c]
-                if piece is not None:
-                    self.pieceItems[r][c] = self.drawPiece(r, c, piece)
+        if (verboseMode):
+            print("Drawing pieces on board!")
 
-    def drawPiece(self, r, c, piece):
+        for col in range(self.cols):
+            for row in range(self.rows):
+                if self.pieceItems[col][row] is not None:
+                    self.canvas.delete(self.pieceItems[col][row])
+                    self.pieceItems[col][row] = None
+        for col in range(self.cols):
+            for row in range(self.rows):
+                piece = self.board[col][row]
+                if piece is not None:
+                    self.pieceItems[col][row] = self.drawPiece(col, row, piece)
+
+    def drawPiece(self, col, row, piece):
         """
         Draws one piece glyph at the center of a square.
         """
-        x, y = self.origin(r, c)
+        x, y = self.topLeftPixel(col, row)
         return self.canvas.create_text(
             x + CELL // 2, y + CELL // 2, text=glyphs[piece["type"]],
             font=("Segoe UI Symbol", int(CELL * 0.6)),
@@ -159,22 +179,22 @@ class ChessBoard(tk.Frame):
 
     # ----- geometry -----
 
-    def origin(self, r, c):
+    def topLeftPixel(self, col, row):
         """
-        Top-left pixel of a square.
+        Top-left pixel of a square. Row 0 is the bottom row.
         """
-        return (MARGIN + c * CELL, MARGIN + r * CELL)
+        return (MARGIN + col * CELL, MARGIN + (self.rows - 1 - row) * CELL)
 
     def squareAt(self, x, y):
         """
-        Converts pixel coordinates to a (row, col) square.
-        @return The (row, col) tuple, or None when off the board.
+        Converts pixel coordinates to a (col, row) square. Row 0 is the bottom row.
+        @return The (col, row) tuple, or None when off the board.
         """
         x -= MARGIN
         y -= MARGIN
         if not (0 <= x < CELL * self.cols and 0 <= y < CELL * self.rows):
             return None
-        return (int(y // CELL), int(x // CELL))
+        return (int(x // CELL), int(self.rows - 1 - y // CELL))
 
     # ----- mouse handling -----
 
@@ -187,14 +207,14 @@ class ChessBoard(tk.Frame):
         sq = self.squareAt(event.x, event.y)
         if sq is None or self.board[sq[0]][sq[1]] is None:
             return
-        r, c = sq
+        col, row = sq
         self.drag = {"from": sq}
-        addEvent(f"pickup {r} {c}")
+        addEvent(f"pickup {col} {row}")
         # Hide the piece on its square so it is not duplicated during
         # the drag; drawPieces() restores it if the drop is invalid.
-        self.canvas.delete(self.pieceItems[r][c])
-        self.pieceItems[r][c] = None
-        self.drag["item"] = self.drawPiece(r, c, self.board[r][c])
+        self.canvas.delete(self.pieceItems[col][row])
+        self.pieceItems[col][row] = None
+        self.drag["item"] = self.drawPiece(col, row, self.board[col][row])
         self.canvas.tag_raise(self.drag["item"])
 
     def onDrag(self, event):
@@ -234,45 +254,45 @@ def closeUI():
 # INTERNAL BOARD OPS
 #####################
 
-def validateCell(r, c, pieceType):
+def validateCell(col, row, pieceType=None):
     """
     Raises ValueError for an out-of-range square or unregistered type.
-    @param r The row.
-    @param c The column.
-    @param pieceType The piece type name.
+    @param col The column.
+    @param row The row.
+    @param pieceType The piece type name, or None to skip the type check.
     """
     if boardUI is None:
-        raise ValueError("UI not created; call createUI() first")
-    if not (0 <= r < boardUI.rows and 0 <= c < boardUI.cols):
-        raise ValueError(f"square ({r}, {c}) out of range")
-    if pieceType not in glyphs:
-        raise ValueError(f"unregistered piece type: '{pieceType}'")
+        raise ValueError("UI not created; call createUI() first.")
+    if not (0 <= col < boardUI.cols and 0 <= row < boardUI.rows):
+        raise ValueError(f"Square ({col}, {row}) out of range.")
+    if pieceType is not None and pieceType not in glyphs:
+        raise ValueError(f"Unregistered piece type: '{pieceType}'")
 
 
 ###############
 # C++ INTERFACE
 ###############
 
-def createUI(rows, cols):
+def createUI(cols, rows):
     """
-    Creates the UI with an empty rows x cols board.
+    Creates the UI with an empty cols x rows board.
     @param cols The number of columns (m).
     @param rows The number of rows (n).
     """
-    if verboseMode:
-        print(f"Creating UI of size {cols} x {rows}")
-    
+    if (verboseMode):
+        print(f"Creating UI board of size ({cols},{rows})!")
+
     global root, boardUI, uiEvents
     if root is not None:
         root.destroy()
     root = tk.Tk()
     root.title("CHECK: Custom House-made Engine for Chess Knowledge")
-    boardUI = ChessBoard(root, rows, cols)
+    boardUI = ChessBoard(root, cols, rows)
     uiEvents = []
     # Handles when the window is deleted.
     root.protocol("WM_DELETE_WINDOW", closeUI)
-
-    root.update()
+    
+    
 
 
 def registerPiece(name, glyph):
@@ -290,60 +310,71 @@ def registerPiece(name, glyph):
 def setBoardState(cells):
     """
     Replaces the whole board state from a list of state strings.
-    @param cells A list of "<row>,<col>,<type>,<color>" strings. An empty
+    @param cells A list of "<col>,<row>,<type>,<color>" strings. An empty
         list clears the board. Cells not listed become empty.
     """
+    if (verboseMode):
+        print(f"Setting board state using input of:\n{cells}\n")
+
     if boardUI is None:
         raise ValueError("UI not created; call createUI() first")
-    boardUI.board = [[None] * boardUI.cols for _ in range(boardUI.rows)]
+
+    boardUI.board = [[None] * boardUI.rows for _ in range(boardUI.cols)]
     for cell in cells:
-        r, c, pieceType, color = cell.split(",")
-        validateCell(int(r), int(c), pieceType)
-        boardUI.board[int(r)][int(c)] = {"type": pieceType, "color": color}
+        col, row, pieceType, color = cell.split(",")
+        validateCell(int(col), int(row), pieceType)
+        boardUI.board[int(col)][int(row)] = {"type": pieceType, "color": color}
+
     boardUI.drawPieces()
 
 
 def getBoardState():
     """
     Returns the current board state as state strings.
-    @return A list of "<row>,<col>,<type>,<color>" strings for occupied cells.
+    @return A list of "<col>,<row>,<type>,<color>" strings for occupied cells.
     """
     if boardUI is None:
         return []
     cells = []
-    for r in range(boardUI.rows):
-        for c in range(boardUI.cols):
-            piece = boardUI.board[r][c]
+    for col in range(boardUI.cols):
+        for row in range(boardUI.rows):
+            piece = boardUI.board[col][row]
             if piece is not None:
-                cells.append(f"{r},{c},{piece['type']},{piece['color']}")
+                cells.append(f"{col},{row},{piece['type']},{piece['color']}")
+
     return cells
 
 
-def movePiece(fromRow, fromCol, toRow, toCol):
+def movePiece(fromCol, fromRow, toCol, toRow):
     """
     Moves a piece in the board data and redraws.
     Called by the backend after a drop event is judged legal.
-    @param fromRow The source row.
     @param fromCol The source column.
-    @param toRow The destination row.
+    @param fromRow The source row.
     @param toCol The destination column.
+    @param toRow The destination row.
     """
-    validateCell(toRow, toCol, "pawn" if glyphs else "")
-    boardUI.board[toRow][toCol] = boardUI.board[fromRow][fromCol]
-    boardUI.board[fromRow][fromCol] = None
+    # Make sure the inputs are valid.
+    validateCell(fromCol, fromRow)
+    validateCell(toCol, toRow)
+    if boardUI.board[fromCol][fromRow] is None:
+        raise ValueError(f"No piece on source square: ({fromCol},{fromRow})")
+
+    boardUI.board[toCol][toRow] = boardUI.board[fromCol][fromRow]
+    boardUI.board[fromCol][fromRow] = None
     boardUI.drawPieces()
 
 
-def highlightSquare(row, col, color=HIGHLIGHT):
+def highlightSquare(col, row, color=HIGHLIGHT):
     """
     Draws a highlight outline on one square.
-    @param row The row of the square.
     @param col The column of the square.
+    @param row The row of the square.
     @param color Optional outline color.
     """
     if boardUI is None:
         return
-    x0, y0 = boardUI.origin(row, col)
+    x0, y0 = boardUI.topLeftPixel(col, row)
     item = boardUI.canvas.create_rectangle(
         x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
         outline=color, width=4,
@@ -413,35 +444,35 @@ def setVerbose(val):
 
 def main():
     """
-    Standalone 4x4 sample for testing the UI without the C++ backend.
+    Standalone 5x6 sample for testing the UI without the C++ backend.
     """
     setVerbose(True)
-    createUI(5, 5)
+    createUI(5, 6)
     registerPiece("knight", "\u265E")
     setBoardState([
         # Add kings.
-        "0,0,king,black",
-        "4,4,king,white",
-        
+        "0,0,king,white",
+        "4,5,king,black",
+
         # Add queens.
-        "0,4,queen,black",
         "4,0,queen,white",
-        
+        "0,5,queen,black",
+
         # Add pawns.
-        "1,0,pawn,black",
-        "1,1,pawn,black",
-        "1,2,pawn,black",
-        "1,3,pawn,black",
-        "1,4,pawn,black",
-        "3,0,pawn,white",
+        "0,1,pawn,white",
+        "1,1,pawn,white",
+        "2,1,pawn,white",
         "3,1,pawn,white",
-        "3,2,pawn,white",
-        "3,3,pawn,white",
-        "3,4,pawn,white",
-        
+        "4,1,pawn,white",
+        "0,4,pawn,black",
+        "1,4,pawn,black",
+        "2,4,pawn,black",
+        "3,4,pawn,black",
+        "4,4,pawn,black",
+
         # Add knights.
-        "0,2,knight,black",
-        "4,2,knight,white",
+        "2,0,knight,white",
+        "2,5,knight,black",
     ])
     root.mainloop()
 
