@@ -4,11 +4,10 @@
  * @date 10/16/2026
  * @brief Implements the CheckConfig methods and features.
  */
-#pragma once
 
 // Include the associated header file.
 #include "CheckConfig.hpp"
-
+#include "Piece.hpp"
 #include "StringUtils.hpp"
 // For error handling.
 #include "MIAException.hpp"
@@ -19,17 +18,22 @@ namespace check
     std::vector<PieceStartingPos> stringToStartingPosition(const std::string& input)
     {
         std::vector<PieceStartingPos> positions;
-        const std::vector<string> entries = string_utils::delimiterString(input, ';');
+        std::vector<std::string> entries = string_utils::delimiterString(input, ';');
+
+        for (std::string& entry : entries)
+        { // Trim any white space from the entry.
+            entry = string_utils::trim(entry);
+        }
+
         for (const std::string& entry : entries)
         {
-            const std::string trimmedEntry = string_utils::trim(entry);
-            if (trimmedEntry.empty())
+            if (entry.empty())
                 continue;
 
-            std::vector<std::string> parts = string_utils::delimiterString(trimmedEntry, ',');
+            std::vector<std::string> parts = string_utils::delimiterString(entry, ';');
             if (parts.size() != 4)
             {
-                std::string err = "Invalid starting position format: " + trimmedEntry;
+                std::string err = "Invalid starting position format: " + entry;
                 MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
             }
             

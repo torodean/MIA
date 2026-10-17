@@ -16,13 +16,14 @@
 
 // Include the associated files to test.
 #include "StringUtils.hpp"
+#include "MIAException.hpp"
 
 namespace string_utils
 {
     /**
      * Tests for the toLower(..) method.
      */
-    TEST(StringUtilsTest, ToLowerConvertsAllCharacters) 
+    TEST(StringUtils_T, ToLowerConvertsAllCharacters) 
     {
         EXPECT_EQ(toLower("HeLLo"), "hello") 
             << "Check a simple string with upper-case characters.";
@@ -44,7 +45,7 @@ namespace string_utils
     /**
      * Tests for the toUpper(..) method.
      */
-    TEST(StringUtilsTest, ToUpperConvertsAllCharacters) 
+    TEST(StringUtils_T, ToUpperConvertsAllCharacters) 
     {
         EXPECT_EQ(toUpper("HeLLo"), "HELLO") 
             << "Check a simple string with upper-case characters.";
@@ -66,7 +67,7 @@ namespace string_utils
     /**
      * Tests for the removeCharInString(..) nethod.
      */
-    TEST(StringUtilsTest, RemoveCharInStringRemovesAllOccurrences) 
+    TEST(StringUtils_T, RemoveCharInStringRemovesAllOccurrences) 
     {
         EXPECT_EQ(removeCharInString("hello world", 'o'), "hell wrld")
 	        << "Check removing a character from a simple string.";
@@ -88,7 +89,7 @@ namespace string_utils
     /**
      * Tests for the findCharInString(..) method.
      */
-    TEST(StringUtilsTest, FindCharInStringReturnsCorrectIndex) 
+    TEST(StringUtils_T, FindCharInStringReturnsCorrectIndex) 
     {
         EXPECT_EQ(findCharInString("hello world", 'e'), 1)
 	        << "Check finding a character in a string.";
@@ -113,7 +114,7 @@ namespace string_utils
     /**
      * Tests for the stringContainsChar(..) method.
      */
-    TEST(StringUtilsTest, StringContainsCharDetectsCharacter) 
+    TEST(StringUtils_T, StringContainsCharDetectsCharacter) 
     {
         EXPECT_TRUE(stringContainsChar("hello world", 'e'))
 	        << "Check finding a character in a string.";
@@ -138,8 +139,8 @@ namespace string_utils
     /**
      * Tests for the delimiterString(..) method.
      */
-    TEST(StringUtilsTest, DelimiterStringSplitsCorrectly) 
-    {        
+    TEST(StringUtils_T, DelimiterStringSplitsCorrectly) 
+    {
         EXPECT_EQ(delimiterString("one,two,three", ",", false),
             (std::vector<std::string>{"one", "two", "three"}))
             << "Check behavior using a comma delimiter.";
@@ -171,13 +172,56 @@ namespace string_utils
         EXPECT_EQ(delimiterString("one!", "!", false),
             (std::vector<std::string>{"one", ""}))
             << "Check behavior using a string ending with the delimiter.";
+
+        EXPECT_EQ(delimiterString("onefishtwofishredfishbluefish", "fish", false),
+            (std::vector<std::string>{"one", "two", "red", "blue", ""}))
+            << "Check behavior using a multi-char string delimiter.";
+    }    
+    
+    
+    /**
+     * Tests for the delimiterString(..) method (char input overload).
+     */
+    TEST(StringUtils_T, DelimiterStringSplitsCorrectlyCharOverload) 
+    {        
+        EXPECT_EQ(delimiterString("one,two,three", ',', false),
+            (std::vector<std::string>{"one", "two", "three"}))
+            << "Check behavior using a comma delimiter.";
+
+        EXPECT_EQ(delimiterString("one0two0three", '0', false),
+            (std::vector<std::string>{"one", "two", "three"}))
+            << "Check behavior using a number delimiter.";
+
+        EXPECT_EQ(delimiterString("one!two!three", '!', false),
+            (std::vector<std::string>{"one", "two", "three"}))
+            << "Check behavior using a symbol delimiter.";
+
+        EXPECT_EQ(delimiterString("one!!two", '!', false),
+            (std::vector<std::string>{"one", "", "two"}))
+            << "Check behavior using a malformed string with consecutive delimiters.";
+
+        EXPECT_EQ(delimiterString("one", '!', false),
+            (std::vector<std::string>{"one"}))
+            << "Check behavior when the delimiter is not present.";
+
+        EXPECT_EQ(delimiterString("", '!', false),
+            (std::vector<std::string>{""}))
+            << "Check behavior using an empty string.";
+
+        EXPECT_EQ(delimiterString("!", '!', false),
+            (std::vector<std::string>{"", ""}))
+            << "Check behavior using a string containing only the delimiter.";
+
+        EXPECT_EQ(delimiterString("one!", '!', false),
+            (std::vector<std::string>{"one", ""}))
+            << "Check behavior using a string ending with the delimiter.";
     }
 
 
     /**
      * Tests for the isDigits(..) method.
      */
-    TEST(StringUtilsTest, IsDigitsReturnsTrueForDigitsOnly) 
+    TEST(StringUtils_T, IsDigitsReturnsTrueForDigitsOnly) 
     {
         EXPECT_TRUE(isDigits("123456"))
             << "Check a string containing only digits.";
@@ -196,7 +240,7 @@ namespace string_utils
     /**
      * Tests for the inputRoll(..) method.
      */
-    TEST(StringUtilsTest, InputRollValidFormat) 
+    TEST(StringUtils_T, InputRollValidFormat) 
     {
         EXPECT_TRUE(inputRoll("1d20"))
             << "Check a valid dice roll format.";
@@ -218,7 +262,7 @@ namespace string_utils
     /**
      * Tests for the formOfYes(..) method.
      */
-    TEST(StringUtilsTest, FormOfYesRecognizesAffirmative) 
+    TEST(StringUtils_T, FormOfYesRecognizesAffirmative) 
     {
         // Check affirmative cases.
         EXPECT_TRUE(formOfYes("yes"));
@@ -242,7 +286,7 @@ namespace string_utils
     /**
      * Tests for the today() method.
      */
-    TEST(StringUtilsTest, TodayReturnsNonEmptyString) 
+    TEST(StringUtils_T, TodayReturnsNonEmptyString) 
     {
         EXPECT_FALSE(today().empty());
     }
@@ -251,7 +295,7 @@ namespace string_utils
     /**
      * Tests for the shuffleString(..) method.
      */
-    TEST(StringUtilsTest, ShuffleStringChangesString) 
+    TEST(StringUtils_T, ShuffleStringChangesString) 
     {
         std::string input1 = "abcdef";
         std::string shuffled1 = shuffleString(input1);
@@ -298,7 +342,7 @@ namespace string_utils
     /**
      * Tests for the getBeforeChar(..) method.
      */
-    TEST(StringUtilsTest, GetBeforeCharReturnsCorrectSubstring) 
+    TEST(StringUtils_T, GetBeforeCharReturnsCorrectSubstring) 
     {
         EXPECT_EQ(getBeforeChar("key=value", '='), "key")
             << "Check substring before a delimiter character.";
@@ -317,7 +361,7 @@ namespace string_utils
     /**
      * Tests for the getAfterChar(..) method.
      */
-    TEST(StringUtilsTest, GetAfterCharReturnsCorrectSubstring) 
+    TEST(StringUtils_T, GetAfterCharReturnsCorrectSubstring) 
     {
         EXPECT_EQ(getAfterChar("key=value", '='), "value")
             << "Check substring after a delimiter character.";
@@ -336,7 +380,7 @@ namespace string_utils
     /**
      * Tests for the getBetweenXAndY(..) method.
      */
-    TEST(StringUtilsTest, GetBetweenXAndYReturnsCorrectSubstring) 
+    TEST(StringUtils_T, GetBetweenXAndYReturnsCorrectSubstring) 
     {
         EXPECT_EQ(getBetweenXAndY("[data]", '[', ']'), "data");
         EXPECT_EQ(getBetweenXAndY("AdataB", 'A', 'B'), "data");
@@ -356,7 +400,7 @@ namespace string_utils
     /**
      * Tests for the entangleText(..) method.
      */
-    TEST(StringUtilsTest, EntangleTextCreatesTwoStrings) 
+    TEST(StringUtils_T, EntangleTextCreatesTwoStrings) 
     {
         std::string input = "abcdef";
         auto result = entangleText(input);
@@ -369,7 +413,7 @@ namespace string_utils
     /**
      * Tests for the stringToIntVector(..) method.
      */
-    TEST(StringUtilsTest, TestStringToIntVector) 
+    TEST(StringUtils_T, TestStringToIntVector) 
     {
         EXPECT_EQ(stringToIntVector(""), std::vector<int>{})
             << "Check an empty string.";
@@ -397,7 +441,7 @@ namespace string_utils
     /**
      * Tests for the intVectorToString(..) method.
      */
-    TEST(StringUtilsTest, IntVectorToStringCases)
+    TEST(StringUtils_T, IntVectorToStringCases)
     {
         EXPECT_EQ(intVectorToString({}), "")
 	        << "Check an empty vector.";
@@ -425,7 +469,7 @@ namespace string_utils
     /**
      * Tests for the invertString(..) method.
      */
-    TEST(StringUtilsTest, InvertStringTests) 
+    TEST(StringUtils_T, InvertStringTests) 
     {
         EXPECT_EQ(invertString(""), "")
 	        << "Check an empty string returns an empty string.";
@@ -450,7 +494,7 @@ namespace string_utils
     /**
      * Tests for the centerText(..) method.
      */
-    TEST(StringUtilsTest, CenterText)
+    TEST(StringUtils_T, CenterText)
     {
         EXPECT_EQ(centerText("Test", 10), "   Test   ");
         EXPECT_EQ(centerText("Test", 9), "  Test   ");
@@ -464,7 +508,7 @@ namespace string_utils
     /**
      * Tests for the resizeString(..) method.
      */
-    TEST(StringUtilsTest, resizeString)
+    TEST(StringUtils_T, resizeString)
     {
         EXPECT_EQ(resizeString("12345", "123"), "  123");
         EXPECT_EQ(resizeString("123", "12345"), "  123");
@@ -476,7 +520,7 @@ namespace string_utils
     /**
      * @brief Tests the zeroString method.
      */
-    TEST(StringUtilsTest, zeroString)
+    TEST(StringUtils_T, zeroString)
     {
         ASSERT_EQ(zeroString(5), "00000");
         ASSERT_EQ(zeroString(8), "00000000");
@@ -492,7 +536,7 @@ namespace string_utils
      * Covers the stringToUint8 method: valid inputs at the range boundaries, 
 	 * and every failure mode it should reject.
      */
-    TEST(StringUtilsTest, StringToUint8)
+    TEST(StringUtils_T, StringToUint8)
     {
         // Valid values parse to the exact uint8_t value.
         EXPECT_EQ(stringToUint8("0"), static_cast<uint8_t>(0));

@@ -76,6 +76,17 @@ namespace string_utils
                                              bool verboseMode = false);
 
     /**
+     * @brief Separates a string into components via a delimiter.
+     * @param input Reference to the input string to parse.
+     * @param delimiter Delimiter to use when parsing.
+     * @param verboseMode Enables verboseMode output (default = false).
+     * @return A vector of string elements.
+     */
+    std::vector<std::string> delimiterString(const std::string& input, 
+                                             char delimiter, 
+                                             bool verboseMode = false);
+
+    /**
      * Function for determining if all characters in a string are digits/integers.
      * @param input Reference to the input string to parse.
      * @return True if all characters are integers.

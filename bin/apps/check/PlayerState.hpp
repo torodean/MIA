@@ -22,7 +22,8 @@ namespace check
         /**
          * Constructor for the player state which defines various values. 
          */
-        PlayerState(uint8_t numOfPlayers, uint8_t whosTurn);
+        PlayerState(uint8_t numOfPlayers, uint8_t whosTurn) :
+            numberOfPlayers(numOfPlayers), whosTurnIsIt(whosTurn) {};
     
         uint8_t numberOfPlayers{2}; ///< Total number of players.
         uint8_t whosTurnIsIt{1};    ///< Stores whos turn it is.

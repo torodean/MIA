@@ -3,6 +3,7 @@
 add_subdirectory( template )
 
 # Add various app folders.
+add_subdirectory( check )
 add_subdirectory( maple )
 if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
     # These apps use the virtual key strokes, which use Windows APIs directly; on Linux

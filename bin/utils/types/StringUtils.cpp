@@ -70,7 +70,9 @@ namespace string_utils
     }
 
 
-    std::vector<std::string> delimiterString(const std::string& input, const std::string& delimiter, bool verboseMode)
+    std::vector<std::string> delimiterString(const std::string& input, 
+                                             const std::string& delimiter,
+                                             bool verboseMode)
     {
         std::string inputCopy = input;
 
@@ -109,6 +111,15 @@ namespace string_utils
         }
 
         return output;
+    }    
+    
+    
+    std::vector<std::string> delimiterString(const std::string& input, 
+                                             char delimiter,
+                                             bool verboseMode)
+    {
+        std::string delStr(1, delimiter);
+        return delimiterString(input, delStr, verboseMode);
     }
 
 

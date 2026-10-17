@@ -7,6 +7,8 @@
  */
 #pragma once
 
+#include <string>
+
 namespace check
 {
     /**
@@ -54,6 +56,7 @@ namespace check
      */
     enum class Color : uint8_t
     {
+        None,       ///< Represents a neutral piece.
         White,      ///< The usual white color.
         Black,      ///< The usual black color.
         Red,
@@ -89,6 +92,6 @@ namespace check
         /// An enum representation indicating the type of piece.
         PieceType type{PieceType::None};
         /// The color of the piece.
-        Color color{Color::white};
+        Color color{Color::White};
     };
 } // namespace check

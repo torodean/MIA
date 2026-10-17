@@ -2,7 +2,8 @@
 set( CHECK_SRC 
      Check.cpp 
      Check_main.cpp
-     CheckConfig.hpp )
+     CheckConfig.cpp
+     Piece.cpp )
 set( CHECK_INC 
      Check.hpp
      CheckConfig.hpp
