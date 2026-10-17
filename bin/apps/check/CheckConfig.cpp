@@ -30,7 +30,7 @@ namespace check
             if (entry.empty())
                 continue;
 
-            std::vector<std::string> parts = string_utils::delimiterString(entry, ';');
+            std::vector<std::string> parts = string_utils::delimiterString(entry, ',');
             if (parts.size() != 4)
             {
                 std::string err = "Invalid starting position format: " + entry;

@@ -11,8 +11,8 @@ set( CHECK_INC
      PlayerState.hpp
      SquareState.hpp
      BoardState.hpp )
-add_executable( Check ${CHECK_SRC} ${CHECK_INC} )
-target_link_libraries( Check
+add_executable( check ${CHECK_SRC} ${CHECK_INC} )
+target_link_libraries( check
                    PRIVATE
                        Framework_CORE # For application framework.
                        Py_UI_LIB      # For UI interfacing.
@@ -21,7 +21,7 @@ target_link_libraries( Check
                      )
 
 # Install the app.
-install_app( Check )
+install_app( check )
 
 # TODO - add tests.
 #add_test_dir()
