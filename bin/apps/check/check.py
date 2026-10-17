@@ -63,12 +63,9 @@ BACKGROUND = "#EEEED2"
 # Events remain here until retrieved by the C++ backend.
 uiEvents = []
 
-# Registered piece types mapped to their glyphs.
-glyphs = {
-    "king": "\u265A",
-    "queen": "\u265B",
-    "pawn": "\u265F"
-}
+# Registered piece types mapped to their glyphs. 
+# These need added using the registerPiece() method.
+glyphs = { }
 
 # The root window and the board widget. Both are None until createUI().
 root = None
@@ -295,16 +292,16 @@ def createUI(cols, rows):
     
 
 
-def registerPiece(name, glyph):
+def registerPiece(name, icon):
     """
     Registers a custom piece type by name and icon glyph.
     The backend owns all rules for the type; this only makes it drawable.
     @param name The piece type name used in setBoardState()/movePiece().
-    @param glyph The unicode character (or any string) used as the icon.
+    @param icon The unicode character (or any string) used as the icon.
     """
-    glyphs[name] = glyph
-    if boardUI is not None:
-        boardUI.drawPieces()
+    if (verboseMode):
+        print(f"Adding {name} piece with icon {icon} to glyphs!")
+    glyphs[name] = icon
 
 
 def setBoardState(cells):
@@ -448,6 +445,9 @@ def main():
     """
     setVerbose(True)
     createUI(5, 6)
+    registerPiece("king", "\u265A")
+    registerPiece("queen", "\u265B")
+    registerPiece("pawn", "\u265F")
     registerPiece("knight", "\u265E")
     setBoardState([
         # Add kings.

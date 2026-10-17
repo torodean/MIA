@@ -101,7 +101,14 @@ namespace check
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
         
         // Register pieces.
+        module.call("registerPiece", "king", "\u265A");
+        timing::sleepMilliseconds(20);
+        module.call("registerPiece", "queen", "\u265B");
+        timing::sleepMilliseconds(20);
+        module.call("registerPiece", "pawn", "\u265F");
+        timing::sleepMilliseconds(20);
         module.call("registerPiece", "knight", "\u265E");
+        timing::sleepMilliseconds(20);
         
         // Setup the starting board position.
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
