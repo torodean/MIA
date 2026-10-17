@@ -27,7 +27,7 @@ namespace check
                                     paths::getDefaultConfigDirToUse() + defaultConfigFile,
                                     CommandOption::commandOptionType::STRING_OPTION),
         module(defaultModuleName, __FILE__),
-        listener(module, queue, "getAllEvents", 10)
+        listener(module, queue, "getAllEvents", 10) // 10 ms UI pollrate.
     { };
 
 
@@ -112,7 +112,7 @@ namespace check
         while (listener.isRunning())
         {
             // Read whatever events the listener has polled so far.
-            storage = queue.getAllEvents();
+            storage = queue.getAllEvents(); // This calls updateUI() each time.
 
             for (const ui::Event& event : storage.getEvents())
             {
