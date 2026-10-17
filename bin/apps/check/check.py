@@ -36,6 +36,7 @@ top, so (0, 0) is the bottom-left square. This applies to event strings,
 board state strings, and every public method taking a col/row pair.
 """
 import tkinter as tk
+from PIL import Image, ImageTk
 
 #########################
 # CONFIGURATION VARIABLES
@@ -49,11 +50,11 @@ CELL = 90
 MARGIN = 34
 
 # Square and label colors.
-LIGHT = "#F0D9B5"
-DARK = "#B58863"
+LIGHT = "#bfa08e"
+DARK = "#7d6455"
 HIGHLIGHT = "#F7EC59"
 LABEL_FG = "#333333"
-BACKGROUND = "#EEEED2"
+BACKGROUND = "#ffddc9"
 
 ##########
 # UI STATE
@@ -205,6 +206,7 @@ class ChessBoard(tk.Frame):
         if sq is None or self.board[sq[0]][sq[1]] is None:
             return
         col, row = sq
+        highlightSquare(col, row)
         self.drag = {"from": sq}
         addEvent(f"pickup {col} {row}")
         # Hide the piece on its square so it is not duplicated during
@@ -227,6 +229,7 @@ class ChessBoard(tk.Frame):
         Ends a drag. The piece snaps back to its origin; the backend
         confirms the move by calling movePiece().
         """
+        clearHighlights()
         if self.drag is None:
             return
         src = self.drag["from"]
@@ -288,8 +291,6 @@ def createUI(cols, rows):
     uiEvents = []
     # Handles when the window is deleted.
     root.protocol("WM_DELETE_WINDOW", closeUI)
-    
-    
 
 
 def registerPiece(name, icon):
@@ -377,6 +378,7 @@ def highlightSquare(col, row, color=HIGHLIGHT):
         outline=color, width=4,
     )
     boardUI.highlightItems.append(item)
+    updateUI()
 
 
 def clearHighlights():
@@ -388,6 +390,7 @@ def clearHighlights():
     for item in boardUI.highlightItems:
         boardUI.canvas.delete(item)
     boardUI.highlightItems = []
+    updateUI()
 
 
 def updateUI():
