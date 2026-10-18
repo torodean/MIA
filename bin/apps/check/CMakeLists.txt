@@ -15,6 +15,7 @@ set( CHECK_SRC
      pieces/Bishop.cpp
      pieces/Knight.cpp
      pieces/Queen.cpp
+     pieces/King.cpp
 )
 set( CHECK_INC 
      Check.hpp

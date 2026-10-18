@@ -21,7 +21,8 @@ namespace check
         std::vector<math::Coordinate<uint8_t>> legalMoves;
 
         // Define the four directions in which a rook can move.
-        const int8_t directions[4][2] = {
+        const int8_t directions[4][2] =
+        {
             { 0,  1}, // Up.
             { 0, -1}, // Down.
             { 1,  0}, // Right.

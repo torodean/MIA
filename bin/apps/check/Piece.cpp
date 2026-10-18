@@ -8,6 +8,8 @@
 // Include the associated header file.
 #include "Piece.hpp"
 #include "StringUtils.hpp"
+#include "BoardState.hpp"
+#include "PlayerState.hpp"
 
 // Include the various piece types.
 #include "Pawn.hpp"
@@ -15,9 +17,7 @@
 #include "Rook.hpp"
 #include "Bishop.hpp"
 #include "Knight.hpp"
-/*
 #include "King.hpp"
-*/
 
 namespace check
 {
@@ -81,6 +81,34 @@ namespace check
     }
 
 
+    std::vector<math::Coordinate<uint8_t>> BasePieceLogic::getLegalCaptures(
+        const math::Coordinate<uint8_t>& currentPos,
+        const BoardState& boardState,
+        Color color)
+    {
+        std::vector<math::Coordinate<uint8_t>> captures;
+
+        for (const auto& move : getLegalMoves(currentPos, boardState, color))
+        {
+            if (boardState.containsOpponentPiece(move.x, move.y, color))
+            {
+                captures.push_back(move);
+            }
+        }
+
+        return captures;
+    }
+
+
+    std::vector<math::Coordinate<uint8_t>> BasePieceLogic::getAttackedSquares(
+        const math::Coordinate<uint8_t>& currentPos,
+        const BoardState& boardState,
+        Color color)
+    {
+        return getLegalMoves(currentPos, boardState, color);
+    }
+
+
     std::unique_ptr<BasePieceLogic> createPieceLogic(PieceType type)
     {
         switch (type)
@@ -99,10 +127,10 @@ namespace check
 
             case PieceType::Knight:
                 return std::make_unique<KnightLogic>();
-/* TODO 
+
             case PieceType::King:
                 return std::make_unique<KingLogic>();
-*/
+
             case PieceType::None:
                 return nullptr;
         }
@@ -119,6 +147,63 @@ namespace check
         if (!logic)
             return {};
 
+        // Only the current player can move their own pieces.
+        if (whosTurnIsItToColor(boardState.whosTurnIsIt()) != piecePos.piece.color)
+            return {};
+
         return logic->getLegalMoves(piecePos.coordinate, boardState, piecePos.piece.color);
+    }
+
+
+    std::vector<math::Coordinate<uint8_t>> getLegalCaptures(const PiecePosition& piecePos,
+                                                            const BoardState& boardState)
+    {
+        auto logic = createPieceLogic(piecePos.piece.type);
+
+        if (!logic)
+            return {};
+
+        return logic->getLegalCaptures(piecePos.coordinate, boardState, piecePos.piece.color);
+    }
+
+
+    std::vector<math::Coordinate<uint8_t>> getAttackedSquares(const BoardState& boardState,
+                                                              Color defendingColor)
+    {
+        std::vector<math::Coordinate<uint8_t>> attackedSquares;
+
+        for (uint16_t y = 0; y < boardState.getYSize(); ++y)
+        {
+            for (uint16_t x = 0; x < boardState.getXSize(); ++x)
+            {
+                const auto& piece = boardState.getPieceOnSquare(static_cast<uint8_t>(x),
+                                                                static_cast<uint8_t>(y));
+
+                // Skip empty squares and pieces belonging to the defending side.
+                if (!piece.has_value() || 
+                    piece->type == PieceType::None || 
+                    piece->color == defendingColor)
+                {
+                    continue;
+                }
+
+                PiecePosition piecePos{*piece, {static_cast<uint8_t>(x), static_cast<uint8_t>(y)}};
+
+                auto logic = createPieceLogic(piece->type);
+
+                if (!logic)
+                    continue;
+
+                auto pieceAttacks = logic->getAttackedSquares(piecePos.coordinate,
+                                                              boardState,
+                                                              piecePos.piece.color);
+
+                attackedSquares.insert(attackedSquares.end(),
+                                       pieceAttacks.begin(),
+                                       pieceAttacks.end());
+            }
+        }
+
+        return attackedSquares;
     }
 } // namespace check

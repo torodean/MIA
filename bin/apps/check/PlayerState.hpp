@@ -8,6 +8,8 @@
 
 #include <cstdint>
 
+#include "Piece.hpp"
+
 namespace check
 {
     /**
@@ -34,4 +36,22 @@ namespace check
          */
         void advanceTurn();
     }; // class PlayerState
+    
+    /**
+     * Converts the current player's index to the corresponding piece color.
+     * Player 1 is White, player 2 is Black, player 3 is Red, and player 4 is Green.
+     * @param whosTurnIsIt The current state of the players.
+     * @return The color corresponding to the current player's index, or Color::None
+     *         if the index does not correspond to a defined color.
+     */
+    Color whosTurnIsItToColor(uint8_t whosTurnIsIt);
+    
+    /**
+     * Converts the current player's index to the corresponding piece color.
+     * Player 1 is White, player 2 is Black, player 3 is Red, and player 4 is Green.
+     * @param playerState The current state of the players.
+     * @return The color corresponding to the current player's index, or Color::None
+     *         if the index does not correspond to a defined color.
+     */
+    Color whosTurnIsItToColor(const PlayerState& playerState);
 }; // namespace check

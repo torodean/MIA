@@ -165,6 +165,47 @@ namespace check
     }
 
 
+    bool BoardState::isSquareAttacked(uint8_t xPos, uint8_t yPos,
+                                      Color defendingColor) const
+    {
+        // Get all squares currently attacked.
+        auto attackedSquares = getAttackedSquares(*this, defendingColor);
+
+        for (const auto& coordinate : attackedSquares)
+        { // Iterate over all attacked squares.
+            if (coordinate.x == xPos && coordinate.y == yPos)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    bool BoardState::isKingInCheck(Color color) const
+    {
+        for (const SquareState& square : squareStates)
+        {
+            const std::optional<Piece>& piece = square.getPiece();
+
+            if (!piece.has_value() ||
+                piece->type != PieceType::King ||
+                piece->color != color)
+            {
+                continue;
+            }
+
+            const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
+
+            return isSquareAttacked(coordinate.x, coordinate.y, color);
+        }
+
+        // No king of the specified color was found.
+        return false;
+    }
+
+
     uint16_t BoardState::coordToIndex(uint8_t xPos, uint8_t yPos) const
     {
         return static_cast<uint16_t>(xPos + yPos*xSize);

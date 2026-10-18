@@ -190,6 +190,20 @@ namespace check
          * been made, this will return std::nullopt.
          */
         std::optional<MoveState> getLastMove() const;
+        
+        /**
+         * Determines whether a square is attacked by an opposing piece.
+         * @param xPos The x-coordinate (column) to check.
+         * @param yPos The y-coordinate (row) to check.
+         * @param defendingColor The 'friendly' color in terms of an attack.
+         */
+        bool isSquareAttacked(uint8_t xPos, uint8_t yPos,
+                              Color defendingColor) const;
+
+        /**
+         * Determines whether the specified player's king is in check.
+         */
+        bool isKingInCheck(Color color) const;
 
         /**
          * Set the runtime context for this object to access.

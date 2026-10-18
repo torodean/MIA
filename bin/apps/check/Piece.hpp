@@ -140,6 +140,29 @@ namespace check
             const BoardState& boardState,
             Color color) = 0;
 
+        /**
+         * This returns the legal captures for a piece based on the current state of
+         * the board. This should be implemented for every derived piece. Since most pieces
+         * have the same logic to determine this (based on legal moves), this has a
+         * base implementation that can be used.
+         */
+        virtual std::vector<math::Coordinate<uint8_t>> getLegalCaptures(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color);
+            
+        /**
+         * This returns all squares attacked by a piece based on the current state of
+         * the board. This includes squares occupied by friendly pieces and unoccupied
+         * squares. For most pieces, this is just the legal moves. The base implementation
+         * here defines it for typical pieces. Some pieces move differently than they
+         * capture (e.g., pawns), so for these, this should be re-implemented.
+         */
+        virtual std::vector<math::Coordinate<uint8_t>> getAttackedSquares(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color);
+
     private:
 
         PieceType type; ///< Stores what type of piece this object defines logic for.
@@ -158,8 +181,28 @@ namespace check
      * return a list of legal moves.
      * @param piecePos The piece to get the legal moves of. This contains color and location.
      * @param boardState The current state of the board.
+     * @return A list of all legal moves for a piece.
      */
     std::vector<math::Coordinate<uint8_t>> getLegalMoves(const PiecePosition& piecePos,
                                                          const BoardState& boardState);
-     
+
+    /**
+     * This is a helper to get the legal captures of any piece. This will use
+     * the appropriate implemented BasePieceLogic based on the input piece and
+     * return a list of legal captures.
+     * @param piecePos The piece to get the legal captures of. This contains color and location.
+     * @param boardState The current state of the board.
+     * @return A list of all legal captures for a piece.
+     */
+    std::vector<math::Coordinate<uint8_t>> getLegalCaptures(const PiecePosition& piecePos,
+                                                            const BoardState& boardState);
+
+    /**
+     * This returns all squares attacked by pieces on the board.
+     * @param boardState The current state of the board.
+     * @return A list of all attacked squares on the board.
+     * @param defendingColor The color being defended against attacks.
+     */
+    std::vector<math::Coordinate<uint8_t>> getAttackedSquares(const BoardState& boardState,
+                                                              Color defendingColor);
 } // namespace check
