@@ -10,6 +10,7 @@
 // Include the associated header file.
 #include "Pawn.hpp"
 #include "BoardState.hpp"
+#include "MoveState.hpp"
 
 namespace check
 {
@@ -79,7 +80,24 @@ namespace check
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
         
-        // TODO - handle en passant here.
+        // Handle en passant.
+        MoveState lastMove = boardState.getLastMove();
+        if (lastMove.piece.type == PieceType::Pawn)
+        { // Last move was a pawn so it may enable en passant.
+            /*
+             * A Positive direction indicates the last moved piece was to our right, otherwise,
+             * it's to our left. Also, the absolute value of this must be exactly 1 to signal
+             * that the last piece moved was one column to the right or left.
+             */
+            int8_t direction = lastMove.endingPos.x - currentPos.x;
+            if (lastMove.endingPos.y == currentPos.y && // The last pawn move ended next to this one. 
+                (direction == -1 || direction == 1) &&  // The last piece was in an adjacent column.
+                lastMove.endingPos.y - lastMove.startingPos.y == 2) // The pawn moved two squares.
+            { // Indicates en passant is possible.
+                legalMoves.push_back({static_cast<uint8_t>(currentPos.x + direction), 
+                                      static_cast<uint8_t>(currentPos.y + forward)});
+            }
+        }
         
         return legalMoves;
     }
