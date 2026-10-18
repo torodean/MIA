@@ -20,7 +20,7 @@ namespace check
 
     void SquareState::updatePiece(Piece cPiece)
     {
-    
+        piece = cPiece;
     }
 
 
@@ -32,16 +32,12 @@ namespace check
 
     bool SquareState::isOccupied() const
     {
-        if (piece.type == PieceType::None)
-            return false;
-        return true;
+        return piece.has_value() && piece->type != PieceType::None;
     }
 
 
-    std::optional<Piece> SquareState::getPiece() const
+    const std::optional<Piece>& SquareState::getPiece() const
     {
-        if (piece.type == PieceType::None)
-            return std::nullopt;
         return piece;
     }
 

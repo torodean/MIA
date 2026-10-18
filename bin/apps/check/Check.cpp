@@ -51,6 +51,9 @@ namespace check
         }
 
         loadConfig();
+                              
+        // Pass the runtime context to the board state to enable logging and verbosity.
+        boardState.setRuntimeContext(getContext());
         
         // Load config values into the board state.
         boardState.initialize(configValues.boardSizeX,
@@ -136,25 +139,31 @@ namespace check
             for (const ui::Event& event : storage.getEvents())
             {
                 std::cout << "Event received: " << event.getName() << std::endl;
-                CheckUIEvent eventType = getEventType(event.getName());
-                switch(eventType)
+                CheckUIEvent uiEvent = toCheckUIEvent(event.getName());
+                switch(uiEvent.type)
                 { // TODO - handle events here.
-                    case CheckUIEvent::PickupPiece:
+                    case CheckUIEventType::PickupPiece:
+                    { // Signals that a piece was picked up.
                         if (configValues.showLegalMoves)
-                            ;// TODO - show legal moves.
+                            displayLegalMoves(module, uiEvent, boardState);
                         break;
-                    case CheckUIEvent::DropPiece:
-                    case CheckUIEvent::ResetBoard:
-                    case CheckUIEvent::SaveBoard:
+                    }
+
+                    case CheckUIEventType::DropPiece:
+
+                    case CheckUIEventType::ResetBoard:
+
+                    case CheckUIEventType::SaveBoard:
                         std::cout << "Still coding this event type!" << std::endl;
                         break;
-                    case CheckUIEvent::Stop:
+
+                    case CheckUIEventType::Stop:
                     { // Signals that the UI was exited.
                         listener.stop();
                         return constants::SUCCESS;
                     }
                     
-                    case CheckUIEvent::Unknown:
+                    case CheckUIEventType::Unknown:
                     default:
                     { // Unknown/unparsable event.
                         std::cerr << "The input event is unknown!" << std::endl;

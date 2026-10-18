@@ -51,7 +51,8 @@ MARGIN = 34
 # Square and label colors.
 LIGHT = "#bfa08e"
 DARK = "#7d6455"
-HIGHLIGHT = "#F7EC59"
+SELECTED_HIGHLIGHT = "#F7EC59"
+LEGAL_MOVE_HIGHLIGHT = "#3db2d3"
 LABEL_FG = "#333333"
 BACKGROUND = "#ffddc9"
 
@@ -208,7 +209,7 @@ class ChessBoard(tk.Frame):
         if sq is None or self.board[sq[0]][sq[1]] is None:
             return
         col, row = sq
-        highlightSquare(col, row)
+        highlightSquare(col, row, SELECTED_HIGHLIGHT)
         self.drag = {"from": sq}
         addEvent(f"pickup_piece {col} {row}")
         # Hide the piece on its square so it is not duplicated during
@@ -365,7 +366,7 @@ def movePiece(fromCol, fromRow, toCol, toRow):
     boardUI.drawPieces()
 
 
-def highlightSquare(col, row, color=HIGHLIGHT):
+def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
     """
     Draws a highlight outline on one square.
     @param col The column of the square.

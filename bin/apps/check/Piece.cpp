@@ -9,6 +9,9 @@
 #include "Piece.hpp"
 #include "StringUtils.hpp"
 
+// Include the various piece types.
+#include "Pawn.hpp"
+
 namespace check
 {
     std::string pieceTypetoString(PieceType type)
@@ -68,5 +71,48 @@ namespace check
 
         // Default.
         return Color::None;
+    }
+
+
+    std::unique_ptr<BasePieceLogic> createPieceLogic(PieceType type)
+    {
+        switch (type)
+        {
+            case PieceType::Pawn:
+                return std::make_unique<PawnLogic>();
+
+            /* TODO - these still need defined logic.
+            case PieceType::King:
+                return std::make_unique<KingLogic>();
+
+            case PieceType::Queen:
+                return std::make_unique<QueenLogic>();
+
+            case PieceType::Bishop:
+                return std::make_unique<BishopLogic>();
+
+            case PieceType::Knight:
+                return std::make_unique<KnightLogic>();
+
+            case PieceType::Rook:
+                return std::make_unique<RookLogic>();
+            */
+            case PieceType::None:
+                return nullptr;
+        }
+
+        return nullptr;
+    }
+
+
+    std::vector<math::Coordinate<uint8_t>> getLegalMoves(const PiecePosition& piecePos,
+                                                         const BoardState& boardState)
+    {
+        auto logic = createPieceLogic(piecePos.piece.type);
+
+        if (!logic)
+            return {};
+
+        return logic->getLegalMoves(piecePos.coordinate, boardState, piecePos.piece.color);
     }
 } // namespace check

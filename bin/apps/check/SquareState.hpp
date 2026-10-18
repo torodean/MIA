@@ -47,7 +47,7 @@ namespace check
         /**
          * Returns the piece on this square or std::nullopt when empty.
          */
-        std::optional<Piece> getPiece() const;
+        const std::optional<Piece>& getPiece() const;
 
         /**
          * Returns the coordinate of this square.
@@ -57,7 +57,7 @@ namespace check
     private:
 
         /// The piece that is currently on this square.
-        Piece piece;
+        std::optional<Piece> piece;
         /// The coordinate of this square on the game board.
         math::Coordinate<uint8_t> coordinate;
     }; // class SquareState

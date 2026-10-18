@@ -31,7 +31,7 @@ namespace check
         {
             if (color == Color::White && currentPos.y == 1)
                 return true;
-            if (color == Color::Black && currentPos.y == boardYSize - 1)
+            if (color == Color::Black && currentPos.y == boardYSize - 2)
                 return true;
             
             // Otherwise, this is not the starting position.
@@ -40,7 +40,7 @@ namespace check
     } // namespace
 
 
-    std::vector<math::Coordinate<uint8_t>> Pawn::getLegalMoves(
+    std::vector<math::Coordinate<uint8_t>> PawnLogic::getLegalMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
         Color color)
@@ -53,7 +53,7 @@ namespace check
         std::vector<math::Coordinate<uint8_t>> legalMoves;
         bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
         
-        // If the square forward is not occupied, that is a valud move.
+        // If the square forward is not occupied, that is a valid move.
         if (!boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + forward)))
         {
             legalMoves.push_back({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)});
@@ -65,40 +65,41 @@ namespace check
         }
 
         // Check if any captures are available.
-        if (currentPos.x + 1 <= boardState.getXSize() && // Keep within board bounds.
-            !boardState.isSquareOccupied(static_cast<uint8_t>(currentPos.x + 1), 
-                                         static_cast<uint8_t>(currentPos.y + forward)))
-        { // forward and to the right.
+        if (currentPos.x + 1 < boardState.getXSize() && // Keep within board bounds.
+            boardState.containsOpponentPiece(static_cast<uint8_t>(currentPos.x + 1), 
+                                             static_cast<uint8_t>(currentPos.y + forward), color))
+        { // Forward and to the right.
+
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x + 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
         if (currentPos.x - 1 >= 0 && // Keep within board bounds.
-            !boardState.isSquareOccupied(static_cast<uint8_t>(currentPos.x + 1), 
-                                         static_cast<uint8_t>(currentPos.y + forward)))
-        { // forward and to the left.
+            boardState.containsOpponentPiece(static_cast<uint8_t>(currentPos.x - 1), 
+                                             static_cast<uint8_t>(currentPos.y + forward), color))
+        { // Forward and to the left.
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x - 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
         
         // Handle en passant.
-        MoveState lastMove = boardState.getLastMove();
-        if (lastMove.piece.type == PieceType::Pawn)
+        const std::optional<MoveState>& lastMove = boardState.getLastMove();
+        if (lastMove != std::nullopt && lastMove->piece.type == PieceType::Pawn)
         { // Last move was a pawn so it may enable en passant.
             /*
              * A Positive direction indicates the last moved piece was to our right, otherwise,
              * it's to our left. Also, the absolute value of this must be exactly 1 to signal
              * that the last piece moved was one column to the right or left.
              */
-            int8_t direction = lastMove.endingPos.x - currentPos.x;
-            if (lastMove.endingPos.y == currentPos.y && // The last pawn move ended next to this one. 
+            int8_t direction = lastMove->endingPos.x - currentPos.x;
+            if (lastMove->endingPos.y == currentPos.y && // The last pawn move ended next to this one. 
                 (direction == -1 || direction == 1) &&  // The last piece was in an adjacent column.
-                lastMove.endingPos.y - lastMove.startingPos.y == 2) // The pawn moved two squares.
+                lastMove->endingPos.y - lastMove->startingPos.y == 2) // The pawn moved two squares.
             { // Indicates en passant is possible.
                 legalMoves.push_back({static_cast<uint8_t>(currentPos.x + direction), 
                                       static_cast<uint8_t>(currentPos.y + forward)});
             }
         }
-        
+
         return legalMoves;
     }
 } // namespace check

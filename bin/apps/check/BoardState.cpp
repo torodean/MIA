@@ -5,6 +5,9 @@
  * @brief Implements the BoardState class and methods.
  */
 
+#include <iostream>
+#include <sstream>
+
 // Include the associated header file.
 #include "BoardState.hpp"
 
@@ -19,11 +22,19 @@ namespace check
                                 uint8_t rows,
                                 const std::vector<PiecePosition>& startingPos)
     {
+        if (context)
+        {
+            std::stringstream stream;
+            stream << "Initializing Board State with size " 
+                   << std::to_string(columns) << " x " << std::to_string(rows) << "!";
+           context->logger.log(stream.str(), {"BoardState", "initialize()"}, context->verboseMode);
+        }
+
         xSize = columns;
         ySize = rows;
         startingPosition = startingPos;
-        setStartingPosition(startingPosition);
         squareStates = createSquareStates(xSize, ySize);
+        setStartingPosition(startingPosition);
         initialized = true;
     }
 
@@ -42,15 +53,41 @@ namespace check
 
     bool BoardState::isSquareOccupied(uint8_t xPos, uint8_t yPos) const
     {
-        // TODO
-        return true;
+        uint16_t index = coordToIndex(xPos, yPos);
+        
+        std::stringstream stream;
+        if (context)
+        {
+            stream << "Checking if square is occupied: "
+                   << "Square (" << std::to_string(xPos) << "," << std::to_string(yPos) << "), index="
+                   << std::to_string(index) << "... ";
+        }
+
+        const SquareState& square = squareStates[index];
+        
+        if (context)
+        {
+            stream << (square.isOccupied() ? "It is!" : "It's not!");
+            context->logger.log(stream.str(), {"BoardState", "isSquareOccupied()"}, context->verboseMode);
+        }
+        
+        return square.isOccupied();
+    }
+    
+    
+    bool BoardState::containsOpponentPiece(uint8_t xPos, uint8_t yPos, Color color) const
+    {
+        const auto& piece = getPieceOnSquare(xPos, yPos);
+        return piece.has_value() && piece->color != color;
     }
 
 
-    std::optional<check::Piece> BoardState::getPieceOnSquare(uint8_t xPos, uint8_t yPos) const
+    const std::optional<Piece>& BoardState::getPieceOnSquare(uint8_t xPos, uint8_t yPos) const
     {
-        // TODO
-        return std::nullopt;
+        uint16_t index = coordToIndex(xPos, yPos);
+        const SquareState& square = squareStates[index];
+
+        return square.getPiece();
     }
 
 
@@ -82,7 +119,7 @@ namespace check
     }
 
 
-    void BoardState::placePiece(uint8_t xPos, uint8_t yPos, check::Piece piece)
+    void BoardState::placePiece(uint8_t xPos, uint8_t yPos, Piece piece)
     {
     
     }
@@ -120,14 +157,22 @@ namespace check
     }
     
 
-    MoveState BoardState::getLastMove()
+    std::optional<MoveState> BoardState::getLastMove() const
     {
+        if (moves.empty())
+            return std::nullopt;
         return moves.back();
     }
 
 
-    uint16_t BoardState::coordToIndex(uint8_t xPos, uint8_t yPos)
+    uint16_t BoardState::coordToIndex(uint8_t xPos, uint8_t yPos) const
     {
         return static_cast<uint16_t>(xPos + yPos*xSize);
+    }
+
+
+    void BoardState::setRuntimeContext(const RuntimeContext& ctx)
+    {
+        context = &ctx;
     }
 } // namespace check

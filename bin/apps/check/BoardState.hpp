@@ -16,6 +16,7 @@
 #include <vector>
 #include <optional>
 
+#include "RuntimeContext.hpp"
 #include "MathTypes.hpp"
 #include "SquareState.hpp"
 #include "PlayerState.hpp"
@@ -82,7 +83,16 @@ namespace check
          * @return The piece on the square or std::nullopt if the square
          *         is not occupied.
          */
-        std::optional<check::Piece> getPieceOnSquare(uint8_t xPos, uint8_t yPos) const;
+        const std::optional<check::Piece>& getPieceOnSquare(uint8_t xPos, uint8_t yPos) const;
+        
+        /**
+         * @brief Determines whether a square contains a piece of a different color.
+         * @param xPos The x-coordinate of the square.
+         * @param yPos The y-coordinate of the square.
+         * @param color The color to compare against.
+         * @return true if the square contains a piece of a different color, false otherwise.
+         */
+        bool containsOpponentPiece(uint8_t xPos, uint8_t yPos, Color color) const;
 
         /**
          * Returns whomever's turn it is in the current board state.
@@ -176,11 +186,20 @@ namespace check
         
         /**
          * This will return the last move that was made. This is needed for things
-         * such as en passant (pawn moves) and other scenarios.
+         * such as en passant (pawn moves) and other scenarios. If no moves have
+         * been made, this will return std::nullopt.
          */
-        MoveState getLastMove();
+        std::optional<MoveState> getLastMove() const;
+
+        /**
+         * Set the runtime context for this object to access.
+         */
+        void setRuntimeContext(const RuntimeContext& ctx);
 
     private:
+    
+        /// Stores runtimeContext such as the logger and verboseMode for this object to use. 
+        const RuntimeContext* context{nullptr};
     
         /// Stores whether or not this object was initialized.
         bool initialized{false};
@@ -194,7 +213,7 @@ namespace check
          * @param xPos The x-coordinate (column) of the input square.
          * @param yPos The y-coordinate (row) of the input square.
          */
-        uint16_t coordToIndex(uint8_t xPos, uint8_t yPos);
+        uint16_t coordToIndex(uint8_t xPos, uint8_t yPos) const;
 
         /// Stores the player state for this board configuration (e.g., whos turn it is). 
         PlayerState playerState{};

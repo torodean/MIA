@@ -18,11 +18,11 @@ namespace check
     /**
      * This defines the logic for a pawn piece.
      */
-    class Pawn : public BasePieceLogic
+    class PawnLogic : public BasePieceLogic
     {
     public:
         /// The main constructor for a pawn piece.
-        Pawn() : BasePieceLogic(PieceType::Pawn) {};
+        PawnLogic() : BasePieceLogic(PieceType::Pawn) {};
 
         /**
          * This returns the legal moves for a pawn piece. For a pawn, the 

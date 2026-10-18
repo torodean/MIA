@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "MathTypes.hpp"
 
@@ -126,7 +127,7 @@ namespace check
          * which is stored and defines which type of piece this object defines
          * the logic for.
          */
-        BasePieceLogic(PieceType pieceType);
+        BasePieceLogic(PieceType pieceType) : type(pieceType) {};
 
         /**
          * This returns the legal moves for a piece based on the current state of 
@@ -152,4 +153,22 @@ namespace check
 
         PieceType type; ///< Stores what type of piece this object defines logic for.
      }; // class BasePieceLogic
+
+    /**
+     * Creates the appropriate logic implementation for a piece type.
+     * @param type The type of piece to create logic for.
+     * @return A pointer to the appropriate BasePieceLogic implementation.
+     */
+    std::unique_ptr<BasePieceLogic> createPieceLogic(PieceType type);
+
+    /**
+     * This is a helper to get the legal moves of any piece. This will use the
+     * appropriate implemented BasePieceLogic baseed on the input piece and
+     * return a list of legal moves.
+     * @param piecePos The piece to get the legal moves of. This contains color and location.
+     * @param boardState The current state of the board.
+     */
+    std::vector<math::Coordinate<uint8_t>> getLegalMoves(const PiecePosition& piecePos,
+                                                         const BoardState& boardState);
+     
 } // namespace check
