@@ -140,15 +140,6 @@ namespace check
             const BoardState& boardState,
             Color color) = 0;
 
-    protected:
-
-        /**
-         * Determines whether a piece can jump other pieces. This is off by default,
-         * as most pieces cannot jump other pieces (for the primary chess pieces, the
-         * knight is the classic example of one that can).
-         */
-        virtual bool canJumpPieces() { return false; };
-
     private:
 
         PieceType type; ///< Stores what type of piece this object defines logic for.

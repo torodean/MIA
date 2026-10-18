@@ -8,7 +8,14 @@ set( CHECK_SRC
      SquareState.cpp
      BoardState.cpp
      EventHandler.cpp
-     Pawn.cpp )
+
+     # Add the logic for the pieces.
+     pieces/Pawn.cpp
+     pieces/Rook.cpp
+     pieces/Bishop.cpp
+     pieces/Knight.cpp
+     pieces/Queen.cpp
+)
 set( CHECK_INC 
      Check.hpp
      CheckConfig.hpp
@@ -18,7 +25,15 @@ set( CHECK_INC
      BoardState.hpp
      EventHandler.hpp
      MoveState.hpp
-     Pawn.hpp )
+     
+     # Add the logic for the pieces.
+     pieces/Pawn.hpp
+     pieces/Rook.hpp
+     pieces/Bishop.hpp
+     pieces/Knight.hpp
+     pieces/Queen.hpp
+     pieces/King.hpp
+)
 add_executable( check ${CHECK_SRC} ${CHECK_INC} )
 target_link_libraries( check
                    PRIVATE
@@ -28,6 +43,13 @@ target_link_libraries( check
                        Types_UTIL     # For string manipulation and parsing.
                        System_UTIL    # For timing.
                      )
+
+# Add this so that the files in the pieces folder don't need "../" for
+# header includes (and visa versa).
+target_include_directories(check PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/pieces
+)
 
 # Install the app.
 install_app( check )

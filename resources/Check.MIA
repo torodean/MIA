@@ -25,4 +25,4 @@ number_of_players=2
 whos_turn_is_it=1
 
 # Starting board state (position).
-starting_state=0,0,king,white;4,5,king,black;4,0,queen,white;0,5,queen,black;0,1,pawn,white;1,1,pawn,white;2,1,pawn,white;3,1,pawn,white;4,1,pawn,white;0,4,pawn,black;1,4,pawn,black;2,4,pawn,black;3,4,pawn,black;4,4,pawn,black;2,0,knight,white;2,5,knight,black
+starting_state=0,0,king,white;4,5,king,black;4,0,queen,white;0,5,queen,black;0,1,pawn,white;1,1,pawn,white;2,1,pawn,white;3,1,pawn,white;4,1,pawn,white;0,4,pawn,black;1,4,pawn,black;2,4,pawn,black;3,4,pawn,black;4,4,pawn,black;2,0,knight,white;2,5,knight,black;1,0,bishop,white;3,5,bishop,black;3,0,rook,white;1,5,rook,black

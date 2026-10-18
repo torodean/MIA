@@ -11,6 +11,13 @@
 
 // Include the various piece types.
 #include "Pawn.hpp"
+#include "Queen.hpp"
+#include "Rook.hpp"
+#include "Bishop.hpp"
+#include "Knight.hpp"
+/*
+#include "King.hpp"
+*/
 
 namespace check
 {
@@ -81,22 +88,21 @@ namespace check
             case PieceType::Pawn:
                 return std::make_unique<PawnLogic>();
 
-            /* TODO - these still need defined logic.
-            case PieceType::King:
-                return std::make_unique<KingLogic>();
-
             case PieceType::Queen:
                 return std::make_unique<QueenLogic>();
 
             case PieceType::Bishop:
                 return std::make_unique<BishopLogic>();
 
-            case PieceType::Knight:
-                return std::make_unique<KnightLogic>();
-
             case PieceType::Rook:
                 return std::make_unique<RookLogic>();
-            */
+
+            case PieceType::Knight:
+                return std::make_unique<KnightLogic>();
+/* TODO 
+            case PieceType::King:
+                return std::make_unique<KingLogic>();
+*/
             case PieceType::None:
                 return nullptr;
         }

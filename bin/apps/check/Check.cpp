@@ -121,6 +121,10 @@ namespace check
         timing::sleepMilliseconds(20);
         module.call("registerPiece", "knight", "\u265E");
         timing::sleepMilliseconds(20);
+        module.call("registerPiece", "rook", "\u265C");
+        timing::sleepMilliseconds(20);
+        module.call("registerPiece", "bishop", "\u265D");
+        timing::sleepMilliseconds(20);
         
         // Setup the starting board position.
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
