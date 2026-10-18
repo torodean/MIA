@@ -7,6 +7,7 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 namespace check
@@ -48,4 +49,10 @@ namespace check
      *       assumes this will remain the case.
      */
     CheckUIEvent getEventType(const std::string& input);
+    
+    /**
+     *
+     *
+     */
+    void showLegalMoves();
 } // namespace check
