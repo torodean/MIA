@@ -151,6 +151,11 @@ namespace check
         if (whosTurnIsItToColor(boardState.whosTurnIsIt()) != piecePos.piece.color)
             return {};
 
+        // Only king moves are legal if the king is in check.
+        if (boardState.isKingInCheck(whosTurnIsItToColor(boardState.whosTurnIsIt())) &&
+            piecePos.piece.type != PieceType::King)
+            return {};
+
         return logic->getLegalMoves(piecePos.coordinate, boardState, piecePos.piece.color);
     }
 

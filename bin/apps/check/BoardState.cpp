@@ -60,14 +60,14 @@ namespace check
         {
             stream << "Checking if square is occupied: "
                    << "Square (" << std::to_string(xPos) << "," << std::to_string(yPos) << "), index="
-                   << std::to_string(index) << "... ";
+                   << std::to_string(index) << ": ";
         }
 
         const SquareState& square = squareStates[index];
         
         if (context)
         {
-            stream << (square.isOccupied() ? "It is!" : "It's not!");
+            stream << (square.isOccupied() ? "true" : "false");
             context->logger.log(stream.str(), {"BoardState", "isSquareOccupied()"}, context->verboseMode);
         }
         
@@ -168,6 +168,13 @@ namespace check
     bool BoardState::isSquareAttacked(uint8_t xPos, uint8_t yPos,
                                       Color defendingColor) const
     {
+        bool isAttacked = false;
+        std::stringstream stream;
+        if (context)
+        {
+            stream << "Checking if the (" << std::to_string(xPos) << ", " 
+                   << std::to_string(yPos) << ") square is attacked: ";
+        }
         // Get all squares currently attacked.
         auto attackedSquares = getAttackedSquares(*this, defendingColor);
 
@@ -175,16 +182,29 @@ namespace check
         { // Iterate over all attacked squares.
             if (coordinate.x == xPos && coordinate.y == yPos)
             {
-                return true;
+                isAttacked = true;
+                break;
             }
         }
 
-        return false;
+        if (context)
+        {
+            stream << (isAttacked ? "true" : "false");
+            context->logger.log(stream.str(), {"BoardState", "isSquareAttacked()"}, context->verboseMode);
+        }
+
+        return isAttacked;
     }
 
 
     bool BoardState::isKingInCheck(Color color) const
     {
+        bool kingInCheck = false;
+        std::stringstream stream;
+        if (context)
+        {
+            stream << "Checking if the " << colorToString(color) << " king is in check: ";
+        }
         for (const SquareState& square : squareStates)
         {
             const std::optional<Piece>& piece = square.getPiece();
@@ -198,7 +218,14 @@ namespace check
 
             const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
 
-            return isSquareAttacked(coordinate.x, coordinate.y, color);
+            kingInCheck = isSquareAttacked(coordinate.x, coordinate.y, color);
+            break;
+        }
+
+        if (context)
+        {
+            stream << (kingInCheck ? "true" : "false");
+            context->logger.log(stream.str(), {"BoardState", "isKingInCheck()"}, context->verboseMode);
         }
 
         // No king of the specified color was found.
