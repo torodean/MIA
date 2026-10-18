@@ -424,8 +424,12 @@ def getAllEvents():
     """
     events = uiEvents.copy()
     uiEvents.clear()
-    if verboseMode:
-        print(f"UI events retrieved: {events}")
+
+    # This can be added if desired for debugging, but is generally extremely 
+    # noisy, since this method is called frequently.
+    #if verboseMode:
+    #    print(f"UI events retrieved: {events}")
+
     return events
 
 
