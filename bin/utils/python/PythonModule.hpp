@@ -145,6 +145,7 @@ public:
      * @param args Zero or more arguments, converted per their C++ type.
      * @return A PythonResult holding the return value of the call.
      * @tparam ArgTypes The argument types.
+     * @throws MIAException if the call returned an error.
      */
     template<typename... ArgTypes>
     PythonResult call(const std::string& name, ArgTypes... args)
@@ -158,6 +159,11 @@ public:
         } // Ensure Python object references are released before releasing the GIL.
 
         PyGILState_Release(state);
+        
+        if (!result.isValid())
+        { // This means the call failed for some reason.
+            MIA_THROW(error::ErrorCode::Py_Module_Call_Error, result.getError());
+        }
 
         return result;
     }

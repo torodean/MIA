@@ -34,6 +34,14 @@ namespace python_ui
      * always polled; waitForEvents() only blocks the c++ side until polled
      * events actually arrive.
      *
+     * IMPORTANT (Tkinter / any GUI toolkit):
+     * The method polled by this listener (getAllEvents by default) MUST NOT
+     * touch the Tk root, canvas, widgets, or call root.update() / mainloop().
+     * Tkinter is not thread-safe; all Tk interactions must stay on the thread
+     * that created the root (normally the main thread). The background thread
+     * may only read pure Python data (e.g. an event list). Calling the event
+     * loop and any drawing/update calls belong in the main thread.
+     *
      * The EventQueue is passed in and shared rather than owned so that other
      * event sources (e.g. an input listener) can push into the same queue,
      * giving the reader a single place to wait. The queue must outlive this

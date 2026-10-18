@@ -422,7 +422,6 @@ def getAllEvents():
     events keep flowing without a separate mainloop on the python side.
     @return A list containing all pending UI events.
     """
-    updateUI()
     events = uiEvents.copy()
     uiEvents.clear()
     if verboseMode:

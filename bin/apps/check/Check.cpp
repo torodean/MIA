@@ -11,13 +11,15 @@
 #include <iostream>
 
 // Used for error handling.
-#include "Paths.hpp"
 #include "MIAException.hpp"
-
+// Used for file paths.
+#include "Paths.hpp"
+// Used for return codes.
 #include "Constants.hpp"
-
 // Used for testing purposes.
 #include "Timing.hpp"
+// Used for python interface results.
+#include "PythonResult.hpp"
 
 namespace check
 {
@@ -118,6 +120,9 @@ namespace check
         
         while (listener.isRunning())
         {
+            // Update the UI to the most recent state.
+            module.call("updateUI");
+
             // Read whatever events the listener has polled so far.
             storage = queue.getAllEvents(); // This calls updateUI() each time.
 
