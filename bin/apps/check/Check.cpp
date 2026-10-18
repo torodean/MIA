@@ -20,6 +20,8 @@
 #include "Timing.hpp"
 // Used for python interface results.
 #include "PythonResult.hpp"
+// Used for handling events.
+#include "EventHandler.hpp"
 
 namespace check
 {
@@ -49,6 +51,11 @@ namespace check
         }
 
         loadConfig();
+        
+        // Load config values into the board state.
+        boardState.initialize(configValues.boardSizeX,
+                              configValues.boardSizeY,
+                              configValues.startingPosition);
     }
 
 
@@ -128,12 +135,31 @@ namespace check
 
             for (const ui::Event& event : storage.getEvents())
             {
-                // TODO - handle events here.
                 std::cout << "Event received: " << event.getName() << std::endl;
-                if (event.getName() == "stop")
-                { // Signals that the UI was exited.
-                    listener.stop();
-                    return constants::SUCCESS;
+                CheckUIEvent eventType = getEventType(event.getName());
+                switch(eventType)
+                { // TODO - handle events here.
+                    case CheckUIEvent::PickupPiece:
+                        if (configValues.showLegalMoves)
+                            ;// TODO - show legal moves.
+                        break;
+                    case CheckUIEvent::DropPiece:
+                    case CheckUIEvent::ResetBoard:
+                    case CheckUIEvent::SaveBoard:
+                        std::cout << "Still coding this event type!" << std::endl;
+                        break;
+                    case CheckUIEvent::Stop:
+                    { // Signals that the UI was exited.
+                        listener.stop();
+                        return constants::SUCCESS;
+                    }
+                    
+                    case CheckUIEvent::Unknown:
+                    default:
+                    { // Unknown/unparsable event.
+                        std::cerr << "The input event is unknown!" << std::endl;
+                        return constants::FAILURE;
+                    }
                 }
             }
             listener.rethrowExceptionIfAny();

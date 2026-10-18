@@ -13,7 +13,8 @@
 # This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
 
 # Misc Options.
-verboseMode=true
+verbose_mode=true
+show_legal_moves=true
 
 # Defines the board size.
 board_size_x=5

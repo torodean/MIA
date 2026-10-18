@@ -15,9 +15,9 @@
 
 namespace check
 {
-    std::vector<PieceStartingPos> stringToStartingPosition(const std::string& input)
+    std::vector<PiecePosition> stringToStartingPosition(const std::string& input)
     {
-        std::vector<PieceStartingPos> positions;
+        std::vector<PiecePosition> positions;
         std::vector<std::string> entries = string_utils::delimiterString(input, ';');
 
         for (std::string& entry : entries)
@@ -42,7 +42,7 @@ namespace check
                 part = string_utils::trim(part);
             }
 
-            PieceStartingPos pos;
+            PiecePosition pos;
             pos.coordinate = math::Coordinate<uint8_t>(string_utils::stringToUint8(parts[0]),
                                                        string_utils::stringToUint8(parts[1]) );
             pos.piece.type = stringToPieceType(parts[2]);
@@ -53,10 +53,10 @@ namespace check
     }
 
 
-    std::string positionsToString(const std::vector<PieceStartingPos>& positions)
+    std::string positionsToString(const std::vector<PiecePosition>& positions)
     {
         std::string output;
-        for (const PieceStartingPos& pos : positions)
+        for (const PiecePosition& pos : positions)
         {
             if (!output.empty())
                 output += ";";
@@ -72,7 +72,8 @@ namespace check
     CheckConfig constructConfig(const config::MIAConfig& config)
     {
         CheckConfig out;
-        out.verboseMode = config.getBool("verboseMode");
+        out.verboseMode = config.getBool("verbose_mode");
+        out.showLegalMoves = config.getBool("show_legal_moves");
         out.boardSizeX = string_utils::stringToUint8(config.getString("board_size_x"));
         out.boardSizeY = string_utils::stringToUint8(config.getString("board_size_y"));
         out.startingPlayerState = PlayerState(string_utils::stringToUint8(config.getString("number_of_players")),
@@ -83,7 +84,7 @@ namespace check
 
 
     std::vector<std::string> positionsToStateStrings(
-        const std::vector<PieceStartingPos>& positions)
+        const std::vector<PiecePosition>& positions)
     {
         std::string stateStringWhole = positionsToString(positions);
         std::vector<std::string> output = string_utils::delimiterString(stateStringWhole, ';');

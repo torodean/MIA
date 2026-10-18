@@ -18,29 +18,20 @@
 namespace check
 {
     /**
-     * Stores a starting position for a single piece. This holds information for
-     * a single piece and its location.
-     */
-    struct PieceStartingPos
-    {
-        Piece piece;
-        math::Coordinate<uint8_t> coordinate;
-    };
-    
-    /**
      * Storage for all configurable CHECK application values.
      */
     struct CheckConfig
     {
-        bool verboseMode{false}; ///< Whether or not to force verboseMode.
-        uint8_t boardSizeX;      ///< The x size of the board.
-        uint8_t boardSizeY;      ///< The y size of the board.
+        bool verboseMode{false};   ///< Whether or not to force verboseMode.
+        bool showLegalMoves{true}; ///< Whether or not to force verboseMode.
+        uint8_t boardSizeX;        ///< The x size of the board.
+        uint8_t boardSizeY;        ///< The y size of the board.
         
         /// State of the players when the game starts.
         PlayerState startingPlayerState;
         
         /// Stores the starting board position.
-        std::vector<PieceStartingPos> startingPosition;
+        std::vector<PiecePosition> startingPosition;
     }; // struct CheckConfig
     
     /**
@@ -50,10 +41,10 @@ namespace check
      * by a comma (",") delimiter. Each position expects a string of the format:
      * "<x-position>,<y-position>,<piece type>,<piece color>"
      * @param input The input string to parse.
-     * @return A vector of PieceStartingPos objects constructed from the input.
+     * @return A vector of PiecePosition objects constructed from the input.
      * @throws MIAException if the string is malformed.
      */
-    std::vector<PieceStartingPos> stringToStartingPosition(const std::string& input);
+    std::vector<PiecePosition> stringToStartingPosition(const std::string& input);
     
     /**
      * This is a helper to convert a startingPosition to a string format. This can
@@ -64,7 +55,7 @@ namespace check
      * @param positions A Vector of piece positions.
      * @param A string representation of the piece positions.
      */
-    std::string positionsToString(const std::vector<PieceStartingPos>& positions);
+    std::string positionsToString(const std::vector<PiecePosition>& positions);
      
     /**
      * This will construct a CheckConfig object from the MIAConfig by pulling out
@@ -82,5 +73,5 @@ namespace check
      * @return A vector of strings constructed from the input.
      */
     std::vector<std::string> positionsToStateStrings(
-        const std::vector<PieceStartingPos>& positions);
+        const std::vector<PiecePosition>& positions);
 } // namespace check

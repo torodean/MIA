@@ -3,14 +3,22 @@ set( CHECK_SRC
      Check.cpp 
      Check_main.cpp
      CheckConfig.cpp
-     Piece.cpp )
+     Piece.cpp
+     PlayerState.cpp
+     SquareState.cpp
+     BoardState.cpp
+     EventHandler.cpp
+     Pawn.cpp )
 set( CHECK_INC 
      Check.hpp
      CheckConfig.hpp
      Piece.hpp
      PlayerState.hpp
      SquareState.hpp
-     BoardState.hpp )
+     BoardState.hpp
+     EventHandler.hpp
+     MoveState.hpp
+     Pawn.hpp )
 add_executable( check ${CHECK_SRC} ${CHECK_INC} )
 target_link_libraries( check
                    PRIVATE

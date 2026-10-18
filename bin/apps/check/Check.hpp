@@ -20,6 +20,7 @@
 #include "PythonModule.hpp"
 #include "EventQueue.hpp"
 #include "PythonUIListener.hpp"
+#include "BoardState.hpp"
 
 namespace check
 {
@@ -90,5 +91,8 @@ namespace check
         ui::EventQueue queue;
         ui::EventStorage storage;
         python_ui::PythonUIListener listener;
+        
+        /// Stores the current board state.
+        BoardState boardState;
     }; // class Check
 } // namespace check

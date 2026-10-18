@@ -8,9 +8,15 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+#include "MathTypes.hpp"
 
 namespace check
 {
+    /// Predeclare BoardState so BasePieceLogic can reference it.
+    class BoardState;
+
     /**
      * Represents the various defined pieces. Each of these pieces should have
      * a class representing the logic and functionality of the piece, while
@@ -94,4 +100,55 @@ namespace check
         /// The color of the piece.
         Color color{Color::White};
     };
+
+    /**
+     * Stores a position for a single piece. This holds information for
+     * a single piece and its location.
+     */
+    struct PiecePosition
+    {
+        Piece piece;
+        math::Coordinate<uint8_t> coordinate;
+    };
+    
+    /**
+     * This class is a base virtual class for any piece. Every piece needs
+     * some sort of logic defining how it moves, captures, legal moves, etc.
+     * Each piece should have a class to define this logic, and each of those
+     * classes should inherit this base class and follow its structure.
+     */
+     class BasePieceLogic
+     {
+     public:
+        /**
+         * The main constructor for this class. This takes only the PieceType,
+         * which is stored and defines which type of piece this object defines
+         * the logic for.
+         */
+        BasePieceLogic(PieceType pieceType);
+
+        /**
+         * This returns the legal moves for a piece based on the current state of 
+         * the board. This uses canJumpPieces(), the color of the piece (for direction),
+         * and the current state of the board to do this. This should be implemented
+         * for every derived piece.
+         */
+        virtual std::vector<math::Coordinate<uint8_t>> getLegalMoves(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color) = 0;
+
+    protected:
+
+        /**
+         * Determines whether a piece can jump other pieces. This is off by default,
+         * as most pieces cannot jump other pieces (for the primary chess pieces, the
+         * knight is the classic example of one that can).
+         */
+        virtual bool canJumpPieces() { return false; };
+
+    private:
+
+        PieceType type; ///< Stores what type of piece this object defines logic for.
+     }; // class BasePieceLogic
 } // namespace check

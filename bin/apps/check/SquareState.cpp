@@ -1,0 +1,70 @@
+/**
+ * @file SquareState.cpp
+ * @author Antonius Torode
+ * @date 10/18/2026
+ * @brief Implements the Square state class and methods.
+ */
+
+// Include the associated header file.
+#include "SquareState.hpp"
+
+namespace check
+{
+
+    SquareState::SquareState(uint8_t xCoord, uint8_t yCoord)
+    {
+        coordinate.x = xCoord;
+        coordinate.y = yCoord;
+    }
+
+
+    void SquareState::updatePiece(Piece cPiece)
+    {
+    
+    }
+
+
+    void SquareState::removePiece()
+    {
+    
+    }
+
+
+    bool SquareState::isOccupied() const
+    {
+        if (piece.type == PieceType::None)
+            return false;
+        return true;
+    }
+
+
+    std::optional<Piece> SquareState::getPiece() const
+    {
+        if (piece.type == PieceType::None)
+            return std::nullopt;
+        return piece;
+    }
+
+
+    const math::Coordinate<uint8_t>& SquareState::getCoordinate() const
+    {
+        return coordinate;
+    }
+
+
+    std::vector<SquareState> createSquareStates(uint8_t xSize, uint8_t ySize)
+    {
+        std::vector<SquareState> squareStates;
+        squareStates.reserve(static_cast<uint16_t>(xSize) * ySize);
+
+        for (uint16_t y = 0; y < ySize; ++y)
+        {
+            for (uint16_t x = 0; x < xSize; ++x)
+            {
+                squareStates.emplace_back(static_cast<uint8_t>(x), static_cast<uint8_t>(y));
+            }
+        }
+
+        return squareStates;
+    }
+} // namespace check

@@ -1,0 +1,86 @@
+/**
+ * @file Pawn.cpp
+ * @author Antonius Torode
+ * @date 10/17/2026
+ * @brief Implements the logic for the pawn piece.
+ */
+
+#include <cstdint>
+
+// Include the associated header file.
+#include "Pawn.hpp"
+#include "BoardState.hpp"
+
+namespace check
+{
+    namespace
+    {
+        /**
+         * This will determine if a pawn is in its starting position. The starting
+         * position is based on the pawn color and the board size. The pawns starting
+         * position should always be either be in row 1, or row boardYSize-1.
+         * @param currentPos The current position of the pawn.
+         * @param color The color of the pawn.
+         * @param boardYSize The maximum y-size of the board.
+         * @return true if the piece is in its starting position, false otherwise.
+         */
+        bool isInStartingPosition(const math::Coordinate<uint8_t>& currentPos, 
+                                  Color color,
+                                  uint8_t boardYSize)
+        {
+            if (color == Color::White && currentPos.y == 1)
+                return true;
+            if (color == Color::Black && currentPos.y == boardYSize - 1)
+                return true;
+            
+            // Otherwise, this is not the starting position.
+            return false;
+        }
+    } // namespace
+
+
+    std::vector<math::Coordinate<uint8_t>> Pawn::getLegalMoves(
+        const math::Coordinate<uint8_t>& currentPos,
+        const BoardState& boardState,
+        Color color)
+    {
+        // Defines forward as +1 or -1 depending on color.
+        int8_t forward = 1; // For white.
+        if (color == Color::Black)
+            forward = -1;
+        
+        std::vector<math::Coordinate<uint8_t>> legalMoves;
+        bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
+        
+        // If the square forward is not occupied, that is a valud move.
+        if (!boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + forward)))
+        {
+            legalMoves.push_back({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)});
+            if (inStartingPos &&
+                !boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + 2*forward)))
+            { // This check is only needed if the move directly forward was already valid.
+                legalMoves.push_back({currentPos.x,  static_cast<uint8_t>(currentPos.y + 2*forward)});
+            }
+        }
+
+        // Check if any captures are available.
+        if (currentPos.x + 1 <= boardState.getXSize() && // Keep within board bounds.
+            !boardState.isSquareOccupied(static_cast<uint8_t>(currentPos.x + 1), 
+                                         static_cast<uint8_t>(currentPos.y + forward)))
+        { // forward and to the right.
+            legalMoves.push_back({static_cast<uint8_t>(currentPos.x + 1), 
+                                  static_cast<uint8_t>(currentPos.y + forward)});
+        }
+        if (currentPos.x - 1 >= 0 && // Keep within board bounds.
+            !boardState.isSquareOccupied(static_cast<uint8_t>(currentPos.x + 1), 
+                                         static_cast<uint8_t>(currentPos.y + forward)))
+        { // forward and to the left.
+            legalMoves.push_back({static_cast<uint8_t>(currentPos.x - 1), 
+                                  static_cast<uint8_t>(currentPos.y + forward)});
+        }
+        
+        // TODO - handle en passant here.
+        
+        return legalMoves;
+    }
+} // namespace check

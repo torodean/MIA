@@ -12,13 +12,13 @@ The UI renders an N x M board of square cells with labeled borders and
 supports
 dragging pieces between squares. All game logic lives in the C++ backend:
 the UI never decides whether a move is legal. When a piece is dropped the UI
-snaps it back to its origin square and queues a drop event; the backend then
+snaps it back to its origin square and queues a drop_piece event; the backend then
 calls movePiece() to make the move official.
 
 Event formats (the C++ side parses these):
    Events (space-separated values, squares are 0-indexed col row):
-    "pickup <col> <row>"
-    "drop <fromCol> <fromRow> <toCol> <toRow>"
+    "pickup_piece <col> <row>"
+    "drop_piece <fromCol> <fromRow> <toCol> <toRow>"
     "stop"
    Board state (one string per occupied cell, comma-separated):
     "<col>,<row>,<type>,<color>"
@@ -82,8 +82,11 @@ def addEvent(event):
     @param event The event to add to the queue.
     """
     uiEvents.append(event)
-    if verboseMode:
-        print(f"UI event added: '{event}'")
+    
+    # This can be added if desired for debugging, but is generally extremely 
+    # noisy, since this method is called frequently.
+    #if verboseMode:
+    #    print(f"UI event added: '{event}'")
 
 
 class ChessBoard(tk.Frame):
@@ -207,7 +210,7 @@ class ChessBoard(tk.Frame):
         col, row = sq
         highlightSquare(col, row)
         self.drag = {"from": sq}
-        addEvent(f"pickup {col} {row}")
+        addEvent(f"pickup_piece {col} {row}")
         # Hide the piece on its square so it is not duplicated during
         # the drag; drawPieces() restores it if the drop is invalid.
         self.canvas.delete(self.pieceItems[col][row])
@@ -237,7 +240,7 @@ class ChessBoard(tk.Frame):
         dst = self.squareAt(event.x, event.y)
         self.drawPieces()
         if dst is not None and dst != src:
-            addEvent(f"drop {src[0]} {src[1]} {dst[0]} {dst[1]}")
+            addEvent(f"drop_piece {src[0]} {src[1]} {dst[0]} {dst[1]}")
 
 
 #####################
@@ -345,7 +348,7 @@ def getBoardState():
 def movePiece(fromCol, fromRow, toCol, toRow):
     """
     Moves a piece in the board data and redraws.
-    Called by the backend after a drop event is judged legal.
+    Called by the backend after a drop_piece event is judged legal.
     @param fromCol The source column.
     @param fromRow The source row.
     @param toCol The destination column.

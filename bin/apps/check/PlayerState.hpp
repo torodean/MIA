@@ -27,5 +27,11 @@ namespace check
     
         uint8_t numberOfPlayers{2}; ///< Total number of players.
         uint8_t whosTurnIsIt{1};    ///< Stores whos turn it is.
+        
+        /**
+         * Advance to the next players turn. This wil increment whosTurnIsIt
+         * until it reaches the number of players, then loop back around to 1.
+         */
+        void advanceTurn();
     }; // class PlayerState
 }; // namespace check
