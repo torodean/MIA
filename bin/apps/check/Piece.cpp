@@ -131,6 +131,7 @@ namespace check
             case PieceType::King:
                 return std::make_unique<KingLogic>();
 
+            case PieceType::Count:
             case PieceType::None:
                 return nullptr;
         }
@@ -177,6 +178,17 @@ namespace check
     {
         std::vector<math::Coordinate<uint8_t>> attackedSquares;
 
+        // Create each piece-logic implementation once.
+        std::array<std::unique_ptr<BasePieceLogic>, static_cast<size_t>(PieceType::Count)> pieceLogic;
+
+        for (uint8_t type = static_cast<uint8_t>(PieceType::King);
+             type < static_cast<uint8_t>(PieceType::Count);
+             ++type)
+        { // Iterate over all valid piece types.
+            PieceType pieceType = static_cast<PieceType>(type);
+            pieceLogic[type] = createPieceLogic(pieceType);
+        }
+
         for (uint16_t y = 0; y < boardState.getYSize(); ++y)
         {
             for (uint16_t x = 0; x < boardState.getXSize(); ++x)
@@ -194,14 +206,13 @@ namespace check
 
                 PiecePosition piecePos{*piece, {static_cast<uint8_t>(x), static_cast<uint8_t>(y)}};
 
-                auto logic = createPieceLogic(piece->type);
+                std::unique_ptr<BasePieceLogic>& logic = pieceLogic[static_cast<uint8_t>(piece->type)];
 
                 if (!logic)
                     continue;
 
-                auto pieceAttacks = logic->getAttackedSquares(piecePos.coordinate,
-                                                              boardState,
-                                                              piecePos.piece.color);
+                std::vector<math::Coordinate<uint8_t>> pieceAttacks = 
+                    logic->getAttackedSquares(piecePos.coordinate, boardState, piecePos.piece.color);
 
                 attackedSquares.insert(attackedSquares.end(),
                                        pieceAttacks.begin(),

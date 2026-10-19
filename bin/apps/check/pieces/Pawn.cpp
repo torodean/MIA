@@ -6,6 +6,7 @@
  */
 
 #include <cstdint>
+#include <cmath>
 
 // Include the associated header file.
 #include "Pawn.hpp"
@@ -46,9 +47,7 @@ namespace check
         Color color)
     {
         // Defines forward as +1 or -1 depending on color.
-        int8_t forward = 1; // For white.
-        if (color == Color::Black)
-            forward = -1;
+        int8_t forward = color == Color::White ? 1 : -1;
         
         std::vector<math::Coordinate<uint8_t>> legalMoves;
         bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
@@ -90,10 +89,11 @@ namespace check
              * it's to our left. Also, the absolute value of this must be exactly 1 to signal
              * that the last piece moved was one column to the right or left.
              */
-            int8_t direction = lastMove->endingPos.x - currentPos.x;
+            int16_t direction = static_cast<int16_t>(lastMove->endingPos.x) -
+                                static_cast<int16_t>(currentPos.x);
             if (lastMove->endingPos.y == currentPos.y && // The last pawn move ended next to this one. 
-                (direction == -1 || direction == 1) &&  // The last piece was in an adjacent column.
-                lastMove->endingPos.y - lastMove->startingPos.y == 2) // The pawn moved two squares.
+                (direction == -1 || direction == 1) &&   // The last piece was in an adjacent column.
+                std::abs(lastMove->endingPos.y - lastMove->startingPos.y) == 2) // The pawn moved two squares.
             { // Indicates en passant is possible.
                 legalMoves.push_back({static_cast<uint8_t>(currentPos.x + direction), 
                                       static_cast<uint8_t>(currentPos.y + forward)});
@@ -101,5 +101,34 @@ namespace check
         }
 
         return legalMoves;
+    }
+    
+
+    std::vector<math::Coordinate<uint8_t>> PawnLogic::getAttackedSquares(
+        const math::Coordinate<uint8_t>& currentPos,
+        const BoardState& boardState,
+        Color color)
+    {
+        std::vector<math::Coordinate<uint8_t>> attackedSquares;
+
+        // Define the pawn's forward direction based on its color.
+        int16_t forward = color == Color::White ? 1 : -1;
+
+        // Check both diagonal attack squares.
+        for (int16_t dx : {-1, 1})
+        {
+            int16_t x = static_cast<int16_t>(currentPos.x) + dx;
+            int16_t y = static_cast<int16_t>(currentPos.y) + forward;
+
+            // Skip squares outside the board.
+            if (x < 0 || x >= boardState.getXSize() || y < 0 || y >= boardState.getYSize())
+            {
+                continue;
+            }
+
+            attackedSquares.push_back({static_cast<uint8_t>(x), static_cast<uint8_t>(y)});
+        }
+
+        return attackedSquares;
     }
 } // namespace check

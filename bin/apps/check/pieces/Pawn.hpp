@@ -35,6 +35,19 @@ namespace check
         std::vector<math::Coordinate<uint8_t>> getLegalMoves(
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
+            Color color) override;        
+            
+        /**
+         * This returns all squares attacked by a pawn. A pawn attacks the two
+         * diagonally adjacent squares in its forward direction, regardless of
+         * whether those squares are occupied.
+         * @param currentPos The current coordinate of the pawn.
+         * @param boardState The current state of the board.
+         * @param color The color of the pawn, which determines its attack direction.
+         */
+        std::vector<math::Coordinate<uint8_t>> getAttackedSquares(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
             Color color) override;
     }; // class Pawn
 } // namespace check

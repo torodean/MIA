@@ -257,7 +257,7 @@ namespace check
         }
 
         // No king of the specified color was found.
-        return false;
+        return kingInCheck;
     }
 
 

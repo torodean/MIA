@@ -36,6 +36,7 @@ namespace check
         Bishop,     ///< The Bishop.
         Knight,     ///< The Knight.
         Rook,       ///< The Rook.
+        Count       ///< Number of defined piece types.
     }; // enum PieceType
 
     /**
