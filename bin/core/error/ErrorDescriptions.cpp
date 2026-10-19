@@ -91,6 +91,12 @@ namespace error
          */
         { Py_Module_Load_Failure, "A Python module failed to load in the embedded interpreter." },
         { Py_Unexp_Return_Type_Request, "The expected return value requested for a python call does not match." },
+        { Py_Module_Call_Error, "A call to a module method returned an error." },
+        
+        /*
+         * CHECK app error codes. 400XX.
+         */
+        { Check_No_Piece_On_Square, "No piece was on the specified square." },
 
         // A catch all for any un-programmed errors.
         { Catastrophic_Failure, "A catastrophic failure occurred." }

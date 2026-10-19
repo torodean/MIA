@@ -16,6 +16,11 @@
 // Used for command options.
 #include "CommandOption.hpp"
 
+// Needed for ui interfacing and event handling.
+#include "PythonModule.hpp"
+#include "EventQueue.hpp"
+#include "PythonUIListener.hpp"
+#include "BoardState.hpp"
 
 namespace check
 {
@@ -70,5 +75,24 @@ namespace check
 
         /// Load the configuration variables.
         void loadConfig();
+        
+        /**
+         * Define the components which are needed for UI event handling
+         * and ui interfacing.
+         *
+         * The defaultModuleName is the default python ui module to use.
+         * The PythonModule handles loading in the python UI.
+         * The EventQueue stores events the UI produces.
+         * The EventStorage stores the events retreived from the queue.
+         * The PythonUIListener handles monitoring and filling the UI queue.
+         */
+        std::string defaultModuleName{"check"};
+        PythonModule module;
+        ui::EventQueue queue;
+        ui::EventStorage storage;
+        python_ui::PythonUIListener listener;
+        
+        /// Stores the current board state.
+        BoardState boardState;
     }; // class Check
 } // namespace check

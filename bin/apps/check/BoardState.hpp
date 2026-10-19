@@ -16,9 +16,12 @@
 #include <vector>
 #include <optional>
 
+#include "RuntimeContext.hpp"
 #include "MathTypes.hpp"
 #include "SquareState.hpp"
 #include "PlayerState.hpp"
+#include "MoveState.hpp"
+#include "Piece.hpp"
 
 namespace check
 {
@@ -31,12 +34,37 @@ namespace check
     {
     public:
         /**
+         * The default constructor for this object. If this is used, the
+         * initialize() method must be called.
+         */
+        BoardState() = default;
+
+        /**
          * Main constructor for a BoardState object. This will construct a board
          * state of an appropriate size with a SquareState for each square.
          * @param columns The number of columns of the board.
          * @param rows The number of rows of the board.
          */
         BoardState(uint8_t columns, uint8_t rows);
+        
+        /**
+         * initialize the object, this should be used when the default constructor
+         * is used.
+         * @param columns The number of columns of the board.
+         * @param rows The number of rows of the board.
+         * @param startingPos The starting position to initialize this board state to.
+         * @throws MIAException if the starting position is invalid.
+         */
+        void initialize(uint8_t columns, 
+                        uint8_t rows,
+                        const std::vector<PiecePosition>& startingPos);
+
+        /**
+         * Sets the starting position of the board.
+         * @param startingPos The starting position to initialize this board state to.
+         * @throws MIAException if the starting position is invalid.
+         */
+        void setStartingPosition(const std::vector<PiecePosition>& startingPos);
 
         /**
          * Determines whether a square is occupied or not.
@@ -55,7 +83,16 @@ namespace check
          * @return The piece on the square or std::nullopt if the square
          *         is not occupied.
          */
-        std::optional<check::Piece> getPieceOnSquare(uint8_t xPos, uint8_t yPos) const;
+        const std::optional<check::Piece>& getPieceOnSquare(uint8_t xPos, uint8_t yPos) const;
+        
+        /**
+         * @brief Determines whether a square contains a piece of a different color.
+         * @param xPos The x-coordinate of the square.
+         * @param yPos The y-coordinate of the square.
+         * @param color The color to compare against.
+         * @return true if the square contains a piece of a different color, false otherwise.
+         */
+        bool containsOpponentPiece(uint8_t xPos, uint8_t yPos, Color color) const;
 
         /**
          * Returns whomever's turn it is in the current board state.
@@ -146,9 +183,41 @@ namespace check
          * to the first player's turn. The board dimensions are unchanged.
          */
         void reset();
+        
+        /**
+         * This will return the last move that was made. This is needed for things
+         * such as en passant (pawn moves) and other scenarios. If no moves have
+         * been made, this will return std::nullopt.
+         */
+        std::optional<MoveState> getLastMove() const;
+        
+        /**
+         * Determines whether a square is attacked by an opposing piece.
+         * @param xPos The x-coordinate (column) to check.
+         * @param yPos The y-coordinate (row) to check.
+         * @param defendingColor The 'friendly' color in terms of an attack.
+         */
+        bool isSquareAttacked(uint8_t xPos, uint8_t yPos,
+                              Color defendingColor) const;
+
+        /**
+         * Determines whether the specified player's king is in check.
+         */
+        bool isKingInCheck(Color color) const;
+
+        /**
+         * Set the runtime context for this object to access.
+         */
+        void setRuntimeContext(const RuntimeContext& ctx);
 
     private:
     
+        /// Stores runtimeContext such as the logger and verboseMode for this object to use. 
+        const RuntimeContext* context{nullptr};
+    
+        /// Stores whether or not this object was initialized.
+        bool initialized{false};
+
         /**
          * Calculates the index value of a square based on the coordinates.
          * The index is given by index(x,y) = x + y*xSize (see squareStates),
@@ -158,15 +227,15 @@ namespace check
          * @param xPos The x-coordinate (column) of the input square.
          * @param yPos The y-coordinate (row) of the input square.
          */
-        uint16_t coordToIndex(uint8_t xPos, uint8_t yPos);
+        uint16_t coordToIndex(uint8_t xPos, uint8_t yPos) const;
 
         /// Stores the player state for this board configuration (e.g., whos turn it is). 
-        PlayerState playerState;
+        PlayerState playerState{};
 
         /// Stores the x size of the board (number of columns).
-        uint8_t xSize;
+        uint8_t xSize{0};
         /// Stores the y size of the board (number of rows).
-        uint8_t ySize;
+        uint8_t ySize{0};
 
         /*
          * This stores each SquareState object for the game board. Since the 
@@ -180,6 +249,17 @@ namespace check
          *
          * This gives the formula: index(x,y) = x + y*xSize
          */
-        std::vector<check::SquareState> squareStates; 
+        std::vector<SquareState> squareStates;
+        
+        /// Stores the starting position for the board (needed for reset()).
+        std::vector<PiecePosition> startingPosition;
+
+        /**
+         * Stores the moves that have been made up to this point in the game. This
+         * tracks the moves that led to this game state.
+         */
+        std::vector<MoveState> moves;
     }; // class BoardState
+    
+    
 } // namespace check

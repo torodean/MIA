@@ -7,8 +7,18 @@
  */
 #pragma once
 
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <memory>
+
+#include "MathTypes.hpp"
+
 namespace check
 {
+    /// Predeclare BoardState so BasePieceLogic can reference it.
+    class BoardState;
+
     /**
      * Represents the various defined pieces. Each of these pieces should have
      * a class representing the logic and functionality of the piece, while
@@ -26,6 +36,7 @@ namespace check
         Bishop,     ///< The Bishop.
         Knight,     ///< The Knight.
         Rook,       ///< The Rook.
+        Count       ///< Number of defined piece types.
     }; // enum PieceType
 
     /**
@@ -54,6 +65,7 @@ namespace check
      */
     enum class Color : uint8_t
     {
+        None,       ///< Represents a neutral piece.
         White,      ///< The usual white color.
         Black,      ///< The usual black color.
         Red,
@@ -89,6 +101,109 @@ namespace check
         /// An enum representation indicating the type of piece.
         PieceType type{PieceType::None};
         /// The color of the piece.
-        Color color{Color::white};
+        Color color{Color::White};
     };
+
+    /**
+     * Stores a position for a single piece. This holds information for
+     * a single piece and its location.
+     */
+    struct PiecePosition
+    {
+        Piece piece;
+        math::Coordinate<uint8_t> coordinate;
+    };
+    
+    /**
+     * This class is a base virtual class for any piece. Every piece needs
+     * some sort of logic defining how it moves, captures, legal moves, etc.
+     * Each piece should have a class to define this logic, and each of those
+     * classes should inherit this base class and follow its structure.
+     */
+     class BasePieceLogic
+     {
+     public:
+        /**
+         * The main constructor for this class. This takes only the PieceType,
+         * which is stored and defines which type of piece this object defines
+         * the logic for.
+         */
+        BasePieceLogic(PieceType pieceType) : type(pieceType) {};
+
+        /**
+         * This returns the legal moves for a piece based on the current state of 
+         * the board. This uses canJumpPieces(), the color of the piece (for direction),
+         * and the current state of the board to do this. This should be implemented
+         * for every derived piece.
+         */
+        virtual std::vector<math::Coordinate<uint8_t>> getLegalMoves(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color) = 0;
+
+        /**
+         * This returns the legal captures for a piece based on the current state of
+         * the board. This should be implemented for every derived piece. Since most pieces
+         * have the same logic to determine this (based on legal moves), this has a
+         * base implementation that can be used.
+         */
+        virtual std::vector<math::Coordinate<uint8_t>> getLegalCaptures(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color);
+            
+        /**
+         * This returns all squares attacked by a piece based on the current state of
+         * the board. This includes squares occupied by friendly pieces and unoccupied
+         * squares. For most pieces, this is just the legal moves. The base implementation
+         * here defines it for typical pieces. Some pieces move differently than they
+         * capture (e.g., pawns), so for these, this should be re-implemented.
+         */
+        virtual std::vector<math::Coordinate<uint8_t>> getAttackedSquares(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color);
+
+    private:
+
+        PieceType type; ///< Stores what type of piece this object defines logic for.
+     }; // class BasePieceLogic
+
+    /**
+     * Creates the appropriate logic implementation for a piece type.
+     * @param type The type of piece to create logic for.
+     * @return A pointer to the appropriate BasePieceLogic implementation.
+     */
+    std::unique_ptr<BasePieceLogic> createPieceLogic(PieceType type);
+
+    /**
+     * This is a helper to get the legal moves of any piece. This will use the
+     * appropriate implemented BasePieceLogic baseed on the input piece and
+     * return a list of legal moves.
+     * @param piecePos The piece to get the legal moves of. This contains color and location.
+     * @param boardState The current state of the board.
+     * @return A list of all legal moves for a piece.
+     */
+    std::vector<math::Coordinate<uint8_t>> getLegalMoves(const PiecePosition& piecePos,
+                                                         const BoardState& boardState);
+
+    /**
+     * This is a helper to get the legal captures of any piece. This will use
+     * the appropriate implemented BasePieceLogic based on the input piece and
+     * return a list of legal captures.
+     * @param piecePos The piece to get the legal captures of. This contains color and location.
+     * @param boardState The current state of the board.
+     * @return A list of all legal captures for a piece.
+     */
+    std::vector<math::Coordinate<uint8_t>> getLegalCaptures(const PiecePosition& piecePos,
+                                                            const BoardState& boardState);
+
+    /**
+     * This returns all squares attacked by pieces on the board.
+     * @param boardState The current state of the board.
+     * @return A list of all attacked squares on the board.
+     * @param defendingColor The color being defended against attacks.
+     */
+    std::vector<math::Coordinate<uint8_t>> getAttackedSquares(const BoardState& boardState,
+                                                              Color defendingColor);
 } // namespace check

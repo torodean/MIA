@@ -193,30 +193,22 @@ TEST_F(PythonModule_T, MixedArgumentTypes)
 /**
  * @brief Verifies calling a missing method returns an error result instead of throwing.
  */
-TEST_F(PythonModule_T, MissingMethodIsErrorResult)
+TEST_F(PythonModule_T, MissingMethodIsErrorResultAndThrows)
 {
-    PythonResult result = module->call("missingMethod");
-
-    EXPECT_FALSE(result.isValid())
-        << "A missing method should produce an invalid result.";
-    EXPECT_NE(result.getError().find("not found"), std::string::npos)
-        << "The error message should mention the method was not found.";
+    EXPECT_THROW(module->call("missingMethod"), error::MIAException)
+        << "A missing method should produce an invalid result and throw.";
 }
 
 
 /**
- * @brief Verifies a Python-side exception surfaces as an error result with the message.
+ * @brief Verifies a Python-side exception throws here too.
  */
 TEST_F(PythonModule_T, PythonTypeErrorIsErrorResult)
 {
     // Python's + concatenates two strings, so mixing a string and an integer
     // is what actually raises the TypeError inside add(a, b).
-    PythonResult result = module->call("add", "x", 1);
-
-    EXPECT_FALSE(result.isValid())
-        << "A Python TypeError should produce an invalid result.";
-    EXPECT_NE(result.getError().find("can only concatenate str"), std::string::npos)
-        << "The error message should carry the Python exception text.";
+    EXPECT_THROW(module->call("add", "x", 1), error::MIAException)
+        << "A Python TypeError should produce an invalid result and throw.";
 }
 
 

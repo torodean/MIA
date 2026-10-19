@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <vector>
 
 #include "MathTypes.hpp"
 #include "Piece.hpp"
@@ -31,7 +32,7 @@ namespace check
          * overwritten, and if no piece is currently here, a new piece will be
          * added.
          */
-        void updatePiece(check::Piece cPiece);
+        void updatePiece(Piece cPiece);
 
         /**
          * Remove the piece from this square.
@@ -46,7 +47,7 @@ namespace check
         /**
          * Returns the piece on this square or std::nullopt when empty.
          */
-        std::optional<check::Piece> getPiece() const;
+        const std::optional<Piece>& getPiece() const;
 
         /**
          * Returns the coordinate of this square.
@@ -56,8 +57,21 @@ namespace check
     private:
 
         /// The piece that is currently on this square.
-        check::Piece piece;
+        std::optional<Piece> piece;
         /// The coordinate of this square on the game board.
         math::Coordinate<uint8_t> coordinate;
     }; // class SquareState
+    
+    /**
+     * @brief Constructs a vector of SquareState objects for a board of the
+     *        specified dimensions.
+     *
+     * Squares are constructed in row-major order, with the indexing formula
+     * index(x,y) = x + y*xSize.
+     *
+     * @param xSize The number of columns of the board.
+     * @param ySize The number of rows of the board.
+     * @return A vector containing a SquareState for each coordinate on the board.
+     */
+    std::vector<SquareState> createSquareStates(uint8_t xSize, uint8_t ySize);
 } // namespace check
