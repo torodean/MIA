@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "StringUtils.hpp"
+#include "MoveState.hpp"
 
 namespace check
 {
@@ -150,6 +151,14 @@ namespace check
         try
         { // Attempt to move the piece.
             state.movePiece(startPos.x, startPos.y, endPos.x, endPos.y);
+            const std::optional<MoveState> lastMove = state.getLastMove();
+            if (lastMove.has_value() && lastMove->wasEnPassant)
+            { // Handle en passant in ui.
+                int8_t direction = lastMove->piece.color == Color::White ? 1 : -1;
+                module.call("removePiece", 
+                            static_cast<uint8_t>(lastMove->endingPos.x), 
+                            static_cast<uint8_t>(lastMove->endingPos.y - direction));
+            }
         }
         catch(const error::MIAException& e)
         { // Occurs if source square is not occupied.

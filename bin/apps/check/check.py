@@ -366,6 +366,19 @@ def movePiece(fromCol, fromRow, toCol, toRow):
     boardUI.drawPieces()
 
 
+def removePiece(col, row):
+    """
+    Removes a piece from the board data and redraws.
+    @param col The column of the square.
+    @param row The row of the square.
+    """
+    # Make sure the inputs are valid.
+    validateCell(col, row)
+
+    boardUI.board[col][row] = None
+    boardUI.drawPieces()
+
+
 def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
     """
     Draws a highlight outline on one square.

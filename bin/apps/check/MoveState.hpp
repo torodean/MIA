@@ -23,5 +23,7 @@ namespace check
         math::Coordinate<uint8_t> startingPos;
         /// The ending location of a piece.
         math::Coordinate<uint8_t> endingPos;
+        /// Stores if the last move was en passant.
+        bool wasEnPassant{false};
     }; // class MoveState
 } // namespace check

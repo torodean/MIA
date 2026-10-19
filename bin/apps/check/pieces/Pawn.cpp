@@ -131,4 +131,42 @@ namespace check
 
         return attackedSquares;
     }
+
+
+    bool isEnPassantMove(const MoveState& move, const BoardState& state)
+    {
+        // The moving piece must be a pawn.
+        if (move.piece.type != PieceType::Pawn)
+            return false;
+
+        // The destination square must be unoccupied.
+        if (state.isSquareOccupied(move.endingPos.x, move.endingPos.y))
+            return false;
+
+        // A pawn must move diagonally by one square to capture en passant.
+        int16_t xDifference = static_cast<int16_t>(move.endingPos.x) -
+                             static_cast<int16_t>(move.startingPos.x);
+        int16_t yDifference = static_cast<int16_t>(move.endingPos.y) -
+                             static_cast<int16_t>(move.startingPos.y);
+
+        if (std::abs(xDifference) != 1 || std::abs(yDifference) != 1)
+            return false;
+
+        // The previous move must have been an opposing pawn's two-square move.
+        const std::optional<MoveState> lastMove = state.getLastMove();
+
+        if (!lastMove.has_value() ||
+            lastMove->piece.type != PieceType::Pawn ||
+            lastMove->piece.color == move.piece.color ||
+            lastMove->endingPos.x != move.endingPos.x ||
+            lastMove->endingPos.y != move.startingPos.y)
+        {
+            return false;
+        }
+
+        int16_t previousYDifference = static_cast<int16_t>(lastMove->endingPos.y) -
+                                      static_cast<int16_t>(lastMove->startingPos.y);
+
+        return std::abs(previousYDifference) == 2;
+    }
 } // namespace check

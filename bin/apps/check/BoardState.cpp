@@ -5,13 +5,15 @@
  * @brief Implements the BoardState class and methods.
  */
 
-#include <iostream>
 #include <sstream>
 
 // Include the associated header file.
 #include "BoardState.hpp"
 #include "MIAException.hpp"
 #include "Error.hpp"
+
+// Used for en passant detection.
+#include "Pawn.hpp" 
 
 namespace check
 {
@@ -129,21 +131,31 @@ namespace check
 
         Piece piece = squareStates[fromIndex].getPiece().value();
 
-        squareStates[toIndex].updatePiece(piece);
-        squareStates[fromIndex].removePiece();
-
         // Store the move in the move history.
         MoveState move;
         move.piece = piece;
         move.startingPos = {fromXPos, fromYPos};
         move.endingPos = {toXPos, toYPos};
+
+        // Check for an en passant special-case.
+        if (isEnPassantMove(move, *this))
+        { // Handle removing the en-passant taken pawn.
+            const std::optional<MoveState> lastMove = this->getLastMove();
+            removePiece(lastMove->endingPos.x, lastMove->endingPos.y);
+            move.wasEnPassant = true;
+        }
+
+        // Add the move to the board moves and update board state.
         moves.push_back(move);
+        squareStates[toIndex].updatePiece(piece);
+        squareStates[fromIndex].removePiece();
     }
 
 
     void BoardState::removePiece(uint8_t xPos, uint8_t yPos)
     {
-    
+        uint16_t index = coordToIndex(xPos, yPos);
+        squareStates[index].removePiece();
     }
 
 

@@ -11,6 +11,7 @@
 
 #include "Piece.hpp"
 #include "MathTypes.hpp"
+#include "MoveState.hpp"
 
 namespace check
 {
@@ -50,4 +51,16 @@ namespace check
             const BoardState& boardState,
             Color color) override;
     }; // class Pawn
+
+    /**
+     * Determines whether a move is an en passant capture. This method is
+     * intended to be used BEFORE the move is actually finalized to the
+     * boardState (meaning the getlastMove() could still be used to determine
+     * if the previous move was an opponents pawn move).
+     * @param move The move that is being made.
+     * @param state The state of the board before this move is recorded.
+     * @return True if the move is an en passant capture, false otherwise.
+     */
+    bool isEnPassantMove(const MoveState& move,
+                         const BoardState& state);
 } // namespace check
