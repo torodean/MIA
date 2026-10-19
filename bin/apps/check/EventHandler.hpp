@@ -40,6 +40,17 @@ namespace check
         std::optional<math::Coordinate<uint8_t>> startPos{std::nullopt};
         std::optional<math::Coordinate<uint8_t>> endPos{std::nullopt};
     };
+
+    /**
+     * Stores event state data. This is data that may be useful carried between
+     * different events. For example, when determining legal moves to highlight
+     * them, those legal moves can be re-used for dropping a piece rather than
+     * recalculating them each time.
+     */
+    struct EventState
+    {
+        std::vector<math::Coordinate<uint8_t>> legalMoves;
+    };
     
     /**
      * Converts a string input to the equivalent CheckUIEvent object.
@@ -76,8 +87,27 @@ namespace check
      *        using the expected color.
      * @param event The event to process.
      * @param state The current state of the board.
+     * @param display Whether or not to display the legal moves in the ui.
+     * @return The state data of the legalMoves that were determined.
      */
-    void displayLegalMoves(PythonModule& module,
-                           const CheckUIEvent& event,
-                           const BoardState& state);
+    EventState processPickupPiece(PythonModule& module,
+                                  const CheckUIEvent& event,
+                                  const BoardState& state,
+                                  bool display = false);
+
+    /**
+     * Process an event of a piece being dropped. This will handle moving a piece
+     * appropriately. This assumes the eventState data came from a processPickupPiece
+     * call.
+     * @param module The python ui module to perform the ui move on. This method
+     *        assumes that a movePiece(col, row, toCol, toRow) method exists which 
+     *        moves a piece in the game ui.
+     * @param event The event to process.
+     * @param state The current state of the board.
+     * @param eventState The state of the legal moves determined from processPickupPiece().
+     */
+    void processMoveEvent(PythonModule& module,
+                          const CheckUIEvent& event,
+                          BoardState& state,
+                          EventState& eventState);
 } // namespace check

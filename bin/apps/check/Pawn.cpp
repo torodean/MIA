@@ -6,6 +6,7 @@
  */
 
 #include <cstdint>
+#include <cmath>
 
 // Include the associated header file.
 #include "Pawn.hpp"
@@ -88,10 +89,11 @@ namespace check
              * it's to our left. Also, the absolute value of this must be exactly 1 to signal
              * that the last piece moved was one column to the right or left.
              */
-            int8_t direction = lastMove->endingPos.x - currentPos.x;
+            int16_t direction = static_cast<int16_t>(lastMove->endingPos.x) -
+                                static_cast<int16_t>(currentPos.x);
             if (lastMove->endingPos.y == currentPos.y && // The last pawn move ended next to this one. 
                 (direction == -1 || direction == 1) &&  // The last piece was in an adjacent column.
-                lastMove->endingPos.y - lastMove->startingPos.y == 2) // The pawn moved two squares.
+                std::abs(lastMove->endingPos.y - lastMove->startingPos.y) == 2) // The pawn moved two squares.
             { // Indicates en passant is possible.
                 legalMoves.push_back({static_cast<uint8_t>(currentPos.x + direction), 
                                       static_cast<uint8_t>(currentPos.y + forward)});

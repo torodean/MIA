@@ -15,6 +15,7 @@ namespace check
         if (whosTurnIsIt < numberOfPlayers)
         { // Advance to the next players turn.
             whosTurnIsIt++;
+            return;
         }
 
         // If it's the last players turn, loop back to player 1.

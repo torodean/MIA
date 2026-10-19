@@ -10,6 +10,8 @@
 
 // Include the associated header file.
 #include "BoardState.hpp"
+#include "MIAException.hpp"
+#include "Error.hpp"
 
 namespace check
 {
@@ -54,7 +56,7 @@ namespace check
     bool BoardState::isSquareOccupied(uint8_t xPos, uint8_t yPos) const
     {
         uint16_t index = coordToIndex(xPos, yPos);
-        
+
         std::stringstream stream;
         if (context)
         {
@@ -99,9 +101,19 @@ namespace check
 
     void BoardState::advanceTurn(uint8_t skipAhead)
     {
+        std::stringstream stream;
+        if (context)
+        {
+            stream << "Advancing player turn from player " << std::to_string(playerState.whosTurnIsIt);
+        }
         for (uint8_t i=0; i<skipAhead; i++)
         { // Call this skipAhead number of times.
             playerState.advanceTurn();
+        }
+        if (context)
+        {
+            stream << " to " << std::to_string(playerState.whosTurnIsIt);
+            context->logger.log(stream.str(), {"BoardState", "advanceTurn()"}, context->verboseMode);
         }
     }
 
@@ -109,7 +121,23 @@ namespace check
     void BoardState::movePiece(uint8_t fromXPos, uint8_t fromYPos,
                                uint8_t toXPos, uint8_t toYPos)
     {
-    
+        if (!isSquareOccupied(fromXPos, fromYPos))
+            MIA_THROW(error::ErrorCode::Check_No_Piece_On_Square);
+
+        uint16_t fromIndex = coordToIndex(fromXPos, fromYPos);
+        uint16_t toIndex = coordToIndex(toXPos, toYPos);
+
+        Piece piece = squareStates[fromIndex].getPiece().value();
+
+        squareStates[toIndex].updatePiece(piece);
+        squareStates[fromIndex].removePiece();
+
+        // Store the move in the move history.
+        MoveState move;
+        move.piece = piece;
+        move.startingPos = {fromXPos, fromYPos};
+        move.endingPos = {toXPos, toYPos};
+        moves.push_back(move);
     }
 
 

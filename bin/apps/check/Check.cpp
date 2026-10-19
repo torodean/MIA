@@ -132,6 +132,7 @@ namespace check
         // Update the UI with the board position.
         module.call("updateUI");
         
+        EventState eventState; // Stores various states between events.
         while (listener.isRunning())
         {
             // Update the UI to the most recent state.
@@ -139,7 +140,6 @@ namespace check
 
             // Read whatever events the listener has polled so far.
             storage = queue.getAllEvents(); // This calls updateUI() each time.
-
             for (const ui::Event& event : storage.getEvents())
             {
                 std::cout << "Event received: " << event.getName() << std::endl;
@@ -147,13 +147,19 @@ namespace check
                 switch(uiEvent.type)
                 { // TODO - handle events here.
                     case CheckUIEventType::PickupPiece:
-                    { // Signals that a piece was picked up.
-                        if (configValues.showLegalMoves)
-                            displayLegalMoves(module, uiEvent, boardState);
+                    { // Signals that a piece was picked up, so calculate the legal moves.
+                        eventState = processPickupPiece(module,
+                                                        uiEvent,
+                                                        boardState,
+                                                        configValues.showLegalMoves);
                         break;
                     }
 
                     case CheckUIEventType::DropPiece:
+                    {
+                        processMoveEvent(module, uiEvent, boardState, eventState);
+                        break;
+                    }
 
                     case CheckUIEventType::ResetBoard:
 

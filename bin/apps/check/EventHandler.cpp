@@ -8,6 +8,7 @@
 // Include the associated header.
 #include "EventHandler.hpp"
 
+#include <iostream>
 #include <vector>
 
 #include "StringUtils.hpp"
@@ -81,13 +82,15 @@ namespace check
     }
 
 
-    void displayLegalMoves(PythonModule& module,
-                           const CheckUIEvent& event,
-                           const BoardState& state)
+    EventState processPickupPiece(PythonModule& module,
+                                  const CheckUIEvent& event,
+                                  const BoardState& state,
+                                  bool display)
     {
+        EventState uiState;
         if (event.type != CheckUIEventType::PickupPiece)
         { // Do nothing for non-pickup events.
-            return;
+            return uiState;
         }
 
         // This could throw std::bad_optional_access but events are well-formed so shouldn't occur.
@@ -104,6 +107,70 @@ namespace check
         {
             module.call("highlightSquare", legalMove.x, legalMove.y);
         }
+
+        uiState.legalMoves = legalMoves;
+        return uiState;
+    }
+
+
+    void processMoveEvent(PythonModule& module,
+                          const CheckUIEvent& event,
+                          BoardState& state,
+                          EventState& eventState)
+    {
+        std::cout << "processMoveEvent 0" << std::endl;
+        if (event.type != CheckUIEventType::DropPiece)
+        { // Do nothing for non-pickup events.
+            return;
+        }
+
+        std::cout << "processMoveEvent 1" << std::endl;
+        // Ensure the event contains both coordinates.
+        if (!event.startPos.has_value() || !event.endPos.has_value())
+        {
+            return;
+        }
+
+        std::cout << "processMoveEvent 2" << std::endl;
+        const math::Coordinate<uint8_t>& startPos = event.startPos.value();
+        const math::Coordinate<uint8_t>& endPos = event.endPos.value();
+
+        // Ensure the destination is a legal move.
+        bool isLegalMove = false;
+        for (const auto& legalMove : eventState.legalMoves)
+        {
+            if (legalMove.x == endPos.x && legalMove.y == endPos.y)
+            {
+                isLegalMove = true;
+                break;
+            }
+        }
+
+        std::cout << "processMoveEvent 3" << std::endl;
+        if (!isLegalMove)
+        {
+            return;
+        }
+
+        std::cout << "processMoveEvent 4" << std::endl;
+        try
+        { // Attempt to move the piece.
+            state.movePiece(startPos.x, startPos.y, endPos.x, endPos.y);
+        }
+        catch(const error::MIAException& e)
+        { // Occurs if source square is not occupied.
+            return;
+        }
+
+        std::cout << "processMoveEvent 5" << std::endl;
+        // Move the piece in the Python UI.
+        module.call("movePiece", startPos.x, startPos.y, endPos.x, endPos.y);
+
+        // Advance to the next player's turn.
+        state.advanceTurn();
+
+        // Clear the cached legal moves after processing the move.
+        eventState.legalMoves.clear();
     }
 } // namespace check
 
