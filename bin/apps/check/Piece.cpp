@@ -5,6 +5,8 @@
  * @brief Implements the features in Piece.hpp
  */
 
+#include <array>
+
 // Include the associated header file.
 #include "Piece.hpp"
 #include "StringUtils.hpp"
