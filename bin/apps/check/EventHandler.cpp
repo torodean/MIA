@@ -12,6 +12,8 @@
 
 #include "StringUtils.hpp"
 #include "MoveState.hpp"
+// Used to push the starting position back to the UI on a reset.
+#include "CheckConfig.hpp"
 
 namespace check
 {
@@ -93,11 +95,17 @@ namespace check
             return uiState;
         }
 
-        // This could throw std::bad_optional_access but events are well-formed so shouldn't occur.
-        const Piece& piece = state.getPieceOnSquare(event.startPos->x, event.startPos->y).value();
+        // A picked up square does not have to hold a piece, so check before using it.
+        const std::optional<Piece>& piece = state.getPieceOnSquare(event.startPos->x,
+                                                                  event.startPos->y);
+
+        if (!piece.has_value())
+        { // Nothing was picked up, so there are no legal moves to display or cache.
+            return uiState;
+        }
 
         PiecePosition piecePos;
-        piecePos.piece = piece;
+        piecePos.piece = piece.value();
         piecePos.coordinate.x = event.startPos.value().x;
         piecePos.coordinate.y = event.startPos.value().y;
 
@@ -113,20 +121,22 @@ namespace check
     }
 
 
-    void processMoveEvent(PythonModule& module,
-                          const CheckUIEvent& event,
-                          BoardState& state,
-                          EventState& eventState)
+    GameResult processMoveEvent(PythonModule& module,
+                                const CheckUIEvent& event,
+                                BoardState& state,
+                                EventState& eventState)
     {
+        GameResult ongoing;
+
         if (event.type != CheckUIEventType::DropPiece)
-        { // Do nothing for non-pickup events.
-            return;
+        { // Do nothing for non-drop events.
+            return ongoing;
         }
 
         // Ensure the event contains both coordinates.
         if (!event.startPos.has_value() || !event.endPos.has_value())
         {
-            return;
+            return ongoing;
         }
 
         const math::Coordinate<uint8_t>& startPos = event.startPos.value();
@@ -145,7 +155,7 @@ namespace check
 
         if (!isLegalMove)
         {
-            return;
+            return ongoing;
         }
 
         try
@@ -162,7 +172,7 @@ namespace check
         }
         catch(const error::MIAException& e)
         { // Occurs if source square is not occupied.
-            return;
+            return ongoing;
         }
 
         // Move the piece in the Python UI.
@@ -173,19 +183,49 @@ namespace check
 
         // Clear the cached legal moves after processing the move.
         eventState.legalMoves.clear();
+
+        /*
+         * The turn has been advanced, so this determines the result for the player who
+         * has to respond to this move. This is the order the end of game conditions are
+         * written for, as both checkmate and stalemate apply to the player on move.
+         */
+        GameResult result = getGameResult(state);
+        eventState.gameOver = result.isGameOver();
+
+        return result;
+    }
+
+
+    void processGameOver(PythonModule& module, const GameResult& result)
+    {
+        if (!module.hasMethod("showGameResult"))
+        { // This result cannot be displayed by the loaded UI module.
+            return;
+        }
+
+        module.call("showGameResult",
+                    gameResultToString(result.type),
+                    gameOverReasonToString(result.reason),
+                    colorToString(result.winner));
+    }
+
+
+    void processResetBoard(PythonModule& module,
+                           BoardState& state,
+                           EventState& eventState)
+    {
+        state.reset();
+
+        /*
+         * Any highlight left over from the previous game is cleared, then the starting
+         * position is pushed back as the whole board state. The UI's setBoardState
+         * replaces every square, so this also removes the pieces which were captured
+         * or moved during the game which just finished.
+         */
+        module.call("clearHighlights");
+        module.call("setBoardState", positionsToStateStrings(state.getStartingPosition()));
+
+        eventState.legalMoves.clear();
+        eventState.gameOver = false;
     }
 } // namespace check
-
-
-
-
-
-
-
-
-
-
-
-
-
-
