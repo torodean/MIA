@@ -4,8 +4,7 @@ This directory contains the standalone apps for the MIA project. Below is a brie
 
 - **check/**  
   CHECK, the Custom House-made Engine for Chess Knowledge, is a chess-style board game app.
-  The C++ backend owns all of the game rules, including piece movement and check handling so a move may not leave its own king attacked.
-  `check.py` is the Python UI which renders the board and forwards player input to the backend through PythonModule.
+  The C++ backend owns all of the game rules, while `check.py` is the Python UI which renders the board and sends player input to the backend.
   
 - **maple/**  
   This app (monetary autonomous projection and learning extension) is a small tool for creating future projections and tasks related to finances.
