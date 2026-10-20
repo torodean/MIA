@@ -12,6 +12,7 @@
 #include <optional>
 
 #include "BoardState.hpp"
+#include "GameResult.hpp"
 #include "MathTypes.hpp"
 #include "PythonModule.hpp"
 
@@ -49,7 +50,15 @@ namespace check
      */
     struct EventState
     {
+        /// The legal moves of the piece picked up by the most recent pickup event.
         std::vector<math::Coordinate<uint8_t>> legalMoves;
+
+        /*
+         * Stores whether or not the game has ended. Once it has, the board is locked
+         * and only a game reset or an application stop is acted on, since the UI holds
+         * its win/draw message up until it is reset.
+         */
+        bool gameOver{false};
     };
     
     /**
@@ -98,16 +107,48 @@ namespace check
     /**
      * Process an event of a piece being dropped. This will handle moving a piece
      * appropriately. This assumes the eventState data came from a processPickupPiece
-     * call.
+     * call. Once the move is made, this determines the result of the game and stores
+     * it in the eventState so that no further board interaction is processed.
      * @param module The python ui module to perform the ui move on. This method
      *        assumes that a movePiece(col, row, toCol, toRow) method exists which 
      *        moves a piece in the game ui.
      * @param event The event to process.
      * @param state The current state of the board.
      * @param eventState The state of the legal moves determined from processPickupPiece().
+     * @return The result of the game after this move. This is ongoing when the move
+     *         was rejected (an illegal drop) or when the game is still being played.
      */
-    void processMoveEvent(PythonModule& module,
-                          const CheckUIEvent& event,
-                          BoardState& state,
-                          EventState& eventState);
+    GameResult processMoveEvent(PythonModule& module,
+                                const CheckUIEvent& event,
+                                BoardState& state,
+                                EventState& eventState);
+
+    /**
+     * Send the result of a finished game to the UI so that it can display it. This
+     * expects that a showGameResult(result, reason, winner) method exists in the UI
+     * module, where each input is a string: the result is "win" or "draw", the reason
+     * is "checkmate", "stalemate", or "insufficient material", and the winner is a
+     * piece color name ("none" for a draw).
+     *
+     * This does nothing when the loaded UI module does not define that method yet, so
+     * a game can still be played against an older UI. Whether this gets reported
+     * anywhere else is left to the caller.
+     *
+     * @param module The python ui module to notify.
+     * @param result The result of the game which just ended.
+     */
+    void processGameOver(PythonModule& module, const GameResult& result);
+
+    /**
+     * Process an event which resets the game. This returns the board to its starting
+     * position, pushes that position to the UI, and unlocks the board so that a new
+     * game can be played.
+     * @param module The python ui module to reset. This method assumes that the
+     *        setBoardState(cells) and clearHighlights() methods exist in the UI module.
+     * @param state The current state of the board.
+     * @param eventState The event state to unlock (its game over flag is cleared).
+     */
+    void processResetBoard(PythonModule& module,
+                           BoardState& state,
+                           EventState& eventState);
 } // namespace check
