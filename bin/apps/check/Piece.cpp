@@ -154,14 +154,32 @@ namespace check
         if (whosTurnIsItToColor(boardState.whosTurnIsIt()) != piecePos.piece.color)
             return {};
 
-        /* TODO - handle checks..
-        if (boardState.isKingInCheck(whosTurnIsItToColor(boardState.whosTurnIsIt())))
-        {
-            return {};
-        }
-        */
+        /* 
+         * These are the moves the piece could make if the king were not involved
+         * (the piece's own movement rules, board bounds, and blocking pieces).
+         */
+        std::vector<math::Coordinate<uint8_t>> pseudoLegalMoves =
+            logic->getLegalMoves(piecePos.coordinate, boardState, piecePos.piece.color);
 
-        return logic->getLegalMoves(piecePos.coordinate, boardState, piecePos.piece.color);
+        /* 
+         * Remove every move which leaves this player's king in check. When the
+         * king is in check, this leaves only the moves which get out of the
+         * check: move the king off of the attacked square, capture the attacking
+         * piece, or move a piece in between the attacker and the king. When the
+         * king is not in check, this instead keeps a pinned piece from moving off
+         * of the line which shields its king.
+         */
+        std::vector<math::Coordinate<uint8_t>> legalMoves;
+
+        for (const math::Coordinate<uint8_t>& move : pseudoLegalMoves)
+        { // Keep only the moves which leave the king safe.
+            if (leavesKingInCheck(piecePos, boardState, move))
+                continue;
+
+            legalMoves.push_back(move);
+        }
+
+        return legalMoves;
     }
 
 
@@ -173,7 +191,45 @@ namespace check
         if (!logic)
             return {};
 
-        return logic->getLegalCaptures(piecePos.coordinate, boardState, piecePos.piece.color);
+        std::vector<math::Coordinate<uint8_t>> pseudoLegalCaptures =
+            logic->getLegalCaptures(piecePos.coordinate, boardState, piecePos.piece.color);
+
+        // Apply the same check filtering used for the legal moves.
+        std::vector<math::Coordinate<uint8_t>> legalCaptures;
+
+        for (const math::Coordinate<uint8_t>& capture : pseudoLegalCaptures)
+        { // Keep only the captures which leave the king safe.
+            if (leavesKingInCheck(piecePos, boardState, capture))
+                continue;
+
+            legalCaptures.push_back(capture);
+        }
+
+        return legalCaptures;
+    }
+
+
+    bool leavesKingInCheck(const PiecePosition& piecePos,
+                           const BoardState& boardState,
+                           const math::Coordinate<uint8_t>& destination)
+    {
+        /*
+         * Simulate the move on a copy of the board so the real game state stays
+         * untouched. This copy is a full snapshot of the squares, the player
+         * state, and the move history, so the move is applied exactly as it would
+         * be in a real game (including special cases such as en passant, which
+         * also removes the captured pawn from the simulated board).
+         */
+        BoardState simulatedBoard(boardState);
+
+        simulatedBoard.movePiece(piecePos.coordinate.x, piecePos.coordinate.y,
+                                 destination.x, destination.y);
+
+        /* 
+         * If this player's king is still attacked once the move is applied, the
+         * move did not get the king out of check and is therefore not legal.
+         */
+        return simulatedBoard.isKingInCheck(piecePos.piece.color);
     }
 
 
