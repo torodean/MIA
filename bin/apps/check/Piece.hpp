@@ -180,9 +180,17 @@ namespace check
      * This is a helper to get the legal moves of any piece. This will use the
      * appropriate implemented BasePieceLogic baseed on the input piece and
      * return a list of legal moves.
+     *
+     * @note Only moves of the current player's pieces are returned, and moves
+     *       which would leave (or put) that player's king in check are filtered
+     *       out. When that king is in check, this means only the moves which get
+     *       the king out of check are returned (move the king, capture the
+     *       attacking piece, or block the attack).
+     *
      * @param piecePos The piece to get the legal moves of. This contains color and location.
      * @param boardState The current state of the board.
      * @return A list of all legal moves for a piece.
+     * @throws MIAException if the square this piece is on is not occupied.
      */
     std::vector<math::Coordinate<uint8_t>> getLegalMoves(const PiecePosition& piecePos,
                                                          const BoardState& boardState);
@@ -191,12 +199,45 @@ namespace check
      * This is a helper to get the legal captures of any piece. This will use
      * the appropriate implemented BasePieceLogic based on the input piece and
      * return a list of legal captures.
+     *
+     * @note Captures which would leave (or put) this piece's king in check are
+     *       filtered out, just as they are in getLegalMoves().
+     *
      * @param piecePos The piece to get the legal captures of. This contains color and location.
      * @param boardState The current state of the board.
      * @return A list of all legal captures for a piece.
+     * @throws MIAException if the square this piece is on is not occupied.
      */
     std::vector<math::Coordinate<uint8_t>> getLegalCaptures(const PiecePosition& piecePos,
                                                             const BoardState& boardState);
+
+    /**
+     * Determines whether moving a piece to the input square would still leave
+     * this piece's king in check. The move is simulated on a copy of the input
+     * board state, so the actual game state is never modified.
+     *
+     * This is the check which keeps the legal moves of a piece honest. A move
+     * leaves the king in check when:
+     *   - the king was already in check and the move did not resolve it,
+     *   - the move uncovered an attack on the king (a pinned piece moving away
+     *     from the line which shields the king), or
+     *   - the piece is a king which steps onto a square an opposing piece
+     *     attacks.
+     *
+     * @note Attack detection uses the pseudo-legal attacks of each piece (see
+     *       BasePieceLogic::getAttackedSquares), so this never recurses back
+     *       into the legal move filtering done by getLegalMoves().
+     *
+     * @param piecePos The piece to simulate moving. This contains color and location.
+     * @param boardState The current state of the board.
+     * @param destination The square to simulate moving the piece to.
+     * @return true if this piece's king would still be in check after this move,
+     *         false if the move leaves the king safe.
+     * @throws MIAException if the square this piece is on is not occupied.
+     */
+    bool leavesKingInCheck(const PiecePosition& piecePos,
+                           const BoardState& boardState,
+                           const math::Coordinate<uint8_t>& destination);
 
     /**
      * This returns all squares attacked by pieces on the board.
