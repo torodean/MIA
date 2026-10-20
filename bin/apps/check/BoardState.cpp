@@ -189,9 +189,24 @@ namespace check
     }
 
 
+    const std::vector<PiecePosition>& BoardState::getStartingPosition() const
+    {
+        return startingPosition;
+    }
+
+
     void BoardState::reset()
     {
         moves.clear();
+
+        /*
+         * The squares are rebuilt from scratch here rather than just re-placing the
+         * starting pieces on top of the current board. setStartingPosition only writes
+         * the starting pieces down, so without this rebuild every piece which moved
+         * during the game would stay on the square it moved to once the game reset.
+         */
+        squareStates = createSquareStates(xSize, ySize);
+
         setStartingPosition(startingPosition);
         playerState.whosTurnIsIt = 1; // Reset player.
     }
