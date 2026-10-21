@@ -110,6 +110,11 @@ protected:
      * @return const RuntimeContext& Reference to the runtime context.
      */
     const RuntimeContext& getContext() const;
+    
+    /**
+     * @brief Overrides the verbose setting in the application context.
+     */
+    void overrideVerboseMode(bool setting);
 
 private:
 

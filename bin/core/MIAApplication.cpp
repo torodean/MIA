@@ -127,3 +127,9 @@ const RuntimeContext& MIAApplication::getContext() const
 { 
     return context; 
 }
+
+
+void MIAApplication::overrideVerboseMode(bool setting)
+{
+    context.verboseMode = setting;
+}
