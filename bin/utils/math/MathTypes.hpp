@@ -31,7 +31,7 @@ namespace math
          * @param input The coordinate to compare against.
          * @return true if both coordinates have equal X and Y components.
          */
-        bool operator==(const Coordinate<Type>& input)
+        bool operator==(const Coordinate<Type>& input) const
         {
             return x == input.x && y == input.y;
         }
