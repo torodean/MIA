@@ -37,3 +37,25 @@ set( CHECK_INC
      pieces/Queen.hpp
      pieces/King.hpp
 )
+add_executable( check ${CHECK_SRC} ${CHECK_INC} )
+target_link_libraries( check
+                   PRIVATE
+                       Framework_CORE # For application framework.
+                       Py_UI_LIB      # For UI interfacing.
+                       Math_UTIL      # For coordinate handling.
+                       Types_UTIL     # For string manipulation and parsing.
+                       System_UTIL    # For timing.
+                     )
+
+# Add this so that the files in the pieces folder don't need "../" for
+# header includes (and visa versa).
+target_include_directories(check PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/pieces
+)
+
+# Install the app.
+install_app( check )
+
+# TODO - add tests.
+#add_test_dir()

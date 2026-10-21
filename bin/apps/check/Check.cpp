@@ -61,6 +61,9 @@ namespace check
         boardState.initialize(configValues.boardSizeX,
                               configValues.boardSizeY,
                               configValues.startingPosition);
+        
+        // Set the python module settings.
+        module.call("setVerbose", configValues.verboseMode);
     }
 
 
@@ -70,11 +73,12 @@ namespace check
         { // Load configuration here.
             configValues = constructConfig(config);
             
+            std::cout << " --> configValues.verboseMode: " << (configValues.verboseMode ? "true" : "false") << std::endl;
             /*
              * The verboseMode can be overwridden from the config file. The desired behavior
              * here is to enable verbose mode if it is on anywhere (command line or config).
              */
-            configValues.verboseMode = configValues.verboseMode || getVerboseMode();
+            overrideVerboseMode(configValues.verboseMode || getVerboseMode());
         }
         catch (error::MIAException& ex)
         {
@@ -82,7 +86,7 @@ namespace check
             // TODO - rethrow here.
         }
 
-        if (configValues.verboseMode)
+        if (getVerboseMode())
         { // Optionally print the config values after it is loaded.
             config.dumpConfigMap();
         }
@@ -107,9 +111,6 @@ namespace check
 
         // Start the UI listener.
         listener.start();
-        
-        // Set the python module settings.
-        module.call("setVerbose", configValues.verboseMode);
         
         // Create the UI.
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
@@ -173,8 +174,7 @@ namespace check
 
                         if (result.isGameOver())
                         { // Report the result here and hand it to the UI to display.
-                            std::cout << "Game over (" << gameOverReasonToString(result.reason)
-                                      << "): ";
+                            std::cout << "Game over (" << gameOverReasonToString(result.reason) << "): ";
 
                             if (result.type == GameResultType::Win)
                             {
