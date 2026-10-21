@@ -19,6 +19,7 @@ Event formats (the C++ side parses these):
    Events (space-separated values, squares are 0-indexed col row):
     "pickup_piece <col> <row>"
     "drop_piece <fromCol> <fromRow> <toCol> <toRow>"
+    "reset_board"
     "stop"
    Board state (one string per occupied cell, comma-separated):
     "<col>,<row>,<type>,<color>"
@@ -71,6 +72,10 @@ glyphs = { }
 # The root window and the board widget. Both are None until createUI().
 root = None
 boardUI = None
+
+# The window which displays the game result, or None when no result is
+# being displayed. Created by showGameResult().
+resultDialog = None
 
 
 #########################
@@ -285,9 +290,12 @@ def createUI(cols, rows):
     if (verboseMode):
         print(f"Creating UI board of size ({cols},{rows})!")
 
-    global root, boardUI, uiEvents
+    global root, boardUI, uiEvents, resultDialog
     if root is not None:
+        # The result window is a child of the root window, so it is destroyed
+        # with it and the stale reference has to be dropped.
         root.destroy()
+        resultDialog = None
     root = tk.Tk()
     root.title("CHECK: Custom House-made Engine for Chess Knowledge")
     boardUI = ChessBoard(root, cols, rows)
@@ -406,6 +414,64 @@ def clearHighlights():
     for item in boardUI.highlightItems:
         boardUI.canvas.delete(item)
     boardUI.highlightItems = []
+    updateUI()
+
+
+def resetBoard():
+    """
+    Closes the game result window and queues a reset_board event.
+    The backend answers the event by starting a new game and sending the
+    starting board state back to the UI with setBoardState().
+    """
+    global resultDialog
+    if (verboseMode):
+        print("Resetting board!")
+
+    if resultDialog is not None:
+        resultDialog.grab_release()
+        resultDialog.destroy()
+        resultDialog = None
+
+    addEvent("reset_board")
+
+
+def showGameResult(result, reason, winner="none"):
+    """
+    Displays the result of a finished game with a single reset option.
+    The backend ignores pickup and drop events once the game is over, so the
+    window cannot be dismissed without resetting; closing it resets too.
+    @param result The result of the game: "win" or "draw".
+    @param reason Why the game ended, e.g. "checkmate", "stalemate" or
+        "insufficient material".
+    @param winner The color of the winner, or "none" for a draw.
+    """
+    if (verboseMode):
+        print(f"Showing game result: {result} ({reason}), winner: {winner}")
+
+    if root is None:
+        raise ValueError("UI not created; call createUI() first")
+
+    global resultDialog
+
+    if result == "win":
+        message = f"{winner.capitalize()} wins by {reason}."
+    else:
+        message = f"Draw by {reason}."
+
+    if resultDialog is not None:
+        resultDialog.destroy()
+
+    resultDialog = tk.Toplevel(root)
+    resultDialog.title("Game Over")
+    resultDialog.resizable(False, False)
+    resultDialog.transient(root)
+    tk.Label(resultDialog, text=message, font=("Segoe UI", 14),
+             bg=BACKGROUND, fg=LABEL_FG).pack(padx=24, pady=(18, 12))
+    tk.Button(resultDialog, text="Reset", command=resetBoard).pack(padx=24,
+                                                                  pady=(0, 18))
+    resultDialog.protocol("WM_DELETE_WINDOW", resetBoard)
+    resultDialog.wait_visibility(resultDialog)
+    resultDialog.grab_set()
     updateUI()
 
 

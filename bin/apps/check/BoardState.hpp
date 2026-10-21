@@ -177,6 +177,16 @@ namespace check
         bool isSquareOnBoard(uint8_t xPos, uint8_t yPos) const;
 
         /**
+         * @brief Returns the starting position this board was built from.
+         *
+         * This is the position the board returns to when reset() is called. It is
+         * needed to rebuild a UI (or write a save file) for that position.
+         *
+         * @return A reference to the piece positions making up the starting position.
+         */
+        const std::vector<check::PiecePosition>& getStartingPosition() const;
+
+        /**
          * @brief Resets the board state to an empty game.
          *
          * Removes all pieces from every square and resets the turn state

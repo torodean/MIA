@@ -22,6 +22,8 @@
 #include "PythonResult.hpp"
 // Used for handling events.
 #include "EventHandler.hpp"
+// Used for the win/draw result of a game.
+#include "GameResult.hpp"
 
 namespace check
 {
@@ -148,6 +150,11 @@ namespace check
                 { // TODO - handle events here.
                     case CheckUIEventType::PickupPiece:
                     { // Signals that a piece was picked up, so calculate the legal moves.
+                        if (eventState.gameOver)
+                        { // The board stays locked until the game is reset.
+                            break;
+                        }
+
                         eventState = processPickupPiece(module,
                                                         uiEvent,
                                                         boardState,
@@ -157,11 +164,38 @@ namespace check
 
                     case CheckUIEventType::DropPiece:
                     {
-                        processMoveEvent(module, uiEvent, boardState, eventState);
+                        if (eventState.gameOver)
+                        { // The board stays locked until the game is reset.
+                            break;
+                        }
+
+                        GameResult result = processMoveEvent(module, uiEvent, boardState, eventState);
+
+                        if (result.isGameOver())
+                        { // Report the result here and hand it to the UI to display.
+                            std::cout << "Game over (" << gameOverReasonToString(result.reason)
+                                      << "): ";
+
+                            if (result.type == GameResultType::Win)
+                            {
+                                std::cout << colorToString(result.winner) << " wins!" << std::endl;
+                            }
+                            else
+                            {
+                                std::cout << "The game is a draw." << std::endl;
+                            }
+
+                            processGameOver(module, result);
+                        }
                         break;
                     }
 
                     case CheckUIEventType::ResetBoard:
+                    { // Signals the game should be reset so that it can be played again.
+                        std::cout << "Resetting the game!" << std::endl;
+                        processResetBoard(module, boardState, eventState);
+                        break;
+                    }
 
                     case CheckUIEventType::SaveBoard:
                         std::cout << "Still coding this event type!" << std::endl;

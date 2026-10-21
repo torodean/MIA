@@ -2,7 +2,11 @@
 
 This directory contains the standalone apps for the MIA project. Below is a brief description of each subfolder:
 
-- **maple/**
+- **check/**  
+  CHECK, the Custom House-made Engine for Chess Knowledge, is a chess-style board game app.
+  The C++ backend owns all of the game rules, while `check.py` is the Python UI which renders the board and sends player input to the backend.
+  
+- **maple/**  
   This app (monetary autonomous projection and learning extension) is a small tool for creating future projections and tasks related to finances.
 
 - **mia_original/**  
@@ -11,7 +15,7 @@ This directory contains the standalone apps for the MIA project. Below is a brie
 - **mia_sequencer/**  
   The MIASequencer loads various defined 'sequences', which are combinations of various 'actions' (such as pressing characters, waiting, clicking the mouse, etc) and then performs those (or a subset of those) sequences.
 
-- **mission_craft/**
+- **mission_craft/**  
   This folder contains the plans and code for a game. Currently very early-stages and experiemental.
 
 - **old_game_tools/**  

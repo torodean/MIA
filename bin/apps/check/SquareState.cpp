@@ -26,8 +26,7 @@ namespace check
 
     void SquareState::removePiece()
     {
-        Piece emptyPiece;
-        piece = emptyPiece;
+        piece.reset();
     }
 
 
