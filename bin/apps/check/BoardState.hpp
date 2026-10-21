@@ -46,7 +46,7 @@ namespace check
          * @param rows The number of rows of the board.
          */
         BoardState(uint8_t columns, uint8_t rows);
-        
+
         /**
          * initialize the object, this should be used when the default constructor
          * is used.
@@ -73,7 +73,7 @@ namespace check
          * @param yPos The y-coordinate (row) of the input square.
          * @return true if there is a piece on the square, false otherwise.
          */
-        bool isSquareOccupied(uint8_t xPos, uint8_t yPos) const;
+        bool isSquareOccupied(math::Coordinate<uint8_t> pos) const;
 
         /**
          * Returns the piece on the requested square.
@@ -83,8 +83,8 @@ namespace check
          * @return The piece on the square or std::nullopt if the square
          *         is not occupied.
          */
-        const std::optional<check::Piece>& getPieceOnSquare(uint8_t xPos, uint8_t yPos) const;
-        
+        const std::optional<check::Piece>& getPieceOnSquare(math::Coordinate<uint8_t> pos) const;
+
         /**
          * @brief Determines whether a square contains a piece of a different color.
          * @param xPos The x-coordinate of the square.
@@ -92,7 +92,7 @@ namespace check
          * @param color The color to compare against.
          * @return true if the square contains a piece of a different color, false otherwise.
          */
-        bool containsOpponentPiece(uint8_t xPos, uint8_t yPos, Color color) const;
+        bool containsOpponentPiece(math::Coordinate<uint8_t> pos, Color color) const;
 
         /**
          * Returns whomever's turn it is in the current board state.
@@ -120,8 +120,8 @@ namespace check
          * @param toYPos The y-coordinate (row) of the destination square.
          * @throws MIAException if the source square is not occupied.
          */
-        void movePiece(uint8_t fromXPos, uint8_t fromYPos,
-                       uint8_t toXPos, uint8_t toYPos);
+        void movePiece(math::Coordinate<uint8_t> fromPos,
+                       math::Coordinate<uint8_t> toPos);
 
         /**
          * @brief Removes the piece from the requested square, if one exists.
@@ -131,7 +131,7 @@ namespace check
          * @param xPos The x-coordinate (column) of the square.
          * @param yPos The y-coordinate (row) of the square.
          */
-        void removePiece(uint8_t xPos, uint8_t yPos);
+        void removePiece(math::Coordinate<uint8_t> pos);
 
         /**
          * @brief Places a piece on the requested square.
@@ -142,7 +142,7 @@ namespace check
          * @param yPos The y-coordinate (row) of the square.
          * @param piece The piece to place on the square.
          */
-        void placePiece(uint8_t xPos, uint8_t yPos, check::Piece piece);
+        void placePiece(math::Coordinate<uint8_t> pos, check::Piece piece);
 
         /**
          * @brief Returns the number of columns of the board.
@@ -174,7 +174,7 @@ namespace check
          * @return true if the coordinate is within the board bounds,
          *         false otherwise.
          */
-        bool isSquareOnBoard(uint8_t xPos, uint8_t yPos) const;
+        bool isSquareOnBoard(math::Coordinate<uint8_t> pos) const;
 
         /**
          * @brief Returns the starting position this board was built from.
@@ -193,27 +193,22 @@ namespace check
          * to the first player's turn. The board dimensions are unchanged.
          */
         void reset();
-        
+
         /**
          * This will return the last move that was made. This is needed for things
          * such as en passant (pawn moves) and other scenarios. If no moves have
          * been made, this will return std::nullopt.
          */
         std::optional<MoveState> getLastMove() const;
-        
+
         /**
          * Determines whether a square is attacked by an opposing piece.
          * @param xPos The x-coordinate (column) to check.
          * @param yPos The y-coordinate (row) to check.
          * @param defendingColor The 'friendly' color in terms of an attack.
          */
-        bool isSquareAttacked(uint8_t xPos, uint8_t yPos,
+        bool isSquareAttacked(math::Coordinate<uint8_t> pos,
                               Color defendingColor) const;
-
-        /**
-         * Determines whether the specified player's king is in check.
-         */
-        bool isKingInCheck(Color color) const;
 
         /**
          * Set the runtime context for this object to access.
@@ -221,10 +216,10 @@ namespace check
         void setRuntimeContext(const RuntimeContext& ctx);
 
     private:
-    
+
         /// Stores runtimeContext such as the logger and verboseMode for this object to use. 
         const RuntimeContext* context{nullptr};
-    
+
         /// Stores whether or not this object was initialized.
         bool initialized{false};
 
@@ -237,7 +232,7 @@ namespace check
          * @param xPos The x-coordinate (column) of the input square.
          * @param yPos The y-coordinate (row) of the input square.
          */
-        uint16_t coordToIndex(uint8_t xPos, uint8_t yPos) const;
+        uint16_t coordToIndex(math::Coordinate<uint8_t> pos) const;
 
         /// Stores the player state for this board configuration (e.g., whos turn it is). 
         PlayerState playerState{};
@@ -260,7 +255,7 @@ namespace check
          * This gives the formula: index(x,y) = x + y*xSize
          */
         std::vector<SquareState> squareStates;
-        
+
         /// Stores the starting position for the board (needed for reset()).
         std::vector<PiecePosition> startingPosition;
 
@@ -270,6 +265,6 @@ namespace check
          */
         std::vector<MoveState> moves;
     }; // class BoardState
-    
-    
+
+
 } // namespace check

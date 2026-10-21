@@ -42,7 +42,7 @@ namespace check
     PieceType stringToPieceType(const std::string& type)
     {
         std::string input = string_utils::toLower(type);
-        
+
         if (input == "king")   return PieceType::King;
         if (input == "queen")  return PieceType::Queen;
         if (input == "pawn")   return PieceType::Pawn;
@@ -72,7 +72,7 @@ namespace check
     Color stringToColor(const std::string& color)
     {
         std::string input = string_utils::toLower(color);
-        
+
         if (input == "white") return Color::White;
         if (input == "black") return Color::Black;
         if (input == "red")   return Color::Red;
@@ -92,7 +92,7 @@ namespace check
 
         for (const auto& move : getLegalMoves(currentPos, boardState, color))
         {
-            if (boardState.containsOpponentPiece(move.x, move.y, color))
+            if (boardState.containsOpponentPiece(move, color))
             {
                 captures.push_back(move);
             }
@@ -222,14 +222,14 @@ namespace check
          */
         BoardState simulatedBoard(boardState);
 
-        simulatedBoard.movePiece(piecePos.coordinate.x, piecePos.coordinate.y,
-                                 destination.x, destination.y);
+        simulatedBoard.movePiece(piecePos.coordinate,
+                                 destination);
 
         /* 
          * If this player's king is still attacked once the move is applied, the
          * move did not get the king out of check and is therefore not legal.
          */
-        return simulatedBoard.isKingInCheck(piecePos.piece.color);
+        return isKingInCheck(simulatedBoard, piecePos.piece.color);
     }
 
 
@@ -253,8 +253,9 @@ namespace check
         {
             for (uint16_t x = 0; x < boardState.getXSize(); ++x)
             {
-                const auto& piece = boardState.getPieceOnSquare(static_cast<uint8_t>(x),
-                                                                static_cast<uint8_t>(y));
+                math::Coordinate<uint8_t> squareCoord(static_cast<uint8_t>(x),
+                                                      static_cast<uint8_t>(y));
+                const auto& piece = boardState.getPieceOnSquare(squareCoord);
 
                 // Skip empty squares and pieces belonging to the defending side.
                 if (!piece.has_value() || 
@@ -264,7 +265,7 @@ namespace check
                     continue;
                 }
 
-                PiecePosition piecePos{*piece, {static_cast<uint8_t>(x), static_cast<uint8_t>(y)}};
+                PiecePosition piecePos{*piece, squareCoord};
 
                 std::unique_ptr<BasePieceLogic>& logic = pieceLogic[static_cast<uint8_t>(piece->type)];
 

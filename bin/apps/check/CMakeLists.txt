@@ -28,7 +28,7 @@ set( CHECK_INC
      EventHandler.hpp
      GameResult.hpp
      MoveState.hpp
-     
+
      # Add the logic for the pieces.
      pieces/Pawn.hpp
      pieces/Rook.hpp

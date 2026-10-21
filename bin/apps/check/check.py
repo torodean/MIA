@@ -77,6 +77,9 @@ boardUI = None
 # being displayed. Created by showGameResult().
 resultDialog = None
 
+# The windows which displays the pawn promotion options.
+pawnPromoBox = None
+
 
 #########################
 # INTERNAL HELPER METHODS
@@ -88,7 +91,7 @@ def addEvent(event):
     @param event The event to add to the queue.
     """
     uiEvents.append(event)
-    
+
     # This can be added if desired for debugging, but is generally extremely 
     # noisy, since this method is called frequently.
     #if verboseMode:
@@ -292,10 +295,11 @@ def createUI(cols, rows):
 
     global root, boardUI, uiEvents, resultDialog
     if root is not None:
-        # The result window is a child of the root window, so it is destroyed
-        # with it and the stale reference has to be dropped.
         root.destroy()
+        # The additional windows are children of the root window, so they are destroyed
+        # with it and the stale references have to be dropped.
         resultDialog = None
+        pawnPromoBox = None
     root = tk.Tk()
     root.title("CHECK: Custom House-made Engine for Chess Knowledge")
     boardUI = ChessBoard(root, cols, rows)
@@ -371,6 +375,20 @@ def movePiece(fromCol, fromRow, toCol, toRow):
 
     boardUI.board[toCol][toRow] = boardUI.board[fromCol][fromRow]
     boardUI.board[fromCol][fromRow] = None
+    boardUI.drawPieces()
+
+
+def setPiece(piece, color, col, row):
+    """
+    Sets a piece from the board data and redraws.
+    @param piece The piece to set.
+    @param col The column of the square.
+    @param row The row of the square.
+    """
+    # Make sure the inputs are valid.
+    validateCell(col, row)
+
+    boardUI.board[col][row] = {"type": piece, "color": color}
     boardUI.drawPieces()
 
 
@@ -467,11 +485,71 @@ def showGameResult(result, reason, winner="none"):
     resultDialog.transient(root)
     tk.Label(resultDialog, text=message, font=("Segoe UI", 14),
              bg=BACKGROUND, fg=LABEL_FG).pack(padx=24, pady=(18, 12))
-    tk.Button(resultDialog, text="Reset", command=resetBoard).pack(padx=24,
-                                                                  pady=(0, 18))
+    tk.Button(resultDialog, text="Reset", command=resetBoard).pack(padx=24, pady=(0, 18))
     resultDialog.protocol("WM_DELETE_WINDOW", resetBoard)
     resultDialog.wait_visibility(resultDialog)
     resultDialog.grab_set()
+    updateUI()
+
+
+def sendPawnPromoChoice(piece):
+    """
+    Closes the pawn promotion window and queues a pawn_promo_choice event.
+    The backend answers the event by promoting the appropriate pawn and 
+    updating the board state.
+    @param piece The pawn promotion choice.
+    """
+    global pawnPromoBox
+    if (verboseMode):
+        print("Promoting pawn!")
+
+    if pawnPromoBox is not None:
+        pawnPromoBox.grab_release()
+        pawnPromoBox.destroy()
+        pawnPromoBox = None
+
+    addEvent(f"pawn_promo_choice {piece}")
+
+
+def showPawnPromoBox(pieces, color):
+    """
+    This will display the pawn promotion box.
+    @param pieces The promotion options for the pawn. The expected format of this is 
+           a comma-delimiter string (e.g., "queen,rook,bishop,knight").
+    @param colo This is the color of the pawn being promoted.
+    """
+    if (verboseMode):
+        print(f"Displaying pawn promotion box.")
+
+    if root is None:
+        raise ValueError("UI not created; call createUI() first")
+
+    global pawnPromoBox
+
+    if pawnPromoBox is not None:
+        pawnPromoBox.destroy()
+
+    pawnPromoBox = tk.Toplevel(root)
+    pawnPromoBox.title("Promote the pawn!")
+    pawnPromoBox.resizable(False, False)
+    pawnPromoBox.transient(root)
+
+    pieceFrame = tk.Frame(pawnPromoBox)
+    pieceFrame.pack(padx=10, pady=10)
+
+    for piece in pieces.split(","):
+        tk.Button(
+            pieceFrame,
+            text=glyphs[piece],
+            font=("Segoe UI Symbol", 24),
+            fg=color,
+            activeforeground=color,
+            command=lambda p=piece: sendPawnPromoChoice(p)
+        ).pack(side=tk.LEFT, padx=4)
+
+    pawnPromoBox.wait_visibility(pawnPromoBox)
+    pawnPromoBox.grab_set()
+
     updateUI()
 
 

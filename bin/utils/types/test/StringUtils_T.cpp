@@ -177,8 +177,8 @@ namespace string_utils
             (std::vector<std::string>{"one", "two", "red", "blue", ""}))
             << "Check behavior using a multi-char string delimiter.";
     }    
-    
-    
+
+
     /**
      * Tests for the delimiterString(..) method (char input overload).
      */

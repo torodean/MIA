@@ -445,7 +445,7 @@ namespace math
     {
         string stringOne = strOne;
         string stringTwo = strTwo;
-        
+
         // Stores whether the result is positive or negative.
         bool isPositive = true;
 
@@ -463,7 +463,7 @@ namespace math
         { // If the second number is negative, use the subtraction method. A - B.
             return subtractTwoStrings(strOne, strTwo.substr(1));
         }
-        
+
         int lengthOne = stringOne.size(); 
         int lengthTwo = stringTwo.size();
 

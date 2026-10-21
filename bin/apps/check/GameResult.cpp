@@ -14,6 +14,8 @@
 #include "BoardState.hpp"
 #include "PlayerState.hpp"
 #include "SquareState.hpp"
+// Needed for determining game result.
+#include "King.hpp"
 
 namespace check
 {
@@ -89,7 +91,7 @@ namespace check
     {
         Color currentPlayer = whosTurnIsItToColor(boardState.whosTurnIsIt());
 
-        return boardState.isKingInCheck(currentPlayer) &&
+        return isKingInCheck(boardState, currentPlayer) &&
                !hasAnyLegalMove(boardState, currentPlayer);
     }
 
@@ -98,7 +100,7 @@ namespace check
     {
         Color currentPlayer = whosTurnIsItToColor(boardState.whosTurnIsIt());
 
-        return !boardState.isKingInCheck(currentPlayer) &&
+        return !isKingInCheck(boardState, currentPlayer) &&
                !hasAnyLegalMove(boardState, currentPlayer);
     }
 

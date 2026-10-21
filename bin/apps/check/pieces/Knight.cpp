@@ -48,9 +48,9 @@ namespace check
             uint8_t xPos = static_cast<uint8_t>(x);
             uint8_t yPos = static_cast<uint8_t>(y);
 
-            if (boardState.isSquareOccupied(xPos, yPos))
+            if (boardState.isSquareOccupied({xPos, yPos}))
             { // A knight can jump over pieces, but cannot capture a friendly piece.
-                if (boardState.containsOpponentPiece(xPos, yPos, color))
+                if (boardState.containsOpponentPiece({xPos, yPos}, color))
                 {
                     legalMoves.push_back({xPos, yPos});
                 }

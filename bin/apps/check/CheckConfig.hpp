@@ -26,14 +26,14 @@ namespace check
         bool showLegalMoves{true}; ///< Whether or not to force verboseMode.
         uint8_t boardSizeX;        ///< The x size of the board.
         uint8_t boardSizeY;        ///< The y size of the board.
-        
+
         /// State of the players when the game starts.
         PlayerState startingPlayerState;
-        
+
         /// Stores the starting board position.
         std::vector<PiecePosition> startingPosition;
     }; // struct CheckConfig
-    
+
     /**
      * This is a helper to convert a string to a startingPosition. The string input
      * has a pre-defined expected format. The various positions are separated by a
@@ -45,7 +45,7 @@ namespace check
      * @throws MIAException if the string is malformed.
      */
     std::vector<PiecePosition> stringToStartingPosition(const std::string& input);
-    
+
     /**
      * This is a helper to convert a startingPosition to a string format. This can
      * be helpful for things such as saving a game state, where the positions need
@@ -56,14 +56,14 @@ namespace check
      * @param A string representation of the piece positions.
      */
     std::string positionsToString(const std::vector<PiecePosition>& positions);
-     
+
     /**
      * This will construct a CheckConfig object from the MIAConfig by pulling out
      * and parsing all necessary values.
      * @throws MIAException for various malformed configuration components.
      */
     CheckConfig constructConfig(const config::MIAConfig& config);    
-    
+
     /**
      * Converts a CheckConfig into a vector of state strings. Each state string is
      * of the format "<x-position>,<y-position>,<piece type>,<piece color>". These

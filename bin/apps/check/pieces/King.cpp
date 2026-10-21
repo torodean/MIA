@@ -49,9 +49,9 @@ namespace check
             uint8_t xPos = static_cast<uint8_t>(x);
             uint8_t yPos = static_cast<uint8_t>(y);
 
-            if (boardState.isSquareOccupied(xPos, yPos))
+            if (boardState.isSquareOccupied({xPos, yPos}))
             { // A king cannot capture a friendly piece.
-                if (boardState.containsOpponentPiece(xPos, yPos, color))
+                if (boardState.containsOpponentPiece({xPos, yPos}, color))
                 {
                     legalMoves.push_back({xPos, yPos});
                 }
@@ -64,5 +64,29 @@ namespace check
         }
 
         return legalMoves;
+    }
+
+
+    bool isKingInCheck(const BoardState& state, Color color)
+    {
+        bool kingInCheck = false;
+
+        for (const SquareState& square : state.getSquareStates())
+        { // Get the square with the king on it.
+            const std::optional<Piece>& piece = square.getPiece();
+
+            if (!piece.has_value() || piece->type != PieceType::King || piece->color != color)
+            {
+                continue;
+            }
+
+            const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
+
+            kingInCheck = state.isSquareAttacked({coordinate.x, coordinate.y}, color);
+            break;
+        }
+
+        // No king of the specified color was found.
+        return kingInCheck;
     }
 } // namespace check

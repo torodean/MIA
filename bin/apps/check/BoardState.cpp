@@ -48,47 +48,47 @@ namespace check
         uint16_t index;
         for (const PiecePosition& pos : startingPos)
         { // Loop over all piece in the starting position.
-            index = coordToIndex(pos.coordinate.x, pos.coordinate.y);
+            index = coordToIndex(pos.coordinate);
             squareStates[index].updatePiece(pos.piece);
         }
         initialized = true;
     }
 
 
-    bool BoardState::isSquareOccupied(uint8_t xPos, uint8_t yPos) const
+    bool BoardState::isSquareOccupied(math::Coordinate<uint8_t> pos) const
     {
-        uint16_t index = coordToIndex(xPos, yPos);
+        uint16_t index = coordToIndex(pos);
 
         std::stringstream stream;
         if (context)
         {
             stream << "Checking if square is occupied: "
-                   << "Square (" << std::to_string(xPos) << "," << std::to_string(yPos) << "), index="
+                   << "Square " << pos << ", index="
                    << std::to_string(index) << ": ";
         }
 
         const SquareState& square = squareStates[index];
-        
+
         if (context)
         {
             stream << (square.isOccupied() ? "true" : "false");
             context->logger.log(stream.str(), {"BoardState", "isSquareOccupied()"}, context->verboseMode);
         }
-        
+
         return square.isOccupied();
     }
-    
-    
-    bool BoardState::containsOpponentPiece(uint8_t xPos, uint8_t yPos, Color color) const
+
+
+    bool BoardState::containsOpponentPiece(math::Coordinate<uint8_t> pos, Color color) const
     {
-        const auto& piece = getPieceOnSquare(xPos, yPos);
+        const auto& piece = getPieceOnSquare(pos);
         return piece.has_value() && piece->color != color;
     }
 
 
-    const std::optional<Piece>& BoardState::getPieceOnSquare(uint8_t xPos, uint8_t yPos) const
+    const std::optional<Piece>& BoardState::getPieceOnSquare(math::Coordinate<uint8_t> pos) const
     {
-        uint16_t index = coordToIndex(xPos, yPos);
+        uint16_t index = coordToIndex(pos);
         const SquareState& square = squareStates[index];
 
         return square.getPiece();
@@ -120,29 +120,39 @@ namespace check
     }
 
 
-    void BoardState::movePiece(uint8_t fromXPos, uint8_t fromYPos,
-                               uint8_t toXPos, uint8_t toYPos)
+    void BoardState::movePiece(math::Coordinate<uint8_t> fromPos,
+                               math::Coordinate<uint8_t> toPos)
     {
-        if (!isSquareOccupied(fromXPos, fromYPos))
+        if (!isSquareOccupied(fromPos))
             MIA_THROW(error::ErrorCode::Check_No_Piece_On_Square);
 
-        uint16_t fromIndex = coordToIndex(fromXPos, fromYPos);
-        uint16_t toIndex = coordToIndex(toXPos, toYPos);
+        uint16_t fromIndex = coordToIndex(fromPos);
+        uint16_t toIndex = coordToIndex(toPos);
 
         Piece piece = squareStates[fromIndex].getPiece().value();
 
         // Store the move in the move history.
         MoveState move;
         move.piece = piece;
-        move.startingPos = {fromXPos, fromYPos};
-        move.endingPos = {toXPos, toYPos};
+        move.startingPos = fromPos;
+        move.endingPos = toPos;
 
         // Check for an en passant special-case.
         if (isEnPassantMove(move, *this))
         { // Handle removing the en-passant taken pawn.
             const std::optional<MoveState> lastMove = this->getLastMove();
-            removePiece(lastMove->endingPos.x, lastMove->endingPos.y);
+            removePiece(lastMove->endingPos);
             move.wasEnPassant = true;
+        }
+
+        // Check for a pawn promotion special case.
+        if (tiggersPromotion(move, *this))
+        {
+            /*
+             * Handles promoting a pawn. This will set the move trigger, but 
+             * the replacement is handled by the event interaction.
+             */
+            move.triggersPawnPromo = true;
         }
 
         // Add the move to the board moves and update board state.
@@ -152,16 +162,17 @@ namespace check
     }
 
 
-    void BoardState::removePiece(uint8_t xPos, uint8_t yPos)
+    void BoardState::removePiece(math::Coordinate<uint8_t> pos)
     {
-        uint16_t index = coordToIndex(xPos, yPos);
+        uint16_t index = coordToIndex(pos);
         squareStates[index].removePiece();
     }
 
 
-    void BoardState::placePiece(uint8_t xPos, uint8_t yPos, Piece piece)
+    void BoardState::placePiece(math::Coordinate<uint8_t> pos, Piece piece)
     {
-    
+        uint16_t index = coordToIndex(pos);
+        squareStates[index].updatePiece(piece);
     }
 
 
@@ -183,9 +194,9 @@ namespace check
     }
 
 
-    bool BoardState::isSquareOnBoard(uint8_t xPos, uint8_t yPos) const
+    bool BoardState::isSquareOnBoard(math::Coordinate<uint8_t> pos) const
     {
-        return xPos < xSize && yPos < ySize;
+        return pos.x < xSize && pos.y < ySize;
     }
 
 
@@ -210,7 +221,7 @@ namespace check
         setStartingPosition(startingPosition);
         playerState.whosTurnIsIt = 1; // Reset player.
     }
-    
+
 
     std::optional<MoveState> BoardState::getLastMove() const
     {
@@ -220,22 +231,22 @@ namespace check
     }
 
 
-    bool BoardState::isSquareAttacked(uint8_t xPos, uint8_t yPos,
+    bool BoardState::isSquareAttacked(math::Coordinate<uint8_t> pos,
                                       Color defendingColor) const
     {
         bool isAttacked = false;
         std::stringstream stream;
         if (context)
         {
-            stream << "Checking if the (" << std::to_string(xPos) << ", " 
-                   << std::to_string(yPos) << ") square is attacked: ";
+            stream << "Checking if the (" << std::to_string(pos.x) << ", " 
+                   << std::to_string(pos.y) << ") square is attacked: ";
         }
         // Get all squares currently attacked.
         auto attackedSquares = getAttackedSquares(*this, defendingColor);
 
         for (const auto& coordinate : attackedSquares)
         { // Iterate over all attacked squares.
-            if (coordinate.x == xPos && coordinate.y == yPos)
+            if (coordinate == pos)
             {
                 isAttacked = true;
                 break;
@@ -252,45 +263,9 @@ namespace check
     }
 
 
-    bool BoardState::isKingInCheck(Color color) const
+    uint16_t BoardState::coordToIndex(math::Coordinate<uint8_t> pos) const
     {
-        bool kingInCheck = false;
-        std::stringstream stream;
-        if (context)
-        {
-            stream << "Checking if the " << colorToString(color) << " king is in check: ";
-        }
-        for (const SquareState& square : squareStates)
-        {
-            const std::optional<Piece>& piece = square.getPiece();
-
-            if (!piece.has_value() ||
-                piece->type != PieceType::King ||
-                piece->color != color)
-            {
-                continue;
-            }
-
-            const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
-
-            kingInCheck = isSquareAttacked(coordinate.x, coordinate.y, color);
-            break;
-        }
-
-        if (context)
-        {
-            stream << (kingInCheck ? "true" : "false");
-            context->logger.log(stream.str(), {"BoardState", "isKingInCheck()"}, context->verboseMode);
-        }
-
-        // No king of the specified color was found.
-        return kingInCheck;
-    }
-
-
-    uint16_t BoardState::coordToIndex(uint8_t xPos, uint8_t yPos) const
-    {
-        return static_cast<uint16_t>(xPos + yPos*xSize);
+        return static_cast<uint16_t>(pos.x + pos.y*xSize);
     }
 
 

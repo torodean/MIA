@@ -36,7 +36,7 @@ namespace check
                 std::string err = "Invalid starting position format: " + entry;
                 MIA_THROW(error::ErrorCode::Invalid_Parameter, err);
             }
-            
+
             for (std::string& part : parts)
             { // Trim any white space from the parts.
                 part = string_utils::trim(part);

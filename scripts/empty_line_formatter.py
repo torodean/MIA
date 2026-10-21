@@ -19,6 +19,10 @@ import argparse
 import os
 
 
+folders_to_ignore = [
+    "CARA"
+]
+
 valid_file_ext = [
     ".c", ".h", ".cpp", ".hpp",
     ".py",
@@ -81,6 +85,9 @@ def process_directory(directory: str) -> None:
         directory: Root directory to search.
     """
     for root, dirs, files in os.walk(directory):
+        # Prevent os.walk() from descending into ignored directories.
+        dirs[:] = [d for d in dirs if d not in folders_to_ignore]
+
         for file in files:
             process_file(os.path.join(root, file))
 

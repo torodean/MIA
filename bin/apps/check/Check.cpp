@@ -53,15 +53,15 @@ namespace check
         }
 
         loadConfig();
-                              
+
         // Pass the runtime context to the board state to enable logging and verbosity.
         boardState.setRuntimeContext(getContext());
-        
+
         // Load config values into the board state.
         boardState.initialize(configValues.boardSizeX,
                               configValues.boardSizeY,
                               configValues.startingPosition);
-        
+
         // Set the python module settings.
         module.call("setVerbose", configValues.verboseMode);
     }
@@ -72,7 +72,7 @@ namespace check
         try
         { // Load configuration here.
             configValues = constructConfig(config);
-            
+
             std::cout << " --> configValues.verboseMode: " << (configValues.verboseMode ? "true" : "false") << std::endl;
             /*
              * The verboseMode can be overwridden from the config file. The desired behavior
@@ -111,10 +111,10 @@ namespace check
 
         // Start the UI listener.
         listener.start();
-        
+
         // Create the UI.
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
-        
+
         // Register pieces.
         module.call("registerPiece", "king", "\u265A");
         timing::sleepMilliseconds(20);
@@ -128,13 +128,13 @@ namespace check
         timing::sleepMilliseconds(20);
         module.call("registerPiece", "bishop", "\u265D");
         timing::sleepMilliseconds(20);
-        
+
         // Setup the starting board position.
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
-        
+
         // Update the UI with the board position.
         module.call("updateUI");
-        
+
         EventState eventState; // Stores various states between events.
         while (listener.isRunning())
         {
@@ -164,7 +164,7 @@ namespace check
                     }
 
                     case CheckUIEventType::DropPiece:
-                    {
+                    { // Signals a piece was dropped in the ui.
                         if (eventState.gameOver)
                         { // The board stays locked until the game is reset.
                             break;
@@ -172,6 +172,35 @@ namespace check
 
                         GameResult result = processMoveEvent(module, uiEvent, boardState, eventState);
 
+                        // TODO - this is duplicate code, move to method.
+                        if (result.isGameOver())
+                        { // Report the result here and hand it to the UI to display.
+                            std::cout << "Game over (" << gameOverReasonToString(result.reason) << "): ";
+
+                            if (result.type == GameResultType::Win)
+                            {
+                                std::cout << colorToString(result.winner) << " wins!" << std::endl;
+                            }
+                            else
+                            {
+                                std::cout << "The game is a draw." << std::endl;
+                            }
+
+                            processGameOver(module, result);
+                        }
+                        break;
+                    }
+
+                    case CheckUIEventType::PawnPromotion:
+                    { // Signals a pawn promotion ui event was received.
+                        if (eventState.gameOver)
+                        { // The board stays locked until the game is reset.
+                            break;
+                        }
+
+                        GameResult result = processPawnPromotion(module, uiEvent, boardState);
+
+                        // TODO - this is duplicate code, move to method.
                         if (result.isGameOver())
                         { // Report the result here and hand it to the UI to display.
                             std::cout << "Game over (" << gameOverReasonToString(result.reason) << "): ";
@@ -206,7 +235,7 @@ namespace check
                         listener.stop();
                         return constants::SUCCESS;
                     }
-                    
+
                     case CheckUIEventType::Unknown:
                     default:
                     { // Unknown/unparsable event.

@@ -113,11 +113,12 @@ namespace error
         Py_Module_Load_Failure = 39000,       ///< A Python module failed to load in the embedded interpreter.
         Py_Unexp_Return_Type_Request = 39001, ///< The expected return value requested for a python call does not match.
         Py_Module_Call_Error = 39002,         ///< A call to a module method returned an error.
-        
+
         /*
          * CHECK app error codes. 400XX.
          */
         Check_No_Piece_On_Square = 400000,    ///< No piece was on the specified square.
+        Check_Malformed_Event = 400001,       ///< A backend-ui event appears to be malformed.
 
         // A catch all for any un-programmed errors.
         Catastrophic_Failure = 9001           ///< Some unprogrammed error occured.

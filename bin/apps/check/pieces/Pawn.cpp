@@ -34,7 +34,7 @@ namespace check
                 return true;
             if (color == Color::Black && currentPos.y == boardYSize - 2)
                 return true;
-            
+
             // Otherwise, this is not the starting position.
             return false;
         }
@@ -48,16 +48,16 @@ namespace check
     {
         // Defines forward as +1 or -1 depending on color.
         int8_t forward = color == Color::White ? 1 : -1;
-        
+
         std::vector<math::Coordinate<uint8_t>> legalMoves;
         bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
-        
+
         // If the square forward is not occupied, that is a valid move.
-        if (!boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + forward)))
+        if (!boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)}))
         {
             legalMoves.push_back({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)});
             if (inStartingPos &&
-                !boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + 2*forward)))
+                !boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + 2*forward)}))
             { // This check is only needed if the move directly forward was already valid.
                 legalMoves.push_back({currentPos.x,  static_cast<uint8_t>(currentPos.y + 2*forward)});
             }
@@ -65,21 +65,21 @@ namespace check
 
         // Check if any captures are available.
         if (currentPos.x + 1 < boardState.getXSize() && // Keep within board bounds.
-            boardState.containsOpponentPiece(static_cast<uint8_t>(currentPos.x + 1), 
-                                             static_cast<uint8_t>(currentPos.y + forward), color))
+            boardState.containsOpponentPiece({static_cast<uint8_t>(currentPos.x + 1), 
+                                             static_cast<uint8_t>(currentPos.y + forward)}, color))
         { // Forward and to the right.
 
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x + 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
         if (currentPos.x - 1 >= 0 && // Keep within board bounds.
-            boardState.containsOpponentPiece(static_cast<uint8_t>(currentPos.x - 1), 
-                                             static_cast<uint8_t>(currentPos.y + forward), color))
+            boardState.containsOpponentPiece({static_cast<uint8_t>(currentPos.x - 1), 
+                                             static_cast<uint8_t>(currentPos.y + forward)}, color))
         { // Forward and to the left.
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x - 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
-        
+
         // Handle en passant.
         const std::optional<MoveState>& lastMove = boardState.getLastMove();
         if (lastMove != std::nullopt && lastMove->piece.type == PieceType::Pawn)
@@ -102,7 +102,7 @@ namespace check
 
         return legalMoves;
     }
-    
+
 
     std::vector<math::Coordinate<uint8_t>> PawnLogic::getAttackedSquares(
         const math::Coordinate<uint8_t>& currentPos,
@@ -140,7 +140,7 @@ namespace check
             return false;
 
         // The destination square must be unoccupied.
-        if (state.isSquareOccupied(move.endingPos.x, move.endingPos.y))
+        if (state.isSquareOccupied(move.endingPos))
             return false;
 
         // A pawn must move diagonally by one square to capture en passant.
@@ -168,5 +168,19 @@ namespace check
                                       static_cast<int16_t>(lastMove->startingPos.y);
 
         return std::abs(previousYDifference) == 2;
+    }
+
+
+    bool tiggersPromotion(const MoveState& move,
+                          const BoardState& state)
+    {
+        // The moving piece must be a pawn.
+        if (move.piece.type != PieceType::Pawn)
+            return false;
+
+        if (move.endingPos.y == state.getYSize() - 1)
+            return true;
+
+        return false;
     }
 } // namespace check
