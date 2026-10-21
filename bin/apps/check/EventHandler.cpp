@@ -96,8 +96,8 @@ namespace check
         }
 
         // A picked up square does not have to hold a piece, so check before using it.
-        const std::optional<Piece>& piece = state.getPieceOnSquare(event.startPos->x,
-                                                                  event.startPos->y);
+        const std::optional<Piece>& piece = state.getPieceOnSquare({event.startPos->x,
+                                                                    event.startPos->y});
 
         if (!piece.has_value())
         { // Nothing was picked up, so there are no legal moves to display or cache.
@@ -160,7 +160,7 @@ namespace check
 
         try
         { // Attempt to move the piece.
-            state.movePiece(startPos.x, startPos.y, endPos.x, endPos.y);
+            state.movePiece({startPos.x, startPos.y}, {endPos.x, endPos.y});
             const std::optional<MoveState> lastMove = state.getLastMove();
             if (lastMove.has_value() && lastMove->wasEnPassant)
             { // Handle en passant in ui.

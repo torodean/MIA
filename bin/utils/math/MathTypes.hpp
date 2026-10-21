@@ -6,6 +6,8 @@
  */
 #pragma once
 
+#include <ostream>
+
 namespace math
 {
     /**
@@ -23,5 +25,29 @@ namespace math
 
         Type x; ///< Storage for the X coordinate value.
         Type y; ///< Storage for the Y coordinate value.
+        
+        /**
+         * @brief Compares two coordinates for equality.
+         * @param input The coordinate to compare against.
+         * @return true if both coordinates have equal X and Y components.
+         */
+        bool operator==(const Coordinate<Type>& input)
+        {
+            return x == input.x && y == input.y;
+        }
     };
+    
+    /**
+     * @brief Outputs a coordinate as a string in the format (x, y).
+     * @tparam Type The type for each component of the coordinate.
+     * @param os The output stream.
+     * @param coord The coordinate to output.
+     * @return A reference to the output stream.
+     */
+    template<typename Type>
+    std::ostream& operator<<(std::ostream& os, const Coordinate<Type>& coord)
+    {
+        os << "(" << coord.x << ", " << coord.y << ")";
+        return os;
+    }
 } // namespace math

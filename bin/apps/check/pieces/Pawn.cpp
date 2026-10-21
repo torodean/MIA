@@ -53,11 +53,11 @@ namespace check
         bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
         
         // If the square forward is not occupied, that is a valid move.
-        if (!boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + forward)))
+        if (!boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)}))
         {
             legalMoves.push_back({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)});
             if (inStartingPos &&
-                !boardState.isSquareOccupied(currentPos.x, static_cast<uint8_t>(currentPos.y + 2*forward)))
+                !boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + 2*forward)}))
             { // This check is only needed if the move directly forward was already valid.
                 legalMoves.push_back({currentPos.x,  static_cast<uint8_t>(currentPos.y + 2*forward)});
             }
@@ -65,16 +65,16 @@ namespace check
 
         // Check if any captures are available.
         if (currentPos.x + 1 < boardState.getXSize() && // Keep within board bounds.
-            boardState.containsOpponentPiece(static_cast<uint8_t>(currentPos.x + 1), 
-                                             static_cast<uint8_t>(currentPos.y + forward), color))
+            boardState.containsOpponentPiece({static_cast<uint8_t>(currentPos.x + 1), 
+                                             static_cast<uint8_t>(currentPos.y + forward)}, color))
         { // Forward and to the right.
 
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x + 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
         if (currentPos.x - 1 >= 0 && // Keep within board bounds.
-            boardState.containsOpponentPiece(static_cast<uint8_t>(currentPos.x - 1), 
-                                             static_cast<uint8_t>(currentPos.y + forward), color))
+            boardState.containsOpponentPiece({static_cast<uint8_t>(currentPos.x - 1), 
+                                             static_cast<uint8_t>(currentPos.y + forward)}, color))
         { // Forward and to the left.
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x - 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
@@ -140,7 +140,7 @@ namespace check
             return false;
 
         // The destination square must be unoccupied.
-        if (state.isSquareOccupied(move.endingPos.x, move.endingPos.y))
+        if (state.isSquareOccupied(move.endingPos))
             return false;
 
         // A pawn must move diagonally by one square to capture en passant.

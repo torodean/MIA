@@ -49,9 +49,9 @@ namespace check
             uint8_t xPos = static_cast<uint8_t>(x);
             uint8_t yPos = static_cast<uint8_t>(y);
 
-            if (boardState.isSquareOccupied(xPos, yPos))
+            if (boardState.isSquareOccupied({xPos, yPos}))
             { // A king cannot capture a friendly piece.
-                if (boardState.containsOpponentPiece(xPos, yPos, color))
+                if (boardState.containsOpponentPiece({xPos, yPos}, color))
                 {
                     legalMoves.push_back({xPos, yPos});
                 }
@@ -82,7 +82,7 @@ namespace check
 
             const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
 
-            kingInCheck = state.isSquareAttacked(coordinate.x, coordinate.y, color);
+            kingInCheck = state.isSquareAttacked({coordinate.x, coordinate.y}, color);
             break;
         }
 

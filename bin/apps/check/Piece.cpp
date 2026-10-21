@@ -92,7 +92,7 @@ namespace check
 
         for (const auto& move : getLegalMoves(currentPos, boardState, color))
         {
-            if (boardState.containsOpponentPiece(move.x, move.y, color))
+            if (boardState.containsOpponentPiece(move, color))
             {
                 captures.push_back(move);
             }
@@ -222,8 +222,8 @@ namespace check
          */
         BoardState simulatedBoard(boardState);
 
-        simulatedBoard.movePiece(piecePos.coordinate.x, piecePos.coordinate.y,
-                                 destination.x, destination.y);
+        simulatedBoard.movePiece(piecePos.coordinate,
+                                 destination);
 
         /* 
          * If this player's king is still attacked once the move is applied, the
@@ -253,8 +253,9 @@ namespace check
         {
             for (uint16_t x = 0; x < boardState.getXSize(); ++x)
             {
-                const auto& piece = boardState.getPieceOnSquare(static_cast<uint8_t>(x),
-                                                                static_cast<uint8_t>(y));
+                math::Coordinate<uint8_t> squareCoord(static_cast<uint8_t>(x),
+                                                      static_cast<uint8_t>(y));
+                const auto& piece = boardState.getPieceOnSquare(squareCoord);
 
                 // Skip empty squares and pieces belonging to the defending side.
                 if (!piece.has_value() || 
@@ -264,7 +265,7 @@ namespace check
                     continue;
                 }
 
-                PiecePosition piecePos{*piece, {static_cast<uint8_t>(x), static_cast<uint8_t>(y)}};
+                PiecePosition piecePos{*piece, squareCoord};
 
                 std::unique_ptr<BasePieceLogic>& logic = pieceLogic[static_cast<uint8_t>(piece->type)];
 

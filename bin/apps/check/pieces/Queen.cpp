@@ -55,9 +55,9 @@ namespace check
                 uint8_t yPos = static_cast<uint8_t>(y);
 
                 // An occupied square blocks further movement.
-                if (boardState.isSquareOccupied(xPos, yPos))
+                if (boardState.isSquareOccupied({xPos, yPos}))
                 { // An opposing piece can be captured, but not a friendly piece.  
-                    if (boardState.containsOpponentPiece(xPos, yPos, color))
+                    if (boardState.containsOpponentPiece({xPos, yPos}, color))
                     {
                         legalMoves.push_back({xPos, yPos});
                     }
