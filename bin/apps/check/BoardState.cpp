@@ -252,42 +252,6 @@ namespace check
     }
 
 
-    bool BoardState::isKingInCheck(Color color) const
-    {
-        bool kingInCheck = false;
-        std::stringstream stream;
-        if (context)
-        {
-            stream << "Checking if the " << colorToString(color) << " king is in check: ";
-        }
-        for (const SquareState& square : squareStates)
-        {
-            const std::optional<Piece>& piece = square.getPiece();
-
-            if (!piece.has_value() ||
-                piece->type != PieceType::King ||
-                piece->color != color)
-            {
-                continue;
-            }
-
-            const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
-
-            kingInCheck = isSquareAttacked(coordinate.x, coordinate.y, color);
-            break;
-        }
-
-        if (context)
-        {
-            stream << (kingInCheck ? "true" : "false");
-            context->logger.log(stream.str(), {"BoardState", "isKingInCheck()"}, context->verboseMode);
-        }
-
-        // No king of the specified color was found.
-        return kingInCheck;
-    }
-
-
     uint16_t BoardState::coordToIndex(uint8_t xPos, uint8_t yPos) const
     {
         return static_cast<uint16_t>(xPos + yPos*xSize);

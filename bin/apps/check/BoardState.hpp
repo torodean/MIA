@@ -211,11 +211,6 @@ namespace check
                               Color defendingColor) const;
 
         /**
-         * Determines whether the specified player's king is in check.
-         */
-        bool isKingInCheck(Color color) const;
-
-        /**
          * Set the runtime context for this object to access.
          */
         void setRuntimeContext(const RuntimeContext& ctx);

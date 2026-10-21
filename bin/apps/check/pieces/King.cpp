@@ -65,4 +65,28 @@ namespace check
 
         return legalMoves;
     }
+    
+
+    bool isKingInCheck(const BoardState& state, Color color)
+    {
+        bool kingInCheck = false;
+
+        for (const SquareState& square : state.getSquareStates())
+        { // Get the square with the king on it.
+            const std::optional<Piece>& piece = square.getPiece();
+
+            if (!piece.has_value() || piece->type != PieceType::King || piece->color != color)
+            {
+                continue;
+            }
+
+            const math::Coordinate<uint8_t>& coordinate = square.getCoordinate();
+
+            kingInCheck = state.isSquareAttacked(coordinate.x, coordinate.y, color);
+            break;
+        }
+
+        // No king of the specified color was found.
+        return kingInCheck;
+    }
 } // namespace check

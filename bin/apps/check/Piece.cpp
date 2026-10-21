@@ -229,7 +229,7 @@ namespace check
          * If this player's king is still attacked once the move is applied, the
          * move did not get the king out of check and is therefore not legal.
          */
-        return simulatedBoard.isKingInCheck(piecePos.piece.color);
+        return isKingInCheck(simulatedBoard, piecePos.piece.color);
     }
 
 

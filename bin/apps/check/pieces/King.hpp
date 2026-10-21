@@ -11,6 +11,7 @@
 
 #include "Piece.hpp"
 #include "MathTypes.hpp"
+#include "BoardState.hpp"
 
 namespace check
 {
@@ -35,4 +36,12 @@ namespace check
             const BoardState& boardState,
             Color color) override;
     }; // class King
+
+    /**
+     * Determines whether the specified player's king is in check.
+     * @param state The current state of the board.
+     * @param color The color of the king in question.
+     * @return true if the king is in check, false otherwise.
+     */
+    bool isKingInCheck(const BoardState& state, Color color);
 } // namespace check
