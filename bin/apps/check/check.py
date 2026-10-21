@@ -91,7 +91,7 @@ def addEvent(event):
     @param event The event to add to the queue.
     """
     uiEvents.append(event)
-    
+
     # This can be added if desired for debugging, but is generally extremely 
     # noisy, since this method is called frequently.
     #if verboseMode:

@@ -27,8 +27,8 @@ namespace testing
         ofs.close();
         return filename;
     }
-    
-    
+
+
     void removeFile(const std::string& filename)
     {
         if (std::filesystem::exists(filename))

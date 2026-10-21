@@ -61,7 +61,7 @@ namespace check
         /// The coordinate of this square on the game board.
         math::Coordinate<uint8_t> coordinate;
     }; // class SquareState
-    
+
     /**
      * @brief Constructs a vector of SquareState objects for a board of the
      *        specified dimensions.

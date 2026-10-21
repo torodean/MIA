@@ -26,17 +26,17 @@ namespace check
          */
         PlayerState(uint8_t numOfPlayers, uint8_t whosTurn) :
             numberOfPlayers(numOfPlayers), whosTurnIsIt(whosTurn) {};
-    
+
         uint8_t numberOfPlayers{2}; ///< Total number of players.
         uint8_t whosTurnIsIt{1};    ///< Stores whos turn it is.
-        
+
         /**
          * Advance to the next players turn. This wil increment whosTurnIsIt
          * until it reaches the number of players, then loop back around to 1.
          */
         void advanceTurn();
     }; // class PlayerState
-    
+
     /**
      * Converts the current player's index to the corresponding piece color.
      * Player 1 is White, player 2 is Black, player 3 is Red, and player 4 is Green.
@@ -45,7 +45,7 @@ namespace check
      *         if the index does not correspond to a defined color.
      */
     Color whosTurnIsItToColor(uint8_t whosTurnIsIt);
-    
+
     /**
      * Converts the current player's index to the corresponding piece color.
      * Player 1 is White, player 2 is Black, player 3 is Red, and player 4 is Green.

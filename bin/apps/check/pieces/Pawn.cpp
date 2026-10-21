@@ -34,7 +34,7 @@ namespace check
                 return true;
             if (color == Color::Black && currentPos.y == boardYSize - 2)
                 return true;
-            
+
             // Otherwise, this is not the starting position.
             return false;
         }
@@ -48,10 +48,10 @@ namespace check
     {
         // Defines forward as +1 or -1 depending on color.
         int8_t forward = color == Color::White ? 1 : -1;
-        
+
         std::vector<math::Coordinate<uint8_t>> legalMoves;
         bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
-        
+
         // If the square forward is not occupied, that is a valid move.
         if (!boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)}))
         {
@@ -79,7 +79,7 @@ namespace check
             legalMoves.push_back({static_cast<uint8_t>(currentPos.x - 1), 
                                   static_cast<uint8_t>(currentPos.y + forward)});
         }
-        
+
         // Handle en passant.
         const std::optional<MoveState>& lastMove = boardState.getLastMove();
         if (lastMove != std::nullopt && lastMove->piece.type == PieceType::Pawn)
@@ -102,7 +102,7 @@ namespace check
 
         return legalMoves;
     }
-    
+
 
     std::vector<math::Coordinate<uint8_t>> PawnLogic::getAttackedSquares(
         const math::Coordinate<uint8_t>& currentPos,
@@ -177,7 +177,7 @@ namespace check
         // The moving piece must be a pawn.
         if (move.piece.type != PieceType::Pawn)
             return false;
-        
+
         if (move.endingPos.y == state.getYSize() - 1)
             return true;
 

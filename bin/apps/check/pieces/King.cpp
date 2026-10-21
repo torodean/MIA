@@ -65,7 +65,7 @@ namespace check
 
         return legalMoves;
     }
-    
+
 
     bool isKingInCheck(const BoardState& state, Color color)
     {

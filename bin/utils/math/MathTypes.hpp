@@ -19,13 +19,13 @@ namespace math
     {
         // Default constructor.
         Coordinate() = default;
-    
+
         /// Main constructor which takes and sets two integer coordinate values.
         Coordinate(Type x_val, Type y_val) : x(x_val), y(y_val) {}
 
         Type x; ///< Storage for the X coordinate value.
         Type y; ///< Storage for the Y coordinate value.
-        
+
         /**
          * @brief Compares two coordinates for equality.
          * @param input The coordinate to compare against.
@@ -36,7 +36,7 @@ namespace math
             return x == input.x && y == input.y;
         }
     };
-    
+
     /**
      * @brief Outputs a coordinate as a string in the format (x, y).
      * @tparam Type The type for each component of the coordinate.

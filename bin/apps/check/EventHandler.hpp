@@ -32,7 +32,7 @@ namespace check
         SaveBoard,    ///< Represents the board/game should be saved.
         PawnPromotion,///< Represents a pawn is being promoted.
     };
-    
+
     /**
      * Stores the information contained in a ui event.
      */
@@ -40,11 +40,11 @@ namespace check
     {
         /// The type that this event represents.
         CheckUIEventType type;
-        
+
         /// The coordinates sent along with this event.
         std::optional<math::Coordinate<uint8_t>> startPos{std::nullopt};
         std::optional<math::Coordinate<uint8_t>> endPos{std::nullopt};
-        
+
         /// A chosen piece string sent with this event (used for promotions and such).
         std::optional<std::string> chosenPromoPiece;
     };
@@ -67,7 +67,7 @@ namespace check
          */
         bool gameOver{false};
     };
-    
+
     /**
      * Converts a string input to the equivalent CheckUIEvent object.
      * @param input The string to convert,
@@ -93,7 +93,7 @@ namespace check
      * @throws MIAException for malformed events.
      */
     CheckUIEvent toCheckUIEvent(const std::string& input);
-    
+
     /**
      * This will display the legal moves for a piece for when the "pickup_piece" 
      * event occured. This expects (and checks) that the event type is PickupPiece,

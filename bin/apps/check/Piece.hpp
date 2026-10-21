@@ -113,7 +113,7 @@ namespace check
         Piece piece;
         math::Coordinate<uint8_t> coordinate;
     };
-    
+
     /**
      * This class is a base virtual class for any piece. Every piece needs
      * some sort of logic defining how it moves, captures, legal moves, etc.
@@ -151,7 +151,7 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color);
-            
+
         /**
          * This returns all squares attacked by a piece based on the current state of
          * the board. This includes squares occupied by friendly pieces and unoccupied

@@ -68,17 +68,17 @@ namespace check
         }
 
         const SquareState& square = squareStates[index];
-        
+
         if (context)
         {
             stream << (square.isOccupied() ? "true" : "false");
             context->logger.log(stream.str(), {"BoardState", "isSquareOccupied()"}, context->verboseMode);
         }
-        
+
         return square.isOccupied();
     }
-    
-    
+
+
     bool BoardState::containsOpponentPiece(math::Coordinate<uint8_t> pos, Color color) const
     {
         const auto& piece = getPieceOnSquare(pos);
@@ -144,7 +144,7 @@ namespace check
             removePiece(lastMove->endingPos);
             move.wasEnPassant = true;
         }
-        
+
         // Check for a pawn promotion special case.
         if (tiggersPromotion(move, *this))
         {
@@ -221,7 +221,7 @@ namespace check
         setStartingPosition(startingPosition);
         playerState.whosTurnIsIt = 1; // Reset player.
     }
-    
+
 
     std::optional<MoveState> BoardState::getLastMove() const
     {

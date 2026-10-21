@@ -159,7 +159,7 @@ public:
         } // Ensure Python object references are released before releasing the GIL.
 
         PyGILState_Release(state);
-        
+
         if (!result.isValid())
         { // This means the call failed for some reason.
             MIA_THROW(error::ErrorCode::Py_Module_Call_Error, result.getError());

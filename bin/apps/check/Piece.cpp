@@ -42,7 +42,7 @@ namespace check
     PieceType stringToPieceType(const std::string& type)
     {
         std::string input = string_utils::toLower(type);
-        
+
         if (input == "king")   return PieceType::King;
         if (input == "queen")  return PieceType::Queen;
         if (input == "pawn")   return PieceType::Pawn;
@@ -72,7 +72,7 @@ namespace check
     Color stringToColor(const std::string& color)
     {
         std::string input = string_utils::toLower(color);
-        
+
         if (input == "white") return Color::White;
         if (input == "black") return Color::Black;
         if (input == "red")   return Color::Red;

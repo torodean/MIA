@@ -25,7 +25,7 @@ namespace check
         math::Coordinate<uint8_t> endingPos;
         /// Stores if the last move was en passant.
         bool wasEnPassant{false};
-        
+
         /*
          * Stores whether the last move triggers a pawn promotion. When this occurs,
          * the piece that is on the square will be updated, the piece in this move

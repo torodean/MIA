@@ -82,7 +82,7 @@ namespace math
         { // The input string is not the expected format.
             MIA_THROW(error::Invalid_Parameter, "The roll method expects an input format of #d##");
         }
-    
+
         int numOfDice = std::stoi(string_utils::getBeforeChar(input, 'd'));
         int sizeOfDice = std::stoi(string_utils::getAfterChar(input, 'd'));
         int totalRolled = 0;

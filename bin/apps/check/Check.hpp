@@ -75,7 +75,7 @@ namespace check
 
         /// Load the configuration variables.
         void loadConfig();
-        
+
         /**
          * Define the components which are needed for UI event handling
          * and ui interfacing.
@@ -91,7 +91,7 @@ namespace check
         ui::EventQueue queue;
         ui::EventStorage storage;
         python_ui::PythonUIListener listener;
-        
+
         /// Stores the current board state.
         BoardState boardState;
     }; // class Check

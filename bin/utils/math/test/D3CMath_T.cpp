@@ -104,19 +104,19 @@ namespace math
         ASSERT_EQ(sum, "47");
         sum = addTwoStrings("32", "15");
         ASSERT_EQ(sum, "47");
-        
+
         // Add two numbers of different string sizes.
         sum = addTwoStrings("320", "15");
         ASSERT_EQ(sum, "335");
         sum = addTwoStrings("15", "320");
         ASSERT_EQ(sum, "335");
-        
+
         // Add two numbers where one is zero.
         sum = addTwoStrings("0", "42");
         ASSERT_EQ(sum, "42");
         sum = addTwoStrings("42", "0");
         ASSERT_EQ(sum, "42");
-        
+
         // Add two numbers of the same string size where one is a negative.
         sum = addTwoStrings("-15", "32");
         ASSERT_EQ(sum, "17");
@@ -126,7 +126,7 @@ namespace math
         ASSERT_EQ(sum, "-17");
         sum = addTwoStrings("-32", "15");
         ASSERT_EQ(sum, "-17");
-        
+
         // Add two numbers of different string sizes where one is a negative.
         sum = addTwoStrings("-15", "320");
         ASSERT_EQ(sum, "305");
@@ -136,7 +136,7 @@ namespace math
         ASSERT_EQ(sum, "-305");
         sum = addTwoStrings("-320", "15");
         ASSERT_EQ(sum, "-305");
-        
+
         // Add two zero numbers.
         sum = addTwoStrings("0", "0");
         ASSERT_EQ(sum, "0");
@@ -146,13 +146,13 @@ namespace math
         ASSERT_EQ(sum, "-47");
         sum = addTwoStrings("-32", "-15");
         ASSERT_EQ(sum, "-47");
-        
+
         // Add two negative numbers of different string sizes.
         sum = addTwoStrings("-320", "-15");
         ASSERT_EQ(sum, "-335");
         sum = addTwoStrings("-15", "-320");
         ASSERT_EQ(sum, "-335");
-        
+
         // Add two large numbers of different string sizes.
         sum = addTwoStrings(           "9182736401827409812734098127349821123412341234", 
                             "981273409871203498712093487120987340912873098571209870912");

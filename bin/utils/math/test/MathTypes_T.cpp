@@ -26,7 +26,7 @@ namespace math
         ASSERT_EQ(coord1, coord2);
         ASSERT_NE(coord1, coord3);
         ASSERT_NE(coord1, coord4);
-        
+
         // Check integer coordinates.
         Coordinate<uint16_t> coord5(5, 6);
         Coordinate<uint16_t> coord6(5, 6);

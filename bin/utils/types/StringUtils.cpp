@@ -112,8 +112,8 @@ namespace string_utils
 
         return output;
     }    
-    
-    
+
+
     std::vector<std::string> delimiterString(const std::string& input, 
                                              char delimiter,
                                              bool verboseMode)

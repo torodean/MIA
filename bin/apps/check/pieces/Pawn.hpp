@@ -37,7 +37,7 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;        
-            
+
         /**
          * This returns all squares attacked by a pawn. A pawn attacks the two
          * diagonally adjacent squares in its forward direction, regardless of

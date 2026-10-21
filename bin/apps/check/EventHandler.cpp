@@ -20,14 +20,14 @@ namespace check
     CheckUIEventType stringToCheckUIEventType(const std::string& input)
     {
         std::string event = string_utils::toLower(input);
-        
+
         if (event == "pickup_piece")      return CheckUIEventType::PickupPiece;
         if (event == "drop_piece")        return CheckUIEventType::DropPiece;
         if (event == "reset_board")       return CheckUIEventType::ResetBoard;
         if (event == "save_board")        return CheckUIEventType::SaveBoard;
         if (event == "pawn_promo_choice") return CheckUIEventType::PawnPromotion;
         if (event == "stop")              return CheckUIEventType::Stop;
-        
+
         return CheckUIEventType::Unknown;
     }
 
@@ -53,7 +53,7 @@ namespace check
         CheckUIEvent event;
         std::vector<std::string> eventTokens = string_utils::delimiterString(input, ' ');
         event.type = stringToCheckUIEventType(eventTokens[0]);
-        
+
         // The rest of the parsing depends on the type of event.
         switch(event.type)
         {
@@ -130,7 +130,7 @@ namespace check
         piecePos.coordinate.y = event.startPos.value().y;
 
         std::vector<math::Coordinate<uint8_t>> legalMoves = getLegalMoves(piecePos, state);
-        
+
         for (const math::Coordinate<uint8_t>& legalMove : legalMoves)
         {
             module.call("highlightSquare", legalMove.x, legalMove.y);
@@ -181,7 +181,7 @@ namespace check
         try
         { // Attempt to move the piece.
             state.movePiece(startPos, endPos);
-            
+
             // Check if this was an en passant move.
             const std::optional<MoveState> lastMove = state.getLastMove();
             if (lastMove.has_value() && lastMove->wasEnPassant)
@@ -191,14 +191,14 @@ namespace check
                             static_cast<uint8_t>(lastMove->endingPos.x), 
                             static_cast<uint8_t>(lastMove->endingPos.y - direction));
             }
-            
+
             // Check if this was a pawn promotion triggering move.
             if (lastMove.has_value() && lastMove->triggersPawnPromo)
             { // Handle a pawn promotion in the ui.
                 module.call("showPawnPromoBox", 
                             "queen,rook,bishop,knight", // TODO - This list should be generated for future expansion.
                             colorToString(lastMove->piece.color));
-                            
+
                 /*
                  * This is a special case, we don't want the rest of this method 
                  * to change the turn and determine the game result until the pawn
@@ -276,12 +276,12 @@ namespace check
                                     BoardState& state)
     {
         GameResult ongoing;
-        
+
         if (event.type != CheckUIEventType::PawnPromotion)
         { // Do nothing for non-pickup events.
             return ongoing;
         }
-        
+
         Piece promoPiece;
         if (event.chosenPromoPiece.has_value())
         {
@@ -297,7 +297,7 @@ namespace check
         // The last move will determine which piece is getting promoted.
         const std::optional<MoveState> lastMove = state.getLastMove();
         promoPiece.color = lastMove->piece.color;
-        
+
         if (lastMove.has_value())
         {
             module.call("setPiece", 
