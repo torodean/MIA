@@ -21,11 +21,12 @@ namespace check
     {
         std::string event = string_utils::toLower(input);
         
-        if (event == "pickup_piece") return CheckUIEventType::PickupPiece;
-        if (event == "drop_piece")   return CheckUIEventType::DropPiece;
-        if (event == "reset_board")  return CheckUIEventType::ResetBoard;
-        if (event == "save_board")   return CheckUIEventType::SaveBoard;
-        if (event == "stop")         return CheckUIEventType::Stop;
+        if (event == "pickup_piece")      return CheckUIEventType::PickupPiece;
+        if (event == "drop_piece")        return CheckUIEventType::DropPiece;
+        if (event == "reset_board")       return CheckUIEventType::ResetBoard;
+        if (event == "save_board")        return CheckUIEventType::SaveBoard;
+        if (event == "pawn_promo_choice") return CheckUIEventType::PawnPromotion;
+        if (event == "stop")              return CheckUIEventType::Stop;
         
         return CheckUIEventType::Unknown;
     }
@@ -35,13 +36,14 @@ namespace check
     {
         switch(event)
         {
-            case CheckUIEventType::PickupPiece: return "pickup_piece";
-            case CheckUIEventType::DropPiece:   return "drop_piece";
-            case CheckUIEventType::ResetBoard:  return "reset_board";
-            case CheckUIEventType::SaveBoard:   return "save_board";
-            case CheckUIEventType::Stop:        return "stop";
+            case CheckUIEventType::PickupPiece:   return "pickup_piece";
+            case CheckUIEventType::DropPiece:     return "drop_piece";
+            case CheckUIEventType::ResetBoard:    return "reset_board";
+            case CheckUIEventType::SaveBoard:     return "save_board";
+            case CheckUIEventType::PawnPromotion: return "pawn_promo_choice";
+            case CheckUIEventType::Stop:          return "stop";
             case CheckUIEventType::Unknown:
-            default:                        return "unknown";
+            default:                              return "unknown";
         }
     }
 
@@ -57,6 +59,10 @@ namespace check
         {
             case CheckUIEventType::PickupPiece:
             {
+                if (eventTokens.size() != 3)
+                    MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
+                              "Expected 3 tokens for PickupPiece event.");
+
                 event.startPos = math::Coordinate<uint8_t>{
                     static_cast<uint8_t>(std::stoi(eventTokens[1])),
                     static_cast<uint8_t>(std::stoi(eventTokens[2])) };
@@ -64,12 +70,26 @@ namespace check
             }
             case CheckUIEventType::DropPiece:
             {
+                if (eventTokens.size() != 5)
+                    MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
+                              "Expected 5 tokens for DropPiece event.");
+
                 event.startPos = math::Coordinate<uint8_t>{
                     static_cast<uint8_t>(std::stoi(eventTokens[1])),
                     static_cast<uint8_t>(std::stoi(eventTokens[2])) };
                 event.endPos = math::Coordinate<uint8_t>{
                     static_cast<uint8_t>(std::stoi(eventTokens[3])),
                     static_cast<uint8_t>(std::stoi(eventTokens[4])) };
+                break;
+            }
+            case CheckUIEventType::PawnPromotion:
+            {
+                if (eventTokens.size() != 2)
+                    MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
+                              "Expected 2 tokens for PawnPromotion event.");
+
+                event.chosenPromoPiece = eventTokens[1];
+                break;
             }
 
             // These events have nothing more to them.
@@ -160,7 +180,9 @@ namespace check
 
         try
         { // Attempt to move the piece.
-            state.movePiece({startPos.x, startPos.y}, {endPos.x, endPos.y});
+            state.movePiece(startPos, endPos);
+            
+            // Check if this was an en passant move.
             const std::optional<MoveState> lastMove = state.getLastMove();
             if (lastMove.has_value() && lastMove->wasEnPassant)
             { // Handle en passant in ui.
@@ -168,6 +190,25 @@ namespace check
                 module.call("removePiece", 
                             static_cast<uint8_t>(lastMove->endingPos.x), 
                             static_cast<uint8_t>(lastMove->endingPos.y - direction));
+            }
+            
+            // Check if this was a pawn promotion triggering move.
+            if (lastMove.has_value() && lastMove->triggersPawnPromo)
+            { // Handle a pawn promotion in the ui.
+                module.call("showPawnPromoBox", 
+                            "queen,rook,bishop,knight", // TODO - This list should be generated for future expansion.
+                            colorToString(lastMove->piece.color));
+                            
+                /*
+                 * This is a special case, we don't want the rest of this method 
+                 * to change the turn and determine the game result until the pawn
+                 * promotion turn has been selected. So... return ongoing and handle
+                 * the rest of the event handling in processPawnPromotion(); This
+                 * assumes that a pawn_promo_choice event immediately follows, which
+                 * is something that is forced by the UI.
+                 */
+                 module.call("movePiece", startPos.x, startPos.y, endPos.x, endPos.y);
+                 return ongoing;
             }
         }
         catch(const error::MIAException& e)
@@ -227,5 +268,56 @@ namespace check
 
         eventState.legalMoves.clear();
         eventState.gameOver = false;
+    }
+
+
+    GameResult processPawnPromotion(PythonModule& module,
+                                    const CheckUIEvent& event,
+                                    BoardState& state)
+    {
+        GameResult ongoing;
+        
+        if (event.type != CheckUIEventType::PawnPromotion)
+        { // Do nothing for non-pickup events.
+            return ongoing;
+        }
+        
+        Piece promoPiece;
+        if (event.chosenPromoPiece.has_value())
+        {
+            promoPiece.type = stringToPieceType(event.chosenPromoPiece.value());
+            if (promoPiece.type == PieceType::None)
+                MIA_THROW(error::ErrorCode::Check_Malformed_Event);
+        }
+        else
+        {
+            MIA_THROW(error::ErrorCode::Check_Malformed_Event);
+        }
+
+        // The last move will determine which piece is getting promoted.
+        const std::optional<MoveState> lastMove = state.getLastMove();
+        promoPiece.color = lastMove->piece.color;
+        
+        if (lastMove.has_value())
+        {
+            module.call("setPiece", 
+                        event.chosenPromoPiece.value(),
+                        colorToString(lastMove->piece.color),
+                        lastMove->endingPos.x,
+                        lastMove->endingPos.y);
+            state.placePiece(lastMove->endingPos, promoPiece); 
+        }
+
+        // Advance to the next player's turn.
+        state.advanceTurn();
+
+        /*
+         * The turn has been advanced, so this determines the result for the player who
+         * has to respond to this move. This is the order the end of game conditions are
+         * written for, as both checkmate and stalemate apply to the player on move.
+         */
+        GameResult result = getGameResult(state);
+
+        return result;
     }
 } // namespace check

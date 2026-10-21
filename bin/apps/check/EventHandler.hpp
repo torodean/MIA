@@ -30,6 +30,7 @@ namespace check
         DropPiece,    ///< Represents a piece was dropped.
         ResetBoard,   ///< Represents the board/game should be reset.
         SaveBoard,    ///< Represents the board/game should be saved.
+        PawnPromotion,///< Represents a pawn is being promoted.
     };
     
     /**
@@ -37,9 +38,15 @@ namespace check
      */
     struct CheckUIEvent
     {
+        /// The type that this event represents.
         CheckUIEventType type;
+        
+        /// The coordinates sent along with this event.
         std::optional<math::Coordinate<uint8_t>> startPos{std::nullopt};
         std::optional<math::Coordinate<uint8_t>> endPos{std::nullopt};
+        
+        /// A chosen piece string sent with this event (used for promotions and such).
+        std::optional<std::string> chosenPromoPiece;
     };
 
     /**
@@ -83,6 +90,7 @@ namespace check
      *
      * @note The events from the python ui's are well-defined and this method
      *       assumes this will remain the case.
+     * @throws MIAException for malformed events.
      */
     CheckUIEvent toCheckUIEvent(const std::string& input);
     
@@ -151,4 +159,22 @@ namespace check
     void processResetBoard(PythonModule& module,
                            BoardState& state,
                            EventState& eventState);
+
+    /**
+     * This handles a pawn_promo_choice event. This event is somewhat special in the
+     * sense that it is forced once a pawn reaches the last rank. When this happens,
+     * the processPickupPiece method moves the pawn, and triggers the ui promo options.
+     * After the promo piece is selected in the ui, this event immediately follows.
+     * The piece chosen is updated in the board state, the pawn is removed, the ui 
+     * board is updated, and then the new game state is determined and returned.
+     *
+     * @param module The python ui module to reset. This method assumes that the
+     *        setBoardState(cells) and clearHighlights() methods exist in the UI module.
+     * @param event The event to process.
+     * @param state The current state of the board.
+     * @throws MIAException if the event is malformed.
+     */
+    GameResult processPawnPromotion(PythonModule& module,
+                                    const CheckUIEvent& event,
+                                    BoardState& state);
 } // namespace check

@@ -144,6 +144,16 @@ namespace check
             removePiece(lastMove->endingPos);
             move.wasEnPassant = true;
         }
+        
+        // Check for a pawn promotion special case.
+        if (tiggersPromotion(move, *this))
+        {
+            /*
+             * Handles promoting a pawn. This will set the move trigger, but 
+             * the replacement is handled by the event interaction.
+             */
+            move.triggersPawnPromo = true;
+        }
 
         // Add the move to the board moves and update board state.
         moves.push_back(move);
@@ -161,7 +171,8 @@ namespace check
 
     void BoardState::placePiece(math::Coordinate<uint8_t> pos, Piece piece)
     {
-    
+        uint16_t index = coordToIndex(pos);
+        squareStates[index].updatePiece(piece);
     }
 
 

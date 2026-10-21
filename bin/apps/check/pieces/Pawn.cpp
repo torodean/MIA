@@ -169,4 +169,18 @@ namespace check
 
         return std::abs(previousYDifference) == 2;
     }
+
+
+    bool tiggersPromotion(const MoveState& move,
+                          const BoardState& state)
+    {
+        // The moving piece must be a pawn.
+        if (move.piece.type != PieceType::Pawn)
+            return false;
+        
+        if (move.endingPos.y == state.getYSize() - 1)
+            return true;
+
+        return false;
+    }
 } // namespace check

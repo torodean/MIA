@@ -97,6 +97,7 @@ namespace error
          * CHECK app error codes. 400XX.
          */
         { Check_No_Piece_On_Square, "No piece was on the specified square." },
+        { Check_Malformed_Event, "A backend-ui event appears to be malformed." },
 
         // A catch all for any un-programmed errors.
         { Catastrophic_Failure, "A catastrophic failure occurred." }
