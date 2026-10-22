@@ -37,3 +37,15 @@ The ability to draw arrows in the UI right right clicking is needed.
 ## Unit tests
 
 Unit tests for all these classes need added.
+
+## Save/Loading options
+
+Add the ability to save and load games.
+
+## Draw conditions.
+
+Other draw conditions such as threefold repetition need added.
+
+## [bug] Black pawn promotion
+
+Currently, only white pawn promotions are allowed, this needs corrected.
