@@ -131,9 +131,13 @@ namespace check
 
         std::vector<math::Coordinate<uint8_t>> legalMoves = getLegalMoves(piecePos, state);
 
-        for (const math::Coordinate<uint8_t>& legalMove : legalMoves)
+        // The UI highlights are only applied when they are enabled.
+        if (display)
         {
-            module.call("highlightSquare", legalMove.x, legalMove.y);
+            for (const math::Coordinate<uint8_t>& legalMove : legalMoves)
+            {
+                module.call("highlightSquare", legalMove.x, legalMove.y);
+            }
         }
 
         uiState.legalMoves = legalMoves;
