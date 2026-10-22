@@ -178,9 +178,14 @@ namespace check
         if (move.piece.type != PieceType::Pawn)
             return false;
 
-        if (move.endingPos.y == state.getYSize() - 1)
-            return true;
+        /*
+         * White moves in the positive y direction, so it gets promoted on the final
+         * row of the board. Black moves in the negative y direction, so it gets
+         * promoted on the first row of the board instead.
+         */
+        if (move.piece.color == Color::White)
+            return move.endingPos.y == state.getYSize() - 1;
 
-        return false;
+        return move.endingPos.y == 0;
     }
 } // namespace check
