@@ -46,39 +46,20 @@ Add the ability to save and load games.
 
 Other draw conditions such as threefold repetition need added.
 
-## [bug] Black pawn promotion
-
-Currently, only white pawn promotions are allowed, this needs corrected.
-
 ## [bug] Promotion does not lock the board
 
 The game over state is never set for a promotion, so a mate or stalemate delivered
 by a promotion leaves the board playable.
-
-## [bug] Promotion uses the last move before checking it
-
-The promotion handler reads the color off of the last move before it checks that a
-last move exists.
 
 ## [bug] Starting player config is ignored
 
 The player count and starting player are read from the config but never given to
 the board state, and a reset always goes back to player one.
 
-## [bug] Show legal moves config is ignored
-
-The show legal moves flag is passed to the pickup handler and never used, so the
-highlights always show.
-
 ## [bug] No board bounds checking
 
 Coordinates coming from both the config and the UI events are used to index the
 squares without being checked against the board size first.
-
-## [bug] Bad UI events crash the app
-
-Event parsing throws standard library exceptions that the app framework does not
-catch, so a malformed event takes the app down instead of being reported.
 
 ## [bug] Config errors are swallowed
 
