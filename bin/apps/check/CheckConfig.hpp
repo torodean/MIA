@@ -32,6 +32,9 @@ namespace check
 
         /// Stores the starting board position.
         std::vector<PiecePosition> startingPosition;
+
+        /// Stores the art for the various pieces.
+        std::vector<PieceArt> pieceArts;
     }; // struct CheckConfig
 
     /**
@@ -60,6 +63,7 @@ namespace check
     /**
      * This will construct a CheckConfig object from the MIAConfig by pulling out
      * and parsing all necessary values.
+     * @param config The configuration object with the loaded config file.
      * @throws MIAException for various malformed configuration components.
      */
     CheckConfig constructConfig(const config::MIAConfig& config);    
@@ -74,4 +78,21 @@ namespace check
      */
     std::vector<std::string> positionsToStateStrings(
         const std::vector<PiecePosition>& positions);
+
+    /**
+     * This will determine the input piece art type. Tye type is keyed off of the
+     * format of the input string. The config expects either a glyph (starting with
+     * "\u" followed by 4 hexadecimal digits) or a file path.
+     */
+    PieceArtType determinePieceArtType(const std::string& input);
+
+    /**
+     * This method will extract the piece art settings from the config object. This
+     * assumes that all config piece values start with the prefix and match a valid
+     * PieceType (see Piece.hpp). For example "piece_king=<value>".
+     * @param config The configuration object with the loaded config file.
+     * @param configPrefix The prefix to search config values for (e.g., "piece_").
+     */
+    std::vector<PieceArt> extractPieceArtsFromConfig(const config::MIAConfig& config,
+                                                     const std::string& configPrefix);
 } // namespace check

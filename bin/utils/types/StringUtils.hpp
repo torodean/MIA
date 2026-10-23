@@ -89,21 +89,30 @@ namespace string_utils
     /**
      * Function for determining if all characters in a string are digits/integers.
      * @param input Reference to the input string to parse.
-     * @return True if all characters are integers.
+     * @return true if all characters are integers, false otherwise.
      */
     bool isDigits(const std::string& input);
 
     /**
+     * Function for determining if all characters in a string are hexadecimal digits.
+     *
+     * @note The hexadecimal letters (i.e. A,B,C,D,E,F) can be capitol or lower-case.
+     * @param input Reference to the input string to parse.
+     * @return true if all characters are integers, false otherwise.
+     */
+    bool isHexDigits(const std::string& input);
+
+    /**
      * Determines if a string is of the format for a dice roll. i.e 1d20 or 3d8.
      * @param input Reference to the input string to parse.
-     * @return True if the string is a dice roll.
+     * @return true if the string is a dice roll, false otherwise.
      */
     bool inputRoll(const std::string& input);
 
     /**
      * A function used to determine if an answer is equivalent to yes.
      * @param input Reference to the input string to parse.
-     * @return True if answer is a form of yes.
+     * @return true if answer is a form of yes, false otherwise.
      */
     bool formOfYes(const std::string& input);
 
@@ -116,7 +125,7 @@ namespace string_utils
     /**
      * Returns a shuffled string.
      * @param input The string to shuffle.
-     * @return That has been shuffled.
+     * @return The string that has been shuffled.
      */
     std::string shuffleString(const std::string& input);
 
@@ -184,7 +193,8 @@ namespace string_utils
      * @param line The string to check.
      * @param delimiterA The first delimiter to count.
      * @param delimiterB The second delimiter to count.
-     * @return True if the line contains exactly one occurrence of delimiterA and exactly one occurrence of delimiterB; otherwise false.
+     * @return true if the line contains exactly one occurrence of delimiterA and exactly 
+     *         one occurrence of delimiterB; otherwise false.
      */
      bool hasExactlyOneOfEachDelimiter(const std::string& line, char delimiterA, char delimiterB);
 
@@ -193,7 +203,7 @@ namespace string_utils
      *
      * @param line The string to check.
      * @param delimiterA The first delimiter to count.
-     * @return True if the line contains exactly one occurrence of the delimiter; otherwise false.
+     * @return true if the line contains exactly one occurrence of the delimiter; otherwise false.
      */
      bool hasExactlyOneOfADelimiter(const std::string& line, char delimiterA);
 

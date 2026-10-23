@@ -24,6 +24,15 @@ board_size_y=5
 number_of_players=2
 whos_turn_is_it=1
 
+# The art for the pieces. These must all start with the prefix "piece_" followed by the
+# piece name. The values of these must be either a unicode character or an image file (in dev).
+piece_king=\u265A
+piece_queen=\u265B
+piece_pawn=\u265F
+piece_knight=\u265E
+piece_rook=\u265C
+piece_bishop=\u265D
+
 #============================================================================
 # Starting board state (position).
 # Exactly one 'starting_state' line must be active (uncommented). To use one

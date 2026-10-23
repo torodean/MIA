@@ -51,11 +51,6 @@ Other draw conditions such as threefold repetition need added.
 The game over state is never set for a promotion, so a mate or stalemate delivered
 by a promotion leaves the board playable.
 
-## [bug] Starting player config is ignored
-
-The player count and starting player are read from the config but never given to
-the board state, and a reset always goes back to player one.
-
 ## [bug] No board bounds checking
 
 Coordinates coming from both the config and the UI events are used to index the
@@ -65,11 +60,6 @@ squares without being checked against the board size first.
 
 A failed config load is logged and then ignored, which lets the board initialize
 with sizes that were never set.
-
-## Install the config and UI script
-
-The config and the UI script are not installed with the other resources, so an
-installed build only runs out of the build tree.
 
 ## Game clocks
 

@@ -131,6 +131,14 @@ namespace string_utils
     }
 
 
+    bool isHexDigits(const std::string& input)
+    {
+        if(!input.empty() && input.find_first_not_of("0123456789ABCDEFabcdef") == std::string::npos)
+            return true;
+        return false;
+    }
+
+
     bool inputRoll(const std::string& input)
     {
         if(input.size() <= 6 && input.find('d') != std::string::npos &&

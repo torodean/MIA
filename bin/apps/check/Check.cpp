@@ -16,8 +16,6 @@
 #include "Paths.hpp"
 // Used for return codes.
 #include "Constants.hpp"
-// Used for testing purposes.
-#include "Timing.hpp"
 // Used for python interface results.
 #include "PythonResult.hpp"
 // Used for handling events.
@@ -60,7 +58,8 @@ namespace check
         // Load config values into the board state.
         boardState.initialize(configValues.boardSizeX,
                               configValues.boardSizeY,
-                              configValues.startingPosition);
+                              configValues.startingPosition,
+                              configValues.startingPlayerState);
 
         // Set the python module settings.
         module.call("setVerbose", configValues.verboseMode);
@@ -116,18 +115,7 @@ namespace check
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
 
         // Register pieces.
-        module.call("registerPiece", "king", "\u265A");
-        timing::sleepMilliseconds(20);
-        module.call("registerPiece", "queen", "\u265B");
-        timing::sleepMilliseconds(20);
-        module.call("registerPiece", "pawn", "\u265F");
-        timing::sleepMilliseconds(20);
-        module.call("registerPiece", "knight", "\u265E");
-        timing::sleepMilliseconds(20);
-        module.call("registerPiece", "rook", "\u265C");
-        timing::sleepMilliseconds(20);
-        module.call("registerPiece", "bishop", "\u265D");
-        timing::sleepMilliseconds(20);
+        registerPieceArtInUI(module, configValues.pieceArts);
 
         // Setup the starting board position.
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));

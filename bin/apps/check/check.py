@@ -462,8 +462,12 @@ def registerPiece(name, icon):
     @param name The piece type name used in setBoardState()/movePiece().
     @param icon The unicode character (or any string) used as the icon.
     """
+    if icon.startswith("\\u") and len(icon) == 6:
+        icon = chr(int(icon[2:], 16))
+
     if (verboseMode):
         print(f"Adding {name} piece with icon {icon} to glyphs!")
+
     glyphs[name] = icon
 
 

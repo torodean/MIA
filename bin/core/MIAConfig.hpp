@@ -2,8 +2,8 @@
  * @file MIAConfig.hpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: This file controls finding and loading in the configuration file(s). This file replaced
- *     the Configurator from the old MIA project.
+ * @brief This file controls finding and loading in the configuration file(s). 
+ *        This file replaced the Configurator from the old MIA project.
  */
 #pragma once
 
@@ -22,7 +22,6 @@ namespace config
     class ConfigData;
 
     /**
-     * @class MIAConfig
      * @brief Manages loading configuration files into flexible key-value storage.
      *
      * This class provides a mechanism to load configuration data into a Data object,
@@ -37,18 +36,18 @@ namespace config
     public:
 
         /**
-         * Main default constructor for the MIAConfig class.
+         * @brief Main default constructor for the MIAConfig class.
          */
         MIAConfig();
 
         /**
-         * Main constructor for the MIAConfig class which sets the config file and type.
-         * After constructed, initialize() must be called to load the configuration file.
+         * @brief Main constructor for the MIAConfig class which sets the config file and type.
+         *        After constructed, initialize() must be called to load the configuration file.
          * @note The file name can be the entire file path or just the name (in which case
          *       default file path locations will be used).
-         * @param configFile[const std::string&] - The config file to use.
-         * @param type[constants::ConfigType] - The type of configuration to load.
-         * @param verboseMode[bool] - Enables verbose output.
+         * @param configFile The config file to use.
+         * @param type The type of configuration to load.
+         * @param verboseMode Enables verbose output.
          */
         MIAConfig(const std::string& configFile, 
                   constants::ConfigType type, 
@@ -60,131 +59,133 @@ namespace config
         ~MIAConfig();
 
         /**
-         * This will iniitalize this object by reading and loading the configuration file into the RawConfigVals map.
-         * @param verboseMode[bool] - Enables verbose output.
-         * @throws MIAException - Thrown if the config file name is not set or if the config file cannot be opened.
+         * @brief This will iniitalize this object by reading and loading the configuration file 
+         *        into the RawConfigVals map.
+         * @param verboseMode Enables verbose output.
+         * @throws MIAException Thrown if the config file name is not set or if the config 
+         *         file cannot be opened.
          */
         void initialize(bool verboseMode = false);
 
         /**
-         * This will reload the configuration file by calling initialize. This is mainly just semantically different
-         * so that the call makes sense in contexts where it is used.
-         * @param verboseMode[bool] - Enables verbose output.
+         * @brief This will reload the configuration file by calling initialize. This is mainly just 
+         *        semantically different so that the call makes sense in contexts where it is used.
+         * @param verboseMode Enables verbose output.
          * @throws MIAException If the underlying initialize() call fails.
          */
         void reload(bool verboseMode = false)
         { initialize(verboseMode); };
 
         /**
-         * Sets the config file name and type for this object and reloads the configuration.
+         * @brief Sets the config file name and type for this object and reloads the configuration.
          * @note The file name can be the entire file path or just the name (in which case
          *       default file path locations will be used).
-         * @param configFile[const std::string&] - The config file to use.
-         * @param type[constants::ConfigType] - The type of configuration to load.
-         * @param verboseMode[bool] - Enables verbose output.
-         * @throws MIAException - If the underlying initialize() call fails.
+         * @param configFile The config file to use.
+         * @param type The type of configuration to load.
+         * @param verboseMode Enables verbose output.
+         * @throws MIAException If the underlying initialize() call fails.
          */
         void setConfigFileName(const std::string& configFile, 
                                constants::ConfigType type, 
                                bool verboseMode = false);
 
         /**
-         * Gets the config file name for this object.
-         * @return [std::string&] - Returns the configFileName value.
+         * @brief Gets the config file name for this object.
+         * @return Returns the configFileName value.
          */
          std::string getConfigFileName()
          { return configFileName; }
 
         /**
-         * Gets the config file name for this object.
-         * @return [std::string&] - Returns the configFileName value.
+         * @brief Gets the config file name for this object.
+         * @return Returns the configFileName value.
          */
          std::string getConfigFileFullPath()
          { return configFileFullPath; }       
 
         /**
-         * Gets the current configuration type.
-         * @return [constants::ConfigType] - The type of configuration data stored.
+         * @brief Gets the current configuration type.
+         * @return The type of configuration data stored.
          */
         constants::ConfigType getConfigType() const;
 
         /**
-         * Retrieves the configuration value associated with the given key as an int.
+         * @brief Retrieves the configuration value associated with the given key as an int.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @param key[const std::string&] - The key name to look up in the configuration map.
-         * @return [int] - The int value if the key exists and conversion succeeds; otherwise, returns 0.
+         * @param key The key name to look up in the configuration map.
+         * @return The int value if the key exists and conversion succeeds; otherwise, returns 0.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         int getInt(const std::string& key) const;
 
         /**
-         * Retrieves the configuration value associated with the given key as a double.
+         * @brief Retrieves the configuration value associated with the given key as a double.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @param key[const std::string&] - The key name to look up in the configuration map.
-         * @return [double] - The double value if the key exists and conversion succeeds; otherwise, returns 0.0.
+         * @param key The key name to look up in the configuration map.
+         * @return The double value if the key exists and conversion succeeds; otherwise, returns 0.0.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         double getDouble(const std::string& key) const;
 
         /**
-         * Retrieves the configuration value associated with the given key as a string.
+         * @brief Retrieves the configuration value associated with the given key as a string.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @param key[const std::string&] - The key name to look up in the configuration map.
-         * @return [std::string] - The string value if the key exists; otherwise, returns an empty string.
+         * @param key The key name to look up in the configuration map.
+         * @return The string value if the key exists; otherwise, returns an empty string.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
         std::string getString(const std::string& key) const;
 
         /**
-         * Retrieves the configuration value associated with the given key as a vector of strings,
-         * splitting the stored string by the specified delimiter.
+         * @brief Retrieves the configuration value associated with the given key as a vector of 
+         *        strings, splitting the stored string by the specified delimiter.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @param key[const std::string&] - The key name to look up in the configuration map.
-         * @param delimiter[char delimiter] - The character used to split the string into vector elements.
-         * @return [std::vector<std::string>] - A vector of strings parsed from the value; empty vector if key not found.
-         * @throws MIAException - Thrown if the key is not found in the configuration map.
+         * @param key The key name to look up in the configuration map.
+         * @param delimiter The character used to split the string into vector elements.
+         * @return A vector of strings parsed from the value; empty vector if key not found.
+         * @throws MIAException Thrown if the key is not found in the configuration map.
          */
         std::vector<std::string> getVector(const std::string& key, char delimiter) const;
 
         /**
-         * Retrieves the configuration value associated with the given key as a bool.
+         * @brief Retrieves the configuration value associated with the given key as a bool.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @param key[const std::string&] - The key name to look up in the configuration map.
-         * @return [bool] - The bool value if the key exists and conversion succeeds; otherwise, returns false.
-         * @throws MIAException - Thrown if the key is not found in the configuration map.
+         * @param key The key name to look up in the configuration map.
+         * @return The bool value if the key exists and conversion succeeds; otherwise, returns false.
+         * @throws MIAException Thrown if the key is not found in the configuration map.
          */
         bool getBool(const std::string& key) const;
 
         /**
-         * Retrieves the configuration value associated with the given key as a vector of ints,
-         * splitting the stored string by the specified delimiter.
-         * @param key[const std::string&] - The key name to look up in the configuration map.
-         * @param delimiter[char] - The character used to split the string into vector elements.
-         * @return [std::vector<int>] - A vector of ints parsed from the value; empty vector if key not found.
-         * @throws MIAException - Thrown if the key is not found in the configuration map.
+         * @brief Retrieves the configuration value associated with the given key as a vector 
+         *        of ints, splitting the stored string by the specified delimiter.
+         * @param key The key name to look up in the configuration map.
+         * @param delimiter The character used to split the string into vector elements.
+         * @return A vector of ints parsed from the value; empty vector if key not found.
+         * @throws MIAException Thrown if the key is not found in the configuration map.
          */
         std::vector<int> getIntVector(const std::string& key, char delimiter) const;
 
         /**
-         * Dumps all key-value pairs stored in rawConfigValsMap to the specified output stream.
-         * Useful for debugging to inspect the current configuration values.
-         * @param os [std::ostream&] - The output stream to write the key-value pairs to (default: std::cout).
+         * @brief Dumps all key-value pairs stored in rawConfigValsMap to the specified output 
+         *        stream. Useful for debugging to inspect the current configuration values.
+         * @param os The output stream to write the key-value pairs to (default: std::cout).
          */
         [[maybe_unused]]
         void dumpConfigMap(std::ostream& os = std::cout) const;
 
         /**
-         * Returns all key-value pairs stored in rawConfigValsMap as a vector.
-         * This can be used to iterate over all configuration entries.
+         * @brief Returns all key-value pairs stored in rawConfigValsMap as a vector. This 
+         *        can be used to iterate over all configuration entries.
          * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @return std::vector<constants::KeyValuePair> - A vector containing all configuration key-value pairs.
+         * @return A vector containing all configuration key-value pairs.
          */
         std::vector<constants::KeyValuePair> getAllConfigPairs() const;        
 
         /**
-         * Returns all raw lines stored in the Data object.
-         * If the config type does not support raw lines, returns an empty vector.
-         * @return std::vector<std::string> - A vector containing all raw lines.
+         * @brief Returns all raw lines stored in the Data object. If the config type does 
+         *        not support raw lines, returns an empty vector.
+         * @return A vector containing all raw lines.
          */
         std::vector<std::string> getRawLines() const;
 
