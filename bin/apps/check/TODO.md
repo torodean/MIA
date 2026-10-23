@@ -51,11 +51,6 @@ Other draw conditions such as threefold repetition need added.
 The game over state is never set for a promotion, so a mate or stalemate delivered
 by a promotion leaves the board playable.
 
-## [bug] Starting player config is ignored
-
-The player count and starting player are read from the config but never given to
-the board state, and a reset always goes back to player one.
-
 ## [bug] No board bounds checking
 
 Coordinates coming from both the config and the UI events are used to index the

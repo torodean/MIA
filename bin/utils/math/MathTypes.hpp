@@ -47,7 +47,7 @@ namespace math
     template<typename Type>
     std::ostream& operator<<(std::ostream& os, const Coordinate<Type>& coord)
     {
-        os << "(" << coord.x << ", " << coord.y << ")";
+        os << "(" << std::to_string(coord.x) << ", " << std::to_string(coord.y) << ")";
         return os;
     }
 } // namespace math

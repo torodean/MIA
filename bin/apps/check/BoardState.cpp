@@ -17,14 +17,10 @@
 
 namespace check
 {
-    BoardState::BoardState(uint8_t columns, uint8_t rows) :
-        xSize(columns), ySize(rows), squareStates(createSquareStates(columns, rows))
-    { }
-
-
     void BoardState::initialize(uint8_t columns, 
                                 uint8_t rows,
-                                const std::vector<PiecePosition>& startingPos)
+                                const std::vector<PiecePosition>& startingPos,
+                                const PlayerState& startPlayerState)
     {
         if (context)
         {
@@ -38,12 +34,14 @@ namespace check
         ySize = rows;
         startingPosition = startingPos;
         squareStates = createSquareStates(xSize, ySize);
-        setStartingPosition(startingPosition);
+        playerState = startPlayerState;
+        setBoardToStartingPosition(startingPosition);
+        startingPlayerState = startPlayerState;
         initialized = true;
     }
 
 
-    void BoardState::setStartingPosition(const std::vector<PiecePosition>& startingPos)
+    void BoardState::setBoardToStartingPosition(const std::vector<PiecePosition>& startingPos)
     {
         uint16_t index;
         for (const PiecePosition& pos : startingPos)
@@ -212,14 +210,14 @@ namespace check
 
         /*
          * The squares are rebuilt from scratch here rather than just re-placing the
-         * starting pieces on top of the current board. setStartingPosition only writes
+         * starting pieces on top of the current board. setBoardToStartingPosition only writes
          * the starting pieces down, so without this rebuild every piece which moved
          * during the game would stay on the square it moved to once the game reset.
          */
         squareStates = createSquareStates(xSize, ySize);
 
-        setStartingPosition(startingPosition);
-        playerState.whosTurnIsIt = 1; // Reset player.
+        setBoardToStartingPosition(startingPosition);
+        playerState.whosTurnIsIt = startingPlayerState.whosTurnIsIt; // Reset player.
     }
 
 

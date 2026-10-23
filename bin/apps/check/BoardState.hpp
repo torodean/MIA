@@ -40,31 +40,25 @@ namespace check
         BoardState() = default;
 
         /**
-         * Main constructor for a BoardState object. This will construct a board
-         * state of an appropriate size with a SquareState for each square.
-         * @param columns The number of columns of the board.
-         * @param rows The number of rows of the board.
-         */
-        BoardState(uint8_t columns, uint8_t rows);
-
-        /**
          * initialize the object, this should be used when the default constructor
          * is used.
          * @param columns The number of columns of the board.
          * @param rows The number of rows of the board.
          * @param startingPos The starting position to initialize this board state to.
+         * @param startPlayerState The starting player state (i.e., # of players and whos starts).
          * @throws MIAException if the starting position is invalid.
          */
         void initialize(uint8_t columns, 
                         uint8_t rows,
-                        const std::vector<PiecePosition>& startingPos);
+                        const std::vector<PiecePosition>& startingPos,
+                        const PlayerState& startPlayerState);
 
         /**
          * Sets the starting position of the board.
          * @param startingPos The starting position to initialize this board state to.
          * @throws MIAException if the starting position is invalid.
          */
-        void setStartingPosition(const std::vector<PiecePosition>& startingPos);
+        void setBoardToStartingPosition(const std::vector<PiecePosition>& startingPos);
 
         /**
          * Determines whether a square is occupied or not.
@@ -234,7 +228,11 @@ namespace check
          */
         uint16_t coordToIndex(math::Coordinate<uint8_t> pos) const;
 
-        /// Stores the player state for this board configuration (e.g., whos turn it is). 
+        /**
+         * Stores the player state for this board configuration (e.g., whos turn it is).
+         * This is dynamically changing, and the current board state depends on it. Thus,
+         * it can only be set in initialize.
+         */
         PlayerState playerState{};
 
         /// Stores the x size of the board (number of columns).
@@ -258,6 +256,8 @@ namespace check
 
         /// Stores the starting position for the board (needed for reset()).
         std::vector<PiecePosition> startingPosition;
+        /// Stores the starting player state for the board (needed for reset()).
+        PlayerState startingPlayerState;
 
         /**
          * Stores the moves that have been made up to this point in the game. This

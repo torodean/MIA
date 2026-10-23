@@ -60,7 +60,8 @@ namespace check
         // Load config values into the board state.
         boardState.initialize(configValues.boardSizeX,
                               configValues.boardSizeY,
-                              configValues.startingPosition);
+                              configValues.startingPosition,
+                              configValues.startingPlayerState);
 
         // Set the python module settings.
         module.call("setVerbose", configValues.verboseMode);
