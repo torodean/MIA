@@ -32,7 +32,7 @@ namespace check
 
         /// Stores the starting board position.
         std::vector<PiecePosition> startingPosition;
-        
+
         /// Stores the art for the various pieces.
         std::vector<PieceArt> pieceArts;
     }; // struct CheckConfig

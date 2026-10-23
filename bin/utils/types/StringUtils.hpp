@@ -92,7 +92,7 @@ namespace string_utils
      * @return true if all characters are integers, false otherwise.
      */
     bool isDigits(const std::string& input);
-        
+
     /**
      * Function for determining if all characters in a string are hexadecimal digits.
      *
