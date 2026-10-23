@@ -15,6 +15,13 @@ the UI never decides whether a move is legal. When a piece is dropped the UI
 snaps it back to its origin square and queues a drop_piece event; the backend then
 calls movePiece() to make the move official.
 
+Right clicking and dragging across the board draws an annotation arrow between
+the two squares, and drawing that same arrow again removes it. Arrows are a
+local UI note: they are never queued as events and the backend is never told
+about them. A right click which never leaves its own square clears the arrows
+coming from that square, and arrows are cleared whenever the position changes
+(movePiece, setPiece, removePiece, setBoardState).
+
 Event formats (the C++ side parses these):
    Events (space-separated values, squares are 0-indexed col row):
     "pickup_piece <col> <row>"
@@ -56,6 +63,12 @@ SELECTED_HIGHLIGHT = "#F7EC59"
 LEGAL_MOVE_HIGHLIGHT = "#3db2d3"
 LABEL_FG = "#333333"
 BACKGROUND = "#ffddc9"
+
+# Annotation arrows drawn with the right mouse button. Arrows are a local UI
+# note only, they are never sent to the C++ backend.
+ARROW_COLOR = "#e8e52c"
+ARROW_WIDTH = 8
+ARROW_HEAD = (16, 22, 9)
 
 ##########
 # UI STATE
@@ -112,6 +125,8 @@ class ChessBoard(tk.Frame):
         self.board = [[None] * rows for _ in range(cols)]
         self.pieceItems = [[None] * rows for _ in range(cols)]
         self.highlightItems = []
+        self.arrows = []
+        self.arrow = None
         self.drag = None
         width = cols * CELL + 2 * MARGIN
         height = rows * CELL + 2 * MARGIN
@@ -120,6 +135,9 @@ class ChessBoard(tk.Frame):
         self.canvas.bind("<Button-1>", self.onPress)
         self.canvas.bind("<B1-Motion>", self.onDrag)
         self.canvas.bind("<ButtonRelease-1>", self.onRelease)
+        self.canvas.bind("<Button-3>", self.onArrowPress)
+        self.canvas.bind("<B3-Motion>", self.onArrowDrag)
+        self.canvas.bind("<ButtonRelease-3>", self.onArrowRelease)
         self.drawBoard()
         self.drawBorderLabels()
         self.pack()
@@ -194,6 +212,13 @@ class ChessBoard(tk.Frame):
         """
         return (MARGIN + col * CELL, MARGIN + (self.rows - 1 - row) * CELL)
 
+    def squareCenterPixel(self, col, row):
+        """
+        Center pixel of a square. Row 0 is the bottom row.
+        """
+        x, y = self.topLeftPixel(col, row)
+        return (x + CELL // 2, y + CELL // 2)
+
     def squareAt(self, x, y):
         """
         Converts pixel coordinates to a (col, row) square. Row 0 is the bottom row.
@@ -204,6 +229,60 @@ class ChessBoard(tk.Frame):
         if not (0 <= x < CELL * self.cols and 0 <= y < CELL * self.rows):
             return None
         return (int(x // CELL), int(self.rows - 1 - y // CELL))
+
+    # ----- annotation arrows -----
+
+    def drawArrow(self, fromSquare, toSquare):
+        """
+        Draws an annotation arrow between the centers of two squares.
+        @param fromSquare The (col, row) square the arrow starts on.
+        @param toSquare The (col, row) square the arrow points at.
+        @return The canvas item id of the arrow.
+        """
+        startX, startY = self.squareCenterPixel(*fromSquare)
+        endX, endY = self.squareCenterPixel(*toSquare)
+        return self.canvas.create_line(startX, startY, endX, endY,
+                                      fill=ARROW_COLOR, width=ARROW_WIDTH,
+                                      arrow=tk.LAST, arrowshape=ARROW_HEAD,
+                                      capstyle=tk.ROUND)
+
+    def findArrow(self, fromSquare, toSquare):
+        """
+        Finds the arrow already drawn between two squares.
+        @param fromSquare The (col, row) square the arrow starts on.
+        @param toSquare The (col, row) square the arrow points at.
+        @return The arrow record, or None when no such arrow is drawn.
+        """
+        for arrow in self.arrows:
+            if arrow["from"] == fromSquare and arrow["to"] == toSquare:
+                return arrow
+        return None
+
+    def clearArrows(self):
+        """
+        Removes every annotation arrow from the board.
+        """
+        for arrow in self.arrows:
+            self.canvas.delete(arrow["item"])
+        self.arrows = []
+
+    def clearArrowsFrom(self, square):
+        """
+        Removes the annotation arrows which come from one square, leaving the
+        rest of the arrows on the board untouched.
+        @param square The (col, row) square the arrows start on.
+        @return The number of arrows removed.
+        """
+        remaining = []
+        removed = 0
+        for arrow in self.arrows:
+            if arrow["from"] == square:
+                self.canvas.delete(arrow["item"])
+                removed += 1
+            else:
+                remaining.append(arrow)
+        self.arrows = remaining
+        return removed
 
     # ----- mouse handling -----
 
@@ -250,6 +329,74 @@ class ChessBoard(tk.Frame):
         self.drawPieces()
         if dst is not None and dst != src:
             addEvent(f"drop_piece {src[0]} {src[1]} {dst[0]} {dst[1]}")
+
+    def onArrowPress(self, event):
+        """
+        Starts an annotation arrow on the square the right button was pressed on.
+        Arrows are a local UI note, they are never queued as backend events.
+        """
+        sq = self.squareAt(event.x, event.y)
+        if sq is None:
+            return
+        self.arrow = {"from": sq, "to": None, "item": None, "dragged": False}
+
+    def onArrowDrag(self, event):
+        """
+        Stretches the annotation arrow to the square under the mouse.
+        The arrow is redrawn rather than stretched to the cursor so that it
+        always snaps to whole squares instead of ending mid-square.
+        """
+        if self.arrow is None:
+            return
+        sq = self.squareAt(event.x, event.y)
+        if sq is None or sq == self.arrow["from"]:
+            # No square to point at yet, so no arrow should be showing.
+            if self.arrow["item"] is not None:
+                self.canvas.delete(self.arrow["item"])
+                self.arrow["item"] = None
+                self.arrow["to"] = None
+            return
+        if self.arrow["item"] is not None:
+            self.canvas.delete(self.arrow["item"])
+        self.arrow["item"] = self.drawArrow(self.arrow["from"], sq)
+        self.arrow["to"] = sq
+        self.arrow["dragged"] = True
+
+    def onArrowRelease(self, event):
+        """
+        Finishes an annotation arrow. A drag onto a different square leaves the
+        arrow on the board, unless that exact arrow is already drawn, in which
+        case drawing it again removes it. A right click which never left its own
+        square clears the arrows coming from that square.
+        """
+        if self.arrow is None:
+            return
+        arrow = self.arrow
+        self.arrow = None
+
+        if arrow["item"] is None:
+            if arrow["dragged"]:
+                # The drag ended off the board or back on its own square, which
+                # cancels it without touching the arrows already drawn.
+                updateUI()
+                return
+            # The button never dragged to another square, so this is a request
+            # to clear the arrows coming from the pressed square.
+            self.clearArrowsFrom(arrow["from"])
+            updateUI()
+            return
+
+        existing = self.findArrow(arrow["from"], arrow["to"])
+        if existing is not None:
+            # This arrow is already drawn, so drawing it again removes it.
+            self.canvas.delete(existing["item"])
+            self.arrows.remove(existing)
+            self.canvas.delete(arrow["item"])
+        else:
+            self.arrows.append({"item": arrow["item"],
+                                "from": arrow["from"],
+                                "to": arrow["to"]})
+        updateUI()
 
 
 #####################
@@ -338,6 +485,9 @@ def setBoardState(cells):
         validateCell(int(col), int(row), pieceType)
         boardUI.board[int(col)][int(row)] = {"type": pieceType, "color": color}
 
+    # The whole position has been replaced, so any arrows drawn against the
+    # old one no longer mean anything.
+    boardUI.clearArrows()
     boardUI.drawPieces()
 
 
@@ -375,6 +525,7 @@ def movePiece(fromCol, fromRow, toCol, toRow):
 
     boardUI.board[toCol][toRow] = boardUI.board[fromCol][fromRow]
     boardUI.board[fromCol][fromRow] = None
+    boardUI.clearArrows()
     boardUI.drawPieces()
 
 
@@ -389,6 +540,7 @@ def setPiece(piece, color, col, row):
     validateCell(col, row)
 
     boardUI.board[col][row] = {"type": piece, "color": color}
+    boardUI.clearArrows()
     boardUI.drawPieces()
 
 
@@ -402,6 +554,7 @@ def removePiece(col, row):
     validateCell(col, row)
 
     boardUI.board[col][row] = None
+    boardUI.clearArrows()
     boardUI.drawPieces()
 
 
@@ -432,6 +585,18 @@ def clearHighlights():
     for item in boardUI.highlightItems:
         boardUI.canvas.delete(item)
     boardUI.highlightItems = []
+    updateUI()
+
+
+def clearArrows():
+    """
+    Removes all annotation arrows from the board.
+    Arrows are drawn by right clicking and dragging on the board, and are a
+    local UI note which the backend is never told about.
+    """
+    if boardUI is None:
+        return
+    boardUI.clearArrows()
     updateUI()
 
 

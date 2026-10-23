@@ -80,7 +80,7 @@ namespace check
      * @param event The CheckUIEvent to convert,
      * @return the equivalent std::string. 
      */
-    std::string checkUIEventToString(CheckUIEventType event);
+    std::string CheckUIEventTypeToString(CheckUIEventType event);
 
     /**
      * Each ui event returned from the ui starts with a string 'name'. This

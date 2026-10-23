@@ -17,6 +17,34 @@
 
 namespace check
 {
+    namespace
+    {
+        /**
+         * @brief Converts a single event token into a board coordinate.
+         *
+         * The coordinate tokens are read off of the event string the UI sends in,
+         * so a token which is not a valid coordinate is reported as a malformed
+         * event instead of the standard library exception the numeric conversion
+         * would otherwise throw.
+         *
+         * @param token The event token to convert.
+         * @return The coordinate the token holds.
+         * @throws MIAException if the token does not hold a valid coordinate.
+         */
+        uint8_t eventTokenToCoordinate(const std::string& token)
+        {
+            try
+            { // stringToUint8 throws for non-numerical or out of range tokens.
+                return string_utils::stringToUint8(token);
+            }
+            catch (const error::MIAException& ex)
+            { // Report this as a malformed event rather than a bad parameter error.
+                MIA_THROW(error::ErrorCode::Check_Malformed_Event, std::string(ex.what()));
+            }
+        }
+    } // namespace
+
+
     CheckUIEventType stringToCheckUIEventType(const std::string& input)
     {
         std::string event = string_utils::toLower(input);
@@ -63,9 +91,8 @@ namespace check
                     MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
                               "Expected 3 tokens for PickupPiece event.");
 
-                event.startPos = math::Coordinate<uint8_t>{
-                    static_cast<uint8_t>(std::stoi(eventTokens[1])),
-                    static_cast<uint8_t>(std::stoi(eventTokens[2])) };
+                event.startPos = math::Coordinate<uint8_t>{eventTokenToCoordinate(eventTokens[1]),
+                                                           eventTokenToCoordinate(eventTokens[2])};
                 break;
             }
             case CheckUIEventType::DropPiece:
@@ -74,12 +101,10 @@ namespace check
                     MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
                               "Expected 5 tokens for DropPiece event.");
 
-                event.startPos = math::Coordinate<uint8_t>{
-                    static_cast<uint8_t>(std::stoi(eventTokens[1])),
-                    static_cast<uint8_t>(std::stoi(eventTokens[2])) };
-                event.endPos = math::Coordinate<uint8_t>{
-                    static_cast<uint8_t>(std::stoi(eventTokens[3])),
-                    static_cast<uint8_t>(std::stoi(eventTokens[4])) };
+                event.startPos = math::Coordinate<uint8_t>{eventTokenToCoordinate(eventTokens[1]),
+                                                           eventTokenToCoordinate(eventTokens[2])};
+                event.endPos = math::Coordinate<uint8_t>{eventTokenToCoordinate(eventTokens[3]),
+                                                         eventTokenToCoordinate(eventTokens[4])};
                 break;
             }
             case CheckUIEventType::PawnPromotion:
@@ -131,9 +156,14 @@ namespace check
 
         std::vector<math::Coordinate<uint8_t>> legalMoves = getLegalMoves(piecePos, state);
 
-        for (const math::Coordinate<uint8_t>& legalMove : legalMoves)
+        // The legal moves are always cached (the drop event validates against them),
+        // but the UI highlights are only applied when they are enabled in the config.
+        if (display)
         {
-            module.call("highlightSquare", legalMove.x, legalMove.y);
+            for (const math::Coordinate<uint8_t>& legalMove : legalMoves)
+            {
+                module.call("highlightSquare", legalMove.x, legalMove.y);
+            }
         }
 
         uiState.legalMoves = legalMoves;
@@ -296,17 +326,21 @@ namespace check
 
         // The last move will determine which piece is getting promoted.
         const std::optional<MoveState> lastMove = state.getLastMove();
+
+        if (!lastMove.has_value())
+        { // There is no move to promote, so this event cannot be handled.
+            MIA_THROW(error::ErrorCode::Check_Malformed_Event,
+                      "Received a pawn promotion event without a pawn move to promote.");
+        }
+
         promoPiece.color = lastMove->piece.color;
 
-        if (lastMove.has_value())
-        {
-            module.call("setPiece", 
-                        event.chosenPromoPiece.value(),
-                        colorToString(lastMove->piece.color),
-                        lastMove->endingPos.x,
-                        lastMove->endingPos.y);
-            state.placePiece(lastMove->endingPos, promoPiece); 
-        }
+        module.call("setPiece", 
+                    event.chosenPromoPiece.value(),
+                    colorToString(lastMove->piece.color),
+                    lastMove->endingPos.x,
+                    lastMove->endingPos.y);
+        state.placePiece(lastMove->endingPos, promoPiece); 
 
         // Advance to the next player's turn.
         state.advanceTurn();
