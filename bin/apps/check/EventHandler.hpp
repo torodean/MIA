@@ -15,6 +15,8 @@
 #include "GameResult.hpp"
 #include "MathTypes.hpp"
 #include "PythonModule.hpp"
+// Needed for piece art.
+#include "Piece.hpp"
 
 namespace check
 {
@@ -168,8 +170,8 @@ namespace check
      * The piece chosen is updated in the board state, the pawn is removed, the ui 
      * board is updated, and then the new game state is determined and returned.
      *
-     * @param module The python ui module to reset. This method assumes that the
-     *        setBoardState(cells) and clearHighlights() methods exist in the UI module.
+     * @param module The python ui module to use. This method assumes that the
+     *        setPiece(piece, color, x, y) method exists.
      * @param event The event to process.
      * @param state The current state of the board.
      * @throws MIAException if the event is malformed.
@@ -177,4 +179,15 @@ namespace check
     GameResult processPawnPromotion(PythonModule& module,
                                     const CheckUIEvent& event,
                                     BoardState& state);
+
+    /**
+     * This method will register all of the piece art values into the UI. All pieces
+     * must be registered within the UI for it to know how to display a piece.
+     *
+     * @param module The python ui module to use. This method assumes that the
+     *        registerPiece(piece, glyph) method exist in the UI module.
+     * @param pieceArts A vector of piece art objects to load into the ui.
+     */
+    void registerPieceArtInUI(PythonModule& module,
+                              const std::vector<PieceArt>& pieceArts);
 } // namespace check

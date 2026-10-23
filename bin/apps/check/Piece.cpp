@@ -23,6 +23,19 @@
 
 namespace check
 {
+    PieceType& operator++(PieceType& type)
+    {
+        if (type == PieceType::Count)
+        { // PieceType::Count is the maximum value allowed by this.
+            type = PieceType::Count;
+            return type;
+        }
+
+        type = static_cast<PieceType>(static_cast<uint8_t>(type) + 1);
+        return type;
+    }
+
+
     std::string pieceTypetoString(PieceType type)
     {
         switch(type)
@@ -241,12 +254,9 @@ namespace check
         // Create each piece-logic implementation once.
         std::array<std::unique_ptr<BasePieceLogic>, static_cast<size_t>(PieceType::Count)> pieceLogic;
 
-        for (uint8_t type = static_cast<uint8_t>(PieceType::King);
-             type < static_cast<uint8_t>(PieceType::Count);
-             ++type)
+        for (PieceType type = PieceType::King; type < PieceType::Count; ++type)
         { // Iterate over all valid piece types.
-            PieceType pieceType = static_cast<PieceType>(type);
-            pieceLogic[type] = createPieceLogic(pieceType);
+            pieceLogic[static_cast<uint8_t>(type)] = createPieceLogic(type);
         }
 
         for (uint16_t y = 0; y < boardState.getYSize(); ++y)

@@ -20,6 +20,26 @@ namespace check
     class BoardState;
 
     /**
+     * This enum represents different types of piece art that can be used.
+     */
+    enum class PieceArtType : uint8_t
+    {
+        Unknown,  ///< Represents an unknown/unset type.
+        Glyph,    ///< Represents a unicode glyph (e.g., "\u265A").
+        Image     ///< Represents a path to an image.
+    };
+
+    /**
+     * Stores the art for displaying a piece. The art must match the type.
+     */
+    struct PieceArt
+    {
+        std::string pieceName; ///< The name of this piece.
+        PieceArtType type;     ///< The type of art stored.
+        std::string art;       ///< The art glyph or file path to an image.
+    };
+
+    /**
      * Represents the various defined pieces. Each of these pieces should have
      * a class representing the logic and functionality of the piece, while
      * this enum is simply an indicator for those types.
@@ -30,14 +50,22 @@ namespace check
     enum class PieceType : uint8_t
     {
         None,       ///< Represents no piece.
-        King,       ///< The King.
+        King,       ///< The King. (Keep this entry first for iterations)
         Queen,      ///< The Queen.
         Pawn,       ///< The Pawn.
         Bishop,     ///< The Bishop.
         Knight,     ///< The Knight.
         Rook,       ///< The Rook.
-        Count       ///< Number of defined piece types.
+        Count       ///< Number of defined piece types. (Keep last!)
     }; // enum PieceType
+
+    /**
+     * Increments the piece type to the next enumerator.
+     * @param type The piece type to increment.
+     * @return A reference to the incremented piece type.
+     * @note This returns a maximum value of PieceType::Count.
+     */
+    PieceType& operator++(PieceType& type);
 
     /**
      * Converts a piece type into its string representation.

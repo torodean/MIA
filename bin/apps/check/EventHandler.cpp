@@ -14,6 +14,8 @@
 #include "MoveState.hpp"
 // Used to push the starting position back to the UI on a reset.
 #include "CheckConfig.hpp"
+// Used for pausing between ui events.
+#include "Timing.hpp"
 
 namespace check
 {
@@ -353,5 +355,21 @@ namespace check
         GameResult result = getGameResult(state);
 
         return result;
+    }
+
+
+    void registerPieceArtInUI(PythonModule& module,
+                              const std::vector<PieceArt>& pieceArts)
+    {
+        for (const PieceArt& pieceArt : pieceArts)
+        {
+            if (pieceArt.type == PieceArtType::Image)
+            {
+                MIA_THROW(error::ErrorCode::Feature_In_Dev, 
+                          "Image files not yet supported for check app ui art.");
+            }
+            module.call("registerPiece", pieceArt.pieceName, pieceArt.art);
+            timing::sleepMilliseconds(20);
+        }
     }
 } // namespace check

@@ -238,6 +238,37 @@ namespace string_utils
 
 
     /**
+     * Tests for the isHexDigits(..) method.
+     */
+    TEST(StringUtils_T, IsHexDigitsReturnsTrueForDigitsOnly) 
+    {
+        EXPECT_TRUE(isHexDigits("123456"))
+            << "Check a string containing only digits.";
+            
+        EXPECT_TRUE(isHexDigits("ABCDE"))
+            << "Check a string containing only hex-letters.";
+            
+        EXPECT_TRUE(isHexDigits("FFF"))
+            << "Check a string containing only F's.";
+            
+        EXPECT_FALSE(isHexDigits("ZZZ"))
+            << "Check a string containing only non-hex-letters";
+            
+        EXPECT_TRUE(isHexDigits("123456ABC"))
+            << "Check a string containing digits and hex-letters.";
+
+        EXPECT_FALSE(isHexDigits("12Az56"))
+            << "Check a string containing non-hex letters letters.";
+
+        EXPECT_FALSE(isHexDigits("1A3!56"))
+            << "Check a string containing symbols.";
+
+        EXPECT_FALSE(isHexDigits(""))
+            << "Check an empty string.";
+    }
+
+
+    /**
      * Tests for the inputRoll(..) method.
      */
     TEST(StringUtils_T, InputRollValidFormat) 
