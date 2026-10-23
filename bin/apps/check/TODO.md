@@ -61,11 +61,6 @@ squares without being checked against the board size first.
 A failed config load is logged and then ignored, which lets the board initialize
 with sizes that were never set.
 
-## Install the config and UI script
-
-The config and the UI script are not installed with the other resources, so an
-installed build only runs out of the build tree.
-
 ## Game clocks
 
 The board state docs mention keeping times and the timing library is linked in for

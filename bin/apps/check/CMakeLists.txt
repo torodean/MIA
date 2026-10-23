@@ -57,5 +57,8 @@ target_include_directories(check PRIVATE
 # Install the app.
 install_app( check )
 
+# Install the associated python files.
+install_python_files( check.py )
+
 # TODO - add tests.
 #add_test_dir()
