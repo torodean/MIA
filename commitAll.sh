@@ -8,6 +8,11 @@ echo "..."
 # Ensure the git is up to date.
 git pull || { echo "git pull failed"; exit 1; }
 echo "..."
+
+# Make sure the submodules are checked out. git pull does not fetch them, and
+# the changelog step below runs CARA out of scripts/CARA.
+git submodule update --init --recursive || { echo "git submodule update failed; check SSH access to the CARA repository!"; exit 1; }
+echo "..."
 git status
 echo "..."
 
