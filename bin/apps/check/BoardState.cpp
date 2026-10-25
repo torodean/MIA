@@ -14,6 +14,8 @@
 
 // Used for en passant detection.
 #include "Pawn.hpp" 
+// Needed for castling special case.
+#include "King.hpp"
 
 namespace check
 {
@@ -47,7 +49,7 @@ namespace check
         for (const PiecePosition& pos : startingPos)
         { // Loop over all piece in the starting position.
             index = coordToIndex(pos.coordinate);
-            squareStates[index].updatePiece(pos.piece);
+            squareStates[index].updatePiece(pos.piece, true);
         }
         initialized = true;
     }
@@ -56,7 +58,7 @@ namespace check
     bool BoardState::isSquareOccupied(math::Coordinate<uint8_t> pos) const
     {
         uint16_t index = coordToIndex(pos);
-
+        /* Commented out for now since it's noisy.
         std::stringstream stream;
         if (context)
         {
@@ -64,14 +66,16 @@ namespace check
                    << "Square " << pos << ", index="
                    << std::to_string(index) << ": ";
         }
+        */
 
         const SquareState& square = squareStates[index];
-
+        /*
         if (context)
         {
             stream << (square.isOccupied() ? "true" : "false");
             context->logger.log(stream.str(), {"BoardState", "isSquareOccupied()"}, context->verboseMode);
         }
+        */
 
         return square.isOccupied();
     }
@@ -151,6 +155,16 @@ namespace check
              * the replacement is handled by the event interaction.
              */
             move.triggersPawnPromo = true;
+        }
+
+        // Check for castling, this is a special case.
+        if (isCastlingMove(move))
+        {
+            /*
+             * Handles castling. This sets the castling trigger, and the rook movement
+             * is done in the event handler so that the ui can be updated as well.
+             */
+            move.wasCastling = true;
         }
 
         // Add the move to the board moves and update board state.
@@ -270,5 +284,12 @@ namespace check
     void BoardState::setRuntimeContext(const RuntimeContext& ctx)
     {
         context = &ctx;
+    }
+
+
+    const SquareState& BoardState::getSquareAt(math::Coordinate<uint8_t> pos) const
+    {
+        uint16_t index = coordToIndex(pos);
+        return squareStates[index];
     }
 } // namespace check

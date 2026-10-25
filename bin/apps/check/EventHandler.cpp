@@ -16,6 +16,8 @@
 #include "CheckConfig.hpp"
 // Used for pausing between ui events.
 #include "Timing.hpp"
+// Needed for castling special case.
+#include "King.hpp"
 
 namespace check
 {
@@ -241,6 +243,16 @@ namespace check
                  */
                  module.call("movePiece", startPos.x, startPos.y, endPos.x, endPos.y);
                  return ongoing;
+            }
+
+            // Check if the last move was a castle of the king.
+            if (lastMove.has_value() && lastMove->wasCastling)
+            { // Handles moving the rook during castling.
+                CastlingMetaData castleData = getCastlingRookData(lastMove.value(), state);
+                math::Coordinate<uint8_t> startRookPos = castleData.rookStartingPos;
+                math::Coordinate<uint8_t> endRookPos = castleData.rookEndingPos;
+                state.movePiece(startRookPos, endRookPos);
+                module.call("movePiece", startRookPos.x, startRookPos.y, endRookPos.x, endRookPos.y);
             }
         }
         catch(const error::MIAException& e)

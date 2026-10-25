@@ -77,7 +77,7 @@ namespace check
          * @return The piece on the square or std::nullopt if the square
          *         is not occupied.
          */
-        const std::optional<check::Piece>& getPieceOnSquare(math::Coordinate<uint8_t> pos) const;
+        const std::optional<Piece>& getPieceOnSquare(math::Coordinate<uint8_t> pos) const;
 
         /**
          * @brief Determines whether a square contains a piece of a different color.
@@ -209,6 +209,13 @@ namespace check
          */
         void setRuntimeContext(const RuntimeContext& ctx);
 
+        /**
+         * Returns a reference to the square at the specified coordinate.
+         * @param pos The location of the square to retrieve.
+         * @return A reference to the square in question.
+         */
+        const SquareState& getSquareAt(math::Coordinate<uint8_t> pos) const;
+
     private:
 
         /// Stores runtimeContext such as the logger and verboseMode for this object to use. 
@@ -265,6 +272,4 @@ namespace check
          */
         std::vector<MoveState> moves;
     }; // class BoardState
-
-
 } // namespace check
