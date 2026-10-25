@@ -19,6 +19,10 @@
 // Needed for castling special case.
 #include "King.hpp"
 
+// For sound effects.
+#include "SoundsFromFile.hpp"
+#include "Paths.hpp"
+
 namespace check
 {
     namespace
@@ -214,10 +218,23 @@ namespace check
 
         try
         { // Attempt to move the piece.
-            state.movePiece(startPos, endPos, true);
+            state.movePiece(startPos, endPos);
+
+            // Get the last move information which is used for various special cases.
+            const std::optional<MoveState> lastMove = state.getLastMove();
+
+            // Play the sound for this move. TODO - this is keyed to the exe for now.
+            std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
+            if (lastMove.has_value() && lastMove->wasCapture)
+            { // Play the capture sound.
+                audio::playSoundFromFileAsync(configPath + "/sounds/capture.mp3");
+            }
+            else
+            { // Play the normal move sound.
+                audio::playSoundFromFileAsync(configPath + "/sounds/move.mp3");
+            }
 
             // Check if this was an en passant move.
-            const std::optional<MoveState> lastMove = state.getLastMove();
             if (lastMove.has_value() && lastMove->wasEnPassant)
             { // Handle en passant in ui.
                 int8_t direction = lastMove->piece.color == Color::White ? 1 : -1;
@@ -287,6 +304,10 @@ namespace check
         { // This result cannot be displayed by the loaded UI module.
             return;
         }
+
+        // Play the sound a game over. TODO - this is keyed to the exe for now.
+        std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
+        audio::playSoundFromFileAsync(configPath + "/sounds/game_over.mp3");
 
         module.call("showGameResult",
                     gameResultToString(result.type),

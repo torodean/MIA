@@ -115,8 +115,7 @@ namespace check
          * @throws MIAException if the source square is not occupied.
          */
         void movePiece(math::Coordinate<uint8_t> fromPos,
-                       math::Coordinate<uint8_t> toPos,
-                               bool playSoundEffect = false);
+                       math::Coordinate<uint8_t> toPos);
 
         /**
          * @brief Removes the piece from the requested square, if one exists.
