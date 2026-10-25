@@ -17,6 +17,10 @@
 // Needed for castling special case.
 #include "King.hpp"
 
+// For sound effects.
+#include "SoundsFromFile.hpp"
+#include "Paths.hpp"
+
 namespace check
 {
     void BoardState::initialize(uint8_t columns, 
@@ -123,7 +127,8 @@ namespace check
 
 
     void BoardState::movePiece(math::Coordinate<uint8_t> fromPos,
-                               math::Coordinate<uint8_t> toPos)
+                               math::Coordinate<uint8_t> toPos,
+                               bool playSoundEffect)
     {
         if (!isSquareOccupied(fromPos))
             MIA_THROW(error::ErrorCode::Check_No_Piece_On_Square);
@@ -138,6 +143,11 @@ namespace check
         move.piece = piece;
         move.startingPos = fromPos;
         move.endingPos = toPos;
+        
+        if (containsOpponentPiece(toPos, piece.color))
+        { // Store whether this was a capture move or not.
+            move.wasCapture = true;
+        }
 
         // Check for an en passant special-case.
         if (isEnPassantMove(move, *this))
@@ -145,6 +155,7 @@ namespace check
             const std::optional<MoveState> lastMove = this->getLastMove();
             removePiece(lastMove->endingPos);
             move.wasEnPassant = true;
+            move.wasCapture = true;
         }
 
         // Check for a pawn promotion special case.
@@ -171,6 +182,19 @@ namespace check
         moves.push_back(move);
         squareStates[toIndex].updatePiece(piece);
         squareStates[fromIndex].removePiece();
+
+        if (playSoundEffect)
+        { // Play the sound for this move. TODO - this is keyed to the exe for now.
+            std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
+            if (move.wasCapture)
+            { // Play the capture sound.
+                audio::playSoundFromFileAsync(configPath + "/sounds/capture.mp3");
+            }
+            else
+            { // Play the normal move sound.
+                audio::playSoundFromFileAsync(configPath + "/sounds/move.mp3");
+            }
+        }
     }
 
 

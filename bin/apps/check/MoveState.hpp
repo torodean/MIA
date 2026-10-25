@@ -27,6 +27,8 @@ namespace check
         bool wasEnPassant{false};
         /// Stores if the last move was castling.
         bool wasCastling{false};
+        /// Stores if the last move made a capture of another piece.
+        bool wasCapture{false};
 
         /*
          * Stores whether the last move triggers a pawn promotion. When this occurs,

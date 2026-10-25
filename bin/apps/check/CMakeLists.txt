@@ -45,6 +45,7 @@ target_link_libraries( check
                        Math_UTIL      # For coordinate handling.
                        Types_UTIL     # For string manipulation and parsing.
                        System_UTIL    # For timing.
+                       Audio_UTIL     # For sound effects.
                      )
 
 # Add this so that the files in the pieces folder don't need "../" for

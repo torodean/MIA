@@ -214,7 +214,7 @@ namespace check
 
         try
         { // Attempt to move the piece.
-            state.movePiece(startPos, endPos);
+            state.movePiece(startPos, endPos, true);
 
             // Check if this was an en passant move.
             const std::optional<MoveState> lastMove = state.getLastMove();

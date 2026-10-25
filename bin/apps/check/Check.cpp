@@ -136,7 +136,7 @@ namespace check
                 std::cout << "Event received: " << event.getName() << std::endl;
                 CheckUIEvent uiEvent = toCheckUIEvent(event.getName());
                 switch(uiEvent.type)
-                { // TODO - handle events here.
+                {
                     case CheckUIEventType::PickupPiece:
                     { // Signals that a piece was picked up, so calculate the legal moves.
                         if (eventState.gameOver)
