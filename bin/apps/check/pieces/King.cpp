@@ -297,8 +297,6 @@ namespace check
             }
         }
 
-        // TODO - check if king would be passing through an attacked square.
-
         return true;
     }
 
