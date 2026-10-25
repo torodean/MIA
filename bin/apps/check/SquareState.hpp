@@ -31,8 +31,11 @@ namespace check
          * Updates (or adds) a piece to this square. An existing piece will be
          * overwritten, and if no piece is currently here, a new piece will be
          * added.
+         * @param cPiece The piece to update on this square.
+         * @param initialPiece whether or not this is the initial piece being added.
+         *        This determines whether to update squareHasChanged or not.
          */
-        void updatePiece(Piece cPiece);
+        void updatePiece(Piece cPiece, bool initialPiece = false);
 
         /**
          * Remove the piece from this square.
@@ -54,8 +57,25 @@ namespace check
          */
         const math::Coordinate<uint8_t>& getCoordinate() const;
 
+        /**
+         * Resets the squareHasChanged state. This is needed during board resets.
+         * @return the state of squareHasChanged after resetting (should be false).
+         */
+        bool resetHasChanged();
+
+        /**
+         * Getter for the squareHasChanged bool.
+         */
+        bool hasChanged() const;
+
     private:
 
+        /**
+         * Stores whether this square has changed (a piece moved) since reset. This
+         * is changed to true whenever updatePiece or removePiece is called. It is
+         * primarily stored to later determine rules such as if castling is allowed.
+         */
+        bool squareHasChanged{false};
         /// The piece that is currently on this square.
         std::optional<Piece> piece;
         /// The coordinate of this square on the game board.

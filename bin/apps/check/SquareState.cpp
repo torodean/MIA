@@ -18,15 +18,17 @@ namespace check
     }
 
 
-    void SquareState::updatePiece(Piece cPiece)
+    void SquareState::updatePiece(Piece cPiece, bool initialPiece)
     {
         piece = cPiece;
+        squareHasChanged = !initialPiece;
     }
 
 
     void SquareState::removePiece()
     {
         piece.reset();
+        squareHasChanged = true;
     }
 
 
@@ -48,6 +50,19 @@ namespace check
     }
 
 
+    bool SquareState::resetHasChanged()
+    {
+        squareHasChanged = false;
+        return squareHasChanged;
+    }
+
+
+    bool SquareState::hasChanged() const
+    {
+        return squareHasChanged;
+    }
+
+
     std::vector<SquareState> createSquareStates(uint8_t xSize, uint8_t ySize)
     {
         std::vector<SquareState> squareStates;
@@ -57,7 +72,8 @@ namespace check
         {
             for (uint16_t x = 0; x < xSize; ++x)
             {
-                squareStates.emplace_back(static_cast<uint8_t>(x), static_cast<uint8_t>(y));
+                SquareState state(static_cast<uint8_t>(x), static_cast<uint8_t>(y));
+                squareStates.emplace_back(state);
             }
         }
 

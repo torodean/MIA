@@ -25,6 +25,8 @@ namespace check
         math::Coordinate<uint8_t> endingPos;
         /// Stores if the last move was en passant.
         bool wasEnPassant{false};
+        /// Stores if the last move was castling.
+        bool wasCastling{false};
 
         /*
          * Stores whether the last move triggers a pawn promotion. When this occurs,

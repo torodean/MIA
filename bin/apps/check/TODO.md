@@ -2,10 +2,6 @@
 
 This is a collection of TODO's still open for this application.
 
-## Castle handling
-
-Add the ability to castle. This also needs generalized for variable board sizes.
-
 ## Custom pieces
 
 Custom pieces need added.
@@ -77,3 +73,7 @@ The startup warning about the app being in dev needs removed once the app is don
 ## Add sounds
 
 The MIA audio libraries are finished and usable, so sound effects should be added to the game.
+
+## Verbose and debug output.
+
+The logging and verbose output needs tidied up and improved.
