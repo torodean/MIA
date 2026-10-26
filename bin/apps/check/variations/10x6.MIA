@@ -1,0 +1,47 @@
+#============================================================================
+# Name        : Check.MIA
+# Author      : Antonius Torode
+# Created on  : 10/16/2025
+# Description : MIA config for the CHECK application.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# Misc Options.
+verbose_mode=true
+show_legal_moves=true
+
+# Defines the board size.
+board_size_x=10
+board_size_y=6
+
+# Player state to start.
+number_of_players=2
+whos_turn_is_it=1
+
+# The art for the pieces. These must all start with the prefix "piece_" followed by the
+# piece name. The values of these must be either a unicode character or an image file (in dev).
+piece_king=\u265A
+piece_queen=\u265B
+piece_pawn=\u265F
+piece_knight=\u265E
+piece_rook=\u265C
+piece_bishop=\u265D
+
+#============================================================================
+# Starting board state (position).
+# Exactly one 'starting_state' line must be active (uncommented). To use one
+# of the test scenarios below, comment out the active starting_state line and
+# uncomment the desired scenario. All scenarios use the 8x8 board above and
+# leave white to move (whos_turn_is_it=1).
+# Coordinate system: (x,y) where x is the column (0 = left edge, increasing
+# right) and y is the row (0 = white home rank, increasing toward black).
+#============================================================================
+
+# Standard chess starting configuration.
+starting_state=0,0,rook,white;1,0,knight,white;2,0,knight,white;3,0,bishop,white;4,0,queen,white;5,0,king,white;6,0,bishop,white;7,0,knight,white;8,0,knight,white;9,0,rook,white;0,1,pawn,white;1,1,pawn,white;2,1,pawn,white;3,1,pawn,white;4,1,pawn,white;5,1,pawn,white;6,1,pawn,white;7,1,pawn,white;8,1,pawn,white;9,1,pawn,white;0,4,pawn,black;1,4,pawn,black;2,4,pawn,black;3,4,pawn,black;4,4,pawn,black;5,4,pawn,black;6,4,pawn,black;7,4,pawn,black;8,4,pawn,black;9,4,pawn,black;0,5,rook,black;1,5,knight,black;2,5,knight,black;3,5,bishop,black;4,5,queen,black;5,5,king,black;6,5,bishop,black;7,5,knight,black;8,5,knight,black;9,5,rook,black

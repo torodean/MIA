@@ -139,12 +139,18 @@ namespace check
         move.startingPos = fromPos;
         move.endingPos = toPos;
 
+        if (containsOpponentPiece(toPos, piece.color))
+        { // Store whether this was a capture move or not.
+            move.wasCapture = true;
+        }
+
         // Check for an en passant special-case.
         if (isEnPassantMove(move, *this))
         { // Handle removing the en-passant taken pawn.
             const std::optional<MoveState> lastMove = this->getLastMove();
             removePiece(lastMove->endingPos);
             move.wasEnPassant = true;
+            move.wasCapture = true;
         }
 
         // Check for a pawn promotion special case.
