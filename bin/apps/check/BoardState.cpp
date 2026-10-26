@@ -138,7 +138,7 @@ namespace check
         move.piece = piece;
         move.startingPos = fromPos;
         move.endingPos = toPos;
-        
+
         if (containsOpponentPiece(toPos, piece.color))
         { // Store whether this was a capture move or not.
             move.wasCapture = true;
