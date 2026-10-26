@@ -1,0 +1,30 @@
+\chapter{Custom House-made Engine for Chess Knowledge (CHECK)}\label{chapter:check}
+\pagestyle{fancy}
+
+\section{Introduction}
+
+The Custom House-made Engine for Chess Knowledge (CHECK) application is a small chess application contained within the MIA project. The project is intended to expand on the class chess concept with many configurable values and added features such as custom game board sizes and custom pieces with unique logic. 
+
+
+
+
+
+
+
+
+
+
+\section{Purpose}
+
+The initial purpose for the CHECK application was to combine various game-related utilities and libraries that had been recently developed and added into the MIA project into a working application. After doing so, this application could be used as the basis to explore a few new concepts and components. The specific (already implemented into MIA) features desired to be integrated and tested within this project are the following:
+\begin{itemize}\itemsep0em
+	\item The Python UI libraries (see \ref{section:python_utils}, \ref{section:ui_utils}, and \ref{section:python_ui_lib}).
+	\item The Audio utilities (see \ref{section:audio}).
+\end{itemize}
+The CHECK application was a perfect opportunity to use these components, as it provided a simple UI interface, with logic that could be handled entirely in the c++ backend. A chess board also provides enough unique cases and components that the Python to c++ interface could be thoroughly explored and tested.
+
+After completing the basic engine, the idea was to further explore some other (new) components in MIA. The CHECK app should serve as a good basis for testing and developing these features as well. These include (but are not limited to) the following:
+\begin{itemize}\itemsep0em
+	\item Networking protocols, game server communications, and \textit{multiplayer} applications. A chess board provides the opportunity for a trivial two-player game system with alternating turns.
+	\item Machine learning. A chess engine provides a great interface for deploying and experimenting with machine learning and AI.
+\end{itemize}
