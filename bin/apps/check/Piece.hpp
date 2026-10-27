@@ -75,15 +75,14 @@ namespace check
      *         enumerator name (e.g. PieceType::Knight becomes "knight").
      *         PieceType::None becomes "none".
      */
-    std::string pieceTypetoString(PieceType type);
+    std::string pieceTypeToString(PieceType type);
 
     /**
      * Converts a string into a piece type. Matching is case insensitive,
      * so "knight", "Knight", and "KNIGHT" all resolve to PieceType::Knight.
      *
      * @param type The string representation of a piece type.
-     * @return The matching piece type.
-     * @throws MIAException if the string does not match any piece type.
+     * @return The matching piece type, or PieceType::None if there is no match.
      */
     PieceType stringToPieceType(const std::string& type);
 
@@ -114,8 +113,7 @@ namespace check
      * "white", "White", and "WHITE" all resolve to Color::White.
      *
      * @param color The string representation of a color.
-     * @return The matching color.
-     * @throws MIAException if the string does not match any color.
+     * @return The matching color, or Color::None if there is no match.
      */
     Color stringToColor(const std::string& color);
 
@@ -206,7 +204,7 @@ namespace check
 
     /**
      * This is a helper to get the legal moves of any piece. This will use the
-     * appropriate implemented BasePieceLogic baseed on the input piece and
+     * appropriate implemented BasePieceLogic based on the input piece and
      * return a list of legal moves.
      *
      * @note Only moves of the current player's pieces are returned, and moves
