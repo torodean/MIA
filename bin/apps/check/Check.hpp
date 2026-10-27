@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include <string>
+
 // Used for the configuration.
 #include "MIAConfig.hpp"
 #include "CheckConfig.hpp"
@@ -62,7 +64,7 @@ namespace check
 
     private:
 
-        /// The name of the defauilt config file that this class uses.
+        /// The name of the default config file that this class uses.
         std::string defaultConfigFile{"Check.MIA"};
 
         /// The configuration loader for this app.
@@ -83,7 +85,7 @@ namespace check
          * The defaultModuleName is the default python ui module to use.
          * The PythonModule handles loading in the python UI.
          * The EventQueue stores events the UI produces.
-         * The EventStorage stores the events retreived from the queue.
+         * The EventStorage stores the events retrieved from the queue.
          * The PythonUIListener handles monitoring and filling the UI queue.
          */
         std::string defaultModuleName{"check"};
