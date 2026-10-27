@@ -118,8 +118,9 @@ namespace check
     /**
      * Process an event of a piece being dropped. This will handle moving a piece
      * appropriately. This assumes the eventState data came from a processPickupPiece
-     * call. Once the move is made, this determines the result of the game and stores
-     * it in the eventState so that no further board interaction is processed.
+     * call. Once the move is made, this determines the result of the game and returns
+     * it. The caller should pass that result to handleGameResult() so the board gets
+     * locked and the result gets displayed when the game has ended.
      * @param module The python ui module to perform the ui move on. This method
      *        assumes that a movePiece(col, row, toCol, toRow) method exists which 
      *        moves a piece in the game ui.
@@ -149,6 +150,20 @@ namespace check
      * @param result The result of the game which just ended.
      */
     void processGameOver(PythonModule& module, const GameResult& result);
+
+    /**
+     * Handle the result of the game after a move was processed. This stores the game
+     * over flag in the eventState so that no further board interaction is processed
+     * until the game is reset, prints the outcome of a finished game to the console,
+     * and hands the result to processGameOver() for the UI to display. This does
+     * nothing besides storing the flag when the game is still being played.
+     * @param module The python ui module to notify of a game over.
+     * @param result The result of the game after the last move.
+     * @param eventState The event state to lock when the game is over.
+     */
+    void handleGameResult(PythonModule& module,
+                          const GameResult& result,
+                          EventState& eventState);
 
     /**
      * Process an event which resets the game. This returns the board to its starting
