@@ -58,12 +58,6 @@ namespace check
         const math::Coordinate<uint8_t>& getCoordinate() const;
 
         /**
-         * Resets the squareHasChanged state. This is needed during board resets.
-         * @return the state of squareHasChanged after resetting (should be false).
-         */
-        bool resetHasChanged();
-
-        /**
          * Getter for the squareHasChanged bool.
          */
         bool hasChanged() const;
