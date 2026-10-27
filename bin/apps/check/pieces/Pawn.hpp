@@ -73,6 +73,6 @@ namespace check
      * @param state The state of the board before this move is recorded.
      * @return true if the move triggers a pawn promotion, false otherwise.
      */
-    bool tiggersPromotion(const MoveState& move,
-                          const BoardState& state);
+    bool triggersPromotion(const MoveState& move,
+                           const BoardState& state);
 } // namespace check
