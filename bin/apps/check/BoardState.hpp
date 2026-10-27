@@ -6,7 +6,7 @@
  *        state, where all pieces are, who's turn it is, times, etc).
  *
  * For the check system, uint8_t values are used for the various coordinates.
- * Since this is a versin of chess, 255 is plenty of storage for either 
+ * Since this is a version of chess, 255 is plenty of storage for either 
  * coordinate direction and values higher would not make much sense as any
  * intended game board for this system.
  */
@@ -250,8 +250,8 @@ namespace check
         /*
          * This stores each SquareState object for the game board. Since the 
          * board has a maximum limit of uint8_t x uint8_t, this data is stored
-         * in a vector rather than some sort of map. The vector storage allowes
-         * sach square it's own index which corresponds to the coordinate of the
+         * in a vector rather than some sort of map. The vector storage allows
+         * each square its own index which corresponds to the coordinate of the
          * square. The bottom left square represents the coordinate (0,0), which is
          * the start of indexing. The indexes increase as the x coordinate increases,
          * and then once the max x coordinate is reached, the next index represents
