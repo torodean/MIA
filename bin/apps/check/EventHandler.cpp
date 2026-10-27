@@ -8,6 +8,7 @@
 // Include the associated header.
 #include "EventHandler.hpp"
 
+#include <iostream>
 #include <vector>
 
 #include "StringUtils.hpp"
@@ -294,10 +295,7 @@ namespace check
          * has to respond to this move. This is the order the end of game conditions are
          * written for, as both checkmate and stalemate apply to the player on move.
          */
-        GameResult result = getGameResult(state);
-        eventState.gameOver = result.isGameOver();
-
-        return result;
+        return getGameResult(state);
     }
 
 
@@ -316,6 +314,34 @@ namespace check
                     gameResultToString(result.type),
                     gameOverReasonToString(result.reason),
                     colorToString(result.winner));
+    }
+
+
+    void handleGameResult(PythonModule& module,
+                          const GameResult& result,
+                          EventState& eventState)
+    {
+        // Store the game over state so the board locks until the game is reset.
+        eventState.gameOver = result.isGameOver();
+
+        if (!result.isGameOver())
+        { // There is nothing to report while the game is still being played.
+            return;
+        }
+
+        // Report the result here and hand it to the UI to display.
+        std::cout << "Game over (" << gameOverReasonToString(result.reason) << "): ";
+
+        if (result.type == GameResultType::Win)
+        {
+            std::cout << colorToString(result.winner) << " wins!" << std::endl;
+        }
+        else
+        {
+            std::cout << "The game is a draw." << std::endl;
+        }
+
+        processGameOver(module, result);
     }
 
 
