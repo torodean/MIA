@@ -11,6 +11,9 @@
 #include <vector>
 
 #include "StringUtils.hpp"
+// Used for error handling of malformed events.
+#include "Error.hpp"
+#include "MIAException.hpp"
 #include "MoveState.hpp"
 // Used to push the starting position back to the UI on a reset.
 #include "CheckConfig.hpp"
@@ -68,7 +71,7 @@ namespace check
     }
 
 
-    std::string CheckUIEventTypeToString(CheckUIEventType event)
+    std::string checkUIEventTypeToString(CheckUIEventType event)
     {
         switch(event)
         {
@@ -305,7 +308,7 @@ namespace check
             return;
         }
 
-        // Play the sound a game over. TODO - this is keyed to the exe for now.
+        // Play the sound for a game over. TODO - this is keyed to the exe for now.
         std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
         audio::playSoundFromFileAsync(configPath + "/sounds/game_over.mp3");
 
