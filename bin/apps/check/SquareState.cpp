@@ -50,13 +50,6 @@ namespace check
     }
 
 
-    bool SquareState::resetHasChanged()
-    {
-        squareHasChanged = false;
-        return squareHasChanged;
-    }
-
-
     bool SquareState::hasChanged() const
     {
         return squareHasChanged;
