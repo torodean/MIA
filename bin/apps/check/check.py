@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-@file    checkUI.py
+@file    check.py
 @author  Antonius Torode
 @date    10/15/2026
 
@@ -27,6 +27,7 @@ Event formats (the C++ side parses these):
     "pickup_piece <col> <row>"
     "drop_piece <fromCol> <fromRow> <toCol> <toRow>"
     "reset_board"
+    "pawn_promo_choice <piece>"
     "stop"
    Board state (one string per occupied cell, comma-separated):
     "<col>,<row>,<type>,<color>"
@@ -685,7 +686,7 @@ def showPawnPromoBox(pieces, color):
     This will display the pawn promotion box.
     @param pieces The promotion options for the pawn. The expected format of this is 
            a comma-delimiter string (e.g., "queen,rook,bishop,knight").
-    @param colo This is the color of the pawn being promoted.
+    @param color This is the color of the pawn being promoted.
     """
     if (verboseMode):
         print(f"Displaying pawn promotion box.")
@@ -771,7 +772,7 @@ def setVerbose(val):
     global verboseMode
     verboseMode = val
     if verboseMode:
-        print("Verbose mode enabled for chessUI (python module).")
+        print("Verbose mode enabled for check (python module).")
 
 
 def main():
