@@ -154,7 +154,7 @@ namespace check
         }
 
         // Check for a pawn promotion special case.
-        if (tiggersPromotion(move, *this))
+        if (triggersPromotion(move, *this))
         {
             /*
              * Handles promoting a pawn. This will set the move trigger, but 
