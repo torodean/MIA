@@ -130,7 +130,7 @@ namespace check
     /**
      * This will get the coordinate of the rook that is being castled with. This
      * assumes all checks for castling validity have been done and the move is in
-     * the porcess of being made (the king has already moved)
+     * the process of being made (the king has already moved)
      *
      * @param move The move that the king has made.
      * @param state The current state of the board.

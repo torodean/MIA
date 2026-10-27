@@ -16,8 +16,6 @@
 #include "Paths.hpp"
 // Used for return codes.
 #include "Constants.hpp"
-// Used for python interface results.
-#include "PythonResult.hpp"
 // Used for handling events.
 #include "EventHandler.hpp"
 // Used for the win/draw result of a game.
@@ -74,7 +72,7 @@ namespace check
 
             std::cout << " --> configValues.verboseMode: " << (configValues.verboseMode ? "true" : "false") << std::endl;
             /*
-             * The verboseMode can be overwridden from the config file. The desired behavior
+             * The verboseMode can be overridden from the config file. The desired behavior
              * here is to enable verbose mode if it is on anywhere (command line or config).
              */
             overrideVerboseMode(configValues.verboseMode || getVerboseMode());

@@ -62,7 +62,7 @@ namespace check
                 output += ";";
 
             output += std::to_string(pos.coordinate.x) + "," + std::to_string(pos.coordinate.y);
-            output += "," + pieceTypetoString(pos.piece.type);
+            output += "," + pieceTypeToString(pos.piece.type);
             output += "," + colorToString(pos.piece.color);
         }
         return output;
@@ -115,7 +115,7 @@ namespace check
         for (PieceType type = PieceType::King; type < PieceType::Count; ++type)
         { // Iterate over all valid piece types.
             PieceArt pieceArt;
-            pieceArt.pieceName = pieceTypetoString(type);
+            pieceArt.pieceName = pieceTypeToString(type);
             std::string configKey = configPrefix + pieceArt.pieceName;
             pieceArt.art = config.getString(configKey);
             pieceArt.type = determinePieceArtType(pieceArt.art);

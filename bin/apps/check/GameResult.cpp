@@ -9,6 +9,7 @@
 #include "GameResult.hpp"
 
 #include <vector>
+#include <optional>
 
 // Used to read the board and determine whose turn it is.
 #include "BoardState.hpp"
