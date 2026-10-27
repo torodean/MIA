@@ -171,8 +171,8 @@ namespace check
     }
 
 
-    bool tiggersPromotion(const MoveState& move,
-                          const BoardState& state)
+    bool triggersPromotion(const MoveState& move,
+                           const BoardState& state)
     {
         // The moving piece must be a pawn.
         if (move.piece.type != PieceType::Pawn)
