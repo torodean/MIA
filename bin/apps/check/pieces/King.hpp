@@ -89,27 +89,6 @@ namespace check
                        CastleDirection direction);
 
     /**
-     * Returns the squares that must be considered when evaluating a castling move.
-     * Starts at the king's position and adds squares in the specified direction
-     * until reaching an occupied square or the edge of the board. If a friendly
-     * rook is encountered, also includes the square immediately beyond it if that
-     * square is on the board (for special game types which randomize piece positions).
-     *
-     * The returned value will iterate from the kings position out, so the king will
-     * always be the zero-index entry.
-     *
-     * @param state The current state of the board.
-     * @param kingPos The position of the king in question.
-     * @param direction The direction to check for castling conditions.
-     * @return A vector of square states containing the king's square and the
-     *         relevant squares in the specified direction.
-     */
-    std::vector<SquareState> getSquaresInQuestion(
-        const BoardState& state,
-        const math::Coordinate<uint8_t>& kingPos,
-        CastleDirection direction);
-
-    /**
      * Determines if the move in question would be a castling move. This just checks
      * if the move would move the king 2 spaces rather than one.
      *
