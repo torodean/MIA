@@ -36,7 +36,7 @@ namespace check
     }
 
 
-    std::string pieceTypetoString(PieceType type)
+    std::string pieceTypeToString(PieceType type)
     {
         switch(type)
         {
