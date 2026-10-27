@@ -6,6 +6,7 @@
  */
 
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 
 // Include the associated header file.
@@ -193,7 +194,7 @@ namespace check
 
         /*
          * If the square next to the king is attacked, the king cannot castle. Since the king
-         * will always move 2 squres when castling, this is the only square this check needs
+         * will always move 2 squares when castling, this is the only square this check needs
          * performed on. The end-move check is already accounted for in legal moves since you
          * cannot move into check already.
          */
@@ -258,7 +259,7 @@ namespace check
          * (All of these cases allow castling in some way)
          *
          * If the piece to the left of the rook is also a rook, the check for if a piece has 
-         * moved needs care to only check against the closes rook: ♜♜□□♚ -> ♜□♚♜□
+         * moved needs care to only check against the closest rook: ♜♜□□♚ -> ♜□♚♜□
          */
         if (specialCase)
         {
@@ -274,7 +275,7 @@ namespace check
                     return false;
                 }
                 if (endPiece->type == PieceType::Rook)
-                { // Don't care about the piece beyong this point.
+                { // Don't care about the piece beyond this point.
                     squaresInQuestion.pop_back();
                 }
             }
@@ -335,8 +336,8 @@ namespace check
              x += direction)
         { // This is looping over all squares until crossing the board boundary or finding a rook.
             SquareState square = state.getSquareAt({static_cast<uint8_t>(x), move.startingPos.y});
-            std::optional<Piece> sqarePiece = square.getPiece();
-            if (sqarePiece.has_value() && sqarePiece->type == PieceType::Rook)
+            std::optional<Piece> squarePiece = square.getPiece();
+            if (squarePiece.has_value() && squarePiece->type == PieceType::Rook)
             { // This is our castling rook.
                 data.rookStartingPos = square.getCoordinate();
                 foundRook = true;
