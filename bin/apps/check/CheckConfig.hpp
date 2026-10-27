@@ -22,8 +22,8 @@ namespace check
      */
     struct CheckConfig
     {
-        bool verboseMode{false};   ///< Whether or not to force verboseMode.
-        bool showLegalMoves{true}; ///< Whether or not to force verboseMode.
+        bool verboseMode{false};   ///< Whether or not verbose output is enabled.
+        bool showLegalMoves{true}; ///< Whether or not to show the legal moves of picked pieces.
         uint8_t boardSizeX;        ///< The x size of the board.
         uint8_t boardSizeY;        ///< The y size of the board.
 
@@ -56,7 +56,7 @@ namespace check
      * format: "<x-position>,<y-position>,<piece type>,<piece color>", and each
      * position is separated by a semi-colon (";") delimiter.
      * @param positions A Vector of piece positions.
-     * @param A string representation of the piece positions.
+     * @return A string representation of the piece positions.
      */
     std::string positionsToString(const std::vector<PiecePosition>& positions);
 
@@ -80,7 +80,7 @@ namespace check
         const std::vector<PiecePosition>& positions);
 
     /**
-     * This will determine the input piece art type. Tye type is keyed off of the
+     * This will determine the input piece art type. The type is keyed off of the
      * format of the input string. The config expects either a glyph (starting with
      * "\u" followed by 4 hexadecimal digits) or a file path.
      */
