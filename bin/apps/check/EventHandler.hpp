@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <string>
 #include <optional>
+#include <vector>
 
 #include "BoardState.hpp"
 #include "GameResult.hpp"
@@ -82,7 +83,7 @@ namespace check
      * @param event The CheckUIEvent to convert,
      * @return the equivalent std::string. 
      */
-    std::string CheckUIEventTypeToString(CheckUIEventType event);
+    std::string checkUIEventTypeToString(CheckUIEventType event);
 
     /**
      * Each ui event returned from the ui starts with a string 'name'. This
