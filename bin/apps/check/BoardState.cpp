@@ -5,6 +5,7 @@
  * @brief Implements the BoardState class and methods.
  */
 
+#include <algorithm>
 #include <sstream>
 
 // Include the associated header file.
@@ -252,24 +253,16 @@ namespace check
     bool BoardState::isSquareAttacked(math::Coordinate<uint8_t> pos,
                                       Color defendingColor) const
     {
-        bool isAttacked = false;
         std::stringstream stream;
         if (context)
         {
             stream << "Checking if the (" << std::to_string(pos.x) << ", " 
                    << std::to_string(pos.y) << ") square is attacked: ";
         }
-        // Get all squares currently attacked.
-        auto attackedSquares = getAttackedSquares(*this, defendingColor);
-
-        for (const auto& coordinate : attackedSquares)
-        { // Iterate over all attacked squares.
-            if (coordinate == pos)
-            {
-                isAttacked = true;
-                break;
-            }
-        }
+        // Search all squares currently attacked for the square in question.
+        const auto attackedSquares = getAttackedSquares(*this, defendingColor);
+        const bool isAttacked = std::find(attackedSquares.begin(), attackedSquares.end(), pos)
+                                != attackedSquares.end();
 
         if (context)
         {

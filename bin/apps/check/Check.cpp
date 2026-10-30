@@ -70,7 +70,6 @@ namespace check
         { // Load configuration here.
             configValues = constructConfig(config);
 
-            std::cout << " --> configValues.verboseMode: " << (configValues.verboseMode ? "true" : "false") << std::endl;
             /*
              * The verboseMode can be overridden from the config file. The desired behavior
              * here is to enable verbose mode if it is on anywhere (command line or config).
@@ -157,23 +156,7 @@ namespace check
                         }
 
                         GameResult result = processMoveEvent(module, uiEvent, boardState, eventState);
-
-                        // TODO - this is duplicate code, move to method.
-                        if (result.isGameOver())
-                        { // Report the result here and hand it to the UI to display.
-                            std::cout << "Game over (" << gameOverReasonToString(result.reason) << "): ";
-
-                            if (result.type == GameResultType::Win)
-                            {
-                                std::cout << colorToString(result.winner) << " wins!" << std::endl;
-                            }
-                            else
-                            {
-                                std::cout << "The game is a draw." << std::endl;
-                            }
-
-                            processGameOver(module, result);
-                        }
+                        handleGameResult(module, result, eventState);
                         break;
                     }
 
@@ -185,23 +168,7 @@ namespace check
                         }
 
                         GameResult result = processPawnPromotion(module, uiEvent, boardState);
-
-                        // TODO - this is duplicate code, move to method.
-                        if (result.isGameOver())
-                        { // Report the result here and hand it to the UI to display.
-                            std::cout << "Game over (" << gameOverReasonToString(result.reason) << "): ";
-
-                            if (result.type == GameResultType::Win)
-                            {
-                                std::cout << colorToString(result.winner) << " wins!" << std::endl;
-                            }
-                            else
-                            {
-                                std::cout << "The game is a draw." << std::endl;
-                            }
-
-                            processGameOver(module, result);
-                        }
+                        handleGameResult(module, result, eventState);
                         break;
                     }
 

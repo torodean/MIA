@@ -7,7 +7,6 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <iostream>
 
 // Include the associated header file.
 #include "King.hpp"
@@ -15,15 +14,73 @@
 
 namespace check
 {
+    namespace
+    {
+        /**
+         * Returns the squares that must be considered when evaluating a castling move.
+         * Starts at the king's position and adds squares in the specified direction
+         * until reaching an occupied square or the edge of the board. If a friendly
+         * rook is encountered, also includes the square immediately beyond it if that
+         * square is on the board (for special game types which randomize piece positions).
+         *
+         * The returned value will iterate from the kings position out, so the king will
+         * always be the zero-index entry.
+         *
+         * @param state The current state of the board.
+         * @param kingPos The position of the king in question.
+         * @param direction The direction to check for castling conditions.
+         * @return A vector of square states containing the king's square and the
+         *         relevant squares in the specified direction.
+         */
+        std::vector<SquareState> getSquaresInQuestion(
+            const BoardState& state,
+            const math::Coordinate<uint8_t>& kingPos,
+            CastleDirection direction)
+        {
+            std::vector<SquareState> squaresInQuestion;
+            squaresInQuestion.push_back(state.getSquareAt(kingPos));
+
+            // Determine the castling direction.
+            const int8_t step = (direction == CastleDirection::LEFT) ? -1 : 1;
+
+            for (uint8_t x = kingPos.x + step; state.isSquareOnBoard({x, kingPos.y}); x += step)
+            {
+                math::Coordinate<uint8_t> pos{x, kingPos.y};
+
+                squaresInQuestion.push_back(state.getSquareAt(pos));
+
+                std::optional<Piece> piece = state.getPieceOnSquare(pos);
+
+                if (piece.has_value())
+                { // Stop once we hit a piece.
+                    if (piece->type == PieceType::Rook &&
+                        piece->color == state.getPieceOnSquare(kingPos)->color)
+                    {
+                        math::Coordinate<uint8_t> nextPos{static_cast<uint8_t>(x + step), kingPos.y};
+
+                        if (state.isSquareOnBoard(nextPos))
+                        { // Special case where we hit a rook but there's more squares in that direction.
+                            squaresInQuestion.push_back(state.getSquareAt(nextPos));
+                        }
+
+                        break;
+                    }
+
+                    break;
+                }
+            }
+
+            return squaresInQuestion;
+        }
+    } // namespace
+
     std::vector<math::Coordinate<uint8_t>> KingLogic::getLegalMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
         Color color)
     {
-        std::vector<math::Coordinate<uint8_t>> legalMoves;
-
         // Define the eight possible moves for a king.
-        const int8_t moves[8][2] =
+        const std::vector<math::Coordinate<int8_t>> steps =
         {
             { 0,  1},
             { 0, -1},
@@ -35,35 +92,9 @@ namespace check
             {-1, -1}
         };
 
-        // Check each possible destination.
-        for (const auto& move : moves)
-        {
-            int16_t x = static_cast<int16_t>(currentPos.x) + move[0];
-            int16_t y = static_cast<int16_t>(currentPos.y) + move[1];
-
-            // Skip destinations outside the board.
-            if (x < 0 || x >= boardState.getXSize() ||
-                y < 0 || y >= boardState.getYSize())
-            {
-                continue;
-            }
-
-            uint8_t xPos = static_cast<uint8_t>(x);
-            uint8_t yPos = static_cast<uint8_t>(y);
-
-            if (boardState.isSquareOccupied({xPos, yPos}))
-            { // A king cannot capture a friendly piece.
-                if (boardState.containsOpponentPiece({xPos, yPos}, color))
-                {
-                    legalMoves.push_back({xPos, yPos});
-                }
-
-                continue;
-            }
-
-            // The destination is unoccupied and can be moved to.
-            legalMoves.push_back({xPos, yPos});
-        }
+        // A king cannot capture a friendly piece.
+        std::vector<math::Coordinate<uint8_t>> legalMoves = 
+            generateStepMoves(currentPos, steps, boardState, color);
 
         // Check for castling options.
         if (canKingCastle(boardState, currentPos, CastleDirection::LEFT))
@@ -136,47 +167,6 @@ namespace check
     }
 
 
-    std::vector<SquareState> getSquaresInQuestion(
-        const BoardState& state,
-        const math::Coordinate<uint8_t>& kingPos,
-        CastleDirection direction)
-    {
-        std::vector<SquareState> squaresInQuestion;
-        squaresInQuestion.push_back(state.getSquareAt(kingPos));
-
-        // Determine the castling direction.
-        const int8_t step = (direction == CastleDirection::LEFT) ? -1 : 1;
-
-        for (uint8_t x = kingPos.x + step; state.isSquareOnBoard({x, kingPos.y}); x += step)
-        {
-            math::Coordinate<uint8_t> pos{x, kingPos.y};
-
-            squaresInQuestion.push_back(state.getSquareAt(pos));
-
-            std::optional<Piece> piece = state.getPieceOnSquare(pos);
-
-            if (piece.has_value())
-            { // Stop once we hit a piece.
-                if (piece->type == PieceType::Rook &&
-                    piece->color == state.getPieceOnSquare(kingPos)->color)
-                {
-                    math::Coordinate<uint8_t> nextPos{static_cast<uint8_t>(x + step), kingPos.y};
-
-                    if (state.isSquareOnBoard(nextPos))
-                    { // Special case where we hit a rook but there's more squares in that direction.
-                        squaresInQuestion.push_back(state.getSquareAt(nextPos));
-                    }
-
-                    break;
-                }
-
-                break;
-            }
-        }
-
-        return squaresInQuestion;
-    }
-
     bool canKingCastle(const BoardState& state,
                        const math::Coordinate<uint8_t>& kingPos,
                        CastleDirection direction)
@@ -201,7 +191,6 @@ namespace check
         if (squaresInQuestion.size() >= 2)
         { // Make sure this check is valid first.
             // Index of 1 will be the square next to the king since it iterates from the king.
-            std::cout << " --> squaresInQuestion.size() >= 2" << std::endl;
             if (state.isSquareAttacked(squaresInQuestion[1].getCoordinate(), king->color))
                 return false;
         }

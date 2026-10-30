@@ -18,10 +18,9 @@ namespace check
         const BoardState& boardState,
         Color color)
     {
-        std::vector<math::Coordinate<uint8_t>> legalMoves;
-
-        // Define the eight possible moves for a knight.
-        const int8_t moves[8][2] = {
+        // Define the eight jumps a knight can make.
+        const std::vector<math::Coordinate<int8_t>> steps =
+        {
             { 1,  2},
             { 1, -2},
             {-1,  2},
@@ -32,36 +31,7 @@ namespace check
             {-2, -1}
         };
 
-        // Check each possible destination.
-        for (const auto& move : moves)
-        {
-            int16_t x = static_cast<int16_t>(currentPos.x) + move[0];
-            int16_t y = static_cast<int16_t>(currentPos.y) + move[1];
-
-            // Skip destinations outside the board.
-            if (x < 0 || x >= boardState.getXSize() ||
-                y < 0 || y >= boardState.getYSize())
-            {
-                continue;
-            }
-
-            uint8_t xPos = static_cast<uint8_t>(x);
-            uint8_t yPos = static_cast<uint8_t>(y);
-
-            if (boardState.isSquareOccupied({xPos, yPos}))
-            { // A knight can jump over pieces, but cannot capture a friendly piece.
-                if (boardState.containsOpponentPiece({xPos, yPos}, color))
-                {
-                    legalMoves.push_back({xPos, yPos});
-                }
-
-                continue;
-            }
-
-            // The destination is unoccupied and can be moved to.
-            legalMoves.push_back({xPos, yPos});
-        }
-
-        return legalMoves;
+        // Knights can jump over pieces, but cannot capture a friendly piece.
+        return generateStepMoves(currentPos, steps, boardState, color);
     }
 } // namespace check
