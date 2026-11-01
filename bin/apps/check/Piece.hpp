@@ -206,12 +206,15 @@ namespace check
      * @param currentPos The position of the piece requesting the moves.
      * @param boardState The current state of the board.
      * @param color The color of the piece requesting the moves.
+     * @param maximumDistance The maximum distance in each direction to move. Zero 
+     *        represents no maximum move distance.
      * @return The squares this piece can legally move to.
      */
     std::vector<math::Coordinate<uint8_t>> generateStraightMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color);
+        Color color,
+        uint8_t maximumDistance = 0);
 
     /**
      * This generates the legal moves for pieces that move along diagonals
@@ -221,12 +224,15 @@ namespace check
      * @param currentPos The position of the piece requesting the moves.
      * @param boardState The current state of the board.
      * @param color The color of the piece requesting the moves.
+     * @param maximumDistance The maximum distance in each direction to move. Zero 
+     *        represents no maximum move distance.
      * @return The squares this piece can legally move to.
      */
     std::vector<math::Coordinate<uint8_t>> generateDiagonalMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color);
+        Color color,
+        uint8_t maximumDistance = 0);
 
     /**
      * This generates the legal moves for pieces that move a fixed number of

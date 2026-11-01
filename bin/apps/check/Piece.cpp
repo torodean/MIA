@@ -36,18 +36,24 @@ namespace check
          * @param directions The direction coordinates to check, each stored as {x, y}.
          * @param boardState The current state of the board.
          * @param color The color of the piece requesting the moves.
+         * @param maximumDistance The maximum distance in each direction to move. Zero 
+         *        represents no maximum move distance.
          * @return The squares this piece can legally move to.
          */
         std::vector<math::Coordinate<uint8_t>> movesInDirections(
             const math::Coordinate<uint8_t>& currentPos,
             const std::vector<math::Coordinate<int8_t>>& directions,
             const BoardState& boardState,
-            Color color)
+            Color color,
+            uint8_t maximumDistance = 0)
         {
             std::vector<math::Coordinate<uint8_t>> legalMoves;
 
             for (const auto& direction : directions)
             {
+                // Tracks the total distance moved to stay less than the maximum.
+                uint8_t distanceMoved = 0;
+
                 math::Coordinate<uint8_t> destination = currentPos;
 
                 // Continue in this direction until reaching the board edge or a piece.
@@ -55,6 +61,7 @@ namespace check
                 {
                     destination.x += direction.x;
                     destination.y += direction.y;
+                    distanceMoved++;
 
                     /*
                      * Stop if the destination is outside the board. Stepping past an
@@ -78,6 +85,15 @@ namespace check
 
                     // The square is unoccupied and can be moved to.
                     legalMoves.push_back(destination);
+
+                    if (maximumDistance == 0)
+                    { // No max case.
+                        continue;
+                    }
+                    else if (distanceMoved >= maximumDistance)
+                    { // Already moved the maximum distance.
+                        break;
+                    }
                 }
             }
 
@@ -190,7 +206,8 @@ namespace check
     std::vector<math::Coordinate<uint8_t>> generateStraightMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color)
+        Color color,
+        uint8_t maximumDistance)
     {
         // Define the four straight directions in which these pieces move.
         const std::vector<math::Coordinate<int8_t>> directions =
@@ -201,14 +218,15 @@ namespace check
             {-1,  0}  // Left.
         };
 
-        return movesInDirections(currentPos, directions, boardState, color);
+        return movesInDirections(currentPos, directions, boardState, color, maximumDistance);
     }
 
 
     std::vector<math::Coordinate<uint8_t>> generateDiagonalMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color)
+        Color color,
+        uint8_t maximumDistance)
     {
         // Define the four diagonal directions in which these pieces move.
         const std::vector<math::Coordinate<int8_t>> directions =
@@ -219,7 +237,7 @@ namespace check
             {-1, -1}  // Down and left.
         };
 
-        return movesInDirections(currentPos, directions, boardState, color);
+        return movesInDirections(currentPos, directions, boardState, color, maximumDistance);
     }
 
 
