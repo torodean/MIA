@@ -11,7 +11,6 @@
 
 #include "Piece.hpp"
 #include "MathTypes.hpp"
-#include "MoveState.hpp"
 
 namespace check
 {
@@ -28,7 +27,7 @@ namespace check
          * This returns the legal moves for a Spade piece. For a Spade, the 
          * piece can move one or two squares forward (positive direction for white,
          * and negative for black). A Spade can capture a piece if it's diagonal to 
-         * it. En passant allows a Spade to take another Pawn pr Spade diagonally if 
+         * it. En passant allows a Spade to take another Pawn or Spade diagonally if 
          * that piece moves two squares past it (ending up next to this Spade).
          */
         std::vector<math::Coordinate<uint8_t>> getLegalMoves(
@@ -48,5 +47,5 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;
-    }; // class Spade
+    }; // class SpadeLogic
 } // namespace check
