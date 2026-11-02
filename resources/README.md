@@ -4,6 +4,9 @@ This folder contains a set of `.MIA` configuration files used by the various fea
 
 ## File Descriptions
 
+### `Check.MIA`
+This is the configuration file for the CHECK application. It defines the board size, player state, piece art glyphs, the starting board position, and any other configuration options.
+
 ### `MIAConfig.MIA`
 Defines the global configuration for the MIA applications.
 
