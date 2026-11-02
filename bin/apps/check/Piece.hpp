@@ -56,6 +56,10 @@ namespace check
         Bishop,     ///< The Bishop.
         Knight,     ///< The Knight.
         Rook,       ///< The Rook.
+        Templar,    ///< The Templar (custom piece).
+        Ankh,       ///< The Ankh (custom piece).
+        Shard,      ///< The Shard (custom piece).
+        Golem,      ///< The Golem (custom piece).
         Count       ///< Number of defined piece types. (Keep last!)
     }; // enum PieceType
 

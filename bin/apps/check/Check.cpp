@@ -109,12 +109,15 @@ namespace check
         listener.start();
 
         // Create the UI.
+        std::cout << "Creating Check UI!" << std::endl;
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
 
         // Register pieces.
+        std::cout << "Registering piece art from config!" << std::endl;
         registerPieceArtInUI(module, configValues.pieceArts);
 
         // Setup the starting board position.
+        std::cout << "Setting initial board state!" << std::endl;
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
 
         // Update the UI with the board position.

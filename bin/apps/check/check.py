@@ -785,11 +785,11 @@ def main():
     registerPiece("queen", "\u265B")
     registerPiece("pawn", "\u265F")
     registerPiece("knight", "\u265E")
+    registerPiece("templar", "\u2720")
     setBoardState([
         # Add kings.
         "0,0,king,white",
         "4,5,king,black",
-
         # Add queens.
         "4,0,queen,white",
         "0,5,queen,black",
@@ -809,6 +809,10 @@ def main():
         # Add knights.
         "2,0,knight,white",
         "2,5,knight,black",
+
+        # Add a custom piece.
+        "1,0,templar,white",
+        "3,5,templar,black",
     ])
     root.mainloop()
 

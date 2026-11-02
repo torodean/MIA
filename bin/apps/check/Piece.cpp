@@ -20,6 +20,10 @@
 #include "Bishop.hpp"
 #include "Knight.hpp"
 #include "King.hpp"
+#include "Templar.hpp"
+#include "Ankh.hpp"
+#include "Golem.hpp"
+#include "Shard.hpp"
 
 namespace check
 {
@@ -119,14 +123,18 @@ namespace check
     {
         switch(type)
         {
-            case PieceType::King:   return "king";
-            case PieceType::Queen:  return "queen";
-            case PieceType::Pawn:   return "pawn";
-            case PieceType::Bishop: return "bishop";
-            case PieceType::Knight: return "knight";
-            case PieceType::Rook:   return "rook";
+            case PieceType::King:    return "king";
+            case PieceType::Queen:   return "queen";
+            case PieceType::Pawn:    return "pawn";
+            case PieceType::Bishop:  return "bishop";
+            case PieceType::Knight:  return "knight";
+            case PieceType::Rook:    return "rook";
+            case PieceType::Templar: return "templar";
+            case PieceType::Golem:   return "golem";
+            case PieceType::Shard:   return "shard";
+            case PieceType::Ankh:    return "ankh";
             case PieceType::None:
-            default:                return "none";
+            default:                 return "none";
         }
     }
 
@@ -135,12 +143,16 @@ namespace check
     {
         std::string input = string_utils::toLower(type);
 
-        if (input == "king")   return PieceType::King;
-        if (input == "queen")  return PieceType::Queen;
-        if (input == "pawn")   return PieceType::Pawn;
-        if (input == "bishop") return PieceType::Bishop;
-        if (input == "knight") return PieceType::Knight;
-        if (input == "rook")   return PieceType::Rook;
+        if (input == "king")    return PieceType::King;
+        if (input == "queen")   return PieceType::Queen;
+        if (input == "pawn")    return PieceType::Pawn;
+        if (input == "bishop")  return PieceType::Bishop;
+        if (input == "knight")  return PieceType::Knight;
+        if (input == "rook")    return PieceType::Rook;
+        if (input == "templar") return PieceType::Templar;
+        if (input == "golem")   return PieceType::Golem;
+        if (input == "shard")   return PieceType::Shard;
+        if (input == "ankh")    return PieceType::Ankh;
 
         // Default.
         return PieceType::None;
@@ -301,6 +313,18 @@ namespace check
 
             case PieceType::King:
                 return std::make_unique<KingLogic>();
+
+            case PieceType::Templar:
+                return std::make_unique<TemplarLogic>();
+
+            case PieceType::Ankh:
+                return std::make_unique<AnkhLogic>();
+
+            case PieceType::Golem:
+                return std::make_unique<GolemLogic>();
+
+            case PieceType::Shard:
+                return std::make_unique<ShardLogic>();
 
             case PieceType::Count:
             case PieceType::None:

@@ -1,0 +1,51 @@
+#============================================================================
+# Name        : Check.MIA
+# Author      : Antonius Torode
+# Created on  : 10/16/2025
+# Description : MIA config for the CHECK application.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# Misc Options.
+verbose_mode=true
+show_legal_moves=true
+
+# Defines the board size.
+board_size_x=10
+board_size_y=10
+
+# Player state to start.
+number_of_players=2
+whos_turn_is_it=1
+
+# The art for the pieces. These must all start with the prefix "piece_" followed by the
+# piece name. The values of these must be either a unicode character or an image file (in dev).
+piece_king=\u265A
+piece_queen=\u265B
+piece_pawn=\u265F
+piece_knight=\u265E
+piece_rook=\u265C
+piece_bishop=\u265D
+piece_templar=\u2720
+piece_ankh=\u2625
+piece_golem=\u25A0
+piece_shard=\u25B2
+
+#============================================================================
+# Starting board state (position).
+# Exactly one 'starting_state' line must be active (uncommented). To use one
+# of the test scenarios below, comment out the active starting_state line and
+# uncomment the desired scenario. All scenarios use the 8x8 board above and
+# leave white to move (whos_turn_is_it=1).
+# Coordinate system: (x,y) where x is the column (0 = left edge, increasing
+# right) and y is the row (0 = white home rank, increasing toward black).
+#============================================================================
+
+# Standard chess starting configuration.
+starting_state=1,0,rook,white;1,1,golem,white;1,1,golem,white;2,0,knight,white;2,1,templar,white;3,0,bishop,white;3,1,shard,white;4,0,queen,white;4,1,ankh,white;5,0,king,white;5,1,ankh,white;6,0,bishop,white;6,1,shard,white;7,0,knight,white;7,1,templar,white;8,0,rook,white;8,1,golem,white;0,2,pawn,white;1,2,pawn,white;2,2,pawn,white;3,2,pawn,white;4,2,pawn,white;5,2,pawn,white;6,2,pawn,white;7,2,pawn,white;8,2,pawn,white;9,2,pawn,white;0,7,pawn,black;1,7,pawn,black;2,7,pawn,black;3,7,pawn,black;4,7,pawn,black;5,7,pawn,black;6,7,pawn,black;7,7,pawn,black;8,7,pawn,black;9,7,pawn,black;1,9,rook,black;1,8,golem,black;2,9,knight,black;2,8,templar,black;3,9,bishop,black;3,8,shard,black;4,9,queen,black;4,8,ankh,black;5,9,king,black;5,8,ankh,black;6,9,bishop,black;6,8,shard,black;7,9,knight,black;7,8,templar,black;8,9,rook,black;8,8,golem,black

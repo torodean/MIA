@@ -32,6 +32,10 @@ piece_pawn=\u265F
 piece_knight=\u265E
 piece_rook=\u265C
 piece_bishop=\u265D
+piece_templar=\u2720
+piece_ankh=\u2625
+piece_golem=\u25A0
+piece_shard=\u25B2
 
 #============================================================================
 # Starting board state (position).

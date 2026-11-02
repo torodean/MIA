@@ -22,21 +22,17 @@ namespace check
          * position is based on the pawn color and the board size. The pawns starting
          * position should always be either be in row 1, or row boardYSize-1.
          * @param currentPos The current position of the pawn.
-         * @param color The color of the pawn.
-         * @param boardYSize The maximum y-size of the board.
+         * @param boardState The current state of the board.
          * @return true if the piece is in its starting position, false otherwise.
          */
-        bool isInStartingPosition(const math::Coordinate<uint8_t>& currentPos, 
-                                  Color color,
-                                  uint8_t boardYSize)
+        bool isInStartingPosition(const math::Coordinate<uint8_t>& currentPos,
+                                  const BoardState& boardState)
         {
-            if (color == Color::White && currentPos.y == 1)
-                return true;
-            if (color == Color::Black && currentPos.y == boardYSize - 2)
-                return true;
+            const SquareState& square = boardState.getSquareAt(currentPos);
+            if (square.hasChanged())
+                return false;
 
-            // Otherwise, this is not the starting position.
-            return false;
+            return true;
         }
     } // namespace
 
@@ -50,7 +46,7 @@ namespace check
         int8_t forward = color == Color::White ? 1 : -1;
 
         std::vector<math::Coordinate<uint8_t>> legalMoves;
-        bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
+        bool inStartingPos = isInStartingPosition(currentPos, boardState);
 
         // If the square forward is not occupied, that is a valid move.
         if (!boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)}))
