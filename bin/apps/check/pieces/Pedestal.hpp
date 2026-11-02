@@ -33,5 +33,25 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;
+
+        /**
+         * This returns all squares attacked by a pedestal. A pedestal's attacks change
+         * based on where the other pieces are. This method is primarily used to determine
+         * things like checks, moving through checks, and other things related to the
+         * follow-up moves. Therefore, the exact places it can attack in the moment are
+         * less relevant than where it could attack after the next move. For 'after the
+         * next move, this is essentially anywhere that a rook would attack.
+         *
+         * TODO - I need to make sure I didn't miss somewhere that the above statement
+         *        might not be true for.
+         *
+         * @param currentPos The current coordinate of the pawn.
+         * @param boardState The current state of the board.
+         * @param color The color of the pawn, which determines its attack direction.
+         */
+        std::vector<math::Coordinate<uint8_t>> getAttackedSquares(
+            const math::Coordinate<uint8_t>& currentPos,
+            const BoardState& boardState,
+            Color color) override;
     }; // class Pedestal
 } // namespace check

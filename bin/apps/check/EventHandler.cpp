@@ -259,7 +259,7 @@ namespace check
                 else if (lastMove->piece.type == PieceType::Spade)
                 { // Promoting a spade.
                     module.call("showPiecePromoBox", 
-                                "templar,ankh,golem,shard", // TODO - This list should be generated for future expansion.
+                                "templar,ankh,golem,shard,pedestal", // TODO - This list should be generated for future expansion.
                                 colorToString(lastMove->piece.color));
                 }
 

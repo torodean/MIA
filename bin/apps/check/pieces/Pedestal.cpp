@@ -58,8 +58,13 @@ namespace check
                 if (boardState.isSquareOccupied(destination))
                 { // An opposing piece can be captured, but not a friendly piece.
                     if (boardState.containsOpponentPiece(destination, color))
-                    {
+                    { // This square contains an opponents piece.
                         legalMoves.push_back(destination);
+                        break;
+                    }
+                    else
+                    { // This square contains a friendly piece.
+                        legalMoves.push_back(prevDestination);
                         break;
                     }
 
@@ -69,5 +74,14 @@ namespace check
         }
 
         return legalMoves;
+    }
+
+        
+    std::vector<math::Coordinate<uint8_t>> PedestalLogic::getAttackedSquares(
+        const math::Coordinate<uint8_t>& currentPos,
+        const BoardState& boardState,
+        Color color)
+    {
+        return generateStraightMoves(currentPos, boardState, color);
     }
 } // namespace check

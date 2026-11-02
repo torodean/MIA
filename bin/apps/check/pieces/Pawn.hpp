@@ -36,7 +36,7 @@ namespace check
         std::vector<math::Coordinate<uint8_t>> getLegalMoves(
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
-            Color color) override;        
+            Color color) override;
 
         /**
          * This returns all squares attacked by a pawn. A pawn attacks the two
