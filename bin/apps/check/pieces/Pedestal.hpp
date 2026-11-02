@@ -45,13 +45,13 @@ namespace check
          * TODO - I need to make sure I didn't miss somewhere that the above statement
          *        might not be true for.
          *
-         * @param currentPos The current coordinate of the pawn.
+         * @param currentPos The current coordinate of the pedestal.
          * @param boardState The current state of the board.
-         * @param color The color of the pawn, which determines its attack direction.
+         * @param color The color of the pedestal, which determines its attack direction.
          */
         std::vector<math::Coordinate<uint8_t>> getAttackedSquares(
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;
-    }; // class Pedestal
+    }; // class PedestalLogic
 } // namespace check
