@@ -73,15 +73,15 @@ namespace check
 
     /**
      * Converts a string input to the equivalent CheckUIEvent object.
-     * @param input The string to convert,
-     * @return the equivalent CheckUIEvent. 
+     * @param input The string to convert.
+     * @return The equivalent CheckUIEvent. 
      */
     CheckUIEventType stringToCheckUIEventType(const std::string& input);
 
     /**
      * Converts a CheckUIEvent input to the equivalent string.
-     * @param event The CheckUIEvent to convert,
-     * @return the equivalent std::string. 
+     * @param event The CheckUIEvent to convert.
+     * @return The equivalent std::string. 
      */
     std::string checkUIEventTypeToString(CheckUIEventType event);
 
