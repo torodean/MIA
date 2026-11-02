@@ -23,6 +23,9 @@ python3 scripts/empty_line_formatter.py docs/
 python3 scripts/empty_line_formatter.py resources/
 python3 scripts/empty_line_formatter.py scripts/
 
+# Update the code metrics in the README.
+python3 scripts/repo_metrics.py -r README.md
+
 # Update the version number and add everything to the repo.
 python3 scripts/increment_version.py
 git add -A
