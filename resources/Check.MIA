@@ -36,6 +36,8 @@ piece_templar=\u2720
 piece_ankh=\u2625
 piece_golem=\u25A0
 piece_shard=\u25B2
+piece_spade=\u2660
+piece_pedestal=\u21EF
 
 #============================================================================
 # Starting board state (position).
