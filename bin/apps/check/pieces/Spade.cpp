@@ -24,7 +24,7 @@ namespace check
         int8_t forward = color == Color::White ? 1 : -1;
 
         std::vector<math::Coordinate<uint8_t>> legalMoves;
-        
+
         // Add all moves one or two forward.
         math::Coordinate<uint8_t> destination = currentPos;
         destination.y = static_cast<uint8_t>(currentPos.y + forward);
@@ -33,7 +33,7 @@ namespace check
             if (!boardState.isSquareOccupied(destination))
             { // The square ahead is not occupied.
                 legalMoves.push_back(destination);
-                
+
                 // Checking 2 squares ahead is only needed if the first wasn't occupied. 
                 destination.y = static_cast<uint8_t>(currentPos.y + 2*forward);
                 if (boardState.isSquareOnBoard(destination) && 

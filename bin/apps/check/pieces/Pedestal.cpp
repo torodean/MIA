@@ -76,7 +76,7 @@ namespace check
         return legalMoves;
     }
 
-        
+
     std::vector<math::Coordinate<uint8_t>> PedestalLogic::getAttackedSquares(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
