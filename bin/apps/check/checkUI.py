@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-@file    check.py
+@file    checkUI.py
 @author  Antonius Torode
 @date    10/15/2026
 
@@ -27,7 +27,7 @@ Event formats (the C++ side parses these):
     "pickup_piece <col> <row>"
     "drop_piece <fromCol> <fromRow> <toCol> <toRow>"
     "reset_board"
-    "pawn_promo_choice <piece>"
+    "piece_promo_choice <piece>"
     "stop"
    Board state (one string per occupied cell, comma-separated):
     "<col>,<row>,<type>,<color>"
@@ -92,7 +92,7 @@ boardUI = None
 resultDialog = None
 
 # The windows which displays the pawn promotion options.
-pawnPromoBox = None
+piecePromoBox = None
 
 
 #########################
@@ -447,7 +447,7 @@ def createUI(cols, rows):
         # The additional windows are children of the root window, so they are destroyed
         # with it and the stale references have to be dropped.
         resultDialog = None
-        pawnPromoBox = None
+        piecePromoBox = None
     root = tk.Tk()
     root.title("CHECK: Custom House-made Engine for Chess Knowledge")
     boardUI = ChessBoard(root, cols, rows)
@@ -662,49 +662,49 @@ def showGameResult(result, reason, winner="none"):
     updateUI()
 
 
-def sendPawnPromoChoice(piece):
+def sendPiecePromoChoice(piece):
     """
-    Closes the pawn promotion window and queues a pawn_promo_choice event.
-    The backend answers the event by promoting the appropriate pawn and 
+    Closes the piece promotion window and queues a piece_promo_choice event.
+    The backend answers the event by promoting the appropriate piece and 
     updating the board state.
-    @param piece The pawn promotion choice.
+    @param piece The piece promotion choice.
     """
-    global pawnPromoBox
+    global piecePromoBox
     if (verboseMode):
-        print("Promoting pawn!")
+        print("Promoting piece!")
 
-    if pawnPromoBox is not None:
-        pawnPromoBox.grab_release()
-        pawnPromoBox.destroy()
-        pawnPromoBox = None
+    if piecePromoBox is not None:
+        piecePromoBox.grab_release()
+        piecePromoBox.destroy()
+        piecePromoBox = None
 
-    addEvent(f"pawn_promo_choice {piece}")
+    addEvent(f"piece_promo_choice {piece}")
 
 
-def showPawnPromoBox(pieces, color):
+def showPiecePromoBox(pieces, color):
     """
-    This will display the pawn promotion box.
-    @param pieces The promotion options for the pawn. The expected format of this is 
+    This will display the piece promotion box.
+    @param pieces The promotion options for the piece. The expected format of this is 
            a comma-delimiter string (e.g., "queen,rook,bishop,knight").
-    @param color This is the color of the pawn being promoted.
+    @param color This is the color of the piece being promoted.
     """
     if (verboseMode):
-        print(f"Displaying pawn promotion box.")
+        print(f"Displaying piece promotion box.")
 
     if root is None:
         raise ValueError("UI not created; call createUI() first")
 
-    global pawnPromoBox
+    global piecePromoBox
 
-    if pawnPromoBox is not None:
-        pawnPromoBox.destroy()
+    if piecePromoBox is not None:
+        piecePromoBox.destroy()
 
-    pawnPromoBox = tk.Toplevel(root)
-    pawnPromoBox.title("Promote the pawn!")
-    pawnPromoBox.resizable(False, False)
-    pawnPromoBox.transient(root)
+    piecePromoBox = tk.Toplevel(root)
+    piecePromoBox.title("Promote the piece!")
+    piecePromoBox.resizable(False, False)
+    piecePromoBox.transient(root)
 
-    pieceFrame = tk.Frame(pawnPromoBox)
+    pieceFrame = tk.Frame(piecePromoBox)
     pieceFrame.pack(padx=10, pady=10)
 
     for piece in pieces.split(","):
@@ -714,11 +714,11 @@ def showPawnPromoBox(pieces, color):
             font=("Segoe UI Symbol", 24),
             fg=color,
             activeforeground=color,
-            command=lambda p=piece: sendPawnPromoChoice(p)
+            command=lambda p=piece: sendPiecePromoChoice(p)
         ).pack(side=tk.LEFT, padx=4)
 
-    pawnPromoBox.wait_visibility(pawnPromoBox)
-    pawnPromoBox.grab_set()
+    piecePromoBox.wait_visibility(piecePromoBox)
+    piecePromoBox.grab_set()
 
     updateUI()
 
@@ -772,7 +772,7 @@ def setVerbose(val):
     global verboseMode
     verboseMode = val
     if verboseMode:
-        print("Verbose mode enabled for check (python module).")
+        print("Verbose mode enabled for checkUI (python module).")
 
 
 def main():
@@ -785,11 +785,11 @@ def main():
     registerPiece("queen", "\u265B")
     registerPiece("pawn", "\u265F")
     registerPiece("knight", "\u265E")
+    registerPiece("templar", "\u2720")
     setBoardState([
         # Add kings.
         "0,0,king,white",
         "4,5,king,black",
-
         # Add queens.
         "4,0,queen,white",
         "0,5,queen,black",
@@ -809,6 +809,10 @@ def main():
         # Add knights.
         "2,0,knight,white",
         "2,5,knight,black",
+
+        # Add a custom piece.
+        "1,0,templar,white",
+        "3,5,templar,black",
     ])
     root.mainloop()
 

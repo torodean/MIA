@@ -16,8 +16,9 @@
 
 namespace check
 {
-    /// Predeclare BoardState so BasePieceLogic can reference it.
+    /// Predeclare some classes so they can be referenced.
     class BoardState;
+    class MoveState;
 
     /**
      * This enum represents different types of piece art that can be used.
@@ -56,6 +57,12 @@ namespace check
         Bishop,     ///< The Bishop.
         Knight,     ///< The Knight.
         Rook,       ///< The Rook.
+        Templar,    ///< The Templar (custom knight-rook like piece).
+        Ankh,       ///< The Ankh (custom knight-bishop like piece).
+        Shard,      ///< The Shard (custom bishop-like piece).
+        Golem,      ///< The Golem (custom rook-like piece).
+        Spade,      ///< The Spade (custom pawn-like piece).
+        Pedestal,   ///< The Pedestal (custom rook-like piece).
         Count       ///< Number of defined piece types. (Keep last!)
     }; // enum PieceType
 
@@ -97,6 +104,7 @@ namespace check
         Black,      ///< The usual black color.
         Red,
         Green,
+        Count       ///< How many color entries exist. Keep this last!
     };
 
     /**
@@ -206,12 +214,15 @@ namespace check
      * @param currentPos The position of the piece requesting the moves.
      * @param boardState The current state of the board.
      * @param color The color of the piece requesting the moves.
+     * @param maximumDistance The maximum distance in each direction to move. Zero 
+     *        represents no maximum move distance.
      * @return The squares this piece can legally move to.
      */
     std::vector<math::Coordinate<uint8_t>> generateStraightMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color);
+        Color color,
+        uint8_t maximumDistance = 0);
 
     /**
      * This generates the legal moves for pieces that move along diagonals
@@ -221,12 +232,15 @@ namespace check
      * @param currentPos The position of the piece requesting the moves.
      * @param boardState The current state of the board.
      * @param color The color of the piece requesting the moves.
+     * @param maximumDistance The maximum distance in each direction to move. Zero 
+     *        represents no maximum move distance.
      * @return The squares this piece can legally move to.
      */
     std::vector<math::Coordinate<uint8_t>> generateDiagonalMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color);
+        Color color,
+        uint8_t maximumDistance = 0);
 
     /**
      * This generates the legal moves for pieces that move a fixed number of
@@ -326,4 +340,29 @@ namespace check
      */
     std::vector<math::Coordinate<uint8_t>> getAttackedSquares(const BoardState& boardState,
                                                               Color defendingColor);
+
+    /**
+     * Determines whether a move is an en passant capture. This method is
+     * intended to be used BEFORE the move is actually finalized to the
+     * boardState (meaning the getlastMove() could still be used to determine
+     * if the previous move was an opponents pawn or spade move).
+     *
+     * @param move The move that is being made.
+     * @param state The state of the board before this move is recorded.
+     * @return true if the move is an en passant capture, false otherwise.
+     */
+    bool isEnPassantMove(const MoveState& move,
+                         const BoardState& state);
+
+    /**
+     * Determines whether a move triggers a piece promotion or not. A piece
+     * promotion is triggered when a valid piece reaches the final row on the 
+     * board. Valid promotion pieces are the pawn and the spade.
+     *
+     * @param move The move that is being made.
+     * @param state The state of the board before this move is recorded.
+     * @return true if the move triggers a piece promotion, false otherwise.
+     */
+    bool triggersPromotion(const MoveState& move,
+                           const BoardState& state);
 } // namespace check

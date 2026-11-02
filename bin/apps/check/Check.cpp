@@ -53,6 +53,13 @@ namespace check
         // Pass the runtime context to the board state to enable logging and verbosity.
         boardState.setRuntimeContext(getContext());
 
+        // Validate the starting position.
+        if (!validStartingPosition(configValues.startingPosition, configValues.startingPlayerState))
+        { // And invalid starting position was configured.
+            std::string err = "Error: The configured starting position is invalid!";
+            MIA_THROW(error::ErrorCode::Check_Invalid_Start_Pos, err);
+        }
+
         // Load config values into the board state.
         boardState.initialize(configValues.boardSizeX,
                               configValues.boardSizeY,
@@ -102,19 +109,21 @@ namespace check
 
     int Check::run()
     {
-        std::cout << "WARNING!! THIS APP IS IN DEV!" << std::endl;
         std::cout << "Loading Check app!" << std::endl;
 
         // Start the UI listener.
         listener.start();
 
         // Create the UI.
+        std::cout << "Creating Check UI!" << std::endl;
         module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
 
         // Register pieces.
+        std::cout << "Registering piece art from config!" << std::endl;
         registerPieceArtInUI(module, configValues.pieceArts);
 
         // Setup the starting board position.
+        std::cout << "Setting initial board state!" << std::endl;
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
 
         // Update the UI with the board position.
@@ -160,14 +169,14 @@ namespace check
                         break;
                     }
 
-                    case CheckUIEventType::PawnPromotion:
-                    { // Signals a pawn promotion ui event was received.
+                    case CheckUIEventType::PiecePromotion:
+                    { // Signals a piece promotion ui event was received.
                         if (eventState.gameOver)
                         { // The board stays locked until the game is reset.
                             break;
                         }
 
-                        GameResult result = processPawnPromotion(module, uiEvent, boardState);
+                        GameResult result = processPiecePromotion(module, uiEvent, boardState);
                         handleGameResult(module, result, eventState);
                         break;
                     }

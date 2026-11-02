@@ -158,10 +158,10 @@ namespace check
         if (triggersPromotion(move, *this))
         {
             /*
-             * Handles promoting a pawn. This will set the move trigger, but 
+             * Handles promoting a piece. This will set the move trigger, but 
              * the replacement is handled by the event interaction.
              */
-            move.triggersPawnPromo = true;
+            move.triggersPromo = true;
         }
 
         // Check for castling, this is a special case.

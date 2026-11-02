@@ -36,7 +36,7 @@ namespace check
         std::vector<math::Coordinate<uint8_t>> getLegalMoves(
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
-            Color color) override;        
+            Color color) override;
 
         /**
          * This returns all squares attacked by a pawn. A pawn attacks the two
@@ -51,28 +51,4 @@ namespace check
             const BoardState& boardState,
             Color color) override;
     }; // class Pawn
-
-    /**
-     * Determines whether a move is an en passant capture. This method is
-     * intended to be used BEFORE the move is actually finalized to the
-     * boardState (meaning the getlastMove() could still be used to determine
-     * if the previous move was an opponents pawn move).
-     *
-     * @param move The move that is being made.
-     * @param state The state of the board before this move is recorded.
-     * @return true if the move is an en passant capture, false otherwise.
-     */
-    bool isEnPassantMove(const MoveState& move,
-                         const BoardState& state);
-
-    /**
-     * Determines whether a move triggers a pawn promotion or not. A pawn
-     * promotion is triggered when a pawn reaches the final row on the board.
-     *
-     * @param move The move that is being made.
-     * @param state The state of the board before this move is recorded.
-     * @return true if the move triggers a pawn promotion, false otherwise.
-     */
-    bool triggersPromotion(const MoveState& move,
-                           const BoardState& state);
 } // namespace check

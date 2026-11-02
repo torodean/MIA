@@ -27,13 +27,13 @@ namespace check
      */
     enum class CheckUIEventType : uint8_t
     {
-        Unknown,      ///< Represents an unknown event type.
-        Stop,         ///< Represents the signal to stop the application.
-        PickupPiece,  ///< Represents a piece was picked up.
-        DropPiece,    ///< Represents a piece was dropped.
-        ResetBoard,   ///< Represents the board/game should be reset.
-        SaveBoard,    ///< Represents the board/game should be saved.
-        PawnPromotion,///< Represents a pawn is being promoted.
+        Unknown,        ///< Represents an unknown event type.
+        Stop,           ///< Represents the signal to stop the application.
+        PickupPiece,    ///< Represents a piece was picked up.
+        DropPiece,      ///< Represents a piece was dropped.
+        ResetBoard,     ///< Represents the board/game should be reset.
+        SaveBoard,      ///< Represents the board/game should be saved.
+        PiecePromotion, ///< Represents a piece is being promoted.
     };
 
     /**
@@ -179,11 +179,11 @@ namespace check
                            EventState& eventState);
 
     /**
-     * This handles a pawn_promo_choice event. This event is somewhat special in the
-     * sense that it is forced once a pawn reaches the last rank. When this happens,
-     * the processPickupPiece method moves the pawn, and triggers the ui promo options.
+     * This handles a piece_promo_choice event. This event is somewhat special in the
+     * sense that it is forced once a type of piece reaches the last rank. When this happens,
+     * the processPickupPiece method moves the piece, and triggers the ui promo options.
      * After the promo piece is selected in the ui, this event immediately follows.
-     * The piece chosen is updated in the board state, the pawn is removed, the ui 
+     * The piece chosen is updated in the board state, the original piece is removed, the ui 
      * board is updated, and then the new game state is determined and returned.
      *
      * @param module The python ui module to use. This method assumes that the
@@ -192,9 +192,9 @@ namespace check
      * @param state The current state of the board.
      * @throws MIAException if the event is malformed.
      */
-    GameResult processPawnPromotion(PythonModule& module,
-                                    const CheckUIEvent& event,
-                                    BoardState& state);
+    GameResult processPiecePromotion(PythonModule& module,
+                                     const CheckUIEvent& event,
+                                     BoardState& state);
 
     /**
      * This method will register all of the piece art values into the UI. All pieces

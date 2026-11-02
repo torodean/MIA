@@ -125,6 +125,9 @@ namespace check
 
                 case PieceType::Knight:
                 case PieceType::Bishop:
+                case PieceType::Shard:
+                case PieceType::Templar:
+                case PieceType::Ankh:
                     /*
                      * A single remaining minor cannot mate on its own either, so these
                      * are counted here and only decided on once the whole board has
@@ -140,8 +143,10 @@ namespace check
                  * considered.
                  */
                 case PieceType::Pawn:
+                case PieceType::Spade:
                 case PieceType::Rook:
                 case PieceType::Queen:
+                case PieceType::Golem:
                 case PieceType::None:
                 case PieceType::Count:
                 default:

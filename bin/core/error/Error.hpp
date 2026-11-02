@@ -117,8 +117,9 @@ namespace error
         /*
          * CHECK app error codes. 400XX.
          */
-        Check_No_Piece_On_Square = 400000,    ///< No piece was on the specified square.
-        Check_Malformed_Event = 400001,       ///< A backend-ui event appears to be malformed.
+        Check_No_Piece_On_Square = 40000,     ///< No piece was on the specified square.
+        Check_Malformed_Event = 40001,        ///< A backend-ui event appears to be malformed.
+        Check_Invalid_Start_Pos = 40002,      ///< An invalid starting position was configured.
 
         // A catch all for any un-programmed errors.
         Catastrophic_Failure = 9001           ///< Some unprogrammed error occured.

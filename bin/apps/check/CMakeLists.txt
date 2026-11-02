@@ -1,3 +1,11 @@
+# Collect all piece source files.
+file( GLOB PIECES_SRC CONFIGURE_DEPENDS
+      "${CMAKE_CURRENT_SOURCE_DIR}/pieces/*.cpp" )
+
+# Collect all piece header files.
+file( GLOB PIECES_INC CONFIGURE_DEPENDS 
+      "${CMAKE_CURRENT_SOURCE_DIR}/pieces/*.hpp" )
+
 # Create the Check executable.
 set( CHECK_SRC 
      Check.cpp 
@@ -11,12 +19,7 @@ set( CHECK_SRC
      GameResult.cpp
 
      # Add the logic for the pieces.
-     pieces/Pawn.cpp
-     pieces/Rook.cpp
-     pieces/Bishop.cpp
-     pieces/Knight.cpp
-     pieces/Queen.cpp
-     pieces/King.cpp
+     ${PIECES_SRC}
 )
 set( CHECK_INC 
      Check.hpp
@@ -30,12 +33,7 @@ set( CHECK_INC
      MoveState.hpp
 
      # Add the logic for the pieces.
-     pieces/Pawn.hpp
-     pieces/Rook.hpp
-     pieces/Bishop.hpp
-     pieces/Knight.hpp
-     pieces/Queen.hpp
-     pieces/King.hpp
+     ${PIECES_INC}
 )
 add_executable( check ${CHECK_SRC} ${CHECK_INC} )
 target_link_libraries( check

@@ -10,8 +10,8 @@
 
 // Include the associated header file.
 #include "Pawn.hpp"
+#include "Piece.hpp"
 #include "BoardState.hpp"
-#include "MoveState.hpp"
 
 namespace check
 {
@@ -22,21 +22,17 @@ namespace check
          * position is based on the pawn color and the board size. The pawns starting
          * position should always be either be in row 1, or row boardYSize-1.
          * @param currentPos The current position of the pawn.
-         * @param color The color of the pawn.
-         * @param boardYSize The maximum y-size of the board.
+         * @param boardState The current state of the board.
          * @return true if the piece is in its starting position, false otherwise.
          */
-        bool isInStartingPosition(const math::Coordinate<uint8_t>& currentPos, 
-                                  Color color,
-                                  uint8_t boardYSize)
+        bool isInStartingPosition(const math::Coordinate<uint8_t>& currentPos,
+                                  const BoardState& boardState)
         {
-            if (color == Color::White && currentPos.y == 1)
-                return true;
-            if (color == Color::Black && currentPos.y == boardYSize - 2)
-                return true;
+            const SquareState& square = boardState.getSquareAt(currentPos);
+            if (square.hasChanged())
+                return false;
 
-            // Otherwise, this is not the starting position.
-            return false;
+            return true;
         }
     } // namespace
 
@@ -50,7 +46,7 @@ namespace check
         int8_t forward = color == Color::White ? 1 : -1;
 
         std::vector<math::Coordinate<uint8_t>> legalMoves;
-        bool inStartingPos = isInStartingPosition(currentPos, color, boardState.getYSize());
+        bool inStartingPos = isInStartingPosition(currentPos, boardState);
 
         // If the square forward is not occupied, that is a valid move.
         if (!boardState.isSquareOccupied({currentPos.x, static_cast<uint8_t>(currentPos.y + forward)}))
@@ -82,7 +78,8 @@ namespace check
 
         // Handle en passant.
         const std::optional<MoveState>& lastMove = boardState.getLastMove();
-        if (lastMove != std::nullopt && lastMove->piece.type == PieceType::Pawn)
+        if (lastMove != std::nullopt && 
+            (lastMove->piece.type == PieceType::Pawn || lastMove->piece.type == PieceType::Spade))
         { // Last move was a pawn so it may enable en passant.
             /*
              * A Positive direction indicates the last moved piece was to our right, otherwise,
@@ -130,62 +127,5 @@ namespace check
         }
 
         return attackedSquares;
-    }
-
-
-    bool isEnPassantMove(const MoveState& move, const BoardState& state)
-    {
-        // The moving piece must be a pawn.
-        if (move.piece.type != PieceType::Pawn)
-            return false;
-
-        // The destination square must be unoccupied.
-        if (state.isSquareOccupied(move.endingPos))
-            return false;
-
-        // A pawn must move diagonally by one square to capture en passant.
-        int16_t xDifference = static_cast<int16_t>(move.endingPos.x) -
-                             static_cast<int16_t>(move.startingPos.x);
-        int16_t yDifference = static_cast<int16_t>(move.endingPos.y) -
-                             static_cast<int16_t>(move.startingPos.y);
-
-        if (std::abs(xDifference) != 1 || std::abs(yDifference) != 1)
-            return false;
-
-        // The previous move must have been an opposing pawn's two-square move.
-        const std::optional<MoveState> lastMove = state.getLastMove();
-
-        if (!lastMove.has_value() ||
-            lastMove->piece.type != PieceType::Pawn ||
-            lastMove->piece.color == move.piece.color ||
-            lastMove->endingPos.x != move.endingPos.x ||
-            lastMove->endingPos.y != move.startingPos.y)
-        {
-            return false;
-        }
-
-        int16_t previousYDifference = static_cast<int16_t>(lastMove->endingPos.y) -
-                                      static_cast<int16_t>(lastMove->startingPos.y);
-
-        return std::abs(previousYDifference) == 2;
-    }
-
-
-    bool triggersPromotion(const MoveState& move,
-                           const BoardState& state)
-    {
-        // The moving piece must be a pawn.
-        if (move.piece.type != PieceType::Pawn)
-            return false;
-
-        /*
-         * White moves in the positive y direction, so it gets promoted on the final
-         * row of the board. Black moves in the negative y direction, so it gets
-         * promoted on the first row of the board instead.
-         */
-        if (move.piece.color == Color::White)
-            return move.endingPos.y == state.getYSize() - 1;
-
-        return move.endingPos.y == 0;
     }
 } // namespace check

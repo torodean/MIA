@@ -12,6 +12,7 @@
 #include "StringUtils.hpp"
 #include "BoardState.hpp"
 #include "PlayerState.hpp"
+#include "MoveState.hpp"
 
 // Include the various piece types.
 #include "Pawn.hpp"
@@ -20,6 +21,12 @@
 #include "Bishop.hpp"
 #include "Knight.hpp"
 #include "King.hpp"
+#include "Templar.hpp"
+#include "Ankh.hpp"
+#include "Golem.hpp"
+#include "Shard.hpp"
+#include "Spade.hpp"
+#include "Pedestal.hpp"
 
 namespace check
 {
@@ -36,18 +43,24 @@ namespace check
          * @param directions The direction coordinates to check, each stored as {x, y}.
          * @param boardState The current state of the board.
          * @param color The color of the piece requesting the moves.
+         * @param maximumDistance The maximum distance in each direction to move. Zero 
+         *        represents no maximum move distance.
          * @return The squares this piece can legally move to.
          */
         std::vector<math::Coordinate<uint8_t>> movesInDirections(
             const math::Coordinate<uint8_t>& currentPos,
             const std::vector<math::Coordinate<int8_t>>& directions,
             const BoardState& boardState,
-            Color color)
+            Color color,
+            uint8_t maximumDistance = 0)
         {
             std::vector<math::Coordinate<uint8_t>> legalMoves;
 
             for (const auto& direction : directions)
             {
+                // Tracks the total distance moved to stay less than the maximum.
+                uint8_t distanceMoved = 0;
+
                 math::Coordinate<uint8_t> destination = currentPos;
 
                 // Continue in this direction until reaching the board edge or a piece.
@@ -55,6 +68,7 @@ namespace check
                 {
                     destination.x += direction.x;
                     destination.y += direction.y;
+                    distanceMoved++;
 
                     /*
                      * Stop if the destination is outside the board. Stepping past an
@@ -78,6 +92,15 @@ namespace check
 
                     // The square is unoccupied and can be moved to.
                     legalMoves.push_back(destination);
+
+                    if (maximumDistance == 0)
+                    { // No max case.
+                        continue;
+                    }
+                    else if (distanceMoved >= maximumDistance)
+                    { // Already moved the maximum distance.
+                        break;
+                    }
                 }
             }
 
@@ -103,14 +126,20 @@ namespace check
     {
         switch(type)
         {
-            case PieceType::King:   return "king";
-            case PieceType::Queen:  return "queen";
-            case PieceType::Pawn:   return "pawn";
-            case PieceType::Bishop: return "bishop";
-            case PieceType::Knight: return "knight";
-            case PieceType::Rook:   return "rook";
+            case PieceType::King:    return "king";
+            case PieceType::Queen:   return "queen";
+            case PieceType::Pawn:    return "pawn";
+            case PieceType::Bishop:  return "bishop";
+            case PieceType::Knight:  return "knight";
+            case PieceType::Rook:    return "rook";
+            case PieceType::Templar: return "templar";
+            case PieceType::Golem:   return "golem";
+            case PieceType::Shard:   return "shard";
+            case PieceType::Ankh:    return "ankh";
+            case PieceType::Spade:   return "spade";
+            case PieceType::Pedestal:return "pedestal";
             case PieceType::None:
-            default:                return "none";
+            default:                 return "none";
         }
     }
 
@@ -119,12 +148,18 @@ namespace check
     {
         std::string input = string_utils::toLower(type);
 
-        if (input == "king")   return PieceType::King;
-        if (input == "queen")  return PieceType::Queen;
-        if (input == "pawn")   return PieceType::Pawn;
-        if (input == "bishop") return PieceType::Bishop;
-        if (input == "knight") return PieceType::Knight;
-        if (input == "rook")   return PieceType::Rook;
+        if (input == "king")    return PieceType::King;
+        if (input == "queen")   return PieceType::Queen;
+        if (input == "pawn")    return PieceType::Pawn;
+        if (input == "bishop")  return PieceType::Bishop;
+        if (input == "knight")  return PieceType::Knight;
+        if (input == "rook")    return PieceType::Rook;
+        if (input == "templar") return PieceType::Templar;
+        if (input == "golem")   return PieceType::Golem;
+        if (input == "shard")   return PieceType::Shard;
+        if (input == "ankh")    return PieceType::Ankh;
+        if (input == "spade")   return PieceType::Spade;
+        if (input == "pedestal")return PieceType::Pedestal;
 
         // Default.
         return PieceType::None;
@@ -190,7 +225,8 @@ namespace check
     std::vector<math::Coordinate<uint8_t>> generateStraightMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color)
+        Color color,
+        uint8_t maximumDistance)
     {
         // Define the four straight directions in which these pieces move.
         const std::vector<math::Coordinate<int8_t>> directions =
@@ -201,14 +237,15 @@ namespace check
             {-1,  0}  // Left.
         };
 
-        return movesInDirections(currentPos, directions, boardState, color);
+        return movesInDirections(currentPos, directions, boardState, color, maximumDistance);
     }
 
 
     std::vector<math::Coordinate<uint8_t>> generateDiagonalMoves(
         const math::Coordinate<uint8_t>& currentPos,
         const BoardState& boardState,
-        Color color)
+        Color color,
+        uint8_t maximumDistance)
     {
         // Define the four diagonal directions in which these pieces move.
         const std::vector<math::Coordinate<int8_t>> directions =
@@ -219,7 +256,7 @@ namespace check
             {-1, -1}  // Down and left.
         };
 
-        return movesInDirections(currentPos, directions, boardState, color);
+        return movesInDirections(currentPos, directions, boardState, color, maximumDistance);
     }
 
 
@@ -283,6 +320,24 @@ namespace check
 
             case PieceType::King:
                 return std::make_unique<KingLogic>();
+
+            case PieceType::Templar:
+                return std::make_unique<TemplarLogic>();
+
+            case PieceType::Ankh:
+                return std::make_unique<AnkhLogic>();
+
+            case PieceType::Golem:
+                return std::make_unique<GolemLogic>();
+
+            case PieceType::Shard:
+                return std::make_unique<ShardLogic>();
+
+            case PieceType::Spade:
+                return std::make_unique<SpadeLogic>();
+
+            case PieceType::Pedestal:
+                return std::make_unique<PedestalLogic>();
 
             case PieceType::Count:
             case PieceType::None:
@@ -430,5 +485,70 @@ namespace check
         }
 
         return attackedSquares;
+    }
+
+
+    bool isEnPassantMove(const MoveState& move, const BoardState& state)
+    {
+        // The moving piece must be a pawn.
+        if (move.piece.type != PieceType::Pawn && move.piece.type != PieceType::Spade)
+            return false;
+
+        // The destination square must be unoccupied.
+        if (state.isSquareOccupied(move.endingPos))
+            return false;
+
+        // A pawn must move diagonally by one square to capture en passant.
+        int16_t xDifference = static_cast<int16_t>(move.endingPos.x) -
+                             static_cast<int16_t>(move.startingPos.x);
+        int16_t yDifference = static_cast<int16_t>(move.endingPos.y) -
+                             static_cast<int16_t>(move.startingPos.y);
+
+        if (std::abs(xDifference) != 1 || std::abs(yDifference) != 1)
+            return false;
+
+        // The previous move must have been an opposing pawn's two-square move.
+        const std::optional<MoveState> lastMove = state.getLastMove();
+
+        // The last move must exist.
+        if (!lastMove.has_value())
+            return false;
+
+        // The last move has to be either a pawn or a spade piece.
+        if (lastMove->piece.type != PieceType::Pawn &&
+            lastMove->piece.type != PieceType::Spade)
+            return false;
+
+        if (lastMove->piece.color == move.piece.color ||
+            lastMove->endingPos.x != move.endingPos.x ||
+            lastMove->endingPos.y != move.startingPos.y)
+        {
+            return false;
+        }
+
+        int16_t previousYDifference = static_cast<int16_t>(lastMove->endingPos.y) -
+                                      static_cast<int16_t>(lastMove->startingPos.y);
+
+        return std::abs(previousYDifference) == 2;
+    }
+
+
+    bool triggersPromotion(const MoveState& move,
+                           const BoardState& state)
+    {
+        // The moving piece must be a pawn or a spade.
+        if (move.piece.type != PieceType::Pawn &&
+            move.piece.type != PieceType::Spade)
+            return false;
+
+        /*
+         * White moves in the positive y direction, so it gets promoted on the final
+         * row of the board. Black moves in the negative y direction, so it gets
+         * promoted on the first row of the board instead.
+         */
+        if (move.piece.color == Color::White)
+            return move.endingPos.y == state.getYSize() - 1;
+
+        return move.endingPos.y == 0;
     }
 } // namespace check

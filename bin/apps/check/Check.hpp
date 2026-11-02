@@ -88,7 +88,7 @@ namespace check
          * The EventStorage stores the events retrieved from the queue.
          * The PythonUIListener handles monitoring and filling the UI queue.
          */
-        std::string defaultModuleName{"check"};
+        std::string defaultModuleName{"checkUI"};
         PythonModule module;
         ui::EventQueue queue;
         ui::EventStorage storage;
