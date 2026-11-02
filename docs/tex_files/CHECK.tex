@@ -3,7 +3,7 @@
 
 \section{Introduction}
 
-The Custom House-made Engine for Chess Knowledge (CHECK) application is a small chess application contained within the MIA project. The project is intended to expand on the class chess concept with many configurable values and added features such as custom game board sizes (see Figure \ref{figure:check_10x6}) and custom pieces (see Figure \ref{figure:check_custom_pieces_01}) with unique logic. As of MIA version 2.117, the CHECK application implements nearly all traditional chess features except for draw by repetition. 
+The Custom House-made Engine for Chess Knowledge (CHECK) application is a small chess application contained within the MIA project. The project is intended to expand on the classic chess concept with many configurable values and added features such as custom game board sizes (see Figure \ref{figure:check_10x6}) and custom pieces (see Figure \ref{figure:check_custom_pieces_01}) with unique logic. As of MIA version 2.117, the CHECK application implements nearly all traditional chess features except for draw by repetition. 
 
 \begin{figure}[h]
 	\centering
@@ -98,10 +98,10 @@ The CHECK application contains custom piece options which have unique logic to a
 \begin{itemize}\itemsep0em
 	\item \textbf{Golem}: The Golem is essentially a slightly less powerful Rook. It moves exactly as a rook does, except it has a maximum move distance of three squares. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 	\item \textbf{Shard}: The Shard is essentially a slightly less powerful Bishop. It moves exactly as a Bishop does, except it has a maximum move distance of three squares. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
-	\item \textbf{Templar}: The Templar piece jumps over other pieces (similar to the Knight). It moves two squares either horizontally or vertically. This pieces is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
+	\item \textbf{Templar}: The Templar piece jumps over other pieces (similar to the Knight). It moves two squares either horizontally or vertically. This piece is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 	\item \textbf{Ankh}: The Ankh piece jumps over other pieces (similar to the Knight). It moves two squares in either diagonal direction. This pieces is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 	\item \textbf{Pedestal}: The Pedestal moves much like a Rook, except it can only move to the furthest legal square (which means it must take a piece if it moves towards it). When determining checks for the king, the squares that a Pedestal piece \textit{could} move to if another piece moves there are considered. For example, if the piece is in line of sight with the king, even though a Pedestal cannot move to a square \textit{next to} the king, that square is still considered attacked. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
-	\item \textbf{Spade}: The Spade is very similar to a Pawn and shares essentially the same mechanics with a twist. The Spade can always move one or two squares forward. The Spade will trigger En Passant when moving two squares past a Pawn and can capture a Pawn En Passant if a Pawn moves two squares and ends up beside it. The Spade can be promoted into all of the above custom pieces if it reaches the last row of the board. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
+	\item \textbf{Spade}: The Spade is very similar to a Pawn and shares essentially the same mechanics with a twist. The Spade can always move one or two squares forward. The Spade will trigger En Passant when moving two squares past a Pawn or another Spade, and can capture a Pawn or another Spade En Passant if that piece moves two squares and ends up beside it. The Spade can be promoted into all of the above custom pieces if it reaches the last row of the board. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 \end{itemize}
 
 
