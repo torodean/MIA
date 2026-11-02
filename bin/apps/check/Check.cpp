@@ -102,7 +102,6 @@ namespace check
 
     int Check::run()
     {
-        std::cout << "WARNING!! THIS APP IS IN DEV!" << std::endl;
         std::cout << "Loading Check app!" << std::endl;
 
         // Start the UI listener.
