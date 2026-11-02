@@ -36,7 +36,8 @@ namespace check
                 
                 // Checking 2 squares ahead is only needed if the first wasn't occupied. 
                 destination.y = static_cast<uint8_t>(currentPos.y + 2*forward);
-                if (!boardState.isSquareOccupied(destination))
+                if (boardState.isSquareOnBoard(destination) && 
+                    !boardState.isSquareOccupied(destination))
                     legalMoves.push_back(destination);
             }
         }

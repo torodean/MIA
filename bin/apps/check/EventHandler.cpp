@@ -61,12 +61,12 @@ namespace check
     {
         std::string event = string_utils::toLower(input);
 
-        if (event == "pickup_piece")      return CheckUIEventType::PickupPiece;
-        if (event == "drop_piece")        return CheckUIEventType::DropPiece;
-        if (event == "reset_board")       return CheckUIEventType::ResetBoard;
-        if (event == "save_board")        return CheckUIEventType::SaveBoard;
-        if (event == "pawn_promo_choice") return CheckUIEventType::PawnPromotion;
-        if (event == "stop")              return CheckUIEventType::Stop;
+        if (event == "pickup_piece")       return CheckUIEventType::PickupPiece;
+        if (event == "drop_piece")         return CheckUIEventType::DropPiece;
+        if (event == "reset_board")        return CheckUIEventType::ResetBoard;
+        if (event == "save_board")         return CheckUIEventType::SaveBoard;
+        if (event == "piece_promo_choice") return CheckUIEventType::PiecePromotion;
+        if (event == "stop")               return CheckUIEventType::Stop;
 
         return CheckUIEventType::Unknown;
     }
@@ -76,14 +76,14 @@ namespace check
     {
         switch(event)
         {
-            case CheckUIEventType::PickupPiece:   return "pickup_piece";
-            case CheckUIEventType::DropPiece:     return "drop_piece";
-            case CheckUIEventType::ResetBoard:    return "reset_board";
-            case CheckUIEventType::SaveBoard:     return "save_board";
-            case CheckUIEventType::PawnPromotion: return "pawn_promo_choice";
-            case CheckUIEventType::Stop:          return "stop";
+            case CheckUIEventType::PickupPiece:    return "pickup_piece";
+            case CheckUIEventType::DropPiece:      return "drop_piece";
+            case CheckUIEventType::ResetBoard:     return "reset_board";
+            case CheckUIEventType::SaveBoard:      return "save_board";
+            case CheckUIEventType::PiecePromotion: return "piece_promo_choice";
+            case CheckUIEventType::Stop:           return "stop";
             case CheckUIEventType::Unknown:
-            default:                              return "unknown";
+            default:                               return "unknown";
         }
     }
 
@@ -119,11 +119,11 @@ namespace check
                                                          eventTokenToCoordinate(eventTokens[4])};
                 break;
             }
-            case CheckUIEventType::PawnPromotion:
+            case CheckUIEventType::PiecePromotion:
             {
                 if (eventTokens.size() != 2)
                     MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
-                              "Expected 2 tokens for PawnPromotion event.");
+                              "Expected 2 tokens for PiecePromotion event.");
 
                 event.chosenPromoPiece = eventTokens[1];
                 break;
@@ -247,18 +247,27 @@ namespace check
                             static_cast<uint8_t>(lastMove->endingPos.y - direction));
             }
 
-            // Check if this was a pawn promotion triggering move.
-            if (lastMove.has_value() && lastMove->triggersPawnPromo)
-            { // Handle a pawn promotion in the ui.
-                module.call("showPawnPromoBox", 
-                            "queen,rook,bishop,knight", // TODO - This list should be generated for future expansion.
-                            colorToString(lastMove->piece.color));
+            // Check if this was a piece promotion triggering move.
+            if (lastMove.has_value() && lastMove->triggersPromo)
+            { // Handle a piece promotion in the ui.
+                if (lastMove->piece.type == PieceType::Pawn)
+                { // Promoting a pawn.
+                    module.call("showPiecePromoBox", 
+                                "queen,rook,bishop,knight", // TODO - This list should be generated for future expansion.
+                                colorToString(lastMove->piece.color));
+                }
+                else if (lastMove->piece.type == PieceType::Spade)
+                { // Promoting a spade.
+                    module.call("showPiecePromoBox", 
+                                "queen,templar,ankh,golem,shard", // TODO - This list should be generated for future expansion.
+                                colorToString(lastMove->piece.color));
+                }
 
                 /*
                  * This is a special case, we don't want the rest of this method 
                  * to change the turn and determine the game result until the pawn
                  * promotion turn has been selected. So... return ongoing and handle
-                 * the rest of the event handling in processPawnPromotion(); This
+                 * the rest of the event handling in processPiecePromotion(); This
                  * assumes that a pawn_promo_choice event immediately follows, which
                  * is something that is forced by the UI.
                  */
@@ -365,13 +374,13 @@ namespace check
     }
 
 
-    GameResult processPawnPromotion(PythonModule& module,
-                                    const CheckUIEvent& event,
-                                    BoardState& state)
+    GameResult processPiecePromotion(PythonModule& module,
+                                     const CheckUIEvent& event,
+                                     BoardState& state)
     {
         GameResult ongoing;
 
-        if (event.type != CheckUIEventType::PawnPromotion)
+        if (event.type != CheckUIEventType::PiecePromotion)
         { // Do nothing for non-pickup events.
             return ongoing;
         }
@@ -394,7 +403,7 @@ namespace check
         if (!lastMove.has_value())
         { // There is no move to promote, so this event cannot be handled.
             MIA_THROW(error::ErrorCode::Check_Malformed_Event,
-                      "Received a pawn promotion event without a pawn move to promote.");
+                      "Received a piece promotion event without a pawn move to promote.");
         }
 
         promoPiece.color = lastMove->piece.color;

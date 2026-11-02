@@ -163,14 +163,14 @@ namespace check
                         break;
                     }
 
-                    case CheckUIEventType::PawnPromotion:
-                    { // Signals a pawn promotion ui event was received.
+                    case CheckUIEventType::PiecePromotion:
+                    { // Signals a piece promotion ui event was received.
                         if (eventState.gameOver)
                         { // The board stays locked until the game is reset.
                             break;
                         }
 
-                        GameResult result = processPawnPromotion(module, uiEvent, boardState);
+                        GameResult result = processPiecePromotion(module, uiEvent, boardState);
                         handleGameResult(module, result, eventState);
                         break;
                     }

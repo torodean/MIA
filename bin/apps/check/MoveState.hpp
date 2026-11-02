@@ -31,10 +31,10 @@ namespace check
         bool wasCapture{false};
 
         /*
-         * Stores whether the last move triggers a pawn promotion. When this occurs,
+         * Stores whether the last move triggers a piece promotion. When this occurs,
          * the piece that is on the square will be updated, the piece in this move
-         * still remains as the pawn.
+         * still remains as the original piece (e.g., pawn, spade).
          */
-        bool triggersPawnPromo{false};
+        bool triggersPromo{false};
     }; // class MoveState
 } // namespace check
