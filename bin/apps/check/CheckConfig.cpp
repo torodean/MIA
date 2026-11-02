@@ -5,6 +5,9 @@
  * @brief Implements the CheckConfig methods and features.
  */
 
+#include <iostream>
+#include <map>
+
 // Include the associated header file.
 #include "CheckConfig.hpp"
 #include "Piece.hpp"
@@ -131,5 +134,35 @@ namespace check
         }
 
         return piecesArt;
+    }
+
+
+    bool validStartingPosition(const std::vector<PiecePosition>& startingPosition,
+                               const PlayerState& startingPlayerState)
+    {
+        std::map<Color, uint8_t> kingCounts;
+
+        for (const PiecePosition& position : startingPosition)
+        {
+            if (position.piece.type == PieceType::King)
+                kingCounts[position.piece.color]++;
+        }
+
+        if (kingCounts.size() != startingPlayerState.numberOfPlayers)
+        {
+            std::cerr << "The number of kings must match how many players there are!" << std::endl;
+            return false;
+        }
+
+        for (const auto& count : kingCounts)
+        {
+            if (count.second != 1)
+            {
+                std::cerr << "There must be one king per player!" << std::endl;
+                return false;
+            }
+        }
+
+        return true;
     }
 } // namespace check

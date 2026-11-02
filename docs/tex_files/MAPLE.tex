@@ -13,7 +13,7 @@ At the time of starting this design, no MAPLE code has been implemented. This se
 The maple tool will take a configuration file with various values needed for the various features of the app. The app itself will be setup as a terminal application which takes various commands to perform different tasks. When the tasks are requested based on an input command, the application will use the configuration file to find the appropriate needed values and perform the task. If the needed values from the configuration file are not found, the application will not be able to proceed until those values are supplied. In some cases, the values will be made configurable directly through the application, such as a toggle-able house price when determining mortgage calculations.
 
 At the present, the following tasks are needed by the MAPLE tool:
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item Annual tax calculations and payments.
 	\item Future projections of a mortgage or loan.
 	\item Comparison projections of renting vs buying property.
@@ -71,7 +71,7 @@ MAPLE reads its data from a key-value config file (default \texttt{Maple.MIA}). 
 
 Tax constants are a fixed set of keys that define rates, brackets, and deductions. Each key carries a suffix identifying the jurisdiction it applies to: \texttt{\_federal} or \texttt{\_state}. The suffix is just a string the loader appends to each key name, so \texttt{\_federal} and \texttt{\_state} are the two used today, but the in-code mechanism itself is not limited to them. The recognized base key names are:
 
-\begin{itemize}
+\begin{itemize}\itemsep0em
 	\item \texttt{medicare\_tax\_rate} - the Medicare tax rate.
 	\item \texttt{oasdi\_tax\_rate} - the OASDI (Social Security) tax rate.
 	\item \texttt{sales\_tax} - the sales tax rate.

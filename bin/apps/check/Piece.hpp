@@ -104,6 +104,7 @@ namespace check
         Black,      ///< The usual black color.
         Red,
         Green,
+        Count       ///< How many color entries exist. Keep this last!
     };
 
     /**

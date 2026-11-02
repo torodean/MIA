@@ -53,6 +53,13 @@ namespace check
         // Pass the runtime context to the board state to enable logging and verbosity.
         boardState.setRuntimeContext(getContext());
 
+        // Validate the starting position.
+        if (!validStartingPosition(configValues.startingPosition, configValues.startingPlayerState))
+        { // And invalid starting position was configured.
+            std::string err = "Error: The configured starting position is invalid!";
+            MIA_THROW(error::ErrorCode::Check_Invalid_Start_Pos, err);
+        }
+
         // Load config values into the board state.
         boardState.initialize(configValues.boardSizeX,
                               configValues.boardSizeY,

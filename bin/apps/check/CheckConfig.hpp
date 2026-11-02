@@ -95,4 +95,18 @@ namespace check
      */
     std::vector<PieceArt> extractPieceArtsFromConfig(const config::MIAConfig& config,
                                                      const std::string& configPrefix);
+
+    /**
+     * This will run some quick checks on the starting position to determine if it
+     * is valid or not. This will check the following:
+     *     - Exactly one king pieces exists for each color.
+     *
+     * @note At the time of writing this, only two players is supported, but this
+     *       method supports any number of players based on how many colors exist.
+     * @param startingPosition The starting position to check against.
+     * @param startingPlayerState The starting player states.
+     * @return true if the starting position is valid, false otherwise.
+     */
+    bool validStartingPosition(const std::vector<PiecePosition>& startingPosition,
+                               const PlayerState& startingPlayerState);
 } // namespace check

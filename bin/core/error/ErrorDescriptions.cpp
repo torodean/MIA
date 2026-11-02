@@ -98,6 +98,7 @@ namespace error
          */
         { Check_No_Piece_On_Square, "No piece was on the specified square." },
         { Check_Malformed_Event, "A backend-ui event appears to be malformed." },
+        { Check_Invalid_Start_Pos, "An invalid starting position was configured." },
 
         // A catch all for any un-programmed errors.
         { Catastrophic_Failure, "A catastrophic failure occurred." }
