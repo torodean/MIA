@@ -26,6 +26,7 @@
 #include "Golem.hpp"
 #include "Shard.hpp"
 #include "Spade.hpp"
+#include "Pedestal.hpp"
 
 namespace check
 {
@@ -136,6 +137,7 @@ namespace check
             case PieceType::Shard:   return "shard";
             case PieceType::Ankh:    return "ankh";
             case PieceType::Spade:   return "spade";
+            case PieceType::Pedestal:return "pedestal";
             case PieceType::None:
             default:                 return "none";
         }
@@ -157,6 +159,7 @@ namespace check
         if (input == "shard")   return PieceType::Shard;
         if (input == "ankh")    return PieceType::Ankh;
         if (input == "spade")   return PieceType::Spade;
+        if (input == "pedestal")return PieceType::Pedestal;
 
         // Default.
         return PieceType::None;
@@ -332,6 +335,9 @@ namespace check
 
             case PieceType::Spade:
                 return std::make_unique<SpadeLogic>();
+
+            case PieceType::Pedestal:
+                return std::make_unique<PedestalLogic>();
 
             case PieceType::Count:
             case PieceType::None:

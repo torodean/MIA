@@ -62,6 +62,7 @@ namespace check
         Shard,      ///< The Shard (custom bishop-like piece).
         Golem,      ///< The Golem (custom rook-like piece).
         Spade,      ///< The Spade (custom pawn-like piece).
+        Pedestal,   ///< The Pedestal (custom rook-like piece).
         Count       ///< Number of defined piece types. (Keep last!)
     }; // enum PieceType
 

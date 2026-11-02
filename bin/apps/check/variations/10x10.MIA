@@ -37,11 +37,11 @@ piece_ankh=\u2625
 piece_golem=\u29C8
 piece_shard=\u2726
 piece_spade=\u2660
+piece_pedestal=\u21EF
 
 # Potential new pieces to add at a later date. (cool glyphs that would make good pieces)
 piece_diamonds=\u2756
 piece_ninja=\u272B
-piece_forward=\u21EF
 piece_flower=\u2741
 piece_star=\u272D
 piece_bubbles=\u2724
@@ -71,4 +71,4 @@ piece_juno=\u26B5
 #============================================================================
 
 # Standard chess starting configuration.
-starting_state=0,0,rook,white;0,1,golem,white;9,1,golem,white;2,0,knight,white;2,1,templar,white;3,0,bishop,white;3,1,shard,white;4,0,queen,white;4,1,ankh,white;5,0,king,white;5,1,ankh,white;6,0,bishop,white;6,1,shard,white;7,0,knight,white;7,1,templar,white;9,0,rook,white;0,2,pawn,white;1,2,pawn,white;2,2,pawn,white;3,2,pawn,white;4,2,pawn,white;5,2,pawn,white;6,2,pawn,white;7,2,pawn,white;8,2,pawn,white;9,2,pawn,white;1,1,spade,white;8,1,spade,white;0,7,pawn,black;1,7,pawn,black;2,7,pawn,black;3,7,pawn,black;4,7,pawn,black;5,7,pawn,black;6,7,pawn,black;7,7,pawn,black;8,7,pawn,black;9,7,pawn,black;0,9,rook,black;0,8,golem,black;2,9,knight,black;2,8,templar,black;3,9,bishop,black;3,8,shard,black;4,9,queen,black;4,8,ankh,black;5,9,king,black;5,8,ankh,black;6,9,bishop,black;6,8,shard,black;7,9,knight,black;7,8,templar,black;9,9,rook,black;9,8,golem,black;1,8,spade,black;8,8,spade,black
+starting_state=0,0,rook,white;0,1,golem,white;9,1,golem,white;2,0,knight,white;2,1,templar,white;3,0,bishop,white;3,1,shard,white;4,0,queen,white;4,1,ankh,white;5,0,king,white;5,1,ankh,white;6,0,bishop,white;6,1,shard,white;7,0,knight,white;7,1,templar,white;9,0,rook,white;0,2,pawn,white;1,2,pawn,white;2,2,pawn,white;3,2,pawn,white;4,2,pawn,white;5,2,pawn,white;6,2,pawn,white;7,2,pawn,white;8,2,pawn,white;9,2,pawn,white;1,1,spade,white;8,1,spade,white;1,0,pedestal,white;8,0,pedestal,white;0,7,pawn,black;1,7,pawn,black;2,7,pawn,black;3,7,pawn,black;4,7,pawn,black;5,7,pawn,black;6,7,pawn,black;7,7,pawn,black;8,7,pawn,black;9,7,pawn,black;0,9,rook,black;0,8,golem,black;2,9,knight,black;2,8,templar,black;3,9,bishop,black;3,8,shard,black;4,9,queen,black;4,8,ankh,black;5,9,king,black;5,8,ankh,black;6,9,bishop,black;6,8,shard,black;7,9,knight,black;7,8,templar,black;9,9,rook,black;9,8,golem,black;1,8,spade,black;8,8,spade,black;1,9,pedestal,black;8,9,pedestal,black
