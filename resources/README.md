@@ -22,6 +22,9 @@ This is the configuration file for the MIATest application, which is used for te
 ### `MIAWorkout.MIA`
 This is the configuration file for the MIAworkout application. Includes parameters and exercise lists for dynamic workout creation.
 
+### `Maple.MIA`
+This is the configuration file for the MAPLE application. It holds the values needed by the MAPLE financial projections and features.
+
 ### `WoWConfig.MIA`
 This is the configuration file for the WoW (World Of Warcraft) related applications.
 
