@@ -208,7 +208,7 @@ def update_readme(readme_path, metrics):
     start = content.index(begin_marker) + len(begin_marker)
     end = content.index(end_marker)
 
-    content = (content[:start] +"\n" + metrics + "\n" +content[end:])
+    content = (content[:start] +"\n```text\n" + metrics + "\n```\n" +content[end:])
 
     with open(readme_path, "w", encoding="utf-8") as file:
         file.write(content)
