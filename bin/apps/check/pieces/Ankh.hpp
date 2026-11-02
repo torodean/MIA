@@ -20,12 +20,12 @@ namespace check
     class AnkhLogic : public BasePieceLogic
     {
     public:
-        /// The main constructor for a Ankh piece.
+        /// The main constructor for an Ankh piece.
         AnkhLogic() : BasePieceLogic(PieceType::Ankh) {};
 
         /**
-         * This returns the legal moves for a Ankh piece. A Ankh moves two
-         * squares diagonally (either direction) and can jump pieces. A Ankh can 
+         * This returns the legal moves for an Ankh piece. An Ankh moves two
+         * squares diagonally (either direction) and can jump pieces. An Ankh can 
          * capture an opposing piece but cannot move onto a square occupied by a piece 
          * of the same color.
          */
@@ -33,5 +33,5 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;
-    }; // class Ankh
+    }; // class AnkhLogic
 } // namespace check
