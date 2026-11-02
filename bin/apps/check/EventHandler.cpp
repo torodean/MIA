@@ -449,7 +449,7 @@ namespace check
             { // The art configuration was found.
                 module.call("registerPiece", pieceArt.pieceName, pieceArt.art);
             }
-            timing::sleepMilliseconds(20);
+            timing::sleepMilliseconds(15);
         }
     }
 } // namespace check
