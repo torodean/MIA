@@ -16,6 +16,10 @@ Automatically increments the documentation and application's version number. Typ
 ### `install.sh`
 Handles extra installation features not handled via cmake.
 
+### `repo_metrics.py`
+This is a simple script that gathers some code metrics about the MIA repo. 
+It will also optionally updated the README with those metrics, which is automatically done when the `commitAll.sh` script is used.
+
 ### `setup.sh`
 This script handles installing some dependancies used by the MIA project and other initial setup steps.
 
