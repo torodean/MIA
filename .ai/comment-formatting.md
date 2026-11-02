@@ -225,8 +225,10 @@ EXPECT_TRUE(container.has(coin, 50))
 
 ### @TODO comments
 
-Write TODOs as `// @TODO - <description>.` on their own line.
+Write TODOs that you add as `// @TODO - <description>.` on their own line.
 They are acceptable in headers and source; do not let them accumulate silently.
+This format applies only to AI-written TODOs.
+Existing human-written TODOs (`TODO - ...`, `@todo`, etc.) are owned by their author and do not need the `@` symbol; leave them as written unless the author explicitly asks for a conversion.
 
 ## CMake (.txt / .cmake)
 
