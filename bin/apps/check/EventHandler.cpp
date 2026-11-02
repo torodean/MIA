@@ -430,7 +430,16 @@ namespace check
                 MIA_THROW(error::ErrorCode::Feature_In_Dev, 
                           "Image files not yet supported for check app ui art.");
             }
-            module.call("registerPiece", pieceArt.pieceName, pieceArt.art);
+            else if (pieceArt.type == PieceArtType::Unknown)
+            { // Default to the empty set if art is not configured.
+                std::cout << "WARNING: Piece art for " 
+                          << pieceArt.pieceName << " not configured! Using empty-set symbol." << std::endl;
+                module.call("registerPiece", pieceArt.pieceName, "\u2205");
+            }
+            else
+            { // The art configuration was found.
+                module.call("registerPiece", pieceArt.pieceName, pieceArt.art);
+            }
             timing::sleepMilliseconds(20);
         }
     }

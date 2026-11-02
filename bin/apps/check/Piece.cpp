@@ -12,6 +12,7 @@
 #include "StringUtils.hpp"
 #include "BoardState.hpp"
 #include "PlayerState.hpp"
+#include "MoveState.hpp"
 
 // Include the various piece types.
 #include "Pawn.hpp"
@@ -24,6 +25,7 @@
 #include "Ankh.hpp"
 #include "Golem.hpp"
 #include "Shard.hpp"
+#include "Spade.hpp"
 
 namespace check
 {
@@ -133,6 +135,7 @@ namespace check
             case PieceType::Golem:   return "golem";
             case PieceType::Shard:   return "shard";
             case PieceType::Ankh:    return "ankh";
+            case PieceType::Spade:   return "spade";
             case PieceType::None:
             default:                 return "none";
         }
@@ -153,6 +156,7 @@ namespace check
         if (input == "golem")   return PieceType::Golem;
         if (input == "shard")   return PieceType::Shard;
         if (input == "ankh")    return PieceType::Ankh;
+        if (input == "spade")   return PieceType::Spade;
 
         // Default.
         return PieceType::None;
@@ -326,6 +330,9 @@ namespace check
             case PieceType::Shard:
                 return std::make_unique<ShardLogic>();
 
+            case PieceType::Spade:
+                return std::make_unique<SpadeLogic>();
+
             case PieceType::Count:
             case PieceType::None:
                 return nullptr;
@@ -472,5 +479,70 @@ namespace check
         }
 
         return attackedSquares;
+    }
+
+
+    bool isEnPassantMove(const MoveState& move, const BoardState& state)
+    {
+        // The moving piece must be a pawn.
+        if (move.piece.type != PieceType::Pawn && move.piece.type != PieceType::Spade)
+            return false;
+
+        // The destination square must be unoccupied.
+        if (state.isSquareOccupied(move.endingPos))
+            return false;
+
+        // A pawn must move diagonally by one square to capture en passant.
+        int16_t xDifference = static_cast<int16_t>(move.endingPos.x) -
+                             static_cast<int16_t>(move.startingPos.x);
+        int16_t yDifference = static_cast<int16_t>(move.endingPos.y) -
+                             static_cast<int16_t>(move.startingPos.y);
+
+        if (std::abs(xDifference) != 1 || std::abs(yDifference) != 1)
+            return false;
+
+        // The previous move must have been an opposing pawn's two-square move.
+        const std::optional<MoveState> lastMove = state.getLastMove();
+
+        // The last move must exist.
+        if (!lastMove.has_value())
+            return false;
+
+        // The last move has to be either a pawn or a spade piece.
+        if (lastMove->piece.type != PieceType::Pawn &&
+            lastMove->piece.type != PieceType::Spade)
+            return false;
+
+        if (lastMove->piece.color == move.piece.color ||
+            lastMove->endingPos.x != move.endingPos.x ||
+            lastMove->endingPos.y != move.startingPos.y)
+        {
+            return false;
+        }
+
+        int16_t previousYDifference = static_cast<int16_t>(lastMove->endingPos.y) -
+                                      static_cast<int16_t>(lastMove->startingPos.y);
+
+        return std::abs(previousYDifference) == 2;
+    }
+
+
+    bool triggersPromotion(const MoveState& move,
+                           const BoardState& state)
+    {
+        // The moving piece must be a pawn or a spade.
+        if (move.piece.type != PieceType::Pawn &&
+            move.piece.type != PieceType::Spade)
+            return false;
+
+        /*
+         * White moves in the positive y direction, so it gets promoted on the final
+         * row of the board. Black moves in the negative y direction, so it gets
+         * promoted on the first row of the board instead.
+         */
+        if (move.piece.color == Color::White)
+            return move.endingPos.y == state.getYSize() - 1;
+
+        return move.endingPos.y == 0;
     }
 } // namespace check

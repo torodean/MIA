@@ -117,8 +117,16 @@ namespace check
             PieceArt pieceArt;
             pieceArt.pieceName = pieceTypeToString(type);
             std::string configKey = configPrefix + pieceArt.pieceName;
-            pieceArt.art = config.getString(configKey);
-            pieceArt.type = determinePieceArtType(pieceArt.art);
+            try
+            { // getString will throw if the key does not exist.
+                pieceArt.art = config.getString(configKey);
+                pieceArt.type = determinePieceArtType(pieceArt.art);
+            }
+            catch(error::MIAException& ex)
+            { // If the config art does not exist, just default to none.
+                pieceArt.art = ""; // Leave it empty.
+                pieceArt.type = PieceArtType::Unknown;
+            }
             piecesArt.push_back(pieceArt);
         }
 
