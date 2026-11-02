@@ -33,5 +33,5 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;
-    }; // class Templar
+    }; // class TemplarLogic
 } // namespace check
