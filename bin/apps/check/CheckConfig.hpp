@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 #include "MathTypes.hpp"
 #include "Piece.hpp"
@@ -73,8 +74,8 @@ namespace check
      * of the format "<x-position>,<y-position>,<piece type>,<piece color>". These
      * state strings are what the setBoardState(cells) method in the python module
      * expects.
-     * @param input The input CheckConfig to parse.
-     * @return A vector of strings constructed from the input.
+     * @param positions The piece positions to convert.
+     * @return A vector of state strings constructed from the positions.
      */
     std::vector<std::string> positionsToStateStrings(
         const std::vector<PiecePosition>& positions);
@@ -83,6 +84,8 @@ namespace check
      * This will determine the input piece art type. The type is keyed off of the
      * format of the input string. The config expects either a glyph (starting with
      * "\u" followed by 4 hexadecimal digits) or a file path.
+     * @param input The piece art string stored in the configuration.
+     * @return The piece art type that the input string represents.
      */
     PieceArtType determinePieceArtType(const std::string& input);
 
