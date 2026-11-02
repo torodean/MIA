@@ -5,22 +5,26 @@
  * @brief Implements the logic for the pawn piece.
  */
 
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
+#include <optional>
 
 // Include the associated header file.
 #include "Pawn.hpp"
 #include "Piece.hpp"
 #include "BoardState.hpp"
+#include "MoveState.hpp"
 
 namespace check
 {
     namespace
     {
         /**
-         * This will determine if a pawn is in its starting position. The starting
-         * position is based on the pawn color and the board size. The pawns starting
-         * position should always be either be in row 1, or row boardYSize-1.
+         * This will determine if a pawn is still in its starting position. A pawn
+         * begins the game in its starting position and leaves it permanently once
+         * it has moved, so this checks whether the square reports any change rather
+         * than checking for a specific row. A row based check could not support
+         * games configured with non-standard starting positions.
          * @param currentPos The current position of the pawn.
          * @param boardState The current state of the board.
          * @return true if the piece is in its starting position, false otherwise.
