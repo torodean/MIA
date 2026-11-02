@@ -15,3 +15,4 @@ Edit these fragments to update the manual; rebuild the PDF from `MIAManual.tex`.
 ## images
 
 The `images/` folder holds the figures and diagrams referenced by the manual.
+Figures are organized into per-chapter subfolders (e.g., `check/`, `workout/`, `wow/`), while shared images such as the logos and setup screenshots are kept at the folder root.
