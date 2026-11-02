@@ -11,7 +11,6 @@
 
 #include "Piece.hpp"
 #include "MathTypes.hpp"
-#include "MoveState.hpp"
 
 namespace check
 {
