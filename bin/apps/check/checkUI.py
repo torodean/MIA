@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-@file    check.py
+@file    checkUI.py
 @author  Antonius Torode
 @date    10/15/2026
 
@@ -772,7 +772,7 @@ def setVerbose(val):
     global verboseMode
     verboseMode = val
     if verboseMode:
-        print("Verbose mode enabled for check (python module).")
+        print("Verbose mode enabled for checkUI (python module).")
 
 
 def main():
