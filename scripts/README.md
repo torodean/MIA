@@ -16,6 +16,9 @@ Automatically increments the documentation and application's version number. Typ
 ### `install.sh`
 Handles extra installation features not handled via cmake.
 
+### `open_changes.sh`
+Quickly opens all files changed according to git status (staged, unstaged, and untracked) as tabs in a single gedit window, so you can do a final review of your edits right before committing. Can be run from anywhere in the repository.
+
 ### `repo_metrics.py`
 This is a simple script that gathers some code metrics about the MIA repo. 
 It will also optionally updated the README with those metrics, which is automatically done when the `commitAll.sh` script is used.
@@ -23,7 +26,7 @@ It will also optionally updated the README with those metrics, which is automati
 ### `setup.sh`
 This script handles installing some dependancies used by the MIA project and other initial setup steps.
 
-### `setup-gtest.sh`
+### `setup_gtest.sh`
 Installs Google Test, which is used by the project's tests. Run on its own or from `setup.sh`.
 
 ### `uninstall.sh`

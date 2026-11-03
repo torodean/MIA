@@ -8,8 +8,8 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "MathTypes.hpp"
 #include "Piece.hpp"
@@ -92,7 +92,7 @@ namespace check
     /**
      * This method will extract the piece art settings from the config object. This
      * assumes that all config piece values start with the prefix and match a valid
-     * PieceType (see Piece.hpp). For example "piece_king=<value>".
+     * PieceType (see PieceType.hpp). For example "piece_king=<value>".
      * @param config The configuration object with the loaded config file.
      * @param configPrefix The prefix to search config values for (e.g., "piece_").
      */

@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "Piece.hpp"
+#include "PieceType.hpp"
 #include "MathTypes.hpp"
 #include "BoardState.hpp"
 

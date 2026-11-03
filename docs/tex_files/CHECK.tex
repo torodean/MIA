@@ -131,7 +131,7 @@ The logic for a piece lives in its own files inside the \texttt{bin/apps/check/p
 	\item \texttt{getAttackedSquares()}: Returns every square the piece attacks, including occupied squares. The base implementation treats attacks the same as legal moves. Pieces that move differently than they capture (the Pawn, the Spade, and the Pedestal) override this.
 \end{itemize}
 
-\texttt{Piece.hpp} also declares helpers that generate common movement patterns, so a piece implementation only needs to describe what makes it different:
+\texttt{MoveGeneration.hpp} also declares helpers that generate common movement patterns, so a piece implementation only needs to describe what makes it different:
 \begin{itemize}\itemsep0em
 	\item \texttt{generateStraightMoves()} and \texttt{generateDiagonalMoves()} generate sliding moves (like the Rook and the Bishop) with an optional \texttt{maximumDistance} limit, where zero means unlimited. The Rook, Bishop, and Queen pieces use these, as do the distance-limited Golem and Shard pieces.
 	\item \texttt{generateStepMoves()} generates moves for pieces that jump a fixed set of offsets (like the Knight). The Templar and Ankh pieces use this.
@@ -189,9 +189,9 @@ std::vector<math::Coordinate<uint8_t>> TemplarLogic::getLegalMoves(
 
 \subsection{Registering the Piece Type}\label{section:check_registering_piece_type}
 
-Pieces are identified throughout the engine by the \texttt{PieceType} enum in \texttt{Piece.hpp}. Three methods in \texttt{Piece.cpp} map between this enum, the string keywords, and the logic classes, so a new piece needs one enum entry and one case in each of these methods. Missing any of these leaves the piece unusable: without the string conversions it cannot be named in a configuration, and without the factory case it has no logic and can never move.
+Pieces are identified throughout the engine by the \texttt{PieceType} enum in \texttt{PieceType.hpp}. The two conversion methods in \texttt{PieceType.cpp} and the \texttt{createPieceLogic()} factory in \texttt{Piece.cpp} map between this enum, the string keywords, and the logic classes, so a new piece needs one enum entry and one case in each of these methods. Missing any of these leaves the piece unusable: without the string conversions it cannot be named in a configuration, and without the factory case it has no logic and can never move.
 
-Add the new enumerator to \texttt{PieceType}. Entries go after the existing pieces and before \texttt{Count}, which must stay last because board iteration and lookup tables are sized from it:
+Add the new enumerator in \texttt{PieceType.hpp}. Entries go after the existing pieces and before \texttt{Count}, which must stay last because board iteration and lookup tables are sized from it:
 
 \begin{lstlisting}[style=cppstyle]
 enum class PieceType : uint8_t
@@ -237,7 +237,7 @@ PieceType stringToPieceType(const std::string& type)
 }
 \end{lstlisting}
 
-Finally, \texttt{createPieceLogic()} is the factory that maps a piece type to its logic object. The new piece's header must be \#included in \texttt{Piece.cpp} (alongside the other piece includes at the top of the file) so the factory can construct the logic class:
+Finally, \texttt{createPieceLogic()} in \texttt{Piece.cpp} is the factory that maps a piece type to its logic object. The new piece's header must be \#included in that file (alongside the other piece includes at the top) so the factory can construct the logic class:
 
 \begin{lstlisting}[style=cppstyle]
 // Include the various piece types.

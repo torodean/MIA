@@ -12,6 +12,8 @@ set( CHECK_SRC
      Check_main.cpp
      CheckConfig.cpp
      Piece.cpp
+     PieceType.cpp
+     MoveGeneration.cpp
      PlayerState.cpp
      SquareState.cpp
      BoardState.cpp
@@ -25,6 +27,8 @@ set( CHECK_INC
      Check.hpp
      CheckConfig.hpp
      Piece.hpp
+     PieceType.hpp
+     MoveGeneration.hpp
      PlayerState.hpp
      SquareState.hpp
      BoardState.hpp

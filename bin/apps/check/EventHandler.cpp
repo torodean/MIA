@@ -16,6 +16,7 @@
 #include "Error.hpp"
 #include "MIAException.hpp"
 #include "MoveState.hpp"
+#include "PieceType.hpp"
 // Used to push the starting position back to the UI on a reset.
 #include "CheckConfig.hpp"
 // Used for pausing between ui events.
