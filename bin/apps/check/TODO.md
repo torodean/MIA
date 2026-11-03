@@ -32,14 +32,13 @@ Unit tests for all these classes need added.
 
 Add the ability to save and load games.
 
+## Board Setup
+
+The ability to set up the board in any starting configuration would be nice.
+
 ## Draw conditions.
 
 Other draw conditions such as threefold repetition need added.
-
-## [bug] Config errors are swallowed
-
-A failed config load is logged and then ignored, which lets the board initialize
-with sizes that were never set.
 
 ## Game clocks
 
