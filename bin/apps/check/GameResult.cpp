@@ -15,6 +15,7 @@
 #include "BoardState.hpp"
 #include "PlayerState.hpp"
 #include "SquareState.hpp"
+#include "PieceType.hpp"
 // Needed for determining game result.
 #include "King.hpp"
 
