@@ -48,23 +48,14 @@ namespace error
          * application design and features which are not fitting in a more specific
          * category. 31XXX
          */
-        MIAConfig_File_Not_Found = 31403,     ///< The configuration file was not found.
-        FATAL_File_Not_Found = 31404,         ///< A needed file was not found.
         Feature_In_Dev = 31415,               ///< This feature is not finished.
-        Invalid_MIAConfig_Option = 31417,     ///< Invalid option in MIAConfig.
         Nothing_set_For_Testing = 31418,      ///< Nothing set for testing.
         Issue_Setting_MIA_Variable = 31419,   ///< Issue setting MIA variable.
-        Issue_With_Sequence_File = 31420,     ///< Issue with MIA sequence file.
-        MIA_Sequence_File_Not_Found = 31421,  ///< MIA sequence file not found.
-        Invalid_Sequence_Option = 31422,      ///< Invalid option in MIASequences.
         Cannot_Find_Mapped_Value = 31423,     ///< Some map does not contain the map searched for.
         Invalid_Character_Input = 31424,      ///< There was an invalid character input.
         Invalid_Argument = 31428,             ///< Invalid application/command argument.
         Missing_Argument = 31429,             ///< The app/command argument was not found.
-        Config_File_Not_Set = 31430,          ///< Config File not set.
-        Failed_To_Open_File = 31431,          ///< Failed to open a file.
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
-        Invalid_Configuration_Call = 31433,   ///< Invalid configuration call.
         Out_Of_Order_Method_Calls = 31434,    ///< A sequence of methods was called out of order.
 
         /*
@@ -75,6 +66,24 @@ namespace error
         Linux_Only_Feature = 31500,           ///< This feature is only supported on Linux.
         Windows_Only_Feature = 31501,         ///< Windows only feature.
         OS_Not_Supported = 31502,             ///< Unsupported OS for this feature.
+
+        /*
+         * Configuration error codes. 316XX. These cover failures while loading or
+         * interpreting configuration files, including MIA sequence files.
+         */
+        Config_File_Not_Found = 31600,        ///< The configuration file was not found.
+        Config_File_Not_Set = 31601,          ///< The configuration file was never set.
+        Config_Missing_Key = 31602,           ///< A required configuration key was not found.
+        Config_Invalid_Option = 31603,        ///< An option in a configuration file was not recognized.
+        Config_Invalid_Value = 31604,         ///< A configuration value was not valid for its setting.
+        Config_Load_Failure = 31605,          ///< The application failed to load its configuration.
+        Config_Invalid_Call = 31606,          ///< The configuration API was called incorrectly.
+
+        /*
+         * File-specific error codes. 317XX.
+         */
+        Required_File_Not_Found = 31700,      ///< A required file was not found.
+        File_Open_Failure = 31701,            ///< Failed to open a file.
 
         /*
          * VLC-related errors. 361XX
@@ -127,27 +136,27 @@ namespace error
 
     /**
      * Returns an error code witha a brief descriptive message.
-     * @param errorCode[int] - The integer error code to return.
-     * @param details[std::string&] - A string with optional descriptive error info (default = "").
+     * @param errorCode The integer error code to return.
+     * @param details A string with optional descriptive error info (default = "").
      */
     [[deprecated("Use MIAException instead!")]]
     int returnError(int errorCode = 9001, const std::string& details = "");
 
     /**
      * Prints information about a specified known error or all of the known errors.
-     * @param error[int] - The error to return information about.
+     * @param error The error to return information about.
      */
     void errorInfo(int error);
 
     /**
      * Returns information about a specific error code.
-     * @param error[ErrorCode] - The error to return information about.
+     * @param error The error to return information about.
      */
     std::string errorInfo(ErrorCode error);
 
     /**
      * Inquires for an error code to gather info about.
-     * @param all[bool] - option to print all error info (default = false).
+     * @param all option to print all error info (default = false).
      */
     void errorInfoRun(bool all = false);
 
