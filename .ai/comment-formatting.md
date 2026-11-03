@@ -225,8 +225,10 @@ EXPECT_TRUE(container.has(coin, 50))
 
 ### @TODO comments
 
-Write TODOs as `// @TODO - <description>.` on their own line.
+Write TODOs that you add as `// @TODO - <description>.` on their own line.
 They are acceptable in headers and source; do not let them accumulate silently.
+This format applies only to AI-written TODOs.
+Existing human-written TODOs (`TODO - ...`, `@todo`, etc.) are owned by their author and do not need the `@` symbol; leave them as written unless the author explicitly asks for a conversion.
 
 ## CMake (.txt / .cmake)
 
@@ -306,7 +308,7 @@ The existing codebase drifts in these ways; recognize the drift but do not copy 
 - **Bracketed param/return** `@param name[type] - ...` and `@return [type] - ...` across most headers, and enforced by `comment_checker.py`. Target: standard Doxygen `@param name ...` and `@return ...`.
 - **`.cpp` files often lack Doxygen on functions** that are declared in the header. This is acceptable when the header carries the docs; the .cpp needs its own Doxygen only for functions not declared in a header.
 - **`///` and `//` mixed for section comments** in some headers (e.g. VirtualKeyStrokes.hpp uses `///` above includes). Use `//` for implementation/section comments; reserve `///` for documenting a declaration.
-- **`@TODO` / `@todo` / `TODO`** variants. Target: `// @TODO - ...`.
+- **`@TODO` / `@todo` / `TODO`** variants in existing code. Target for new AI-written TODOs: `// @TODO - ...`. Human-written TODOs are not drift; leave them alone.
 - **Block comments with `/*` or `*/` on the same line as body** appear in a few places. Target: delimiters on their own lines.
 - **`@throws` vs `@throw`**: newer code uses `@throws`; some older utils headers use `@throw [type] - ...`. Target: `@throws type description`.
 

@@ -29,22 +29,14 @@ namespace error
         /*
          * MIA Program/application specific errors.
          */
-        { MIAConfig_File_Not_Found, "MIAConfig file not found." },
-        { FATAL_File_Not_Found, "FATAL: File not found." },
         { Feature_In_Dev, "Feature still in development." },
-        { Invalid_MIAConfig_Option, "Invalid option in MIAConfig." },
         { Nothing_set_For_Testing, "Nothing set for testing." },
         { Issue_Setting_MIA_Variable, "Issue setting MIA variable." },
-        { Issue_With_Sequence_File, "Issue with MIA sequence file." },
-        { MIA_Sequence_File_Not_Found, "MIA sequence file not found." },
-        { Invalid_Sequence_Option, "Invalid option in MIASequences." },
         { Cannot_Find_Mapped_Value, "Error finding mapped value." },
         { Invalid_Character_Input, "Invalid character input." },
         { Invalid_Argument, "Invalid application/command argument." },
         { Missing_Argument, "The app/command argument was not found." },
-        { Failed_To_Open_File, "Failed to open file." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
-        { Invalid_Configuration_Call, "Invalid configuration call." },
         { Out_Of_Order_Method_Calls, "A sequence of methods was called out of order." },
 
         /*
@@ -54,6 +46,23 @@ namespace error
         { Windows_Only_Feature, "This feature is only implemented for Windows." },
         { Linux_Only_Feature, "This feature is only implemented for Linux." },
         { OS_Not_Supported, "This feature is not supported on this OS." },
+
+        /*
+         * Configuration error codes. 316XX.
+         */
+        { Config_File_Not_Found, "The configuration file was not found." },
+        { Config_File_Not_Set, "The configuration file was never set." },
+        { Config_Missing_Key, "A required configuration key was not found." },
+        { Config_Invalid_Option, "An option in a configuration file was not recognized." },
+        { Config_Invalid_Value, "A configuration value was not valid for its setting." },
+        { Config_Load_Failure, "The application failed to load its configuration." },
+        { Config_Invalid_Call, "The configuration API was called incorrectly." },
+
+        /*
+         * File-specific error codes. 317XX.
+         */
+        { Required_File_Not_Found, "A required file was not found." },
+        { File_Open_Failure, "Failed to open a file." },
 
         /*
          * VLC-related errors. 361XX

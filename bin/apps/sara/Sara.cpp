@@ -128,7 +128,7 @@ void Sara::loadConfig()
                                                + sequence.name
                                                + " Config file in question is: "
                                                + config.getConfigFileFullPath();
-                MIA_THROW(error::ErrorCode::Invalid_Sequence_Option, invalidSequenceErr);
+                MIA_THROW(error::ErrorCode::Config_Invalid_Option, invalidSequenceErr);
                 sequence.clear();
             }
         }
@@ -354,4 +354,3 @@ int Sara::run()
     }
     return constants::SUCCESS;
 }
-

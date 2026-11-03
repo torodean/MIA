@@ -22,7 +22,7 @@ namespace config
         if (!file.is_open()) 
         {            
             std::string err = "Failed to open config file: " + filePath;
-            throw error::MIAException(error::ErrorCode::Failed_To_Open_File, err);
+            throw error::MIAException(error::ErrorCode::File_Open_Failure, err);
         }            
         rawConfigLines.clear();
 
@@ -46,49 +46,49 @@ namespace config
 
     int RawLinesData::getInt(const std::string& key) const
     {
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getInt not supported for RAW_LINES configuration file.");
     }
 
 
     double RawLinesData::getDouble(const std::string& key) const
     {
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getDouble not supported for RAW_LINES configuration file.");
     }
 
 
     std::string RawLinesData::getString(const std::string& key) const
     {
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getString not supported for RAW_LINES configuration file.");
     }
 
 
     std::vector<std::string> RawLinesData::getVector(const std::string& key, char delimiter) const
     {
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getVector not supported for RAW_LINES configuration file.");
     }
 
 
     bool RawLinesData::getBool(const std::string& key) const
     {
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getBool not supported for RAW_LINES configuration file.");
     }
 
 
     std::vector<int> RawLinesData::getIntVector(const std::string& key, char delimiter) const
     {
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getIntVector not supported for RAW_LINES configuration file.");
     }
 
 
     std::vector<constants::KeyValuePair> RawLinesData::getAllConfigPairs() const
     {        
-        throw error::MIAException(error::ErrorCode::Invalid_Configuration_Call, 
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Call, 
             "getAllConfigPairs not supported for RAW_LINES configuration file.");
     }
 

@@ -3,7 +3,7 @@
 
 \section{Introduction}
 
-The Custom House-made Engine for Chess Knowledge (CHECK) application is a small chess application contained within the MIA project. The project is intended to expand on the class chess concept with many configurable values and added features such as custom game board sizes (see Figure \ref{figure:check_10x6}) and custom pieces (see Figure \ref{figure:check_custom_pieces_01}) with unique logic. As of MIA version 2.117, the CHECK application implements nearly all traditional chess features except for draw by repetition. 
+The Custom House-made Engine for Chess Knowledge (CHECK) application is a small chess application contained within the MIA project. The project is intended to expand on the classic chess concept with many configurable values and added features such as custom game board sizes (see Figure \ref{figure:check_10x6}) and custom pieces (see Figure \ref{figure:check_custom_pieces_01}) with unique logic. As of MIA version 2.117, the CHECK application implements nearly all traditional chess features except for draw by repetition. 
 
 \begin{figure}[h]
 	\centering
@@ -44,7 +44,7 @@ After completing the basic engine, the idea was to further explore some other (n
 
 
 
-\section{Configuration}
+\section{Configuration}\label{section:check_configuration}
 
 TODO
 
@@ -66,11 +66,11 @@ TODO
 
 
 
-\section{Available Pieces}
+\section{Available Pieces}\label{section:check_available_pieces}
 
 This section outlines the available pieces that can be used in the CHECK application. All of the pieces have a specified keyword which is used to add the piece to the configuration. Once added, each piece contains its own logic and behaviors. These are all outlined here.
 
-\subsection{Normal Chess Pieces}
+\subsection{Normal Chess Pieces}\label{section:check_normal_pieces}
 
 The CHECK application contains all of the usual chess pieces which (when isolated from the custom pieces) contain all of the same logic and mechanics as they do in traditional chess. Some of the pieces have extended behavior and functionality when used in conjunction with some of the custom pieces.
 
@@ -84,7 +84,7 @@ The CHECK application contains all of the usual chess pieces which (when isolate
 \end{itemize}
 
 
-\subsection{Custom CHECK Pieces}
+\subsection{Custom CHECK Pieces}\label{section:check_custom_pieces}
 
 The CHECK application contains custom piece options which have unique logic to add new elements on top of the traditional chess game. The CHECK application is designed with the intention of being expandable with new and custom pieces so the number of pieces will potentially grow in time. These custom pieces are outlined in this section.
 
@@ -98,10 +98,10 @@ The CHECK application contains custom piece options which have unique logic to a
 \begin{itemize}\itemsep0em
 	\item \textbf{Golem}: The Golem is essentially a slightly less powerful Rook. It moves exactly as a rook does, except it has a maximum move distance of three squares. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 	\item \textbf{Shard}: The Shard is essentially a slightly less powerful Bishop. It moves exactly as a Bishop does, except it has a maximum move distance of three squares. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
-	\item \textbf{Templar}: The Templar piece jumps over other pieces (similar to the Knight). It moves two squares either horizontally or vertically. This pieces is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
-	\item \textbf{Ankh}: The Ankh piece jumps over other pieces (similar to the Knight). It moves two squares in either diagonal direction. This pieces is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
+	\item \textbf{Templar}: The Templar piece jumps over other pieces (similar to the Knight). It moves two squares either horizontally or vertically. This piece is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
+	\item \textbf{Ankh}: The Ankh piece jumps over other pieces (similar to the Knight). It moves two squares in either diagonal direction. This piece is similar to the Bishop in the sense that it will always stay on its starting color. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 	\item \textbf{Pedestal}: The Pedestal moves much like a Rook, except it can only move to the furthest legal square (which means it must take a piece if it moves towards it). When determining checks for the king, the squares that a Pedestal piece \textit{could} move to if another piece moves there are considered. For example, if the piece is in line of sight with the king, even though a Pedestal cannot move to a square \textit{next to} the king, that square is still considered attacked. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
-	\item \textbf{Spade}: The Spade is very similar to a Pawn and shares essentially the same mechanics with a twist. The Spade can always move one or two squares forward. The Spade will trigger En Passant when moving two squares past a Pawn and can capture a Pawn En Passant if a Pawn moves two squares and ends up beside it. The Spade can be promoted into all of the above custom pieces if it reaches the last row of the board. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
+	\item \textbf{Spade}: The Spade is very similar to a Pawn and shares essentially the same mechanics with a twist. The Spade can always move one or two squares forward. The Spade will trigger En Passant when moving two squares past a Pawn or another Spade, and can capture a Pawn or another Spade En Passant if that piece moves two squares and ends up beside it. The Spade can be promoted into all of the above custom pieces if it reaches the last row of the board. See Figure \ref{figure:check_custom_pieces_01} for the default glyph art.
 \end{itemize}
 
 
@@ -117,6 +117,172 @@ The CHECK application contains custom piece options which have unique logic to a
 
 
 
-\section{Adding a New Custom Piece}
+\section{Adding a New Custom Piece}\label{section:check_adding_piece}
 
-TODO
+Adding a custom piece takes a few steps: create the piece's logic class, register the new type with the piece type system, and add the piece's art to the configuration file. Anything beyond these steps depends on what the piece does. The custom \textit{Templar} piece is used as the example throughout this section. The Templar jumps over other pieces (like the Knight does) and moves exactly two squares horizontally or vertically.
+
+
+\subsection{Creating the Piece Logic}\label{section:check_creating_piece_logic}
+
+The logic for a piece lives in its own files inside the \texttt{bin/apps/check/pieces/} directory (\texttt{Templar.hpp} and \texttt{Templar.cpp} for the example piece). Each piece class derives from \texttt{BasePieceLogic} (defined in \texttt{Piece.hpp}), which defines the interface that all pieces share:
+\begin{itemize}\itemsep0em
+	\item \texttt{getLegalMoves()}: Pure virtual. Every piece implements this. Given the piece's position, the board state, and the piece's color, it returns every square the piece could move to.
+	\item \texttt{getLegalCaptures()}: Returns the squares the piece can capture. The base implementation derives these from the legal moves, which is correct for most pieces.
+	\item \texttt{getAttackedSquares()}: Returns every square the piece attacks, including occupied squares. The base implementation treats attacks the same as legal moves. Pieces that move differently than they capture (the Pawn, the Spade, and the Pedestal) override this.
+\end{itemize}
+
+\texttt{Piece.hpp} also declares helpers that generate common movement patterns, so a piece implementation only needs to describe what makes it different:
+\begin{itemize}\itemsep0em
+	\item \texttt{generateStraightMoves()} and \texttt{generateDiagonalMoves()} generate sliding moves (like the Rook and the Bishop) with an optional \texttt{maximumDistance} limit, where zero means unlimited. The Rook, Bishop, and Queen pieces use these, as do the distance-limited Golem and Shard pieces.
+	\item \texttt{generateStepMoves()} generates moves for pieces that jump a fixed set of offsets (like the Knight). The Templar and Ankh pieces use this.
+\end{itemize}
+
+The Templar shows how small a piece implementation can be. The class passes its type to the base constructor and declares the move method:
+
+\begin{lstlisting}[style=cppstyle]
+/**
+ * This defines the logic for a Templar piece.
+ */
+class TemplarLogic : public BasePieceLogic
+{
+public:
+    /// The main constructor for a Templar piece.
+    TemplarLogic() : BasePieceLogic(PieceType::Templar) {};
+
+    /**
+     * This returns the legal moves for a Templar piece. A Templar moves two
+     * squares horizontally or vertically and can jump pieces. A Templar can 
+     * capture an opposing piece but cannot move onto a square occupied by a 
+     * piece of the same color.
+     */
+    std::vector<math::Coordinate<uint8_t>> getLegalMoves(
+        const math::Coordinate<uint8_t>& currentPos,
+        const BoardState& boardState,
+        Color color) override;
+}; // class TemplarLogic
+\end{lstlisting}
+
+The implementation only lists the offsets the Templar can jump to. Board edges, captures, and blocking by friendly pieces are handled by \texttt{generateStepMoves()}:
+
+\begin{lstlisting}[style=cppstyle]
+std::vector<math::Coordinate<uint8_t>> TemplarLogic::getLegalMoves(
+    const math::Coordinate<uint8_t>& currentPos,
+    const BoardState& boardState,
+    Color color)
+{
+    // Define the jumps a Templar can make.
+    const std::vector<math::Coordinate<int8_t>> steps =
+    {
+        { 0,  2},  // Up two squares.
+        { 0, -2},  // Down two squares.
+        { 2,  0},  // Right two squares. 
+        {-2,  0},  // Left two squares.
+    };
+
+    // Templars jump other pieces in straight lines and moves two squares.
+    return generateStepMoves(currentPos, steps, boardState, color);
+}
+\end{lstlisting}
+
+\textbf{No CMake changes are needed.} The \texttt{CMakeLists.txt} in \texttt{bin/apps/check/} collects the piece sources with \texttt{CONFIGURE\_DEPENDS} globs over \texttt{pieces/*.cpp} and \texttt{pieces/*.hpp}, so a new file placed in the pieces directory is compiled on the next build. The same file places both directories on the include path, so headers in either directory can be included by name from the other.
+
+
+\subsection{Registering the Piece Type}\label{section:check_registering_piece_type}
+
+Pieces are identified throughout the engine by the \texttt{PieceType} enum in \texttt{Piece.hpp}. Three methods in \texttt{Piece.cpp} map between this enum, the string keywords, and the logic classes, so a new piece needs one enum entry and one case in each of these methods. Missing any of these leaves the piece unusable: without the string conversions it cannot be named in a configuration, and without the factory case it has no logic and can never move.
+
+Add the new enumerator to \texttt{PieceType}. Entries go after the existing pieces and before \texttt{Count}, which must stay last because board iteration and lookup tables are sized from it:
+
+\begin{lstlisting}[style=cppstyle]
+enum class PieceType : uint8_t
+{
+    None,       ///< Represents no piece.
+    King,       ///< The King. (Keep this entry first for iterations)
+
+    // ... all other existing pieces ...
+
+    Pedestal,   ///< The Pedestal (custom rook-like piece).
+    Templar,    ///< The Templar (custom knight-rook like piece).
+    Count       ///< Number of defined piece types. (Keep last!)
+}; // enum PieceType
+\end{lstlisting}
+
+\texttt{pieceTypeToString()} converts the enum to its all-lowercase keyword. This keyword is the name the piece is known by everywhere outside the C++ code (config values and board state strings):
+
+\begin{lstlisting}[style=cppstyle]
+std::string pieceTypeToString(PieceType type)
+{
+    switch(type)
+    {
+        // ... all other existing cases ...
+        case PieceType::Templar: return "templar";
+        case PieceType::None:
+        default:                 return "none";
+    }
+}
+\end{lstlisting}
+
+\texttt{stringToPieceType()} performs the reverse conversion. Matching is case insensitive, so "templar", "Templar", and "TEMPLAR" all resolve to the same type:
+
+\begin{lstlisting}[style=cppstyle]
+PieceType stringToPieceType(const std::string& type)
+{
+    std::string input = string_utils::toLower(type);
+
+    // ... all other existing comparisons ...
+    if (input == "templar") return PieceType::Templar;
+
+    // Default.
+    return PieceType::None;
+}
+\end{lstlisting}
+
+Finally, \texttt{createPieceLogic()} is the factory that maps a piece type to its logic object. The new piece's header must be \#included in \texttt{Piece.cpp} (alongside the other piece includes at the top of the file) so the factory can construct the logic class:
+
+\begin{lstlisting}[style=cppstyle]
+// Include the various piece types.
+// ... all other existing piece includes ...
+#include "Templar.hpp"
+
+std::unique_ptr<BasePieceLogic> createPieceLogic(PieceType type)
+{
+    switch (type)
+    {
+        // ... all other existing cases ...
+        case PieceType::Templar:
+            return std::make_unique<TemplarLogic>();
+
+        case PieceType::Count:
+        case PieceType::None:
+            return nullptr;
+    }
+
+    return nullptr;
+}
+\end{lstlisting}
+
+
+\subsection{Adding the Piece Art}\label{section:check_adding_piece_art}
+
+Each piece's display art is stored in the configuration file as a key-value pair: the key is the prefix \texttt{piece\_} followed by the piece's lowercase keyword, and the value is either a unicode glyph (written as \texttt{\textbackslash u} followed by exactly four hexadecimal digits) or a path to an image file (image support is still in development). These values are read at load time by \texttt{extractPieceArtsFromConfig()}, and \texttt{determinePieceArtType()} decides the format from the shape of the value. A piece with no configured art is drawn with a default empty set symbol (\texttt{\textbackslash u2205}). The following lines from the default configuration (\texttt{resources/Check.MIA}) show the templar entry alongside a few others:
+
+\begin{lstlisting}[style=pythonstyle]
+# The art for the pieces. These must all start with the prefix "piece_" followed by the
+# piece name. The values of these must be either a unicode character or an image file (in dev).
+piece_king=\u265A
+piece_queen=\u265B
+piece_templar=\u2720
+\end{lstlisting}
+
+No changes are needed in the Python user interface. The backend registers every configured piece art with the UI at startup (\texttt{registerPieceArtInUI()}, called from \texttt{Check.cpp}), so the new piece appears with its glyph once the key exists.
+
+
+\subsection{Additional Custom Behavior}\label{section:check_additional_custom_behavior}
+
+Everything outside the steps above depends on what the new piece does. The shared mechanics that a new piece may need to join are these:
+\begin{itemize}\itemsep0em
+	\item \texttt{isEnPassantMove()} and \texttt{triggersPromotion()} (in \texttt{Piece.cpp}) check piece types directly, currently the Pawn and the Spade. A new pawn-like piece that should capture en passant or promote must be added to these checks, and (if it promotes) to the promotion options.
+	\item \texttt{getAttackedSquares()} must be overridden when the piece attacks differently than it moves, so that check detection sees the correct squares. The Pedestal is the example here: it attacks the squares it would reach by sliding even though it can only move to the furthest one.
+\end{itemize}
+
+Nothing else is needed for legality. The free function \texttt{getLegalMoves()} runs every piece's logic through the same checks and filtering (via \texttt{leavesKingInCheck()}), so a new piece automatically obeys the rule that it may not leave its own king in check.

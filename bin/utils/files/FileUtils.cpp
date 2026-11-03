@@ -152,7 +152,7 @@ namespace files
         } 
         else 
         {
-            throw error::MIAException(error::ErrorCode::FATAL_File_Not_Found);
+            MIA_THROW(error::ErrorCode::Required_File_Not_Found);
         }
     }
 

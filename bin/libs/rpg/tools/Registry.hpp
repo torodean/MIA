@@ -61,7 +61,7 @@ namespace rpg
         {
             std::ifstream file(filename);
             if (!file.is_open())
-                MIA_THROW(error::Failed_To_Open_File, filename);
+                MIA_THROW(error::File_Open_Failure, filename);
 
             nlohmann::json data;
             file >> data;

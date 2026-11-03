@@ -6,6 +6,8 @@
  */
 
 #include <array>
+#include <cmath>
+#include <optional>
 
 // Include the associated header file.
 #include "Piece.hpp"

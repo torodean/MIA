@@ -4,17 +4,26 @@ This folder contains a set of `.MIA` configuration files used by the various fea
 
 ## File Descriptions
 
+### `Check.MIA`
+This is the configuration file for the CHECK application. It defines the board size, player state, piece art glyphs, the starting board position, and any other configuration options.
+
 ### `MIAConfig.MIA`
 Defines the global configuration for the MIA applications.
 
 ### `MIASequences.MIA`
-This is the configuration file for the MIASequencer application. It contains the various sequences to define which can then be performed by the application. 
+This is the configuration file for the SARA application (formerly the MIASequencer). It contains the various sequences to define which can then be performed by the application. 
 
 ### `MIATemplate.MIA`
 This is a template configuration file used by the MIATemplate application. Its purpose is to demonstrate how a configuration file can be used. 
 
+### `MIATest.MIA`
+This is the configuration file for the MIATest application, which is used for testing and experimentation of features being developed. 
+
 ### `MIAWorkout.MIA`
 This is the configuration file for the MIAworkout application. Includes parameters and exercise lists for dynamic workout creation.
+
+### `Maple.MIA`
+This is the configuration file for the MAPLE application. It holds the values needed by the MAPLE financial projections and features.
 
 ### `WoWConfig.MIA`
 This is the configuration file for the WoW (World Of Warcraft) related applications.

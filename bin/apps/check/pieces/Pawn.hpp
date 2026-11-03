@@ -11,7 +11,6 @@
 
 #include "Piece.hpp"
 #include "MathTypes.hpp"
-#include "MoveState.hpp"
 
 namespace check
 {
@@ -50,5 +49,5 @@ namespace check
             const math::Coordinate<uint8_t>& currentPos,
             const BoardState& boardState,
             Color color) override;
-    }; // class Pawn
+    }; // class PawnLogic
 } // namespace check
