@@ -10,6 +10,7 @@
 // Include the associated header file.
 #include "Rook.hpp"
 #include "BoardState.hpp"
+#include "MoveGeneration.hpp"
 
 namespace check
 {
