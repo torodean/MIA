@@ -10,6 +10,7 @@
 // Include the associated header file.
 #include "Ankh.hpp"
 #include "BoardState.hpp"
+#include "MoveGeneration.hpp"
 
 namespace check
 {
