@@ -16,10 +16,13 @@ snaps it back to its origin square and queues a drop_piece event; the backend th
 calls movePiece() to make the move official.
 
 Right clicking and dragging across the board draws an annotation arrow between
-the two squares, and drawing that same arrow again removes it. Arrows are a
-local UI note: they are never queued as events and the backend is never told
-about them. A right click which never leaves its own square clears the arrows
-coming from that square, and arrows are cleared whenever the position changes
+the two squares, and drawing that same arrow again removes it. A right click
+which never leaves its own square toggles a persistent highlight on that
+square. The left button draws no annotations: picking a piece up instead drops
+the annotations which come from that square, its arrows and its highlight.
+Arrows and square highlights are a local UI note: they are never queued as
+events and the backend is never told about them. They are cleared for the
+picked square on pickup, and everywhere whenever the position changes
 (movePiece, setPiece, removePiece, setBoardState).
 
 Event formats (the C++ side parses these):
@@ -62,6 +65,7 @@ LIGHT = "#bfa08e"
 DARK = "#7d6455"
 SELECTED_HIGHLIGHT = "#F7EC59"
 LEGAL_MOVE_HIGHLIGHT = "#3db2d3"
+SQUARE_HIGHLIGHT = "#59c135"
 LABEL_FG = "#333333"
 BACKGROUND = "#ffddc9"
 
@@ -128,6 +132,7 @@ class ChessBoard(tk.Frame):
         self.highlightItems = []
         self.arrows = []
         self.arrow = None
+        self.squareHighlights = []
         self.drag = None
         width = cols * CELL + 2 * MARGIN
         height = rows * CELL + 2 * MARGIN
@@ -136,9 +141,9 @@ class ChessBoard(tk.Frame):
         self.canvas.bind("<Button-1>", self.onPress)
         self.canvas.bind("<B1-Motion>", self.onDrag)
         self.canvas.bind("<ButtonRelease-1>", self.onRelease)
-        self.canvas.bind("<Button-3>", self.onArrowPress)
-        self.canvas.bind("<B3-Motion>", self.onArrowDrag)
-        self.canvas.bind("<ButtonRelease-3>", self.onArrowRelease)
+        self.canvas.bind("<Button-3>", self.onRightPress)
+        self.canvas.bind("<B3-Motion>", self.onRightDrag)
+        self.canvas.bind("<ButtonRelease-3>", self.onRightRelease)
         self.drawBoard()
         self.drawBorderLabels()
         self.pack()
@@ -231,7 +236,26 @@ class ChessBoard(tk.Frame):
             return None
         return (int(x // CELL), int(self.rows - 1 - y // CELL))
 
-    # ----- annotation arrows -----
+    # ----- annotations -----
+
+    def clearAnnotations(self):
+        """
+        Removes every annotation from the board: all arrows and all square
+        highlights. Called whenever the position changes, since annotations
+        drawn against the old position no longer mean anything.
+        """
+        self.clearArrows()
+        self.clearSquareHighlights()
+
+    def clearSquareAnnotations(self, square):
+        """
+        Removes the annotations which come from one square: the arrows leaving
+        it and its highlight, leaving the other squares untouched. Called when
+        a square's piece is picked up.
+        @param square The (col, row) square the annotations come from.
+        """
+        self.clearArrowsFrom(square)
+        self.clearSquareHighlight(square)
 
     def drawArrow(self, fromSquare, toSquare):
         """
@@ -261,7 +285,8 @@ class ChessBoard(tk.Frame):
 
     def clearArrows(self):
         """
-        Removes every annotation arrow from the board.
+        Removes every annotation arrow from the board, leaving the square
+        highlights untouched.
         """
         for arrow in self.arrows:
             self.canvas.delete(arrow["item"])
@@ -285,18 +310,73 @@ class ChessBoard(tk.Frame):
         self.arrows = remaining
         return removed
 
+    def findSquareHighlight(self, square):
+        """
+        Finds the persistent highlight drawn on one square.
+        @param square The (col, row) square to look for.
+        @return The highlight record, or None when the square is not
+        highlighted.
+        """
+        for highlight in self.squareHighlights:
+            if highlight["square"] == square:
+                return highlight
+        return None
+
+    def toggleSquareHighlight(self, square):
+        """
+        Highlights a square, or removes the highlight when the square is
+        already highlighted. Drawn in the same inset outline style as the
+        selection and legal-move highlights.
+        @param square The (col, row) square to toggle the highlight on.
+        """
+        if self.clearSquareHighlight(square):
+            return
+        x0, y0 = self.topLeftPixel(*square)
+        item = self.canvas.create_rectangle(
+            x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
+            outline=SQUARE_HIGHLIGHT, width=4,
+        )
+        self.squareHighlights.append({"item": item, "square": square})
+
+    def clearSquareHighlight(self, square):
+        """
+        Removes the persistent highlight from one square, if it has one,
+        leaving the highlights on the other squares untouched.
+        @param square The (col, row) square the highlight is on.
+        @return True when a highlight was removed, false when there was none.
+        """
+        existing = self.findSquareHighlight(square)
+        if existing is None:
+            return False
+        self.canvas.delete(existing["item"])
+        self.squareHighlights.remove(existing)
+        return True
+
+    def clearSquareHighlights(self):
+        """
+        Removes every persistent square highlight from the board.
+        """
+        for highlight in self.squareHighlights:
+            self.canvas.delete(highlight["item"])
+        self.squareHighlights = []
+
     # ----- mouse handling -----
 
     def onPress(self, event):
         """
         Begins a drag when a square holding a piece is pressed.
         The piece glyph is removed from its square so it appears lifted,
-        and only the glyph following the mouse remains visible.
+        and only the glyph following the mouse remains visible. Picking a piece
+        up drops the annotations which come from its square: the arrows leaving
+        it and its highlight.
         """
         sq = self.squareAt(event.x, event.y)
         if sq is None or self.board[sq[0]][sq[1]] is None:
             return
         col, row = sq
+        # The picked square is about to change, so the annotations which come
+        # from it go away: its arrows and its highlight together.
+        self.clearSquareAnnotations(sq)
         highlightSquare(col, row, SELECTED_HIGHLIGHT)
         self.drag = {"from": sq}
         addEvent(f"pickup_piece {col} {row}")
@@ -331,17 +411,20 @@ class ChessBoard(tk.Frame):
         if dst is not None and dst != src:
             addEvent(f"drop_piece {src[0]} {src[1]} {dst[0]} {dst[1]}")
 
-    def onArrowPress(self, event):
+    def onRightPress(self, event):
         """
-        Starts an annotation arrow on the square the right button was pressed on.
-        Arrows are a local UI note, they are never queued as backend events.
+        Begins a right button gesture on the square the button was pressed on.
+        Dragging the gesture to another square draws an annotation arrow, and
+        a release on the pressed square itself toggles its highlight. Arrows
+        and highlights are a local UI note, they are never queued as backend
+        events.
         """
         sq = self.squareAt(event.x, event.y)
         if sq is None:
             return
         self.arrow = {"from": sq, "to": None, "item": None, "dragged": False}
 
-    def onArrowDrag(self, event):
+    def onRightDrag(self, event):
         """
         Stretches the annotation arrow to the square under the mouse.
         The arrow is redrawn rather than stretched to the cursor so that it
@@ -363,12 +446,12 @@ class ChessBoard(tk.Frame):
         self.arrow["to"] = sq
         self.arrow["dragged"] = True
 
-    def onArrowRelease(self, event):
+    def onRightRelease(self, event):
         """
         Finishes an annotation arrow. A drag onto a different square leaves the
         arrow on the board, unless that exact arrow is already drawn, in which
         case drawing it again removes it. A right click which never left its own
-        square clears the arrows coming from that square.
+        square toggles a persistent highlight on that square.
         """
         if self.arrow is None:
             return
@@ -382,8 +465,8 @@ class ChessBoard(tk.Frame):
                 updateUI()
                 return
             # The button never dragged to another square, so this is a request
-            # to clear the arrows coming from the pressed square.
-            self.clearArrowsFrom(arrow["from"])
+            # to toggle a persistent highlight on the pressed square.
+            self.toggleSquareHighlight(arrow["from"])
             updateUI()
             return
 
@@ -490,9 +573,9 @@ def setBoardState(cells):
         validateCell(int(col), int(row), pieceType)
         boardUI.board[int(col)][int(row)] = {"type": pieceType, "color": color}
 
-    # The whole position has been replaced, so any arrows drawn against the
-    # old one no longer mean anything.
-    boardUI.clearArrows()
+    # The whole position has been replaced, so any annotations drawn against
+    # the old one no longer mean anything.
+    boardUI.clearAnnotations()
     boardUI.drawPieces()
 
 
@@ -530,7 +613,7 @@ def movePiece(fromCol, fromRow, toCol, toRow):
 
     boardUI.board[toCol][toRow] = boardUI.board[fromCol][fromRow]
     boardUI.board[fromCol][fromRow] = None
-    boardUI.clearArrows()
+    boardUI.clearAnnotations()
     boardUI.drawPieces()
 
 
@@ -545,7 +628,7 @@ def setPiece(piece, color, col, row):
     validateCell(col, row)
 
     boardUI.board[col][row] = {"type": piece, "color": color}
-    boardUI.clearArrows()
+    boardUI.clearAnnotations()
     boardUI.drawPieces()
 
 
@@ -559,7 +642,7 @@ def removePiece(col, row):
     validateCell(col, row)
 
     boardUI.board[col][row] = None
-    boardUI.clearArrows()
+    boardUI.clearAnnotations()
     boardUI.drawPieces()
 
 
@@ -595,13 +678,28 @@ def clearHighlights():
 
 def clearArrows():
     """
-    Removes all annotation arrows from the board.
+    Removes all annotation arrows from the board, leaving the square
+    highlights untouched.
     Arrows are drawn by right clicking and dragging on the board, and are a
     local UI note which the backend is never told about.
     """
     if boardUI is None:
         return
     boardUI.clearArrows()
+    updateUI()
+
+
+def clearAnnotations():
+    """
+    Removes every annotation from the board: all arrows and all square
+    highlights.
+    Arrows are drawn by right clicking and dragging on the board, square
+    highlights by a plain right click, and both are a local UI note which the
+    backend is never told about.
+    """
+    if boardUI is None:
+        return
+    boardUI.clearAnnotations()
     updateUI()
 
 
