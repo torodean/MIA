@@ -13,10 +13,11 @@
 #include <memory>
 
 #include "MathTypes.hpp"
+#include "PieceType.hpp"
 
 namespace check
 {
-    /// Predeclare some classes so they can be referenced.
+    // Predeclare some classes so they can be referenced.
     class BoardState;
     class MoveState;
 
@@ -39,59 +40,6 @@ namespace check
         PieceArtType type;     ///< The type of art stored.
         std::string art;       ///< The art glyph or file path to an image.
     };
-
-    /**
-     * Represents the various defined pieces. Each of these pieces should have
-     * a class representing the logic and functionality of the piece, while
-     * this enum is simply an indicator for those types.
-     *
-     * For now, this has all of the normal chess pieces defined, new pieces
-     * can be added later after these are working and coded.
-     */
-    enum class PieceType : uint8_t
-    {
-        None,       ///< Represents no piece.
-        King,       ///< The King. (Keep this entry first for iterations)
-        Queen,      ///< The Queen.
-        Pawn,       ///< The Pawn.
-        Bishop,     ///< The Bishop.
-        Knight,     ///< The Knight.
-        Rook,       ///< The Rook.
-        Templar,    ///< The Templar (custom knight-rook like piece).
-        Ankh,       ///< The Ankh (custom knight-bishop like piece).
-        Shard,      ///< The Shard (custom bishop-like piece).
-        Golem,      ///< The Golem (custom rook-like piece).
-        Spade,      ///< The Spade (custom pawn-like piece).
-        Pedestal,   ///< The Pedestal (custom rook-like piece).
-        Count       ///< Number of defined piece types. (Keep last!)
-    }; // enum PieceType
-
-    /**
-     * Increments the piece type to the next enumerator.
-     * @param type The piece type to increment.
-     * @return A reference to the incremented piece type.
-     * @note This returns a maximum value of PieceType::Count.
-     */
-    PieceType& operator++(PieceType& type);
-
-    /**
-     * Converts a piece type into its string representation.
-     * @note This produces all-lowercase output.
-     * @param type The piece type to convert.
-     * @return The string representation of the piece type, matching the
-     *         enumerator name (e.g. PieceType::Knight becomes "knight").
-     *         PieceType::None becomes "none".
-     */
-    std::string pieceTypeToString(PieceType type);
-
-    /**
-     * Converts a string into a piece type. Matching is case insensitive,
-     * so "knight", "Knight", and "KNIGHT" all resolve to PieceType::Knight.
-     *
-     * @param type The string representation of a piece type.
-     * @return The matching piece type, or PieceType::None if there is no match.
-     */
-    PieceType stringToPieceType(const std::string& type);
 
     /**
      * The order here matters. The players are assigned an index, and their
@@ -202,65 +150,6 @@ namespace check
 
         PieceType type; ///< Stores what type of piece this object defines logic for.
      }; // class BasePieceLogic
-
-    /**
-     * This generates the legal moves for pieces that move in straight lines
-     * (e.g., rook, queen). Each of the four straight directions is checked square
-     * by square starting from currentPos. Empty squares are added as legal moves.
-     * A direction stops at the board edge or at the first occupied square, which
-     * is added as a capture when it holds an opposing piece and is simply blocked
-     * when it holds a friendly piece.
-     *
-     * @param currentPos The position of the piece requesting the moves.
-     * @param boardState The current state of the board.
-     * @param color The color of the piece requesting the moves.
-     * @param maximumDistance The maximum distance in each direction to move. Zero 
-     *        represents no maximum move distance.
-     * @return The squares this piece can legally move to.
-     */
-    std::vector<math::Coordinate<uint8_t>> generateStraightMoves(
-        const math::Coordinate<uint8_t>& currentPos,
-        const BoardState& boardState,
-        Color color,
-        uint8_t maximumDistance = 0);
-
-    /**
-     * This generates the legal moves for pieces that move along diagonals
-     * (e.g., bishop, queen). This behaves the same as generateStraightMoves, but
-     * checks the four diagonal directions instead of the straight ones.
-     *
-     * @param currentPos The position of the piece requesting the moves.
-     * @param boardState The current state of the board.
-     * @param color The color of the piece requesting the moves.
-     * @param maximumDistance The maximum distance in each direction to move. Zero 
-     *        represents no maximum move distance.
-     * @return The squares this piece can legally move to.
-     */
-    std::vector<math::Coordinate<uint8_t>> generateDiagonalMoves(
-        const math::Coordinate<uint8_t>& currentPos,
-        const BoardState& boardState,
-        Color color,
-        uint8_t maximumDistance = 0);
-
-    /**
-     * This generates the legal moves for pieces that move a fixed number of
-     * squares at a time (e.g., knight, king). Each direction is checked only
-     * once, unlike the pieces handled by generateStraightMoves. These pieces
-     * move over whatever is in their way, so an occupied destination is legal
-     * only when it holds an opposing piece, and a friendly piece simply blocks
-     * that square.
-     *
-     * @param currentPos The position of the piece requesting the moves.
-     * @param directions The fixed offsets to check, each stored as {x, y}.
-     * @param boardState The current state of the board.
-     * @param color The color of the piece requesting the moves.
-     * @return The squares this piece can legally move to.
-     */
-    std::vector<math::Coordinate<uint8_t>> generateStepMoves(
-        const math::Coordinate<uint8_t>& currentPos,
-        const std::vector<math::Coordinate<int8_t>>& directions,
-        const BoardState& boardState,
-        Color color);
 
     /**
      * Creates the appropriate logic implementation for a piece type.
