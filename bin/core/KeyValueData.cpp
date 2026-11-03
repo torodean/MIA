@@ -25,7 +25,7 @@ namespace config
         if (!file.is_open()) 
         {            
             std::string err = "Failed to open config file: " + filePath;
-            throw error::MIAException(error::ErrorCode::Failed_To_Open_File, err);
+            throw error::MIAException(error::ErrorCode::File_Open_Failure, err);
         }
         rawConfigValsMap.clear();
 
