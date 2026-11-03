@@ -45,7 +45,9 @@ namespace check
         }
         catch (const error::MIAException& ex)
         {
-            std::cerr << "Error during Check::initialize: " << ex.what() << std::endl;
+            // Rethrow so a failed configuration load is not treated as a successful initialization.
+            std::string err = std::string("Error during Check::initialize: ") + ex.what();
+            MIA_THROW(error::ErrorCode::Config_Load_Failure, err);
         }
 
         loadConfig();
@@ -83,10 +85,11 @@ namespace check
              */
             overrideVerboseMode(configValues.verboseMode || getVerboseMode());
         }
-        catch (error::MIAException& ex)
+        catch (const error::MIAException& ex)
         {
-            std::cerr << "Error loading in configuration file value(s): " << ex.what();
-            // TODO - rethrow here.
+            // Rethrow so the application exits instead of running with unloaded configuration values.
+            std::string err = std::string("Error loading in configuration file value(s): ") + ex.what();
+            MIA_THROW(error::ErrorCode::Config_Load_Failure, err);
         }
 
         if (getVerboseMode())
