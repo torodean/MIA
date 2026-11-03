@@ -53,7 +53,7 @@ namespace logger
             }
 
             if (!basic_utils::ensureFileExists(fullpath))
-                MIA_THROW(error::ErrorCode::Failed_To_Open_File);
+                MIA_THROW(error::ErrorCode::File_Open_Failure);
 
             return fullpath;
         }
