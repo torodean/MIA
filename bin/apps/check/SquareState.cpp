@@ -7,6 +7,7 @@
 
 // Include the associated header file.
 #include "SquareState.hpp"
+#include "PieceType.hpp"
 
 namespace check
 {
