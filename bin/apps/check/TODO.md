@@ -22,7 +22,6 @@ The ability to have images and a custom skin is needed for all elements.
 
 The arrows should be made translucent and a bit larger.
 Perhaps even add in knight-shaped arrows which form an L shape.
-Also, being able to highlight a square by right clicking needs added.
 
 ## Unit tests
 
