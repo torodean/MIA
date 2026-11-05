@@ -7,6 +7,9 @@
  */
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "MathTypes.hpp"
 #include "Piece.hpp"
 
@@ -36,5 +39,22 @@ namespace check
          * still remains as the original piece (e.g., pawn, spade).
          */
         bool triggersPromo{false};
-    }; // class MoveState
+    }; // struct MoveState
+
+    /**
+     * Converts a single MoveState into the display text used for the ui move
+     * history boxes. The text is "<glyph>: <start> -> <end>" for a normal move
+     * and "<glyph>: <start> -x <end>" for a capture, where <start> and <end>
+     * are square labels made of the file letter and rank number used by the
+     * board's labeled border (e.g., "e2"), and <glyph> is the moved piece's
+     * glyph art. The glyph is looked up in pieceArts by the moved piece's
+     * type, and is left out along with the colon when no glyph art backs the
+     * piece (e.g., when image art is used).
+     *
+     * @param move The move state to convert.
+     * @param pieceArts The configured piece arts to look the glyph up in.
+     * @return The display string for the move.
+     */
+    std::string moveStateToString(const MoveState& move,
+                                  const std::vector<PieceArt>& pieceArts);
 } // namespace check
