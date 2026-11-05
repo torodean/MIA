@@ -24,7 +24,12 @@ When editing a file, bring its comments toward these forms; do not replicate the
 Wrap comments at roughly **120 characters**.
 This is the lower end of the 120-140 range in CodingStandards.tex.
 Do not enforce a hard cap; just do not run far past 120.
-Do not wrap at 80.
+
+A file's established comment wrap beats the 120 target.
+Many existing files (e.g., most of bin/apps/check) settled near 80.
+When editing such a file, wrap new and edited comments at the file's established width, and do not re-wrap untouched comment lines toward 120.
+When a changed comment no longer fits its width cleanly, reflow the whole comment block at that width so sentences do not break raggedly mid-clause.
+Use the 120 wrap in files without an established narrower width, and when doing a deliberate whole-file comment pass.
 
 ## C++ (.hpp / .cpp)
 
@@ -322,7 +327,7 @@ Rewrite comments only in the files you are actively changing, and bring them tow
 3. Member variables use `///` above or `///<` inline, consistently within the file.
 4. Enum values use `///<` on the same line.
 5. Multi-line `/* */` and `/** */` blocks have `/*`/`/**` and `*/` on their own lines; body lines prefixed ` * `.
-6. Comments wrap near 120 chars, not 80.
+6. Comments wrap near 120 chars, or at the file's established narrower width when it has one.
 7. Namespace and long-block closing braces have a trailing `} // namespace ...` comment.
 8. Headers use `#pragma once`.
 9. Wording follows [writing-style.md](writing-style.md): plain, terse, no em dashes, no signposting, accurate.
