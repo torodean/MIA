@@ -7,11 +7,11 @@
 
 // Include the associated header.
 #include "EventHandler.hpp"
-#include "PieceType.hpp"
 
 #include <iostream>
 #include <vector>
 
+#include "PieceType.hpp"
 #include "StringUtils.hpp"
 // Used for error handling of malformed events.
 #include "Error.hpp"
