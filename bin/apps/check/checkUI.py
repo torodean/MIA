@@ -65,15 +65,16 @@ LIGHT = "#bfa08e"
 DARK = "#7d6455"
 SELECTED_HIGHLIGHT = "#F7EC59"
 LEGAL_MOVE_HIGHLIGHT = "#3db2d3"
-SQUARE_HIGHLIGHT = "#59c135"
 LABEL_FG = "#333333"
 BACKGROUND = "#ffddc9"
 
-# Annotation arrows drawn with the right mouse button. Arrows are a local UI
+# Annotations drawn with the right mouse button: arrows dragged between two
+# squares, and highlights toggled on a single square. These are a local UI
 # note only, they are never sent to the C++ backend.
 ARROW_COLOR = "#e8e52c"
 ARROW_WIDTH = 8
 ARROW_HEAD = (16, 22, 9)
+SQUARE_HIGHLIGHT = "#59c135"
 
 ##########
 # UI STATE
@@ -257,6 +258,8 @@ class ChessBoard(tk.Frame):
         self.clearArrowsFrom(square)
         self.clearSquareHighlight(square)
 
+    # ----- annotation arrows -----
+
     def drawArrow(self, fromSquare, toSquare):
         """
         Draws an annotation arrow between the centers of two squares.
@@ -309,6 +312,8 @@ class ChessBoard(tk.Frame):
                 remaining.append(arrow)
         self.arrows = remaining
         return removed
+
+    # ----- square highlights -----
 
     def findSquareHighlight(self, square):
         """
@@ -488,8 +493,47 @@ class ChessBoard(tk.Frame):
 #####################
 
 def closeUI():
+    """
+    Destroys the UI and queues a stop event.
+    The backend responds to the event by ending the program.
+    """
     addEvent("stop")
     root.destroy()
+
+def resetBoard():
+    """
+    Closes the game result window and queues a reset_board event.
+    The backend answers the event by starting a new game and sending the
+    starting board state back to the UI with setBoardState().
+    """
+    global resultDialog
+    if (verboseMode):
+        print("Resetting board!")
+
+    if resultDialog is not None:
+        resultDialog.grab_release()
+        resultDialog.destroy()
+        resultDialog = None
+
+    addEvent("reset_board")
+
+def sendPiecePromoChoice(piece):
+    """
+    Closes the piece promotion window and queues a piece_promo_choice event.
+    The backend answers the event by promoting the appropriate piece and 
+    updating the board state.
+    @param piece The piece promotion choice.
+    """
+    global piecePromoBox
+    if (verboseMode):
+        print("Promoting piece!")
+
+    if piecePromoBox is not None:
+        piecePromoBox.grab_release()
+        piecePromoBox.destroy()
+        piecePromoBox = None
+
+    addEvent(f"piece_promo_choice {piece}")
 
 
 #####################
@@ -511,9 +555,69 @@ def validateCell(col, row, pieceType=None):
         raise ValueError(f"Unregistered piece type: '{pieceType}'")
 
 
+###################
+# BOARD ANNOTATIONS
+###################
+
+def clearArrows():
+    """
+    Removes all annotation arrows from the board, leaving the square
+    highlights untouched.
+    Arrows are drawn by right clicking and dragging on the board, and are a
+    local UI note which the backend is never told about.
+    """
+    if boardUI is None:
+        return
+    boardUI.clearArrows()
+    updateUI()
+
+def clearAnnotations():
+    """
+    Removes every annotation from the board: all arrows and all square
+    highlights.
+    Arrows are drawn by right clicking and dragging on the board, square
+    highlights by a plain right click, and both are a local UI note which the
+    backend is never told about.
+    """
+    if boardUI is None:
+        return
+    boardUI.clearAnnotations()
+    updateUI()
+
+def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
+    """
+    Draws a highlight outline on one square.
+    @param col The column of the square.
+    @param row The row of the square.
+    @param color Optional outline color.
+    """
+    if boardUI is None:
+        return
+    x0, y0 = boardUI.topLeftPixel(col, row)
+    item = boardUI.canvas.create_rectangle(
+        x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
+        outline=color, width=4,
+    )
+    boardUI.highlightItems.append(item)
+    updateUI()
+
+def clearHighlights():
+    """
+    Removes all square highlights.
+    """
+    if boardUI is None:
+        return
+    for item in boardUI.highlightItems:
+        boardUI.canvas.delete(item)
+    boardUI.highlightItems = []
+    updateUI()
+
+
 ###############
 # C++ INTERFACE
 ###############
+
+# ----- creation and updates -----
 
 def createUI(cols, rows):
     """
@@ -538,6 +642,16 @@ def createUI(cols, rows):
     # Handles when the window is deleted.
     root.protocol("WM_DELETE_WINDOW", closeUI)
 
+def updateUI():
+    """
+    Processes pending tkinter events and redraws the window.
+    The backend can call this to keep the UI responsive between polls.
+    """
+    if root is not None:
+        root.update()
+
+
+# ----- board state -----
 
 def registerPiece(name, icon):
     """
@@ -553,7 +667,6 @@ def registerPiece(name, icon):
         print(f"Adding {name} piece with icon {icon} to glyphs!")
 
     glyphs[name] = icon
-
 
 def setBoardState(cells):
     """
@@ -578,7 +691,6 @@ def setBoardState(cells):
     boardUI.clearAnnotations()
     boardUI.drawPieces()
 
-
 def getBoardState():
     """
     Returns the current board state as state strings.
@@ -594,7 +706,6 @@ def getBoardState():
                 cells.append(f"{col},{row},{piece['type']},{piece['color']}")
 
     return cells
-
 
 def movePiece(fromCol, fromRow, toCol, toRow):
     """
@@ -616,7 +727,6 @@ def movePiece(fromCol, fromRow, toCol, toRow):
     boardUI.clearAnnotations()
     boardUI.drawPieces()
 
-
 def setPiece(piece, color, col, row):
     """
     Sets a piece from the board data and redraws.
@@ -630,7 +740,6 @@ def setPiece(piece, color, col, row):
     boardUI.board[col][row] = {"type": piece, "color": color}
     boardUI.clearAnnotations()
     boardUI.drawPieces()
-
 
 def removePiece(col, row):
     """
@@ -646,80 +755,7 @@ def removePiece(col, row):
     boardUI.drawPieces()
 
 
-def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
-    """
-    Draws a highlight outline on one square.
-    @param col The column of the square.
-    @param row The row of the square.
-    @param color Optional outline color.
-    """
-    if boardUI is None:
-        return
-    x0, y0 = boardUI.topLeftPixel(col, row)
-    item = boardUI.canvas.create_rectangle(
-        x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
-        outline=color, width=4,
-    )
-    boardUI.highlightItems.append(item)
-    updateUI()
-
-
-def clearHighlights():
-    """
-    Removes all square highlights.
-    """
-    if boardUI is None:
-        return
-    for item in boardUI.highlightItems:
-        boardUI.canvas.delete(item)
-    boardUI.highlightItems = []
-    updateUI()
-
-
-def clearArrows():
-    """
-    Removes all annotation arrows from the board, leaving the square
-    highlights untouched.
-    Arrows are drawn by right clicking and dragging on the board, and are a
-    local UI note which the backend is never told about.
-    """
-    if boardUI is None:
-        return
-    boardUI.clearArrows()
-    updateUI()
-
-
-def clearAnnotations():
-    """
-    Removes every annotation from the board: all arrows and all square
-    highlights.
-    Arrows are drawn by right clicking and dragging on the board, square
-    highlights by a plain right click, and both are a local UI note which the
-    backend is never told about.
-    """
-    if boardUI is None:
-        return
-    boardUI.clearAnnotations()
-    updateUI()
-
-
-def resetBoard():
-    """
-    Closes the game result window and queues a reset_board event.
-    The backend answers the event by starting a new game and sending the
-    starting board state back to the UI with setBoardState().
-    """
-    global resultDialog
-    if (verboseMode):
-        print("Resetting board!")
-
-    if resultDialog is not None:
-        resultDialog.grab_release()
-        resultDialog.destroy()
-        resultDialog = None
-
-    addEvent("reset_board")
-
+# ----- dialogs -----
 
 def showGameResult(result, reason, winner="none"):
     """
@@ -758,26 +794,6 @@ def showGameResult(result, reason, winner="none"):
     resultDialog.wait_visibility(resultDialog)
     resultDialog.grab_set()
     updateUI()
-
-
-def sendPiecePromoChoice(piece):
-    """
-    Closes the piece promotion window and queues a piece_promo_choice event.
-    The backend answers the event by promoting the appropriate piece and 
-    updating the board state.
-    @param piece The piece promotion choice.
-    """
-    global piecePromoBox
-    if (verboseMode):
-        print("Promoting piece!")
-
-    if piecePromoBox is not None:
-        piecePromoBox.grab_release()
-        piecePromoBox.destroy()
-        piecePromoBox = None
-
-    addEvent(f"piece_promo_choice {piece}")
-
 
 def showPiecePromoBox(pieces, color):
     """
@@ -820,15 +836,7 @@ def showPiecePromoBox(pieces, color):
 
     updateUI()
 
-
-def updateUI():
-    """
-    Processes pending tkinter events and redraws the window.
-    The backend can call this to keep the UI responsive between polls.
-    """
-    if root is not None:
-        root.update()
-
+# ----- event queue -----
 
 def getNextEvent():
     """
@@ -840,7 +848,6 @@ def getNextEvent():
     if not uiEvents:
         return ""
     return uiEvents.pop(0)
-
 
 def getAllEvents():
     """
@@ -861,6 +868,7 @@ def getAllEvents():
 
     return events
 
+# ----- configuration -----
 
 def setVerbose(val):
     """
@@ -873,9 +881,15 @@ def setVerbose(val):
         print("Verbose mode enabled for checkUI (python module).")
 
 
+##################
+# STANDALONE DEMO
+##################
+
 def main():
     """
-    Standalone 5x6 sample for testing the UI without the C++ backend.
+    Standalone 5x6 sample for testing the UI without the C++ backend. This only
+    handles visuals and picking up pieces, it does not handle moving pieces since
+    that is all handled by the C++ backend.
     """
     setVerbose(True)
     createUI(5, 6)
@@ -913,7 +927,6 @@ def main():
         "3,5,templar,black",
     ])
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()
