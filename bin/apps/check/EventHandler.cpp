@@ -7,6 +7,7 @@
 
 // Include the associated header.
 #include "EventHandler.hpp"
+#include "PieceType.hpp"
 
 #include <iostream>
 #include <vector>
@@ -16,7 +17,6 @@
 #include "Error.hpp"
 #include "MIAException.hpp"
 #include "MoveState.hpp"
-#include "PieceType.hpp"
 // Used to push the starting position back to the UI on a reset.
 #include "CheckConfig.hpp"
 // Used for pausing between ui events.
@@ -187,7 +187,8 @@ namespace check
     GameResult processMoveEvent(PythonModule& module,
                                 const CheckUIEvent& event,
                                 BoardState& state,
-                                EventState& eventState)
+                                EventState& eventState,
+                                const std::vector<PieceArt>& pieceArts)
     {
         GameResult ongoing;
 
@@ -227,6 +228,18 @@ namespace check
 
             // Get the last move information which is used for various special cases.
             const std::optional<MoveState> lastMove = state.getLastMove();
+
+            /*
+             * Add the move to the ui move history. This is done before the
+             * special cases below because castling records the rook's move too,
+             * which would overwrite the king's move as the last move, and a
+             * promotion returns from here early, before the rest of the event
+             * handling runs.
+             */
+            if (lastMove.has_value())
+            {
+                processMoveToHistory(module, pieceArts, lastMove.value());
+            }
 
             // Play the sound for this move. TODO - this is keyed to the exe for now.
             std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
@@ -297,6 +310,9 @@ namespace check
         // Advance to the next player's turn.
         state.advanceTurn();
 
+        // Point the ui turn indicator at the new player.
+        processTurnChange(module, state);
+
         // Clear the cached legal moves after processing the move.
         eventState.legalMoves.clear();
 
@@ -327,6 +343,46 @@ namespace check
     }
 
 
+    void processTurnChange(PythonModule& module, const BoardState& state)
+    {
+        Color color = whosTurnIsItToColor(state.whosTurnIsIt());
+        if (color != Color::White && color != Color::Black)
+        { // Currently only covers the two standard players.
+            return;
+        }
+
+        module.call("setTurn", colorToString(color));
+    }
+
+
+    void processMoveToHistory(PythonModule& module,
+                              const std::vector<PieceArt>& pieceArts,
+                              const MoveState& move)
+    {
+        // Only white and black have move history boxes in the ui, so other colors are skipped.
+        if (move.piece.color != Color::White && move.piece.color != Color::Black)
+        {
+            return;
+        }
+
+        module.call("addMoveToHistory",
+                    colorToString(move.piece.color),
+                    moveStateToString(move, pieceArts));
+    }
+
+
+    void addMoveMarker(PythonModule& module, Color color, const std::string& marker)
+    {
+        // Only white and black have move history boxes in the ui, so other colors are skipped.
+        if (color != Color::White && color != Color::Black)
+        {
+            return;
+        }
+
+        module.call("markMoveInHistory", colorToString(color), marker);
+    }
+
+
     void handleGameResult(PythonModule& module,
                           const GameResult& result,
                           EventState& eventState)
@@ -337,6 +393,11 @@ namespace check
         if (!result.isGameOver())
         { // There is nothing to report while the game is still being played.
             return;
+        }
+
+        if (result.reason == GameOverReason::Checkmate)
+        { // Mark the move which delivered this checkmate with #.
+            addMoveMarker(module, result.winner, "#");
         }
 
         // Report the result here and hand it to the UI to display.
@@ -360,6 +421,12 @@ namespace check
                            EventState& eventState)
     {
         state.reset();
+
+        // The turn resets, so point the ui back at the starting player.
+        processTurnChange(module, state);
+
+        // Empty the ui move history boxes for the new game.
+        module.call("clearMoveHistory");
 
         /*
          * Any highlight left over from the previous game is cleared, then the starting
@@ -418,6 +485,9 @@ namespace check
 
         // Advance to the next player's turn.
         state.advanceTurn();
+
+        // Point the ui turn indicator at the new player.
+        processTurnChange(module, state);
 
         /*
          * The turn has been advanced, so this determines the result for the player who
