@@ -74,14 +74,14 @@ namespace check
     /**
      * Converts a string input to the equivalent CheckUIEvent object.
      * @param input The string to convert.
-     * @return The equivalent CheckUIEvent. 
+     * @return The equivalent CheckUIEvent.
      */
     CheckUIEventType stringToCheckUIEventType(const std::string& input);
 
     /**
      * Converts a CheckUIEvent input to the equivalent string.
      * @param event The CheckUIEvent to convert.
-     * @return The equivalent std::string. 
+     * @return The equivalent std::string.
      */
     std::string checkUIEventTypeToString(CheckUIEventType event);
 
@@ -118,22 +118,27 @@ namespace check
     /**
      * Process an event of a piece being dropped. This will handle moving a piece
      * appropriately. This assumes the eventState data came from a processPickupPiece
-     * call. Once the move is made, this determines the result of the game and returns
-     * it. The caller should pass that result to handleGameResult() so the board gets
-     * locked and the result gets displayed when the game has ended.
+     * call. Once the move is made, this adds the move to the ui move history,
+     * advances the turn in the board state and in the ui turn indicator, then
+     * determines the result of the game and returns it. The caller should
+     * pass that result to handleGameResult() so the board gets locked and
+     * the result gets displayed when the game has ended.
      * @param module The python ui module to perform the ui move on. This method
      *        assumes that a movePiece(col, row, toCol, toRow) method exists which 
      *        moves a piece in the game ui.
      * @param event The event to process.
      * @param state The current state of the board.
      * @param eventState The state of the legal moves determined from processPickupPiece().
+     * @param pieceArts The configured piece arts, used to build the glyph for
+     *        the move history entry.
      * @return The result of the game after this move. This is ongoing when the move
      *         was rejected (an illegal drop) or when the game is still being played.
      */
     GameResult processMoveEvent(PythonModule& module,
                                 const CheckUIEvent& event,
                                 BoardState& state,
-                                EventState& eventState);
+                                EventState& eventState,
+                                const std::vector<PieceArt>& pieceArts);
 
     /**
      * Send the result of a finished game to the UI so that it can display it. This
@@ -152,11 +157,53 @@ namespace check
     void processGameOver(PythonModule& module, const GameResult& result);
 
     /**
+     * Report the player whose turn it now is to the ui turn indicator. This
+     * assumes that a setTurn(color) method exists in the ui module.
+     *
+     * @note Only two players (white and black) is currently supported.
+     *
+     * @param module The python ui module to notify.
+     * @param state The current state of the board, whose turn is reported.
+     */
+    void processTurnChange(PythonModule& module, const BoardState& state);
+
+    /**
+     * Report a made move to the ui move history boxes. This assumes that an
+     * addMoveToHistory(side, move) method exists in the ui module, where the
+     * move is the display string built by moveStateToString().
+     *
+     * @note Only two players (white and black) is currently supported.
+     *
+     * @param module The python ui module to notify.
+     * @param pieceArts The configured piece arts to look the glyph up in.
+     * @param move The move state to display in the ui.
+     */
+    void processMoveToHistory(PythonModule& module,
+                              const std::vector<PieceArt>& pieceArts,
+                              const MoveState& move);
+
+    /**
+     * Mark the last move of the given color in the ui move history with a
+     * marker (e.g., "#"), which is appended to the move's already recorded
+     * history entry. This assumes that a markMoveInHistory(side, marker)
+     * method exists in the ui module.
+     *
+     * @note Only two players (white and black) is currently supported.
+     *
+     * @param module The python ui module to notify.
+     * @param color The color of the last player's move to mark.
+     * @param marker The text to append to that move.
+     */
+    void addMoveMarker(PythonModule& module, Color color, const std::string& marker);
+
+    /**
      * Handle the result of the game after a move was processed. This stores the game
      * over flag in the eventState so that no further board interaction is processed
-     * until the game is reset, prints the outcome of a finished game to the console,
-     * and hands the result to processGameOver() for the UI to display. This does
+     * until the game is reset, marks the checkmating move with "#" in the ui
+     * move history, prints the outcome of a finished game to the console, and
+     * hands the result to processGameOver() for the UI to display. This does
      * nothing besides storing the flag when the game is still being played.
+     *
      * @param module The python ui module to notify of a game over.
      * @param result The result of the game after the last move.
      * @param eventState The event state to lock when the game is over.
@@ -166,11 +213,14 @@ namespace check
                           EventState& eventState);
 
     /**
-     * Process an event which resets the game. This returns the board to its starting
-     * position, pushes that position to the UI, and unlocks the board so that a new
-     * game can be played.
+     * Process an event which resets the game. This returns the board to its
+     * starting position, pushes that position to the UI, returns the ui turn
+     * indicator to the starting player, clears the ui move history boxes, and
+     * unlocks the board so that a new game can be played.
+     *
      * @param module The python ui module to reset. This method assumes that the
-     *        setBoardState(cells) and clearHighlights() methods exist in the UI module.
+     *        setBoardState(cells), clearHighlights() and clearMoveHistory()
+     *        methods exist in the UI module.
      * @param state The current state of the board.
      * @param eventState The event state to unlock (its game over flag is cleared).
      */
@@ -180,11 +230,12 @@ namespace check
 
     /**
      * This handles a piece_promo_choice event. This event is somewhat special in the
-     * sense that it is forced once a type of piece reaches the last rank. When this happens,
-     * the processPickupPiece method moves the piece, and triggers the ui promo options.
-     * After the promo piece is selected in the ui, this event immediately follows.
-     * The piece chosen is updated in the board state, the original piece is removed, the ui 
-     * board is updated, and then the new game state is determined and returned.
+     * sense that it is forced once a type of piece reaches the last rank. When this 
+     * happens, the processPickupPiece method moves the piece, and triggers the ui promo 
+     * options. After the promo piece is selected in the ui, this event immediately follows.
+     * The piece chosen is updated in the board state, the original piece is removed, 
+     * the ui board is updated, the turn is advanced in the board state and the ui turn 
+     * indicator, and then the new game state is determined and returned.
      *
      * @param module The python ui module to use. This method assumes that the
      *        setPiece(piece, color, x, y) method exists.
