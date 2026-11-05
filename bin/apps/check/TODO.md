@@ -31,10 +31,6 @@ Unit tests for all these classes need added.
 
 Add the ability to save and load games.
 
-## Board Setup
-
-The ability to set up the board in any starting configuration would be nice.
-
 ## Draw conditions.
 
 Other draw conditions such as threefold repetition need added.
@@ -43,10 +39,6 @@ Other draw conditions such as threefold repetition need added.
 
 The board state docs mention keeping times and the timing library is linked in for
 it, but nothing keeps time yet.
-
-## Move history in the UI
-
-The moves are recorded but never shown, some sort of move list is needed.
 
 ## Add sounds
 
