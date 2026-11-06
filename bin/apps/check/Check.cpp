@@ -129,6 +129,9 @@ namespace check
         std::cout << "Setting initial board state!" << std::endl;
         module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
 
+        // Point the ui turn indicator at the configured starting player.
+        processTurnChange(module, boardState);
+
         // Update the UI with the board position.
         module.call("updateUI");
 
@@ -167,7 +170,8 @@ namespace check
                             break;
                         }
 
-                        GameResult result = processMoveEvent(module, uiEvent, boardState, eventState);
+                        GameResult result = processMoveEvent(module, uiEvent, boardState, eventState,
+                                                             configValues.pieceArts);
                         handleGameResult(module, result, eventState);
                         break;
                     }

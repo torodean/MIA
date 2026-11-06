@@ -19,6 +19,7 @@ set( CHECK_SRC
      BoardState.cpp
      EventHandler.cpp
      GameResult.cpp
+     MoveState.cpp
 
      # Add the logic for the pieces.
      ${PIECES_SRC}
@@ -61,7 +62,7 @@ target_include_directories(check PRIVATE
 install_app( check )
 
 # Install the associated python files.
-install_python_files( checkUI.py )
+install_python_files( checkUI.py optionsUI.py )
 
 # TODO - add tests.
 #add_test_dir()

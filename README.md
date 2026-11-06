@@ -65,12 +65,12 @@ A common adage when referencing current AI systems is 'trust but verify.' My exp
 +--------------+-------+-------+
 | File Type    | Files | Lines |
 +--------------+-------+-------+
-| C++ Header   |   126 | 12496 |
-| C++ Source   |   168 | 27379 |
-| CMake        |    69 |  1041 |
-| Python       |    21 |  3263 |
-| Shell Script |    12 |   410 |
-| TOTAL        |   396 | 44589 |
+| C++ Header   |   128 | 12614 |
+| C++ Source   |   171 | 27585 |
+| CMake        |    69 |  1046 |
+| Python       |    22 |  3889 |
+| Shell Script |    13 |   450 |
+| TOTAL        |   403 | 45584 |
 +--------------+-------+-------+
 ```
 <!-- END AUTO GENERATED CODE METRICS -->

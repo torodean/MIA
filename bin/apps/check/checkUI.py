@@ -25,6 +25,11 @@ events and the backend is never told about them. They are cleared for the
 picked square on pickup, and everywhere whenever the position changes
 (movePiece, setPiece, removePiece, setBoardState).
 
+A thin collapse bar sits against the board's right edge. Clicking it opens
+or closes the options panel (see optionsUI.py). The panel opens to the
+right of the board and widens the window. Panel events join this module's
+event queue like every other UI event.
+
 Event formats (the C++ side parses these):
    Events (space-separated values, squares are 0-indexed col row):
     "pickup_piece <col> <row>"
@@ -49,6 +54,10 @@ board state strings, and every public method taking a col/row pair.
 """
 import tkinter as tk
 
+# Module in the same directory. It defines the options panel and its
+# collapse bar. The C++ side puts it on sys.path like checkUI itself.
+import optionsUI
+
 #########################
 # CONFIGURATION VARIABLES
 #########################
@@ -65,15 +74,16 @@ LIGHT = "#bfa08e"
 DARK = "#7d6455"
 SELECTED_HIGHLIGHT = "#F7EC59"
 LEGAL_MOVE_HIGHLIGHT = "#3db2d3"
-SQUARE_HIGHLIGHT = "#59c135"
 LABEL_FG = "#333333"
 BACKGROUND = "#ffddc9"
 
-# Annotation arrows drawn with the right mouse button. Arrows are a local UI
+# Annotations drawn with the right mouse button: arrows dragged between two
+# squares, and highlights toggled on a single square. These are a local UI
 # note only, they are never sent to the C++ backend.
 ARROW_COLOR = "#e8e52c"
 ARROW_WIDTH = 8
 ARROW_HEAD = (16, 22, 9)
+SQUARE_HIGHLIGHT = "#59c135"
 
 ##########
 # UI STATE
@@ -97,6 +107,10 @@ resultDialog = None
 
 # The windows which displays the pawn promotion options.
 piecePromoBox = None
+
+# The options panel and its collapse bar, or None until createUI() creates
+# the optionsUI.OptionsPanel.
+optionsPanel = None
 
 
 #########################
@@ -134,7 +148,10 @@ class ChessBoard(tk.Frame):
         self.arrow = None
         self.squareHighlights = []
         self.drag = None
-        width = cols * CELL + 2 * MARGIN
+        # The labeled border only occupies the left and bottom margins. The
+        # squares sit flush with the right edge, so the collapse bar sits
+        # directly against the board there.
+        width = cols * CELL + MARGIN
         height = rows * CELL + 2 * MARGIN
         self.canvas = tk.Canvas(self, width=width, height=height, highlightthickness=0, bg=BACKGROUND)
         self.canvas.pack()
@@ -146,7 +163,9 @@ class ChessBoard(tk.Frame):
         self.canvas.bind("<ButtonRelease-3>", self.onRightRelease)
         self.drawBoard()
         self.drawBorderLabels()
-        self.pack()
+        # The board packs on the left of the main row, so the options bar
+        # and panel can sit to its right.
+        self.pack(side=tk.LEFT)
 
     # ----- drawing -----
 
@@ -257,6 +276,8 @@ class ChessBoard(tk.Frame):
         self.clearArrowsFrom(square)
         self.clearSquareHighlight(square)
 
+    # ----- annotation arrows -----
+
     def drawArrow(self, fromSquare, toSquare):
         """
         Draws an annotation arrow between the centers of two squares.
@@ -309,6 +330,8 @@ class ChessBoard(tk.Frame):
                 remaining.append(arrow)
         self.arrows = remaining
         return removed
+
+    # ----- square highlights -----
 
     def findSquareHighlight(self, square):
         """
@@ -488,8 +511,46 @@ class ChessBoard(tk.Frame):
 #####################
 
 def closeUI():
+    """
+    Destroys the UI and queues a stop event.
+    The backend responds to the event by ending the program.
+    """
     addEvent("stop")
     root.destroy()
+
+def resetBoard():
+    """
+    Closes the game result window and queues a reset_board event.
+    The backend answers the event by starting a new game and sending the
+    starting board state back to the UI with setBoardState().
+    """
+    global resultDialog
+    if (verboseMode):
+        print("Resetting board!")
+
+    if resultDialog is not None:
+        resultDialog.destroy()
+        resultDialog = None
+
+    addEvent("reset_board")
+
+def sendPiecePromoChoice(piece):
+    """
+    Closes the piece promotion window and queues a piece_promo_choice event.
+    The backend answers the event by promoting the appropriate piece and 
+    updating the board state.
+    @param piece The piece promotion choice.
+    """
+    global piecePromoBox
+    if (verboseMode):
+        print("Promoting piece!")
+
+    if piecePromoBox is not None:
+        piecePromoBox.grab_release()
+        piecePromoBox.destroy()
+        piecePromoBox = None
+
+    addEvent(f"piece_promo_choice {piece}")
 
 
 #####################
@@ -511,9 +572,69 @@ def validateCell(col, row, pieceType=None):
         raise ValueError(f"Unregistered piece type: '{pieceType}'")
 
 
+###################
+# BOARD ANNOTATIONS
+###################
+
+def clearArrows():
+    """
+    Removes all annotation arrows from the board, leaving the square
+    highlights untouched.
+    Arrows are drawn by right clicking and dragging on the board, and are a
+    local UI note which the backend is never told about.
+    """
+    if boardUI is None:
+        return
+    boardUI.clearArrows()
+    updateUI()
+
+def clearAnnotations():
+    """
+    Removes every annotation from the board: all arrows and all square
+    highlights.
+    Arrows are drawn by right clicking and dragging on the board, square
+    highlights by a plain right click, and both are a local UI note which the
+    backend is never told about.
+    """
+    if boardUI is None:
+        return
+    boardUI.clearAnnotations()
+    updateUI()
+
+def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
+    """
+    Draws a highlight outline on one square.
+    @param col The column of the square.
+    @param row The row of the square.
+    @param color Optional outline color.
+    """
+    if boardUI is None:
+        return
+    x0, y0 = boardUI.topLeftPixel(col, row)
+    item = boardUI.canvas.create_rectangle(
+        x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
+        outline=color, width=4,
+    )
+    boardUI.highlightItems.append(item)
+    updateUI()
+
+def clearHighlights():
+    """
+    Removes all square highlights.
+    """
+    if boardUI is None:
+        return
+    for item in boardUI.highlightItems:
+        boardUI.canvas.delete(item)
+    boardUI.highlightItems = []
+    updateUI()
+
+
 ###############
 # C++ INTERFACE
 ###############
+
+# ----- creation and updates -----
 
 def createUI(cols, rows):
     """
@@ -524,7 +645,7 @@ def createUI(cols, rows):
     if (verboseMode):
         print(f"Creating UI board of size ({cols},{rows})!")
 
-    global root, boardUI, uiEvents, resultDialog
+    global root, boardUI, uiEvents, resultDialog, piecePromoBox, optionsPanel
     if root is not None:
         root.destroy()
         # The additional windows are children of the root window, so they are destroyed
@@ -533,11 +654,29 @@ def createUI(cols, rows):
         piecePromoBox = None
     root = tk.Tk()
     root.title("CHECK: Custom House-made Engine for Chess Knowledge")
-    boardUI = ChessBoard(root, cols, rows)
+
+    # The board, the collapse bar and the options panel share one row,
+    # packed left to right. The panel can then open beside the board
+    # without disturbing it.
+    mainRow = tk.Frame(root)
+    mainRow.pack()
+    boardUI = ChessBoard(mainRow, cols, rows)
+    optionsPanel = optionsUI.OptionsPanel(mainRow, addEvent, glyphs)
+
     uiEvents = []
     # Handles when the window is deleted.
     root.protocol("WM_DELETE_WINDOW", closeUI)
 
+def updateUI():
+    """
+    Processes pending tkinter events and redraws the window.
+    The backend can call this to keep the UI responsive between polls.
+    """
+    if root is not None:
+        root.update()
+
+
+# ----- board state -----
 
 def registerPiece(name, icon):
     """
@@ -553,7 +692,9 @@ def registerPiece(name, icon):
         print(f"Adding {name} piece with icon {icon} to glyphs!")
 
     glyphs[name] = icon
-
+    if optionsPanel is not None:
+        # The panel may already be drawing this piece in the turn indicator.
+        optionsPanel.updateGlyphs()
 
 def setBoardState(cells):
     """
@@ -578,7 +719,6 @@ def setBoardState(cells):
     boardUI.clearAnnotations()
     boardUI.drawPieces()
 
-
 def getBoardState():
     """
     Returns the current board state as state strings.
@@ -594,7 +734,6 @@ def getBoardState():
                 cells.append(f"{col},{row},{piece['type']},{piece['color']}")
 
     return cells
-
 
 def movePiece(fromCol, fromRow, toCol, toRow):
     """
@@ -616,7 +755,6 @@ def movePiece(fromCol, fromRow, toCol, toRow):
     boardUI.clearAnnotations()
     boardUI.drawPieces()
 
-
 def setPiece(piece, color, col, row):
     """
     Sets a piece from the board data and redraws.
@@ -630,7 +768,6 @@ def setPiece(piece, color, col, row):
     boardUI.board[col][row] = {"type": piece, "color": color}
     boardUI.clearAnnotations()
     boardUI.drawPieces()
-
 
 def removePiece(col, row):
     """
@@ -646,86 +783,14 @@ def removePiece(col, row):
     boardUI.drawPieces()
 
 
-def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
-    """
-    Draws a highlight outline on one square.
-    @param col The column of the square.
-    @param row The row of the square.
-    @param color Optional outline color.
-    """
-    if boardUI is None:
-        return
-    x0, y0 = boardUI.topLeftPixel(col, row)
-    item = boardUI.canvas.create_rectangle(
-        x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
-        outline=color, width=4,
-    )
-    boardUI.highlightItems.append(item)
-    updateUI()
-
-
-def clearHighlights():
-    """
-    Removes all square highlights.
-    """
-    if boardUI is None:
-        return
-    for item in boardUI.highlightItems:
-        boardUI.canvas.delete(item)
-    boardUI.highlightItems = []
-    updateUI()
-
-
-def clearArrows():
-    """
-    Removes all annotation arrows from the board, leaving the square
-    highlights untouched.
-    Arrows are drawn by right clicking and dragging on the board, and are a
-    local UI note which the backend is never told about.
-    """
-    if boardUI is None:
-        return
-    boardUI.clearArrows()
-    updateUI()
-
-
-def clearAnnotations():
-    """
-    Removes every annotation from the board: all arrows and all square
-    highlights.
-    Arrows are drawn by right clicking and dragging on the board, square
-    highlights by a plain right click, and both are a local UI note which the
-    backend is never told about.
-    """
-    if boardUI is None:
-        return
-    boardUI.clearAnnotations()
-    updateUI()
-
-
-def resetBoard():
-    """
-    Closes the game result window and queues a reset_board event.
-    The backend answers the event by starting a new game and sending the
-    starting board state back to the UI with setBoardState().
-    """
-    global resultDialog
-    if (verboseMode):
-        print("Resetting board!")
-
-    if resultDialog is not None:
-        resultDialog.grab_release()
-        resultDialog.destroy()
-        resultDialog = None
-
-    addEvent("reset_board")
-
+# ----- dialogs -----
 
 def showGameResult(result, reason, winner="none"):
     """
     Displays the result of a finished game with a single reset option.
-    The backend ignores pickup and drop events once the game is over, so the
-    window cannot be dismissed without resetting; closing it resets too.
+    The dialog does not block the main window. The backend ignores pickup
+    and drop events once the game is over, so the move history can still
+    be copied with the panel's Copy button. Closing the window resets too.
     @param result The result of the game: "win" or "draw".
     @param reason Why the game ended, e.g. "checkmate", "stalemate" or
         "insufficient material".
@@ -755,29 +820,7 @@ def showGameResult(result, reason, winner="none"):
              bg=BACKGROUND, fg=LABEL_FG).pack(padx=24, pady=(18, 12))
     tk.Button(resultDialog, text="Reset", command=resetBoard).pack(padx=24, pady=(0, 18))
     resultDialog.protocol("WM_DELETE_WINDOW", resetBoard)
-    resultDialog.wait_visibility(resultDialog)
-    resultDialog.grab_set()
     updateUI()
-
-
-def sendPiecePromoChoice(piece):
-    """
-    Closes the piece promotion window and queues a piece_promo_choice event.
-    The backend answers the event by promoting the appropriate piece and 
-    updating the board state.
-    @param piece The piece promotion choice.
-    """
-    global piecePromoBox
-    if (verboseMode):
-        print("Promoting piece!")
-
-    if piecePromoBox is not None:
-        piecePromoBox.grab_release()
-        piecePromoBox.destroy()
-        piecePromoBox = None
-
-    addEvent(f"piece_promo_choice {piece}")
-
 
 def showPiecePromoBox(pieces, color):
     """
@@ -820,15 +863,61 @@ def showPiecePromoBox(pieces, color):
 
     updateUI()
 
+# ----- options panel -----
 
-def updateUI():
+def setTurn(color):
     """
-    Processes pending tkinter events and redraws the window.
-    The backend can call this to keep the UI responsive between polls.
+    Shows whose turn it is on the options panel turn indicator.
+    @param color "white" or "black".
     """
-    if root is not None:
-        root.update()
+    if optionsPanel is None:
+        raise ValueError("UI not created; call createUI() first")
+    optionsPanel.setTurn(color)
 
+def addMoveToHistory(side, move):
+    """
+    Appends a move to the given player's move history box on the options
+    panel.
+    @param side "white" or "black", the player who made the move.
+    @param move The move text to display, e.g., "e2e4".
+    """
+    if optionsPanel is None:
+        raise ValueError("UI not created; call createUI() first")
+    optionsPanel.addMove(side, move)
+
+def clearMoveHistory():
+    """
+    Empties both move history boxes on the options panel. The backend calls
+    this when a new game starts so the boxes only ever hold the current
+    game's moves.
+    """
+    if optionsPanel is None:
+        raise ValueError("UI not created; call createUI() first")
+    optionsPanel.clearMoves()
+
+def markMoveInHistory(side, marker):
+    """
+    Appends a marker to the last move recorded for the given player on the
+    options panel, e.g., "#" on the move which delivered checkmate.
+    @param side "white" or "black", the player who made the last move.
+    @param marker The text to append to that move.
+    """
+    if optionsPanel is None:
+        raise ValueError("UI not created; call createUI() first")
+    optionsPanel.markLastMove(side, marker)
+
+def showOptionsPanel():
+    """
+    Opens the options panel beside the board. The backend calls this after
+    createUI() when the configuration says the panel starts open. The panel
+    starts closed, so nothing is called when it starts closed. The collapse
+    bar still closes it afterwards.
+    """
+    if optionsPanel is None:
+        raise ValueError("UI not created; call createUI() first")
+    optionsPanel.show()
+
+# ----- event queue -----
 
 def getNextEvent():
     """
@@ -840,7 +929,6 @@ def getNextEvent():
     if not uiEvents:
         return ""
     return uiEvents.pop(0)
-
 
 def getAllEvents():
     """
@@ -861,6 +949,7 @@ def getAllEvents():
 
     return events
 
+# ----- configuration -----
 
 def setVerbose(val):
     """
@@ -873,9 +962,15 @@ def setVerbose(val):
         print("Verbose mode enabled for checkUI (python module).")
 
 
+##################
+# STANDALONE DEMO
+##################
+
 def main():
     """
-    Standalone 5x6 sample for testing the UI without the C++ backend.
+    Standalone 5x6 sample for testing the UI without the C++ backend. This only
+    handles visuals and picking up pieces, it does not handle moving pieces since
+    that is all handled by the C++ backend.
     """
     setVerbose(True)
     createUI(5, 6)
@@ -894,12 +989,12 @@ def main():
 
         # Add pawns.
         "0,1,pawn,white",
-        "1,1,pawn,white",
-        "2,1,pawn,white",
+        "1,2,pawn,white",
+        "2,2,pawn,white",
         "3,1,pawn,white",
         "4,1,pawn,white",
         "0,4,pawn,black",
-        "1,4,pawn,black",
+        "1,3,pawn,black",
         "2,4,pawn,black",
         "3,4,pawn,black",
         "4,4,pawn,black",
@@ -912,8 +1007,14 @@ def main():
         "1,0,templar,white",
         "3,5,templar,black",
     ])
-    root.mainloop()
 
+    # Panel content: a short opening, black to move.
+    addMoveToHistory("white", "c3")
+    addMoveToHistory("black", "b4")
+    addMoveToHistory("white", "b3")
+    setTurn("black")
+    optionsPanel.show()
+    root.mainloop()
 
 if __name__ == "__main__":
     main()

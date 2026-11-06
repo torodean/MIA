@@ -31,10 +31,6 @@ Unit tests for all these classes need added.
 
 Add the ability to save and load games.
 
-## Board Setup
-
-The ability to set up the board in any starting configuration would be nice.
-
 ## Draw conditions.
 
 Other draw conditions such as threefold repetition need added.
@@ -44,10 +40,6 @@ Other draw conditions such as threefold repetition need added.
 The board state docs mention keeping times and the timing library is linked in for
 it, but nothing keeps time yet.
 
-## Move history in the UI
-
-The moves are recorded but never shown, some sort of move list is needed.
-
 ## Add sounds
 
 A sound for putting the opponent into check needs added.
@@ -55,3 +47,11 @@ A sound for putting the opponent into check needs added.
 ## Verbose and debug output.
 
 The logging and verbose output needs tidied up and improved.
+
+## Add an undo button
+
+## Config validation
+
+The config files need some validation and the options to have any config field be optional. Also, expanding config to change colors and other things in the UI.
+
+An undo button is needed to take back the last move.
