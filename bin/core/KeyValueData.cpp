@@ -86,7 +86,7 @@ namespace config
         } 
         catch (...) 
         {
-            // TODO - Add MIAException here.
+            throw error::MIAException(error::ErrorCode::Config_Invalid_Value);
             return 0;
         }
     }
@@ -109,7 +109,7 @@ namespace config
         } 
         catch (...) 
         {
-            // TODO - Add MIAException here.
+            throw error::MIAException(error::ErrorCode::Config_Invalid_Value);
             return 0.0;
         }
     }
