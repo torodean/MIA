@@ -77,12 +77,13 @@ namespace check
     {
         CheckConfig out;
 
-        out.verboseMode = config.getBool("verbose_mode");
-        out.showLegalMoves = config.getBool("show_legal_moves");
+        out.verboseMode = config.getBool("verbose_mode", true, false);
+        out.showLegalMoves = config.getBool("show_legal_moves", true, true);
         out.boardSizeX = string_utils::stringToUint8(config.getString("board_size_x"));
         out.boardSizeY = string_utils::stringToUint8(config.getString("board_size_y"));
-        out.startingPlayerState = PlayerState(string_utils::stringToUint8(config.getString("number_of_players")),
-                                              string_utils::stringToUint8(config.getString("whos_turn_is_it")));
+        out.startingPlayerState = PlayerState(
+            string_utils::stringToUint8(config.getString("number_of_players", true, "2")),
+            string_utils::stringToUint8(config.getString("whos_turn_is_it", true, "1")));
         out.startingPosition = stringToStartingPosition(config.getString("starting_state"));
         out.pieceArts = extractPieceArtsFromConfig(config, "piece_");
 

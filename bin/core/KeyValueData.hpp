@@ -2,9 +2,10 @@
  * @file KeyValueData.hpp
  * @author Antonius Torode
  * @date 05/24/2025
- * Description: Private header defining the KeyValueData class for MIAConfig.
- *              This class implements the ConfigData interface to store configuration
- *              data as key-value pairs, supporting key-based access and conversion.
+ *
+ * Private header defining the KeyValueData class for MIAConfig.
+ * This class implements the ConfigData interface to store configuration
+ * data as key-value pairs, supporting key-based access and conversion.
  */
 #pragma once
 
@@ -12,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include <unordered_map>
+#include <optional>
 
 // Included for the abstract base class.
 #include "ConfigData.hpp"
@@ -40,79 +42,80 @@ namespace config
 
         /**
          * @brief Loads configuration data from a file as key-value pairs.
-         * @param filePath[const std::string&] - The path to the configuration file.
-         * @param verboseMode[bool] - If true, enables verbose output during loading.
+         * @param filePath The path to the configuration file.
+         * @param verboseMode If true, enables verbose output during loading.
          * @throws MIAException If the file cannot be opened or parsed.
-         * @see ConfigData::load()
          */
         void load(const std::string& filePath, bool verboseMode) override;
 
         /**
+         * @brief Retrieves the configuration value for a key as a boolean.
+         * @param key The key to look up.
+         * @return The boolean value if the key exists and conversion succeeds;
+         *         otherwise std::nullopt.
+         * @throws MIAException If the value conversion fails.
+         * @see ConfigData::getBool()
+         */
+        std::optional<bool> getBool(const std::string& key) const override;
+
+        /**
          * @brief Retrieves the configuration value for a key as an integer.
-         * @param key[const std::string&] - The key to look up.
-         * @return [int] - The integer value if the key exists and conversion succeeds; otherwise, 0.
-         * @throws MIAException If the key is not found or conversion fails.
+         * @param key The key to look up.
+         * @return The integer value if the key exists and conversion succeeds;
+         *         otherwise std::nullopt.
+         * @throws MIAException If the value conversion fails.
          * @see ConfigData::getInt()
          */
-        int getInt(const std::string& key) const override;
+        std::optional<int> getInt(const std::string& key) const override;
 
         /**
          * @brief Retrieves the configuration value for a key as a double.
-         * @param key[const std::string&] - The key to look up.
-         * @return [double] - The double value if the key exists and conversion succeeds; otherwise, 0.0.
-         * @throws MIAException If the key is not found or conversion fails.
+         * @param key The key to look up.
+         * @return The double value if the key exists and conversion succeeds;
+         *         otherwise std::nullopt.
+         * @throws MIAException If the value conversion fails.
          * @see ConfigData::getDouble()
          */
-        double getDouble(const std::string& key) const override;
+        std::optional<double> getDouble(const std::string& key) const override;
 
         /**
          * @brief Retrieves the configuration value for a key as a string.
-         * @param key[const std::string&] - The key to look up.
-         * @return [std::string] - The string value if the key exists; otherwise, an empty string.
-         * @throws MIAException If the key is not found.
+         * @param key The key to look up.
+         * @return The string value if the key exists; otherwise std::nullopt.
          * @see ConfigData::getString()
          */
-        std::string getString(const std::string& key) const override;
+        std::optional<std::string> getString(const std::string& key) const override;
 
         /**
          * @brief Retrieves the configuration value for a key as a vector of strings.
-         * @param key[const std::string&] - The key to look up.
-         * @param delimiter[char] - The character used to split the string value.
-         * @return [std::vector<std::string>] - A vector of strings parsed from the value; empty if key not found or conversion fails.
-         * @throws MIAException If the key is not found.
+         * @param key The key to look up.
+         * @param delimiter The character used to split the string value.
+         * @return A vector of strings parsed from the value; empty if key not found or conversion fails.
+         * @throws MIAException If the value conversion fails.
          * @see ConfigData::getVector()
          */
         std::vector<std::string> getVector(const std::string& key, char delimiter) const override;
 
         /**
-         * @brief Retrieves the configuration value for a key as a boolean.
-         * @param key[const std::string&] - The key to look up.
-         * @return [bool] - The boolean value if the key exists and conversion succeeds; otherwise, false.
-         * @throws MIAException If the key is not found or conversion fails.
-         * @see ConfigData::getBool()
-         */
-        bool getBool(const std::string& key) const override;
-
-        /**
          * @brief Retrieves the configuration value for a key as a vector of integers.
-         * @param key[const std::string&] - The key to look up.
-         * @param delimiter[char] - The character used to split the string value.
-         * @return [std::vector<int>] - A vector of integers parsed from the value; empty if key not found or conversion fails.
-         * @throws MIAException If the key is not found or conversion fails.
+         * @param key The key to look up.
+         * @param delimiter The character used to split the string value.
+         * @return A vector of integers parsed from the value; empty if key not found or conversion fails.
+         * @throws MIAException If the value conversion fails.
          * @see ConfigData::getIntVector()
          */
         std::vector<int> getIntVector(const std::string& key, char delimiter) const override;
 
         /**
          * @brief Retrieves all key-value pairs stored in the configuration.
-         * @return [std::vector<constants::KeyValuePair>] - A vector containing all key-value pairs.
+         * @return A vector containing all key-value pairs.
          * @see ConfigData::getAllConfigPairs()
          */
         std::vector<constants::KeyValuePair> getAllConfigPairs() const override;
 
         /**
          * @brief Retrieves raw lines constructed from key-value pairs.
-         * @return [std::vector<std::string>] - A vector of strings, each representing a key-value pair as a line.
+         * @return A vector of strings, each representing a key-value pair as a line.
          * @note Constructs lines in the format "key=value" from stored pairs.
          * @see ConfigData::getRawLines()
          */
@@ -120,8 +123,8 @@ namespace config
 
         /**
          * @brief Outputs the configuration data to the specified stream.
-         * @param os[std::ostream&] - The output stream to write to.
-         * @return [void] - No return value; outputs all key-value pairs.
+         * @param os The output stream to write to.
+         * @return No return value; outputs all key-value pairs.
          * @note Outputs each key-value pair in the format "key=value".
          * @see ConfigData::dump()
          */
@@ -129,7 +132,7 @@ namespace config
 
         /**
          * @brief Retrieves the type of configuration data stored.
-         * @return [constants::ConfigType] - Always returns constants::ConfigType::KEY_VALUE.
+         * @return Always returns constants::ConfigType::KEY_VALUE.
          * @see ConfigData::getType()
          */
         constants::ConfigType getType() const override;
