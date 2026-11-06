@@ -72,13 +72,28 @@ namespace config
     }
 
 
-    int KeyValueData::getInt(const std::string& key) const
+    std::optional<bool> KeyValueData::getBool(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
         if (it == rawConfigValsMap.end())
         {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+            return std::nullopt;
+        }
+
+        std::string val = it->second;
+        std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+
+        // Check for different forms of true.
+        return (val == "true" || val == "1" || val == "yes" || val == "on");
+    }
+
+
+    std::optional<int> KeyValueData::getInt(const std::string& key) const
+    {
+        auto it = rawConfigValsMap.find(key);
+        if (it == rawConfigValsMap.end())
+        {
+            return std::nullopt;
         }
         try 
         {
@@ -87,22 +102,22 @@ namespace config
         catch (...) 
         {
             throw error::MIAException(error::ErrorCode::Config_Invalid_Value);
-            return 0;
         }
     }
 
 
-    double KeyValueData::getDouble(const std::string& key) const
+    std::optional<double> KeyValueData::getDouble(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
         if (it == rawConfigValsMap.end())
         {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+            return std::nullopt;
         }
         try 
         {
-            if (it->second == "inf" || it->second == "infinity")
+            std::string infCheck = it->second;
+            std::transform(infCheck.begin(), infCheck.end(), infCheck.begin(), ::tolower);
+            if (infCheck == "inf" || infCheck == "infinity")
                 return std::numeric_limits<double>::infinity();
             else
                 return std::stod(it->second);
@@ -110,18 +125,16 @@ namespace config
         catch (...) 
         {
             throw error::MIAException(error::ErrorCode::Config_Invalid_Value);
-            return 0.0;
         }
     }
 
 
-    std::string KeyValueData::getString(const std::string& key) const
+    std::optional<std::string> KeyValueData::getString(const std::string& key) const
     {
         auto it = rawConfigValsMap.find(key);
         if (it == rawConfigValsMap.end())
         {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+            return std::nullopt;
         }
 
         return it->second;
@@ -134,8 +147,7 @@ namespace config
         auto it = rawConfigValsMap.find(key);
         if (it == rawConfigValsMap.end())
         {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+            return result;
         }
 
         std::string val = it->second;
@@ -150,31 +162,13 @@ namespace config
     }
 
 
-    bool KeyValueData::getBool(const std::string& key) const
-    {
-        auto it = rawConfigValsMap.find(key);
-        if (it == rawConfigValsMap.end())
-        {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
-        }
-
-        std::string val = it->second;
-        std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-
-        // Check for different forms of true.
-        return (val == "true" || val == "1" || val == "yes" || val == "on");
-    }
-
-
     std::vector<int> KeyValueData::getIntVector(const std::string& key, char delimiter) const
     {
         std::vector<int> result;
         auto it = rawConfigValsMap.find(key);
         if (it == rawConfigValsMap.end())
         {
-            std::string err = "Can't find key in configuration map: " + key;
-            throw error::MIAException(error::ErrorCode::Cannot_Find_Mapped_Value, err);
+            return result;
         }
 
         std::string val = it->second;
@@ -188,11 +182,12 @@ namespace config
             } 
             catch (...) 
             {
-                // Skip invalid integers
+                throw error::MIAException(error::ErrorCode::Config_Invalid_Value);
             }
         }
         return result;
     }
+
 
     std::vector<constants::KeyValuePair> KeyValueData::getAllConfigPairs() const
     {
@@ -227,6 +222,7 @@ namespace config
         }
         os << std::endl;
     }
+
 
     constants::ConfigType KeyValueData::getType() const
     {

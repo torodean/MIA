@@ -17,7 +17,7 @@
 #include "ConfigData.hpp"
 
 namespace config
-{   
+{
     // Forward declaration of ConfigData class where the configuration data is stored.
     class ConfigData;
 
@@ -110,51 +110,74 @@ namespace config
         constants::ConfigType getConfigType() const;
 
         /**
-         * @brief Retrieves the configuration value associated with the given key as an int.
-         * @note Only supported for constants::ConfigType::KEY_VALUE.
+         * @brief Retrieves the configuration value associated with the given key as a bool.
+         * @note Currently only supported for constants::ConfigType::KEY_VALUE.
+         *
          * @param key The key name to look up in the configuration map.
-         * @return The int value if the key exists and conversion succeeds; otherwise, returns 0.
-         * @throws MIAException - Thrown if the key is not found in the configuration map.
+         * @return The bool value if the key exists and conversion succeeds; otherwise, returns false.
+         * @param optional Whether or not this config value is optional.
+         * @param defaultVal The default value to return if this is optional and not found.
+         * @throws MIAException Thrown if the key is not found in the configuration map.
          */
-        int getInt(const std::string& key) const;
+        bool getBool(const std::string& key,
+                     bool optional = false,
+                     bool defaultVal = false) const;
+
+        /**
+         * @brief Retrieves the configuration value associated with the given key as an int.
+         * @note Currently only supported for constants::ConfigType::KEY_VALUE.
+         *
+         * @param key The key name to look up in the configuration map.
+         * @param optional Whether or not this config value is optional.
+         * @param defaultVal The default value to return if this is optional and not found.
+         * @return The int value if the key exists and conversion succeeds; otherwise std::nullopt.
+         * @throws MIAException if the key is not found in the configuration map and is required
+         *         or if parsing of the key fails.
+         */
+        int getInt(const std::string& key,
+                   bool optional = false,
+                   int defaultVal = 0) const;
 
         /**
          * @brief Retrieves the configuration value associated with the given key as a double.
-         * @note Only supported for constants::ConfigType::KEY_VALUE.
+         * @note Currently only supported for constants::ConfigType::KEY_VALUE.
+         *
          * @param key The key name to look up in the configuration map.
+         * @param optional Whether or not this config value is optional.
+         * @param defaultVal The default value to return if this is optional and not found.
          * @return The double value if the key exists and conversion succeeds; otherwise, returns 0.0.
-         * @throws MIAException - Thrown if the key is not found in the configuration map.
+         * @throws MIAException if the key is not found in the configuration map and is required
+         *         or if parsing of the key fails.
          */
-        double getDouble(const std::string& key) const;
+        double getDouble(const std::string& key,
+                        bool optional = false,
+                        double defaultVal = 0.0) const;
 
         /**
          * @brief Retrieves the configuration value associated with the given key as a string.
-         * @note Only supported for constants::ConfigType::KEY_VALUE.
+         * @note Currently only supported for constants::ConfigType::KEY_VALUE.
+         *
          * @param key The key name to look up in the configuration map.
+         * @param optional Whether or not this config value is optional.
+         * @param defaultVal The default value to return if this is optional and not found.
          * @return The string value if the key exists; otherwise, returns an empty string.
          * @throws MIAException - Thrown if the key is not found in the configuration map.
          */
-        std::string getString(const std::string& key) const;
+        std::string getString(const std::string& key,
+                              bool optional = false,
+                              const std::string& defaultVal = "") const;
 
         /**
          * @brief Retrieves the configuration value associated with the given key as a vector of 
          *        strings, splitting the stored string by the specified delimiter.
-         * @note Only supported for constants::ConfigType::KEY_VALUE.
+         * @note Currently only supported for constants::ConfigType::KEY_VALUE.
+         *
          * @param key The key name to look up in the configuration map.
          * @param delimiter The character used to split the string into vector elements.
          * @return A vector of strings parsed from the value; empty vector if key not found.
-         * @throws MIAException Thrown if the key is not found in the configuration map.
          */
-        std::vector<std::string> getVector(const std::string& key, char delimiter) const;
-
-        /**
-         * @brief Retrieves the configuration value associated with the given key as a bool.
-         * @note Only supported for constants::ConfigType::KEY_VALUE.
-         * @param key The key name to look up in the configuration map.
-         * @return The bool value if the key exists and conversion succeeds; otherwise, returns false.
-         * @throws MIAException Thrown if the key is not found in the configuration map.
-         */
-        bool getBool(const std::string& key) const;
+        std::vector<std::string> getVector(const std::string& key,
+                                           char delimiter) const;
 
         /**
          * @brief Retrieves the configuration value associated with the given key as a vector 
@@ -162,9 +185,10 @@ namespace config
          * @param key The key name to look up in the configuration map.
          * @param delimiter The character used to split the string into vector elements.
          * @return A vector of ints parsed from the value; empty vector if key not found.
-         * @throws MIAException Thrown if the key is not found in the configuration map.
+         * @throws MIAException Thrown if the values are incorrectly formatted.
          */
-        std::vector<int> getIntVector(const std::string& key, char delimiter) const;
+        std::vector<int> getIntVector(const std::string& key,
+                                      char delimiter) const;
 
         /**
          * @brief Dumps all key-value pairs stored in rawConfigValsMap to the specified output 
@@ -180,7 +204,7 @@ namespace config
          * @note Only supported for constants::ConfigType::KEY_VALUE.
          * @return A vector containing all configuration key-value pairs.
          */
-        std::vector<constants::KeyValuePair> getAllConfigPairs() const;        
+        std::vector<constants::KeyValuePair> getAllConfigPairs() const;      
 
         /**
          * @brief Returns all raw lines stored in the Data object. If the config type does 

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <optional>
 
 // Used for the ConfigType
 #include "Constants.hpp"
@@ -24,6 +25,11 @@ namespace config
      * formats such as key-value pairs or raw lines. It is used internally by MIAConfig
      * as part of the PIMPL idiom to hide implementation details. Subclasses implement
      * specific storage and retrieval mechanisms based on the configuration type.
+     *
+     * All of the base-type returned values are set as std::optional so that callers can 
+     * decide how they want to handle values which are not present (i.e. strictly require
+     * or to allow some values to be optional). The vector values are not optional because
+     * the caller can just check if the vector is empty for the same result.
      */
     class ConfigData
     {
@@ -34,12 +40,20 @@ namespace config
         virtual ~ConfigData() = default;
 
         /**
+         * @brief Retrieves the configuration value for a key as a boolean.
+         * @param key The key to look up.
+         * @return The boolean value of the configuration entry.
+         * @note Pure virtual; must be implemented by derived classes.
+         */
+        virtual std::optional<bool> getBool(const std::string& key) const = 0;
+
+        /**
          * @brief Retrieves the configuration value for a key as an integer.
          * @param key The key to look up.
          * @return The integer value of the configuration entry.
          * @note Pure virtual; must be implemented by derived classes.
          */
-        virtual int getInt(const std::string& key) const = 0;
+        virtual std::optional<int> getInt(const std::string& key) const = 0;
 
         /**
          * @brief Retrieves the configuration value for a key as a double.
@@ -47,7 +61,7 @@ namespace config
          * @return The double value of the configuration entry.
          * @note Pure virtual; must be implemented by derived classes.
          */
-        virtual double getDouble(const std::string& key) const = 0;
+        virtual std::optional<double> getDouble(const std::string& key) const = 0;
 
         /**
          * @brief Retrieves the configuration value for a key as a string.
@@ -55,33 +69,29 @@ namespace config
          * @return The string value of the configuration entry.
          * @note Pure virtual; must be implemented by derived classes.
          */
-        virtual std::string getString(const std::string& key) const = 0;
+        virtual std::optional<std::string> getString(const std::string& key) const = 0;
 
         /**
-         * @brief Retrieves the configuration value for a key as a vector of strings, split by a delimiter.
+         * @brief Retrieves the configuration value for a key as a vector of strings, 
+         *        split by a delimiter.
          * @param key The key to look up.
          * @param delimiter The character used to split the string value.
          * @return A vector of strings parsed from the configuration entry.
          * @note Pure virtual; must be implemented by derived classes.
          */
-        virtual std::vector<std::string> getVector(const std::string& key, char delimiter) const = 0;
+        virtual std::vector<std::string> getVector(const std::string& key, 
+                                                   char delimiter) const = 0;
 
         /**
-         * @brief Retrieves the configuration value for a key as a boolean.
-         * @param key The key to look up.
-         * @return The boolean value of the configuration entry.
-         * @note Pure virtual; must be implemented by derived classes.
-         */
-        virtual bool getBool(const std::string& key) const = 0;
-
-        /**
-         * @brief Retrieves the configuration value for a key as a vector of integers, split by a delimiter.
+         * @brief Retrieves the configuration value for a key as a vector of 
+         *        integers, split by a delimiter.
          * @param key The key to look up.
          * @param delimiter The character used to split the string value.
          * @return A vector of integers parsed from the configuration entry.
          * @note Pure virtual; must be implemented by derived classes.
          */
-        virtual std::vector<int> getIntVector(const std::string& key, char delimiter) const = 0;
+        virtual std::vector<int> getIntVector(const std::string& key, 
+                                              char delimiter) const = 0;
 
         /**
          * @brief Retrieves all key-value pairs stored in the configuration.

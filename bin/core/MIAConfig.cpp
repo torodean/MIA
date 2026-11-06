@@ -30,6 +30,7 @@ namespace config
     // default to RawLinesData since it is perfectly valid for any type of file.
     MIAConfig::MIAConfig() : configData(std::make_unique<RawLinesData>()) {}
 
+
     MIAConfig::MIAConfig(const std::string& configFile, constants::ConfigType type, bool verboseMode)
         : configFileName(configFile)
     {
@@ -44,7 +45,9 @@ namespace config
         }
     }
 
+
     MIAConfig::~MIAConfig() = default;
+
 
     void MIAConfig::setConfigFileName(const std::string& configFile, constants::ConfigType type, bool verboseMode)
     {
@@ -60,6 +63,7 @@ namespace config
         }
         reload(verboseMode);
     }
+
 
     void MIAConfig::initialize(bool verboseMode)
     {
@@ -83,50 +87,98 @@ namespace config
         configData->load(configFileFullPath, verboseMode);
     }
 
+
     constants::ConfigType MIAConfig::getConfigType() const
     {
         return configData->getType();
     }
 
-    int MIAConfig::getInt(const std::string& key) const
-    {
-        return configData->getInt(key);
+
+    bool MIAConfig::getBool(const std::string& key, bool optional, bool defaultVal) const
+    {      
+        std::optional<bool> val = configData->getBool(key);;
+        if (val.has_value())
+            return val.value();
+
+        if (!val.has_value() && !optional)
+        { // This indicates the value was not found in the config but is required.
+            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
+        }
+
+        return defaultVal;
     }
 
-    double MIAConfig::getDouble(const std::string& key) const
+
+    int MIAConfig::getInt(const std::string& key, bool optional, int defaultVal) const
     {
-        return configData->getDouble(key);
+        std::optional<int> val = configData->getInt(key);
+        if (val.has_value())
+            return val.value();
+
+        if (!val.has_value() && !optional)
+        { // This indicates the value was not found in the config but is required.
+            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
+        }
+
+        return defaultVal;
     }
 
-    std::string MIAConfig::getString(const std::string& key) const
+
+    double MIAConfig::getDouble(const std::string& key, bool optional, double defaultVal) const
     {
-        return configData->getString(key);
+        std::optional<double> val = configData->getDouble(key);
+        if (val.has_value())
+            return val.value();
+
+        if (!val.has_value() && !optional)
+        { // This indicates the value was not found in the config but is required.
+            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
+        }
+
+        return defaultVal;
     }
+
+
+    std::string MIAConfig::getString(const std::string& key, 
+                                     bool optional,
+                                     const std::string& defaultVal) const
+    {
+        std::optional<std::string> val = configData->getString(key);
+        if (val.has_value())
+            return val.value();
+
+        if (!val.has_value() && !optional)
+        { // This indicates the value was not found in the config but is required.
+            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
+        }
+
+        return defaultVal;
+    }
+
 
     std::vector<std::string> MIAConfig::getVector(const std::string& key, char delimiter) const
     {
         return configData->getVector(key, delimiter);
     }
 
-    bool MIAConfig::getBool(const std::string& key) const
-    {
-        return configData->getBool(key);
-    }
 
     std::vector<int> MIAConfig::getIntVector(const std::string& key, char delimiter) const
     {
         return configData->getIntVector(key, delimiter);
     }
 
+
     std::vector<constants::KeyValuePair> MIAConfig::getAllConfigPairs() const
     {
         return configData->getAllConfigPairs();
     }
 
+
     std::vector<std::string> MIAConfig::getRawLines() const
     {
         return configData->getRawLines();
     }
+
 
     void MIAConfig::dumpConfigMap(std::ostream& os) const
     {
