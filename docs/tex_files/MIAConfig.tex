@@ -116,7 +116,7 @@ std::vector<std::string> names = config.getVector("userList", ',');
 
 \subsection*{Optional Configuration Values}
 
-The configuration values support optional values. To use optional values, an acceptable default value needs to be available from the developer in the case of the optional value not being found. Many of the \texttt{MIAConfig::get*} methods contains an \texttt{optional} parameter, followed by the default value to return if the value is not found. These can be used with:
+The configuration values support optional values (as of MIA version 2.123). To use optional values, an acceptable default value needs to be available from the developer in the case of the optional value not being found. Many of the \texttt{MIAConfig::get*} methods contains an \texttt{optional} parameter, followed by the default value to return if the value is not found. These can be used with:
 
 \begin{lstlisting}[style=cppstyle]
 	config::MIAConfig config;
