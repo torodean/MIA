@@ -114,6 +114,23 @@ int retryCount = config.getInt("maxRetries");
 std::vector<std::string> names = config.getVector("userList", ',');
 \end{lstlisting}
 
+\subsection*{Optional Configuration Values}
+
+The configuration values support optional values. To use optional values, an acceptable default value needs to be available from the developer in the case of the optional value not being found. Many of the \texttt{MIAConfig::get*} methods contains an \texttt{optional} parameter, followed by the default value to return if the value is not found. These can be used with:
+
+\begin{lstlisting}[style=cppstyle]
+	config::MIAConfig config;
+	
+	// Later in the code...
+	config.setConfigFileName("MIAConfig.MIA", constants::ConfigType::KEY_VALUE);
+	
+	// Defaults to "." if no "inputFilePath" is found.
+	std::string path = config.getString("inputFilePath", true, ".");
+	
+	// Defaults to false if no "verboseMode" is found.
+	bool verbose = config.getBool("verboseMode", true, false);
+\end{lstlisting}
+
 \section{Extensibility and Maintainability}
 
 The configuration system was designed to be flexible and extensible. The design allows for future integration with other configuration formats (e.g., JSON or environment variables) or backend sources with minimal changes to consuming code. Additional configuration maps or derived classes can be introduced later without altering the core interface or behavior.
