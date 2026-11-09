@@ -55,6 +55,7 @@ namespace error
         Invalid_Character_Input = 31424,      ///< There was an invalid character input.
         Invalid_Argument = 31428,             ///< Invalid application/command argument.
         Missing_Argument = 31429,             ///< The app/command argument was not found.
+        Duplicate_Argument = 31430,           ///< The same command option was specified more than once.
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
         Out_Of_Order_Method_Calls = 31434,    ///< A sequence of methods was called out of order.
 
