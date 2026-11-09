@@ -44,7 +44,7 @@ namespace config
          * @brief Loads configuration data from a file as key-value pairs.
          * @param filePath The path to the configuration file.
          * @param verboseMode If true, enables verbose output during loading.
-         * @throws MIAException If the file cannot be opened or parsed.
+         * @throws MIAException if the file cannot be opened.
          */
         void load(const std::string& filePath, bool verboseMode) override;
 
@@ -124,7 +124,6 @@ namespace config
         /**
          * @brief Outputs the configuration data to the specified stream.
          * @param os The output stream to write to.
-         * @return No return value; outputs all key-value pairs.
          * @note Outputs each key-value pair in the format "key=value".
          * @see ConfigData::dump()
          */
