@@ -37,7 +37,15 @@ namespace check
         Checkmate,             ///< The current player is in check with no legal move.
         Stalemate,             ///< The current player is not in check but has no legal move.
         InsufficientMaterial,  ///< Neither player can force a checkmate.
+        ThreefoldRepetition,   ///< The same position has occurred three times.
+        FiftyMoveRule,         ///< No pawn-like move or capture for fifty moves.
     };
+
+    /// Occurrences of a position which draw the game by threefold repetition.
+    inline constexpr uint32_t THREEFOLD_REPETITION_LIMIT = 3;
+
+    /// Quiet moves which draw by the fifty-move rule (50 per player).
+    inline constexpr uint16_t FIFTY_MOVE_RULE_LIMIT = 100;
 
     /**
      * Stores the result of a game. This holds the outcome, the reason for that
@@ -112,10 +120,37 @@ namespace check
     bool hasInsufficientMaterial(const BoardState& boardState);
 
     /**
+     * @brief Determines whether the current position has occurred three times.
+     *
+     * Positions are compared by positionKey(), and the current occurrence
+     * counts toward the limit. FIDE play requires a player to claim this draw;
+     * here it ends the game automatically like stalemate does.
+     *
+     * @param boardState The current state of the board.
+     * @return true if the current position reached THREEFOLD_REPETITION_LIMIT
+     *         occurrences, false otherwise.
+     */
+    bool isThreefoldRepetition(const BoardState& boardState);
+
+    /**
+     * @brief Determines whether the fifty-move rule draws the game.
+     *
+     * Counts moves back to the last pawn-like move (pawn or spade) or capture
+     * and compares against FIFTY_MOVE_RULE_LIMIT. This ends the game
+     * automatically like stalemate does.
+     *
+     * @param boardState The current state of the board.
+     * @return true if FIFTY_MOVE_RULE_LIMIT quiet moves have been played,
+     *         false otherwise.
+     */
+    bool isFiftyMoveRule(const BoardState& boardState);
+
+    /**
      * @brief Determines the current result of the game.
      *
      * The end-of-game conditions are checked in this order: checkmate, stalemate,
-     * then insufficient material. The first one which applies becomes the result.
+     * threefold repetition, fifty-move rule, then insufficient material. The
+     * first one which applies becomes the result.
      * Since both checkmate and stalemate apply to the player who is to move, this
      * must be called after the turn has been advanced to the next player.
      *
@@ -145,7 +180,8 @@ namespace check
      *
      * @param reason The game over reason to convert.
      * @return The string representation of the reason ("none", "checkmate",
-     *         "stalemate", or "insufficient material").
+     *         "stalemate", "insufficient material", "threefold repetition",
+     *         or "fifty-move rule").
      */
     std::string gameOverReasonToString(GameOverReason reason);
 } // namespace check
