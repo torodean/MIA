@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <string>
 
 // Include the associated header file.
 #include "BoardState.hpp"
@@ -17,6 +18,8 @@
 #include "Pawn.hpp" 
 // Needed for castling special case.
 #include "King.hpp"
+// Used for building position keys.
+#include "PieceType.hpp"
 
 namespace check
 {
@@ -41,6 +44,10 @@ namespace check
         setBoardToStartingPosition(startingPosition);
         startingPlayerState = startPlayerState;
         initialized = true;
+
+        // The starting position is the first entry of the position history.
+        positionHistory.clear();
+        positionHistory.push_back(positionKey(*this));
     }
 
 
@@ -120,11 +127,15 @@ namespace check
             stream << " to " << std::to_string(playerState.whosTurnIsIt);
             context->logger.log(stream.str(), {"BoardState", "advanceTurn()"}, context->verboseMode);
         }
+
+        // The completed turn leaves a new position for the next player.
+        positionHistory.push_back(positionKey(*this));
     }
 
 
     void BoardState::movePiece(math::Coordinate<uint8_t> fromPos,
-                               math::Coordinate<uint8_t> toPos)
+                               math::Coordinate<uint8_t> toPos,
+                               bool recordInHistory)
     {
         if (!isSquareOccupied(fromPos))
             MIA_THROW(error::ErrorCode::Check_No_Piece_On_Square);
@@ -175,7 +186,11 @@ namespace check
         }
 
         // Add the move to the board moves and update board state.
-        moves.push_back(move);
+        if (recordInHistory)
+        {
+            moves.push_back(move);
+        }
+
         squareStates[toIndex].updatePiece(piece);
         squareStates[fromIndex].removePiece();
     }
@@ -239,6 +254,10 @@ namespace check
 
         setBoardToStartingPosition(startingPosition);
         playerState.whosTurnIsIt = startingPlayerState.whosTurnIsIt; // Reset player.
+
+        // The new game restarts the position history at the starting position.
+        positionHistory.clear();
+        positionHistory.push_back(positionKey(*this));
     }
 
 
@@ -247,6 +266,63 @@ namespace check
         if (moves.empty())
             return std::nullopt;
         return moves.back();
+    }
+
+
+    void BoardState::setLastMoveCastlingData(const CastlingMetaData& rookMove)
+    {
+        if (moves.empty())
+        {
+            MIA_THROW(error::ErrorCode::Out_Of_Order_Method_Calls,
+                      "Castling data set before a move was recorded.");
+        }
+
+        moves.back().castlingData = rookMove;
+    }
+
+
+    const std::vector<MoveState>& BoardState::getMoves() const
+    {
+        return moves;
+    }
+
+
+    const std::vector<std::string>& BoardState::getPositionHistory() const
+    {
+        return positionHistory;
+    }
+
+
+    std::string positionKey(const BoardState& boardState)
+    {
+        std::string key;
+
+        for (const SquareState& square : boardState.getSquareStates())
+        {
+            const std::optional<Piece>& piece = square.getPiece();
+
+            if (!piece.has_value())
+                continue;
+
+            const math::Coordinate<uint8_t>& pos = square.getCoordinate();
+            key.push_back(static_cast<char>(pos.x));
+            key.push_back(static_cast<char>(pos.y));
+            key.push_back(static_cast<char>(piece->type));
+            key.push_back(static_cast<char>(piece->color));
+
+            if (piece->type == PieceType::King || piece->type == PieceType::Rook)
+            { // Their square's changed flag is the castling availability.
+                key.push_back(square.hasChanged() ? 1 : 0);
+            }
+        }
+
+        key.push_back(static_cast<char>(boardState.whosTurnIsIt()));
+
+        const bool epAvailable = lastMoveAllowsEnPassant(
+            boardState, whosTurnIsItToColor(boardState.whosTurnIsIt()));
+        key.push_back(epAvailable ? 1 : 0);
+
+        return key;
     }
 
 
