@@ -99,15 +99,6 @@ namespace check
     bool isCastlingMove(const MoveState& move);
 
     /**
-     * Stores some move data for a rook that is being castled with.
-     */
-    struct CastlingMetaData
-    {
-        math::Coordinate<uint8_t> rookStartingPos;
-        math::Coordinate<uint8_t> rookEndingPos;
-    };
-
-    /**
      * This will get the coordinate of the rook that is being castled with. This
      * assumes all checks for castling validity have been done and the move is in
      * the process of being made (the king has already moved)
