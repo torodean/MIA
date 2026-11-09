@@ -222,13 +222,25 @@ namespace check
                            const math::Coordinate<uint8_t>& destination);
 
     /**
-     * This returns all squares attacked by pieces on the board.
+     * @brief This returns all squares attacked by pieces on the board.
      * @param boardState The current state of the board.
      * @return A list of all attacked squares on the board.
      * @param defendingColor The color being defended against attacks.
      */
     std::vector<math::Coordinate<uint8_t>> getAttackedSquares(const BoardState& boardState,
                                                               Color defendingColor);
+
+    /**
+     * @brief Determines whether the last move left an en passant capture available.
+     *
+     * This checks the last-move condition of the en passant rule. That is, the last move
+     * being a two-square move of an opposing pawn or spade piece.
+     *
+     * @param state The state of the board.
+     * @param capturingColor The color which would make the en passant capture.
+     * @return true if an opposing pawn or spade just moved two squares.
+     */
+    bool lastMoveAllowsEnPassant(const BoardState& state, Color capturingColor);
 
     /**
      * Determines whether a move is an en passant capture. This method is
