@@ -42,5 +42,16 @@ echo "Running non-verbose mode test..."
 non_verbose_output=$(${test_executable_name} -t)
 [[ "$non_verbose_output" != *"Verbose mode enabled"* ]] || { echo "Unexpected verbose output"; exit 1; }
 
-echo "All tests passed."
+# Test 6: A duplicated bool flag (short and long form) is rejected.
+# The app prints the error and continues, so stdin is redirected to avoid
+# the interactive prompt reached when test mode fails to enable.
+echo "Running duplicate bool flag test..."
+dup_bool_output=$(${test_executable_name} -t --test < /dev/null 2>&1)
+[[ "$dup_bool_output" == *"Duplicate"* && "$dup_bool_output" == *"--test"* ]] || { echo "Duplicate bool flag was not rejected"; exit 1; }
 
+# Test 7: A duplicated string option with values is rejected.
+echo "Running duplicate string option test..."
+dup_string_output=$(${test_executable_name} -c a.MIA -c b.MIA < /dev/null 2>&1)
+[[ "$dup_string_output" == *"Duplicate"* && "$dup_string_output" == *"--config"* ]] || { echo "Duplicate string option was not rejected"; exit 1; }
+
+echo "All tests passed."
