@@ -2,7 +2,7 @@
  * @file RawLinesData.cpp
  * @author Antonius Torode
  * @date 05/24/2025
- * Description: 
+ * @brief Implementation of the RawLinesData class for MIAConfig.
  */
 
 #include <iostream>
@@ -29,7 +29,7 @@ namespace config
         std::string line;
         while (std::getline(file, line)) 
         {
-            if (!line.empty() && line[0] != '#' && line.size()>2)
+            if (line.size() > 2 && line[0] != '#')
             {
                 if(verboseMode)
 				    std::cout << "Config line read: " << line << std::endl;
