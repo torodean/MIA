@@ -95,6 +95,13 @@ namespace check
 
         /**
          * Advance the turn to the next player.
+         *
+         * Advancing the turn ends the current one, so the position the next
+         * player faces is recorded in the position history (see positionKey()).
+         * This is the only point a completed turn is recorded, and the event
+         * flows call it after every board update of a turn (the castling rook
+         * move and any promotion replacement included).
+         *
          * @param skipahead An optional value to skip-ahead. This is added to support
          *        game variations with player/turn skips.
          */
@@ -108,14 +115,29 @@ namespace check
          * destination square, overwriting any piece currently there. The
          * source square is left empty.
          *
-         * @param fromXPos The x-coordinate (column) of the source square.
-         * @param fromYPos The y-coordinate (row) of the source square.
-         * @param toXPos The x-coordinate (column) of the destination square.
-         * @param toYPos The y-coordinate (row) of the destination square.
+         * @param fromPos The coordinate of the source square.
+         * @param toPos The coordinate of the destination square.
+         * @param recordInHistory When false, the move is left out of the moves
+         *        history. Used for component moves, such as the rook move of a
+         *        castle, so the history holds one entry per turn.
          * @throws MIAException if the source square is not occupied.
          */
         void movePiece(math::Coordinate<uint8_t> fromPos,
-                       math::Coordinate<uint8_t> toPos);
+                       math::Coordinate<uint8_t> toPos,
+                       bool recordInHistory = true);
+
+        /**
+         * @brief Stores the castling rook's move on the last recorded move.
+         *
+         * The rook move of a castle is not recorded as its own history entry,
+         * so its coordinates are attached to the king's entry. This keeps the
+         * castle reversible, as the rook's original square cannot be derived
+         * once the rook has moved.
+         *
+         * @param rookMove The rook's starting and ending squares of the castle.
+         * @throws MIAException if no move has been recorded yet.
+         */
+        void setLastMoveCastlingData(const CastlingMetaData& rookMove);
 
         /**
          * @brief Removes the piece from the requested square, if one exists.
@@ -196,6 +218,25 @@ namespace check
         std::optional<MoveState> getLastMove() const;
 
         /**
+         * @brief Returns every move made in this game, in the order made.
+         *
+         * The history holds exactly one entry per completed turn.
+         *
+         * @return A reference to the vector of recorded moves.
+         */
+        const std::vector<MoveState>& getMoves() const;
+
+        /**
+         * @brief Returns the key of every position which has occurred so far.
+         *
+         * The first entry is the starting position and the last entry is the
+         * current position of the board. reset() restarts the history.
+         *
+         * @return A reference to the vector of recorded position keys.
+         */
+        const std::vector<std::string>& getPositionHistory() const;
+
+        /**
          * Determines whether a square is attacked by an opposing piece.
          * @param xPos The x-coordinate (column) to check.
          * @param yPos The y-coordinate (row) to check.
@@ -271,5 +312,25 @@ namespace check
          * tracks the moves that led to this game state.
          */
         std::vector<MoveState> moves;
+
+        /*
+         * Stores the positionKey() of every position which has occurred in this
+         * game: the starting position followed by one entry per turn completed
+         * by advanceTurn(). Repetition rules are checked against this history.
+         */
+        std::vector<std::string> positionHistory;
     }; // class BoardState
+
+    /**
+     * @brief Builds the key which identifies the current position.
+     *
+     * The key holds the piece placement, the moved state of every king and
+     * rook, whose turn it is, and whether an en passant capture is available.
+     * Two positions share a key when they are identical for the rules which
+     * compare positions, such as threefold repetition.
+     *
+     * @param boardState The current state of the board.
+     * @return The position key string for the board.
+     */
+    std::string positionKey(const BoardState& boardState);
 } // namespace check
