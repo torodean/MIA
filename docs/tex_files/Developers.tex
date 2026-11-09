@@ -696,7 +696,7 @@ void MIATemplate::initialize(int argc, char* argv[])
 }
 	\end{lstlisting}
 
-	\item \textbf{Error Handling:} Throws \idxtt{MIAException} if a type mismatch occurs or parsing fails.
+	\item \textbf{Error Handling:} Throws \idxtt{MIAException} if a type mismatch occurs, parsing fails, or an option is specified more than once.
 \end{itemize}
 
 \subsection{command\_parser Namespace}
@@ -717,7 +717,9 @@ Each parser:
 	\item Validates the presence of the option.
 	\item Converts the argument to the correct type.
 	\item Throws a \idxtt{MIAException} on error, such as type mismatch or missing required value.
+	\item Rejects an option that appears more than once; the short and long forms count as duplicates of each other. The limit is currently fixed at one occurrence per option and is not configurable as of MIA version 2.123.
 \end{itemize}
+Option occurrences are counted by exact match of the registered short or long form, so an argument such as \texttt{--config=file} matches no option, and values which match no registered option are ignored.
 The \idxtt{CommandOption} class acts as a high-level interface, while \idxtt{command\_parser} performs the low-level parsing. Together, they ensure robustness, type safety, and consistent error reporting across the command-line interface.
 
 
@@ -1436,6 +1438,17 @@ The \texttt{Testing\_CORE} is a defined CMake component which can be linked to f
 \end{lstlisting}
 This may not always be desired, though it should be rather common throughout the MIA project. This \texttt{Testing\_CORE} feature was added in version 2.113, so any component added before that may or may not be updated to use it.
 
+\subsection{Application Shell Tests}\label{section:testing_shell_scripts}
+
+App level behavior can be tested by shell tests written as \idx{Bash} scripts in an app's \idxtt{test} directory, which passes the executable's path as the script's first argument. The script runs the executable end-to-end and checks its output, exit codes, and created files, which can cover behavior a unit test cannot, such as command-line parsing and error reporting to the terminal. An example is \texttt{templateApp\_T.sh} in \texttt{bin/apps/template/test}, which tests the template app's help output, logging, configuration loading, verbose mode, and rejection of duplicated command options. Adding shell tests to CMake uses the following format:
+\begin{lstlisting}[style=makestyle]
+# Add a custom set of tests for the template application.
+add_test( NAME TemplateApp_T
+          COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/templateApp_T.sh
+          $<TARGET_FILE:MIATemplate>
+)
+\end{lstlisting}
+
 \subsection{Running Tests}
 
 Tests run through CTest from the build directory:
@@ -1447,5 +1460,4 @@ The \texttt{-T} option of \idxtt{build.sh} also builds and runs the tests.
 \subsection{Continuous Integration}
 
 The workflow in \texttt{.github/workflows/tests.yml} builds and tests the project on every pull request and every push to main. It runs only when files under \texttt{bin/} changed. The build-and-test job runs twice through a matrix, once with all optional dependencies installed and once without any of them, so builds which skip the optional feature flags are tested alongside the full build (see section \ref{section:optional_features}).
-
 
