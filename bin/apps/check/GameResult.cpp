@@ -8,6 +8,7 @@
 // Include the associated header file.
 #include "GameResult.hpp"
 
+#include <algorithm>
 #include <vector>
 #include <optional>
 
@@ -49,6 +50,20 @@ namespace check
                 return Color::Black;
 
             return Color::White;
+        }
+
+        /**
+         * @brief Determines whether a moved piece type resets the fifty-move rule.
+         *
+         * Pawns and spades are the pieces which promote and capture en passant,
+         * so both reset this rule.
+         *
+         * @param type The type of the moved piece.
+         * @return true if moving this type resets the rule, false otherwise.
+         */
+        bool resetsFiftyMoveRule(PieceType type)
+        {
+            return type == PieceType::Pawn || type == PieceType::Spade;
         }
     }
 
@@ -159,6 +174,39 @@ namespace check
     }
 
 
+    bool isThreefoldRepetition(const BoardState& boardState)
+    {
+        const std::string currentKey = positionKey(boardState);
+        const std::vector<std::string>& history = boardState.getPositionHistory();
+
+        return std::count(history.begin(), history.end(), currentKey)
+               >= THREEFOLD_REPETITION_LIMIT;
+    }
+
+
+    bool isFiftyMoveRule(const BoardState& boardState)
+    {
+        const std::vector<MoveState>& moves = boardState.getMoves();
+
+        uint16_t moveCount = 0;
+
+        for (size_t i = moves.size(); i > 0; i--)
+        {
+            const MoveState& move = moves[i - 1];
+
+            if (resetsFiftyMoveRule(move.piece.type) || move.wasCapture)
+                break;
+
+            moveCount++;
+
+            if (moveCount >= FIFTY_MOVE_RULE_LIMIT)
+                return true;
+        }
+
+        return false;
+    }
+
+
     GameResult getGameResult(const BoardState& boardState)
     {
         GameResult result;
@@ -176,6 +224,20 @@ namespace check
         {
             result.type = GameResultType::Draw;
             result.reason = GameOverReason::Stalemate;
+            return result;
+        }
+
+        if (isThreefoldRepetition(boardState))
+        {
+            result.type = GameResultType::Draw;
+            result.reason = GameOverReason::ThreefoldRepetition;
+            return result;
+        }
+
+        if (isFiftyMoveRule(boardState))
+        {
+            result.type = GameResultType::Draw;
+            result.reason = GameOverReason::FiftyMoveRule;
             return result;
         }
 
@@ -211,6 +273,8 @@ namespace check
             case GameOverReason::Checkmate:            return "checkmate";
             case GameOverReason::Stalemate:            return "stalemate";
             case GameOverReason::InsufficientMaterial: return "insufficient material";
+            case GameOverReason::ThreefoldRepetition:  return "threefold repetition";
+            case GameOverReason::FiftyMoveRule:        return "fifty-move rule";
 
             case GameOverReason::None:
             default:                                   return "none";
