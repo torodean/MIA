@@ -42,7 +42,8 @@ namespace config
         /**
          * @brief Retrieves the configuration value for a key as a boolean.
          * @param key The key to look up.
-         * @return The boolean value of the configuration entry.
+         * @return The boolean value of the configuration entry, or std::nullopt if the
+         *         key is not present.
          * @note Pure virtual; must be implemented by derived classes.
          */
         virtual std::optional<bool> getBool(const std::string& key) const = 0;
@@ -50,7 +51,8 @@ namespace config
         /**
          * @brief Retrieves the configuration value for a key as an integer.
          * @param key The key to look up.
-         * @return The integer value of the configuration entry.
+         * @return The integer value of the configuration entry, or std::nullopt if the
+         *         key is not present.
          * @note Pure virtual; must be implemented by derived classes.
          */
         virtual std::optional<int> getInt(const std::string& key) const = 0;
@@ -58,7 +60,8 @@ namespace config
         /**
          * @brief Retrieves the configuration value for a key as a double.
          * @param key The key to look up.
-         * @return The double value of the configuration entry.
+         * @return The double value of the configuration entry, or std::nullopt if the
+         *         key is not present.
          * @note Pure virtual; must be implemented by derived classes.
          */
         virtual std::optional<double> getDouble(const std::string& key) const = 0;
@@ -66,7 +69,8 @@ namespace config
         /**
          * @brief Retrieves the configuration value for a key as a string.
          * @param key The key to look up.
-         * @return The string value of the configuration entry.
+         * @return The string value of the configuration entry, or std::nullopt if the
+         *         key is not present.
          * @note Pure virtual; must be implemented by derived classes.
          */
         virtual std::optional<std::string> getString(const std::string& key) const = 0;
