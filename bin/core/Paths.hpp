@@ -131,7 +131,7 @@ namespace paths
         namespace fs = std::filesystem;
         std::error_code errCode;
 
-        fs::path execPath = fs::canonical(fs::current_path(), errCode);
+        fs::path execPath = fs::canonical(fs::path(getExecutableDir()), errCode);
         if (errCode) 
         {
             return false;
