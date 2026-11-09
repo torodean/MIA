@@ -13,3 +13,6 @@ target_include_directories( Python_UTIL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Add the unit tests.
 add_test_dir()
+
+# Install the common python tools and features.
+install_python_files( pythonTools.py )
