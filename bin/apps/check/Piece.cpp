@@ -277,6 +277,29 @@ namespace check
     }
 
 
+    bool lastMoveAllowsEnPassant(const BoardState& state, Color capturingColor)
+    {
+        const std::optional<MoveState> lastMove = state.getLastMove();
+
+        // The last move must exist.
+        if (!lastMove.has_value())
+            return false;
+
+        // The last move has to be either a pawn or a spade piece.
+        if (lastMove->piece.type != PieceType::Pawn &&
+            lastMove->piece.type != PieceType::Spade)
+            return false;
+
+        if (lastMove->piece.color == capturingColor)
+            return false;
+
+        int16_t previousYDifference = static_cast<int16_t>(lastMove->endingPos.y) -
+                                      static_cast<int16_t>(lastMove->startingPos.y);
+
+        return std::abs(previousYDifference) == 2;
+    }
+
+
     bool isEnPassantMove(const MoveState& move, const BoardState& state)
     {
         // The moving piece must be a pawn.
@@ -299,26 +322,11 @@ namespace check
         // The previous move must have been an opposing pawn's two-square move.
         const std::optional<MoveState> lastMove = state.getLastMove();
 
-        // The last move must exist.
-        if (!lastMove.has_value())
+        if (!lastMoveAllowsEnPassant(state, move.piece.color))
             return false;
 
-        // The last move has to be either a pawn or a spade piece.
-        if (lastMove->piece.type != PieceType::Pawn &&
-            lastMove->piece.type != PieceType::Spade)
-            return false;
-
-        if (lastMove->piece.color == move.piece.color ||
-            lastMove->endingPos.x != move.endingPos.x ||
-            lastMove->endingPos.y != move.startingPos.y)
-        {
-            return false;
-        }
-
-        int16_t previousYDifference = static_cast<int16_t>(lastMove->endingPos.y) -
-                                      static_cast<int16_t>(lastMove->startingPos.y);
-
-        return std::abs(previousYDifference) == 2;
+        return lastMove->endingPos.x == move.endingPos.x &&
+               lastMove->endingPos.y == move.startingPos.y;
     }
 
 
