@@ -7,6 +7,7 @@
  */
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -15,6 +16,17 @@
 
 namespace check
 {
+    /**
+     * This stores the rook move that accompanies a king's castling move.
+     */
+    struct CastlingMetaData
+    {
+        /// The starting location of the castling rook.
+        math::Coordinate<uint8_t> rookStartingPos;
+        /// The ending location of the castling rook.
+        math::Coordinate<uint8_t> rookEndingPos;
+    };
+
     /**
      * This defines the state for a single move.
      */
@@ -39,6 +51,9 @@ namespace check
          * still remains as the original piece (e.g., pawn, spade).
          */
         bool triggersPromo{false};
+
+        /// The rook move of a castle, present only when wasCastling is true.
+        std::optional<CastlingMetaData> castlingData{std::nullopt};
     }; // struct MoveState
 
     /**
