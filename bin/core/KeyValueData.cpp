@@ -2,7 +2,7 @@
  * @file KeyValueData.cpp
  * @author Antonius Torode
  * @date 05/24/2025
- * Description: 
+ * @brief Implementation of the KeyValueData class for MIAConfig.
  */
 
 #include <fstream>
@@ -34,7 +34,7 @@ namespace config
 
         while (std::getline(file, line)) 
         {            
-            if (!line.empty() && line[0] != '#' && line.size()>2)
+            if (line.size() > 2 && line[0] != '#')
             {
                 if(verboseMode) 
 				    std::cout << "Config line read: " << line << std::endl;
@@ -56,7 +56,7 @@ namespace config
                 continue; // or log malformed line
 
             variable = basic_utils::strip(lines[i].substr(0, equalSignLocation));
-            value = lines[i].substr(equalSignLocation+1,lines[i].size()-1);
+            value = lines[i].substr(equalSignLocation + 1);
 
             //removes end of line characters from variable name and value. Fixes a bug.
             variable.erase(remove(variable.begin(), variable.end(), '\r'), variable.end());
@@ -83,8 +83,17 @@ namespace config
         std::string val = it->second;
         std::transform(val.begin(), val.end(), val.begin(), ::tolower);
 
-        // Check for different forms of true.
-        return (val == "true" || val == "1" || val == "yes" || val == "on");
+        // Check for the different forms of true and false.
+        if (val == "true" || val == "1" || val == "yes" || val == "on")
+        {
+            return true;
+        }
+        if (val == "false" || val == "0" || val == "no" || val == "off")
+        {
+            return false;
+        }
+
+        throw error::MIAException(error::ErrorCode::Config_Invalid_Value);
     }
 
 
