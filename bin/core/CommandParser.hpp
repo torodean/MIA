@@ -2,21 +2,23 @@
  * @file CommandParser.hpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: This file contains various utilities for parsing command options.
+ * @brief Contains various utilities for parsing command options.
  */
 #pragma once
 
 #include <string>
 
 namespace command_parser
-{    
+{
     /**
-     * Parses a boolean flag from command-line arguments.
-     * @param argc[int] - Argument count.
-     * @param argv[char**] - Argument values.
-     * @param shortArg[const std::string&] - Short option (e.g., "-v").
-     * @param longArg[const std::string&] - Long option (e.g., "--verbose").
-     * @param outValue[bool&] - Output boolean value to set.
+     * @brief Parses a boolean flag from command-line arguments.
+     *
+     * @param argc Argument count.
+     * @param argv Argument values.
+     * @param shortArg Short option (e.g., "-v").
+     * @param longArg Long option (e.g., "--verbose").
+     * @param outValue Output boolean value to set.
+     * @throws MIAException if the option is specified more than once.
      */
     void parseBoolFlag(int argc, char* argv[], 
                        const std::string& shortArg,
@@ -24,14 +26,16 @@ namespace command_parser
                        bool& outValue);
 
     /**
-     * Parses an integer option from command-line arguments.
-     * @param argc[int] - Argument count.
-     * @param argv[char**] - Argument values.
-     * @param shortArg[const std::string&] - Short option (e.g., "-t").
-     * @param longArg[const std::string&] - Long option (e.g., "--threads").
-     * @param outValue[int&] - Output integer value to set.
-     * @param required[bool] - If this option is required or not when parsing.
-     * @throws MIAException - Thrown if the option is not found or the value is not a valid integer.
+     * @brief Parses an integer option from command-line arguments.
+     *
+     * @param argc Argument count.
+     * @param argv Argument values.
+     * @param shortArg Short option (e.g., "-t").
+     * @param longArg Long option (e.g., "--threads").
+     * @param outValue Output integer value to set.
+     * @param required If this option is required or not when parsing.
+     * @throws MIAException if the option is not found, the value is not a valid integer,
+     *         or the option is specified more than once.
      */
     void parseIntOption(int argc, char* argv[], 
                         const std::string& shortArg,
@@ -40,14 +44,16 @@ namespace command_parser
                         bool required = false);
 
     /**
-     * Parses an unsigned integer option from command-line arguments.
-     * @param argc[int] - Argument count.
-     * @param argv[char**] - Argument values.
-     * @param shortArg[const std::string&] - Short option (e.g., "-d").
-     * @param longArg[const std::string&] - Long option (e.g., "--debug").
-     * @param outValue[unsigned int&] - Output unsigned integer value to set.
-     * @param required[bool] - If this option is required or not when parsing.
-     * @throws MIAException - Thrown if the option is not found or the value is not a valid integer.
+     * @brief Parses an unsigned integer option from command-line arguments.
+     *
+     * @param argc Argument count.
+     * @param argv Argument values.
+     * @param shortArg Short option (e.g., "-d").
+     * @param longArg Long option (e.g., "--debug").
+     * @param outValue Output unsigned integer value to set.
+     * @param required If this option is required or not when parsing.
+     * @throws MIAException if the option is not found, the value is not a valid integer,
+     *         or the option is specified more than once.
      */
     void parseUnsignedIntOption(int argc, char* argv[], 
                                 const std::string& shortArg,
@@ -56,14 +62,16 @@ namespace command_parser
                                 bool required = false);
 
     /**
-     * Parses a double option from command-line arguments.
-     * @param argc[int] - Argument count.
-     * @param argv[char**] - Argument values.
-     * @param shortArg[const std::string&] - Short option (e.g., "-h").
-     * @param longArg[const std::string&] - Long option (e.g., "--threshold").
-     * @param outValue[double&] - Output double value to set.
-     * @param required[bool] - If this option is required or not when parsing.
-     * @throws MIAException - Thrown if the option is not found or the value is not a valid double.
+     * @brief Parses a double option from command-line arguments.
+     *
+     * @param argc Argument count.
+     * @param argv Argument values.
+     * @param shortArg Short option (e.g., "-h").
+     * @param longArg Long option (e.g., "--threshold").
+     * @param outValue Output double value to set.
+     * @param required If this option is required or not when parsing.
+     * @throws MIAException if the option is not found, the value is not a valid double,
+     *         or the option is specified more than once.
      */
     void parseDoubleOption(int argc, char* argv[], 
                            const std::string& shortArg,
@@ -72,14 +80,15 @@ namespace command_parser
                            bool required = false);
 
     /**
-     * Parses a string option from command-line arguments.
-     * @param argc[int] - Argument count.
-     * @param argv[char**] - Argument values.
-     * @param shortArg[const std::string&] - Short option (e.g., "-o").
-     * @param longArg[const std::string&] - Long option (e.g., "--output").
-     * @param outValue[std::string&] - Output string value to set.
-     * @param required[bool] - If this option is required or not when parsing.
-     * @throws MIAException - Thrown if the option is not found.
+     * @brief Parses a string option from command-line arguments.
+     *
+     * @param argc Argument count.
+     * @param argv Argument values.
+     * @param shortArg Short option (e.g., "-o").
+     * @param longArg Long option (e.g., "--output").
+     * @param outValue Output string value to set.
+     * @param required If this option is required or not when parsing.
+     * @throws MIAException if the option is not found or is specified more than once.
      */
     void parseStringOption(int argc, char* argv[], 
                            const std::string& shortArg,

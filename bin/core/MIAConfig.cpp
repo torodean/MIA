@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <optional>
 #include <limits> // Used for infinity()
 
 // The associated header file(s).
@@ -18,7 +19,7 @@
 #include "RawLinesData.hpp"
 // Used for file path locations.
 #include "Paths.hpp"
-// Used foir some string manipulation
+// Used for some string manipulation
 #include "BasicUtilities.hpp"
 // Used for error codes and exceptions.
 #include "Error.hpp"
@@ -27,6 +28,38 @@
 
 namespace config
 {
+    namespace
+    {
+        /**
+         * @brief Resolves an optional configuration value by returning the found value or the
+         *        default value, or by throwing if the missing value is required.
+         * @tparam Type The value type returned by the configuration lookup.
+         * @param key The key that was looked up; used for the exception message when required.
+         * @param val The optional value returned by the underlying ConfigData lookup.
+         * @param optional Whether or not this config value is optional.
+         * @param defaultVal The value to return if the value was not found and is optional.
+         * @return The found value; otherwise defaultVal if optional is true.
+         * @throws MIAException if the value was not found and is required.
+         */
+        template <typename Type>
+        Type resolveOrDefault(const std::string& key,
+                              const std::optional<Type>& val,
+                              bool optional,
+                              const Type& defaultVal)
+        {
+            if (val.has_value())
+                return val.value();
+
+            if (!optional)
+            { // This indicates the value was not found in the config but is required.
+                MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
+            }
+
+            return defaultVal;
+        }
+    } // namespace
+
+
     // default to RawLinesData since it is perfectly valid for any type of file.
     MIAConfig::MIAConfig() : configData(std::make_unique<RawLinesData>()) {}
 
@@ -95,47 +128,20 @@ namespace config
 
 
     bool MIAConfig::getBool(const std::string& key, bool optional, bool defaultVal) const
-    {      
-        std::optional<bool> val = configData->getBool(key);;
-        if (val.has_value())
-            return val.value();
-
-        if (!val.has_value() && !optional)
-        { // This indicates the value was not found in the config but is required.
-            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
-        }
-
-        return defaultVal;
+    {
+        return resolveOrDefault(key, configData->getBool(key), optional, defaultVal);
     }
 
 
     int MIAConfig::getInt(const std::string& key, bool optional, int defaultVal) const
     {
-        std::optional<int> val = configData->getInt(key);
-        if (val.has_value())
-            return val.value();
-
-        if (!val.has_value() && !optional)
-        { // This indicates the value was not found in the config but is required.
-            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
-        }
-
-        return defaultVal;
+        return resolveOrDefault(key, configData->getInt(key), optional, defaultVal);
     }
 
 
     double MIAConfig::getDouble(const std::string& key, bool optional, double defaultVal) const
     {
-        std::optional<double> val = configData->getDouble(key);
-        if (val.has_value())
-            return val.value();
-
-        if (!val.has_value() && !optional)
-        { // This indicates the value was not found in the config but is required.
-            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
-        }
-
-        return defaultVal;
+        return resolveOrDefault(key, configData->getDouble(key), optional, defaultVal);
     }
 
 
@@ -143,16 +149,7 @@ namespace config
                                      bool optional,
                                      const std::string& defaultVal) const
     {
-        std::optional<std::string> val = configData->getString(key);
-        if (val.has_value())
-            return val.value();
-
-        if (!val.has_value() && !optional)
-        { // This indicates the value was not found in the config but is required.
-            MIA_THROW(error::ErrorCode::Config_Missing_Key, key);
-        }
-
-        return defaultVal;
+        return resolveOrDefault(key, configData->getString(key), optional, defaultVal);
     }
 
 
@@ -185,4 +182,3 @@ namespace config
         configData->dump(os);
     }    
 } // namespace config
-

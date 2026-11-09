@@ -59,7 +59,7 @@ namespace config
         ~MIAConfig();
 
         /**
-         * @brief This will iniitalize this object by reading and loading the configuration file 
+         * @brief This will initialize this object by reading and loading the configuration file 
          *        into the RawConfigVals map.
          * @param verboseMode Enables verbose output.
          * @throws MIAException Thrown if the config file name is not set or if the config 
@@ -97,8 +97,8 @@ namespace config
          { return configFileName; }
 
         /**
-         * @brief Gets the config file name for this object.
-         * @return Returns the configFileName value.
+         * @brief Gets the full path of the configuration file that was loaded.
+         * @return Returns the configFileFullPath value.
          */
          std::string getConfigFileFullPath()
          { return configFileFullPath; }       
@@ -114,10 +114,12 @@ namespace config
          * @note Currently only supported for constants::ConfigType::KEY_VALUE.
          *
          * @param key The key name to look up in the configuration map.
-         * @return The bool value if the key exists and conversion succeeds; otherwise, returns false.
          * @param optional Whether or not this config value is optional.
          * @param defaultVal The default value to return if this is optional and not found.
-         * @throws MIAException Thrown if the key is not found in the configuration map.
+         * @return The bool value if the key exists; otherwise, returns defaultVal if
+         *         optional is true.
+         * @throws MIAException if the key is not found in the configuration map and is required
+         *         or if parsing of the key fails.
          */
         bool getBool(const std::string& key,
                      bool optional = false,
@@ -130,7 +132,8 @@ namespace config
          * @param key The key name to look up in the configuration map.
          * @param optional Whether or not this config value is optional.
          * @param defaultVal The default value to return if this is optional and not found.
-         * @return The int value if the key exists and conversion succeeds; otherwise std::nullopt.
+         * @return The int value if the key exists and conversion succeeds; otherwise,
+         *         returns defaultVal if optional is true.
          * @throws MIAException if the key is not found in the configuration map and is required
          *         or if parsing of the key fails.
          */
@@ -145,7 +148,8 @@ namespace config
          * @param key The key name to look up in the configuration map.
          * @param optional Whether or not this config value is optional.
          * @param defaultVal The default value to return if this is optional and not found.
-         * @return The double value if the key exists and conversion succeeds; otherwise, returns 0.0.
+         * @return The double value if the key exists and conversion succeeds; otherwise,
+         *         returns defaultVal if optional is true.
          * @throws MIAException if the key is not found in the configuration map and is required
          *         or if parsing of the key fails.
          */
@@ -160,8 +164,9 @@ namespace config
          * @param key The key name to look up in the configuration map.
          * @param optional Whether or not this config value is optional.
          * @param defaultVal The default value to return if this is optional and not found.
-         * @return The string value if the key exists; otherwise, returns an empty string.
-         * @throws MIAException - Thrown if the key is not found in the configuration map.
+         * @return The string value if the key exists; otherwise, returns defaultVal if
+         *         optional is true.
+         * @throws MIAException if the key is not found in the configuration map and is required.
          */
         std::string getString(const std::string& key,
                               bool optional = false,
@@ -175,6 +180,7 @@ namespace config
          * @param key The key name to look up in the configuration map.
          * @param delimiter The character used to split the string into vector elements.
          * @return A vector of strings parsed from the value; empty vector if key not found.
+         * @throws MIAException if called when the configuration type is RAW_LINES.
          */
         std::vector<std::string> getVector(const std::string& key,
                                            char delimiter) const;
@@ -185,7 +191,8 @@ namespace config
          * @param key The key name to look up in the configuration map.
          * @param delimiter The character used to split the string into vector elements.
          * @return A vector of ints parsed from the value; empty vector if key not found.
-         * @throws MIAException Thrown if the values are incorrectly formatted.
+         * @throws MIAException if the values are incorrectly formatted or if called when
+         *         the configuration type is RAW_LINES.
          */
         std::vector<int> getIntVector(const std::string& key,
                                       char delimiter) const;

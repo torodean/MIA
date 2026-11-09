@@ -41,12 +41,13 @@ public:
     };
 
     /**
-     * Constructs a CommandOption with specified short option, long option, description, and option type.
-     * @param shortArg[const std::string&] - Short form of the option (e.g., "-c").
-     * @param longArg[const std::string&] - Long form of the option (e.g., "--config").
-     * @param description[const std::string&] - Human-readable description of the option.
-     * @param type[commandOptionType] - The expected data type for this option (bool, int, double, string).
-     * @param required[bool] - Whether this command option is required or not.
+     * @brief Constructs a CommandOption with specified short option, long option, description, and option type.
+     *
+     * @param shortArg Short form of the option (e.g., "-c").
+     * @param longArg Long form of the option (e.g., "--config").
+     * @param description Human-readable description of the option.
+     * @param type The expected data type for this option (bool, int, double, string).
+     * @param required Whether this command option is required or not.
      */
     CommandOption(const std::string& shortArg,
                   const std::string& longArg,
@@ -57,9 +58,11 @@ public:
     { }
 
     /**
-     * Returns the help string for this command option.
+     * @brief Returns the help string for this command option.
+     *
      * Format: "  -s, --long    Description"
-     * @return std::string - The formatted help string.
+     *
+     * @return The formatted help string.
      */
     std::string getHelp() const
     {
@@ -76,14 +79,17 @@ public:
     }
 
     /**
-     * Templated method to retrieve the parsed command-line option value.
+     * @brief Templated method to retrieve the parsed command-line option value.
+     *
      * Dispatches to the correct command_parser method based on the template type.
-     * @tparam Type - The expected return type (bool, int, double, or std::string).
-     * @param argc[int] - Argument count.
-     * @param argv[char**] - Argument values.
-     * @param out[Type&] - The parsed and typed value - this is modified by the parsing.
-     * @param requiredOption[bool] - Whether or not the method is required when called.
-     * @throws MIAException - If parsing fails or the type is unsupported for the option.
+     *
+     * @tparam Type The expected return type (bool, int, double, or std::string).
+     * @param argc Argument count.
+     * @param argv Argument values.
+     * @param out The parsed and typed value. Modified by the parsing.
+     * @param requiredOption Whether or not the method is required when called.
+     * @throws MIAException if parsing fails, the type is unsupported for the option,
+     *         or the option is specified more than once.
      */
     template<typename Type>
     void getOptionVal(int argc, char* argv[], Type& out, bool requiredOption = false) const
@@ -153,6 +159,6 @@ private:
     /// The type of command option value this argument expects.
     commandOptionType type;
 
-    // Is this command option required where it is used?
+    /// Is this command option required where it is used?
     bool requiredOption{false};
 };

@@ -47,10 +47,19 @@ namespace config
     {
     protected:
         std::string configContent = 
+            "# port2=9999\n"
+            "\n"
+            "ab\n"
             "port=8080\n"
             "host=localhost\n"
             "pi=3.14\n"
             "debug=true\n"
+            "falseFlag=false\n"
+            "zeroFlag=0\n"
+            "noFlag=no\n"
+            "offFlag=off\n"
+            "upper=TRUE\n"
+            "junkBool=guacamole\n"
             "ids=1,2,3\n"
             "names=alpha,beta,gamma\n"
             "integers=1,2,3,4,42\n"
@@ -161,7 +170,7 @@ namespace config
      *
      * The test attempts to retrieve integer, vector, and boolean values for keys
      * that do not exist in the configuration and confirms that the expected
-     * exception type is thrown. It also tries to parse invalud vectors and ensures
+     * exception type is thrown. It also tries to parse invalid vectors and ensures
      * the failure occurs.
      */
     TEST_F(MIAConfig_T, ExceptionThrownForMissingKey) 
@@ -198,5 +207,39 @@ namespace config
 
         EXPECT_EQ(config.getDouble("nonexistent", true, 14.823), 14.823);
         EXPECT_EQ(config.getDouble("pi", true, 14.823), 3.14);
+    }
+
+
+    /**
+     * @brief Verifies that boolean values are parsed from all supported true and false
+     *        tokens and that an unrecognized boolean value throws.
+     */
+    TEST_F(MIAConfig_T, BoolValueParsing) 
+    {
+        MIAConfig config(filePath, ConfigType::KEY_VALUE);
+        config.initialize();
+
+        EXPECT_TRUE(config.getBool("debug"));
+        EXPECT_TRUE(config.getBool("upper"));
+        EXPECT_FALSE(config.getBool("falseFlag"));
+        EXPECT_FALSE(config.getBool("zeroFlag"));
+        EXPECT_FALSE(config.getBool("noFlag"));
+        EXPECT_FALSE(config.getBool("offFlag"));
+        EXPECT_THROW(config.getBool("junkBool"), error::MIAException);
+    }
+
+
+    /**
+     * @brief Verifies that comment, empty, and too-short configuration lines are skipped
+     *        during loading and never stored as configuration entries.
+     */
+    TEST_F(MIAConfig_T, CommentAndShortLinesSkipped) 
+    {
+        MIAConfig config(filePath, ConfigType::KEY_VALUE);
+        config.initialize();
+
+        EXPECT_THROW(config.getInt("port2"), error::MIAException);
+        EXPECT_THROW(config.getString("ab"), error::MIAException);
+        EXPECT_EQ(config.getInt("port"), 8080);
     }
 } // namespace config

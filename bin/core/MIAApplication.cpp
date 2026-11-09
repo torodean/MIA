@@ -2,9 +2,9 @@
  * @file MIAApplication.cpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: Implements the BasicApplication base class methods.
- *              Handles common initialization such as parsing command line
- *              arguments for verbose mode.
+ * @brief Implements the MIAApplication base class methods.
+ *
+ * Handles common initialization such as parsing command line arguments for verbose mode.
  */
 
 #include <iostream>
@@ -12,9 +12,6 @@
 
 // The associated header file.
 #include "MIAApplication.hpp"
-// Used for exception handling.
-#include "MIAException.hpp"
-#include "Error.hpp"
 // Used for parsing command options.
 #include "CommandParser.hpp"
 // Used for default path locations.
@@ -38,32 +35,22 @@ MIAApplication::MIAApplication() :
 
 void MIAApplication::initialize(int argc, char* argv[])
 {
-    try
-    {
-        // Set the executable name.
-        executableName = argv[0];
+    // Set the executable name.
+    executableName = argv[0];
 
-        // Sets the application name in the logger to prepend to log messages.
-        context.logger.setApplicationName(executableName);
+    // Sets the application name in the logger to prepend to log messages.
+    context.logger.setApplicationName(executableName);
 
-        // Set the command option parameters for verbose and help.
-        verboseOpt.getOptionVal<bool>(argc, argv, context.verboseMode);
-        debugOpt.getOptionVal<unsigned int>(argc, argv, context.debugLevel);
-        helpOpt.getOptionVal<bool>(argc, argv, helpRequested);
+    // Set the command option parameters for verbose and help.
+    verboseOpt.getOptionVal<bool>(argc, argv, context.verboseMode);
+    debugOpt.getOptionVal<unsigned int>(argc, argv, context.debugLevel);
+    helpOpt.getOptionVal<bool>(argc, argv, helpRequested);
 
-        // Load (optionally if specified) the custom log file. 
-        std::string customLogFile;
-        logFileOpt.getOptionVal<std::string>(argc, argv, customLogFile);
-        if (!customLogFile.empty())
-            context.logger.setLogFile(customLogFile);
-    }
-    catch (const error::MIAException& ex)
-    {
-        // This shouldn't ever throw a MIAException since it's simple and part of the base app, 
-        // but throw an exception just in case... 
-        std::string err = "Error during MIAApplication::initialize!";
-        throw error::MIAException(error::ErrorCode::Catastrophic_Failure, err); 
-    }
+    // Load (optionally if specified) the custom log file.
+    std::string customLogFile;
+    logFileOpt.getOptionVal<std::string>(argc, argv, customLogFile);
+    if (!customLogFile.empty())
+        context.logger.setLogFile(customLogFile);
 
     if (helpRequested)
     {

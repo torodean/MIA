@@ -58,8 +58,9 @@ namespace maple
          * @brief Reads a comma-separated list from the config as doubles, keeping the
          *        default list on a missing key.
          *
-         * Catches the MIAException thrown when the key is absent so the caller's default
-         * list is preserved. Optionally warns on stderr about the missing key.
+         * getVector() returns an empty vector for a missing key, so an empty result is
+         * treated as absent and the caller's default list is preserved. Optionally warns
+         * on stderr about the missing key.
          *
          * @param config The config object to read from.
          * @param key The key to look up.
@@ -72,23 +73,22 @@ namespace maple
                                                          std::vector<double> defaultValue,
                                                          bool printWarnings)
         {
-            try
-            {
-                std::vector<std::string> strings = config.getVector(key, ',');
-                std::vector<double> values;
-                values.reserve(strings.size());
-                std::transform(strings.begin(), strings.end(),
-                               std::back_inserter(values),
-                               [](const std::string& s) { return std::stod(s); });
-                return values;
-            }
-            catch (const error::MIAException&)
+            std::vector<std::string> strings = config.getVector(key, ',');
+
+            if (strings.empty())
             {
                 if (printWarnings)
                     std::cerr << "Maple: missing config key '" << key
                               << "', keeping default list" << std::endl;
                 return defaultValue;
             }
+
+            std::vector<double> values;
+            values.reserve(strings.size());
+            std::transform(strings.begin(), strings.end(),
+                           std::back_inserter(values),
+                           [](const std::string& s) { return std::stod(s); });
+            return values;
         }
     } // namespace
 

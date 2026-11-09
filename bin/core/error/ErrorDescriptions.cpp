@@ -36,6 +36,7 @@ namespace error
         { Invalid_Character_Input, "Invalid character input." },
         { Invalid_Argument, "Invalid application/command argument." },
         { Missing_Argument, "The app/command argument was not found." },
+        { Duplicate_Argument, "The same command option was specified more than once." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
         { Out_Of_Order_Method_Calls, "A sequence of methods was called out of order." },
 
