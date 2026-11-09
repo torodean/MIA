@@ -2,7 +2,7 @@
  * @file CommandParser.cpp
  * @author Antonius Torode
  * @date 05/22/2025
- * Description: This file implements the utilities for parsing command options.
+ * @brief Implements the utilities for parsing command options.
  */
 
 #include <string>
@@ -21,13 +21,14 @@ namespace command_parser
     /**
      * This namespace defines internal helper methods which are meant to be used only by this file. 
      */
-    namespace internal
+    namespace
     {
         /**
-         * This is a helper method to throw an exception when required is true. Does nothing otherwise.
-         * @param required[bool] - Whether the option is required or not.
-         * @param longArg[const std::string&] - Long option (e.g., "--debug").
-         * @param typeName[const std::string&] - A string describing the type to throw an error about.
+         * @brief Throws an exception when required is true. Does nothing otherwise.
+         *
+         * @param required Whether the option is required or not.
+         * @param longArg Long option (e.g., "--debug").
+         * @param typeName A string describing the type to throw an error about.
          */
         void checkRequired(bool required,
                            const std::string& longArg,
@@ -39,22 +40,60 @@ namespace command_parser
                 throw error::MIAException(error::ErrorCode::Missing_Argument, err);
             }
         }
-    }
+
+
+        /**
+         * @brief Counts how many times an option's short or long form appears in the arguments.
+         *
+         * @param argc Argument count.
+         * @param argv Argument values.
+         * @param shortArg Short option (e.g., "-v"). An empty string matches no short form.
+         * @param longArg Long option (e.g., "--verbose").
+         * @return int The number of times the option appears in the arguments.
+         */
+        int countOptionOccurrences(int argc, char* argv[],
+                                   const std::string& shortArg,
+                                   const std::string& longArg)
+        {
+            int occurrences = 0;
+
+            for (int i = 1; i < argc; ++i)
+            {
+                if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
+                    ++occurrences;
+            }
+
+            return occurrences;
+        }
+
+
+        /**
+         * @brief Throws an exception when a command option appears more than once. Does nothing otherwise.
+         *
+         * @param occurrences The number of times the option appears in the arguments.
+         * @param longArg Long option (e.g., "--debug").
+         */
+        void checkDuplicateOption(int occurrences, const std::string& longArg)
+        {
+            if (occurrences > 1)
+            {
+                std::string err = "Duplicate command option " + longArg + " specified";
+                throw error::MIAException(error::ErrorCode::Duplicate_Argument, err);
+            }
+        }
+    } // namespace
+
 
     void parseBoolFlag(int argc, char* argv[],
                        const std::string& shortArg,
                        const std::string& longArg,
                        bool& outValue)
     {
-        for (int i = 1; i < argc; ++i)
-        {
-            if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
-            {
-                outValue = true;
-                return;
-            }
-        }
-        outValue = false;
+        int occurrences = countOptionOccurrences(argc, argv, shortArg, longArg);
+
+        checkDuplicateOption(occurrences, longArg);
+
+        outValue = occurrences > 0;
     }
 
 
@@ -64,6 +103,10 @@ namespace command_parser
                         int& outValue,
                         bool required)
     {
+        int occurrences = countOptionOccurrences(argc, argv, shortArg, longArg);
+
+        checkDuplicateOption(occurrences, longArg);
+
         for (int i = 1; i < argc - 1; ++i)
         {
             if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
@@ -80,7 +123,7 @@ namespace command_parser
             }
         }
 
-        internal::checkRequired(required, longArg, "Integer");
+        checkRequired(required, longArg, "Integer");
     }
 
 
@@ -90,6 +133,10 @@ namespace command_parser
                                 unsigned int& outValue,
                                 bool required)
     {
+        int occurrences = countOptionOccurrences(argc, argv, shortArg, longArg);
+
+        checkDuplicateOption(occurrences, longArg);
+
         for (int i = 1; i < argc - 1; ++i)
         {
             if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
@@ -106,7 +153,7 @@ namespace command_parser
             }
         }
 
-        internal::checkRequired(required, longArg, "Unsigned Integer");
+        checkRequired(required, longArg, "Unsigned Integer");
     }
 
 
@@ -116,6 +163,10 @@ namespace command_parser
                            double& outValue,
                            bool required)
     {
+        int occurrences = countOptionOccurrences(argc, argv, shortArg, longArg);
+
+        checkDuplicateOption(occurrences, longArg);
+
         for (int i = 1; i < argc - 1; ++i)
         {
             if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
@@ -132,7 +183,7 @@ namespace command_parser
             }
         }
 
-        internal::checkRequired(required, longArg, "Double");
+        checkRequired(required, longArg, "Double");
     }
 
 
@@ -142,6 +193,10 @@ namespace command_parser
                            std::string& outValue,
                            bool required)
     {
+        int occurrences = countOptionOccurrences(argc, argv, shortArg, longArg);
+
+        checkDuplicateOption(occurrences, longArg);
+
         for (int i = 1; i < argc - 1; ++i)
         {
             if ( (shortArg != "" && argv[i] == shortArg) || argv[i] == longArg)
@@ -151,6 +206,6 @@ namespace command_parser
             }
         }
 
-        internal::checkRequired(required, longArg, "String");
+        checkRequired(required, longArg, "String");
     }
 } // namespace command_parser
