@@ -31,10 +31,6 @@ Unit tests for all these classes need added.
 
 Add the ability to save and load games.
 
-## Draw conditions.
-
-Other draw conditions such as threefold repetition need added.
-
 ## Game clocks
 
 The board state docs mention keeping times and the timing library is linked in for
