@@ -104,6 +104,9 @@ namespace check
         if (event == "drop_piece")         return CheckUIEventType::DropPiece;
         if (event == "reset_board")        return CheckUIEventType::ResetBoard;
         if (event == "save_board")         return CheckUIEventType::SaveBoard;
+        if (event == "load_board")         return CheckUIEventType::LoadBoard;
+        if (event == "edit_mode")          return CheckUIEventType::EditMode;
+        if (event == "undo_move")          return CheckUIEventType::UndoMove;
         if (event == "piece_promo_choice") return CheckUIEventType::PiecePromotion;
         if (event == "stop")               return CheckUIEventType::Stop;
 
@@ -119,6 +122,9 @@ namespace check
             case CheckUIEventType::DropPiece:      return "drop_piece";
             case CheckUIEventType::ResetBoard:     return "reset_board";
             case CheckUIEventType::SaveBoard:      return "save_board";
+            case CheckUIEventType::LoadBoard:      return "load_board";
+            case CheckUIEventType::EditMode:       return "edit_mode";
+            case CheckUIEventType::UndoMove:       return "undo_move";
             case CheckUIEventType::PiecePromotion: return "piece_promo_choice";
             case CheckUIEventType::Stop:           return "stop";
             case CheckUIEventType::Unknown:
@@ -171,6 +177,9 @@ namespace check
             // These events have nothing more to them.
             case CheckUIEventType::ResetBoard:
             case CheckUIEventType::SaveBoard:
+            case CheckUIEventType::LoadBoard:
+            case CheckUIEventType::EditMode:
+            case CheckUIEventType::UndoMove:
             case CheckUIEventType::Stop:
             case CheckUIEventType::Unknown:
                 break;
