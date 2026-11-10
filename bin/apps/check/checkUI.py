@@ -30,11 +30,18 @@ or closes the options panel (see optionsUI.py). The panel opens to the
 right of the board and widens the window. Panel events join this module's
 event queue like every other UI event.
 
+A menu bar sits across the top of the window with various game actions.
+The menu contents and the events they add are defined in createUI().
+
 Event formats (the C++ side parses these):
    Events (space-separated values, squares are 0-indexed col row):
     "pickup_piece <col> <row>"
     "drop_piece <fromCol> <fromRow> <toCol> <toRow>"
     "reset_board"
+    "save_board"
+    "load_board"
+    "edit_mode"
+    "undo_move"
     "piece_promo_choice <piece>"
     "stop"
    Board state (one string per occupied cell, comma-separated):
@@ -123,6 +130,10 @@ piecePromoBox = None
 # The options panel and its collapse bar, or None until createUI() creates
 # the optionsUI.OptionsPanel.
 optionsPanel = None
+
+# The window's menu bar, or None until createUI() builds it. Destroyed
+# with the root window.
+menuBar = None
 
 
 #########################
@@ -657,7 +668,7 @@ def createUI(cols, rows):
     if (verboseMode):
         pythonTools.output_text(f"Creating UI board of size ({cols},{rows})!", option="program")
 
-    global root, boardUI, uiEvents, resultDialog, piecePromoBox, optionsPanel
+    global root, boardUI, uiEvents, resultDialog, piecePromoBox, optionsPanel, menuBar
     if root is not None:
         root.destroy()
         # The additional windows are children of the root window, so they are destroyed
@@ -666,6 +677,33 @@ def createUI(cols, rows):
         piecePromoBox = None
     root = tk.Tk()
     root.title("CHECK: Custom House-made Engine for Chess Knowledge")
+
+    # ----- The menu bar -----
+    menuBar = tk.Menu(root, tearoff=0)
+
+    fileMenu = tk.Menu(menuBar, tearoff=0)
+    fileMenu.add_command(label="Save", accelerator="Ctrl+S",
+                         command=lambda: addEvent("save_board"))
+    fileMenu.add_command(label="Load",
+                         command=lambda: addEvent("load_board"))
+    fileMenu.add_separator()
+    # Exit reuses closeUI(), so it behaves exactly like closing the window.
+    fileMenu.add_command(label="Exit", command=closeUI)
+    menuBar.add_cascade(label="File", menu=fileMenu)
+
+    gameMenu = tk.Menu(menuBar, tearoff=0)
+    gameMenu.add_command(label="Undo", accelerator="Ctrl+Z",
+                         command=lambda: addEvent("undo_move"))
+    gameMenu.add_command(label="Edit",
+                         command=lambda: addEvent("edit_mode"))
+    menuBar.add_cascade(label="Game", menu=gameMenu)
+
+    root.config(menu=menuBar)
+
+    # The accelerator labels above only display the shortcuts; tkinter
+    # needs explicit bindings for the keys to actually fire the events.
+    root.bind("<Control-s>", lambda event: addEvent("save_board"))
+    root.bind("<Control-z>", lambda event: addEvent("undo_move"))
 
     # The board, the collapse bar and the options panel share one row,
     # packed left to right. The panel can then open beside the board
