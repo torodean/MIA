@@ -131,6 +131,7 @@ A wrong comment is worse than no comment.
 - When code is changed, verify and update the comments that describe it in the same change.
 - If a comment contradicts the code and you cannot tell which is right, flag it rather than silently "fixing" it to match one side.
 - Do not write a comment that restates what the code obviously does. Describe intent, preconditions, side-effects, and non-obvious decisions - not the literal statement.
+- Comment only on the code which is actually there. Do not explain hypotheticals about designs which were not built or behavior which no longer exists in the code (e.g., "creating this per call would leak connections"). If the reader cannot observe the point by reading this code, the comment does not belong.
 
 ## What not to reference
 
