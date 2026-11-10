@@ -16,7 +16,6 @@
 #include "MIAException.hpp"
 // Used for toLower().
 #include "StringUtils.hpp"
-#include "TaxConstants.hpp"
 
 namespace maple
 {
