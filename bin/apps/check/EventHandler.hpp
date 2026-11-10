@@ -18,9 +18,24 @@
 #include "PythonModule.hpp"
 // Needed for piece art.
 #include "Piece.hpp"
+// Needed for the sound effects player.
+#include "AudioPlayer.hpp"
 
 namespace check
 {
+    /**
+     * Creates a static audio player which plays the check game's sound
+     * effects. The sounds are the tracks in a playlist so that a specific
+     * sound can be played with AudioPlayer::play().
+     *
+     * TODO - The main application should build and configure the sound
+     *        effects playlist instead of it being constructed here.
+     *
+     * @return The sound effects audio player.
+     * @throws MIAException if the audio system fails to initialize.
+     */
+    audio::AudioPlayer& soundEffects();
+
     /**
      * This enum stores all of the possible events that can be returned from
      * the python UI.
