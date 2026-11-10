@@ -129,3 +129,15 @@ int testAudioPlayerVolumeChange(bool verboseMode);
  * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
  */
 int testAudioPlayerChangeFilePlaysNext(bool verboseMode);
+
+/**
+ * @brief Tests that play() stops after its track or continues the playlist.
+ *
+ * Plays the long file as a one-shot by name, interrupts it with the short
+ * file, and verifies the player finishes instead of advancing, then plays
+ * the short file normally and verifies the long file starts on its own.
+ *
+ * @param verboseMode Whether or not to enable verbose output.
+ * @return Returns constants::SUCCESS on success, constants::FAILURE on failure.
+ */
+int testAudioPlayerPlaySingleTrack(bool verboseMode);
