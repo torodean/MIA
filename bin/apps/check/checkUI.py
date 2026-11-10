@@ -58,6 +58,18 @@ import tkinter as tk
 # collapse bar. The C++ side puts it on sys.path like checkUI itself.
 import optionsUI
 
+# Shared python utilities. Import strategy: bin/utils/python/README.md.
+try:
+    import pythonTools
+except ImportError:
+    import os, sys
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isfile(os.path.join(d, "bin", "utils", "python", "pythonTools.py")) \
+            and d != os.path.dirname(d):
+        d = os.path.dirname(d)
+    sys.path.insert(0, os.path.join(d, "bin", "utils", "python"))
+    import pythonTools
+
 #########################
 # CONFIGURATION VARIABLES
 #########################
@@ -127,7 +139,7 @@ def addEvent(event):
     # This can be added if desired for debugging, but is generally extremely 
     # noisy, since this method is called frequently.
     #if verboseMode:
-    #    print(f"UI event added: '{event}'")
+    #    pythonTools.output_text(f"UI event added: '{event}'", option="program")
 
 
 class ChessBoard(tk.Frame):
@@ -174,7 +186,7 @@ class ChessBoard(tk.Frame):
         Draws the N x M grid of square cells.
         """
         if (verboseMode):
-            print("Drawing Board!")
+            pythonTools.output_text("Drawing Board!", option="program")
 
         for col in range(self.cols):
             for row in range(self.rows):
@@ -188,7 +200,7 @@ class ChessBoard(tk.Frame):
         and ranks (1, 2, 3, ...) to the left, counting up from the bottom.
         """
         if (verboseMode):
-            print("Drawing border labels on board!")
+            pythonTools.output_text("Drawing border labels on board!", option="program")
 
         font = ("Segoe UI", int(CELL * 0.18))
         for row in range(self.rows):
@@ -205,7 +217,7 @@ class ChessBoard(tk.Frame):
         Redraws every piece from the board data.
         """
         if (verboseMode):
-            print("Drawing pieces on board!")
+            pythonTools.output_text("Drawing pieces on board!", option="program")
 
         for col in range(self.cols):
             for row in range(self.rows):
@@ -526,7 +538,7 @@ def resetBoard():
     """
     global resultDialog
     if (verboseMode):
-        print("Resetting board!")
+        pythonTools.output_text("Resetting board!", option="note")
 
     if resultDialog is not None:
         resultDialog.destroy()
@@ -543,7 +555,7 @@ def sendPiecePromoChoice(piece):
     """
     global piecePromoBox
     if (verboseMode):
-        print("Promoting piece!")
+        pythonTools.output_text("Promoting piece!", option="note")
 
     if piecePromoBox is not None:
         piecePromoBox.grab_release()
@@ -643,7 +655,7 @@ def createUI(cols, rows):
     @param rows The number of rows (n).
     """
     if (verboseMode):
-        print(f"Creating UI board of size ({cols},{rows})!")
+        pythonTools.output_text(f"Creating UI board of size ({cols},{rows})!", option="program")
 
     global root, boardUI, uiEvents, resultDialog, piecePromoBox, optionsPanel
     if root is not None:
@@ -689,7 +701,7 @@ def registerPiece(name, icon):
         icon = chr(int(icon[2:], 16))
 
     if (verboseMode):
-        print(f"Adding {name} piece with icon {icon} to glyphs!")
+        pythonTools.output_text(f"Adding {name} piece with icon {icon} to glyphs!", option="program")
 
     glyphs[name] = icon
     if optionsPanel is not None:
@@ -703,7 +715,7 @@ def setBoardState(cells):
         list clears the board. Cells not listed become empty.
     """
     if (verboseMode):
-        print(f"Setting board state using input of:\n{cells}\n")
+        pythonTools.output_text(f"Setting board state using input of:\n{cells}", option="note")
 
     if boardUI is None:
         raise ValueError("UI not created; call createUI() first")
@@ -797,7 +809,7 @@ def showGameResult(result, reason, winner="none"):
     @param winner The color of the winner, or "none" for a draw.
     """
     if (verboseMode):
-        print(f"Showing game result: {result} ({reason}), winner: {winner}")
+        pythonTools.output_text(f"Showing game result: {result} ({reason}), winner: {winner}", option="note")
 
     if root is None:
         raise ValueError("UI not created; call createUI() first")
@@ -830,7 +842,7 @@ def showPiecePromoBox(pieces, color):
     @param color This is the color of the piece being promoted.
     """
     if (verboseMode):
-        print(f"Displaying piece promotion box.")
+        pythonTools.output_text("Displaying piece promotion box.", option="note")
 
     if root is None:
         raise ValueError("UI not created; call createUI() first")
@@ -945,7 +957,7 @@ def getAllEvents():
     # This can be added if desired for debugging, but is generally extremely 
     # noisy, since this method is called frequently.
     #if verboseMode:
-    #    print(f"UI events retrieved: {events}")
+    #    pythonTools.output_text(f"UI events retrieved: {events}", option="program")
 
     return events
 
@@ -959,7 +971,7 @@ def setVerbose(val):
     global verboseMode
     verboseMode = val
     if verboseMode:
-        print("Verbose mode enabled for checkUI (python module).")
+        pythonTools.output_text("Verbose mode enabled for checkUI (python module).", option="program")
 
 
 ##################

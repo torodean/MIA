@@ -231,10 +231,8 @@ namespace check
 
             /*
              * Add the move to the ui move history. This is done before the
-             * special cases below because castling records the rook's move too,
-             * which would overwrite the king's move as the last move, and a
-             * promotion returns from here early, before the rest of the event
-             * handling runs.
+             * special cases below because a promotion returns from here early,
+             * before the rest of the event handling runs.
              */
             if (lastMove.has_value())
             {
@@ -295,7 +293,8 @@ namespace check
                 CastlingMetaData castleData = getCastlingRookData(lastMove.value(), state);
                 math::Coordinate<uint8_t> startRookPos = castleData.rookStartingPos;
                 math::Coordinate<uint8_t> endRookPos = castleData.rookEndingPos;
-                state.movePiece(startRookPos, endRookPos);
+                state.setLastMoveCastlingData(castleData);
+                state.movePiece(startRookPos, endRookPos, false);
                 module.call("movePiece", startRookPos.x, startRookPos.y, endRookPos.x, endRookPos.y);
             }
         }
