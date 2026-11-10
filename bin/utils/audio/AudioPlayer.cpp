@@ -22,8 +22,6 @@
 // Used for error returns.
 #include "MIAException.hpp"
 #include "Error.hpp"
-// Used for logging libVLC diagnostics.
-#include "Logger.hpp"
 // Used for thread sleeps.
 #include "Timing.hpp"
 
