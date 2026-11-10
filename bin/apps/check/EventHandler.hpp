@@ -48,6 +48,9 @@ namespace check
         DropPiece,      ///< Represents a piece was dropped.
         ResetBoard,     ///< Represents the board/game should be reset.
         SaveBoard,      ///< Represents the board/game should be saved.
+        LoadBoard,      ///< Represents the board/game should be loaded.
+        EditMode,       ///< Represents the board edit mode should be toggled.
+        UndoMove,       ///< Represents the last move should be undone.
         PiecePromotion, ///< Represents a piece is being promoted.
     };
 
