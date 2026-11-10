@@ -11,8 +11,6 @@
 
 #include <algorithm>
 
-#include "Modifies.hpp"
-
 namespace stats
 {
     Attribute::Attribute(uint32_t id,
