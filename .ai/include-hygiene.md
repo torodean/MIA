@@ -31,7 +31,7 @@ For each file, check that the types, functions, and macros it uses come from an 
 
 Highest-signal cases:
 
-- A .cpp uses a type whose declaration only arrives through its associated header's includes.
+- A .cpp uses a type whose declaration only arrives through its associated header's includes and the header does not itself need that type; the fix is to move the include into the .cpp rather than to duplicate it in both files.
 - A public header (one included by other targets) uses a type from another module but does not include that module's header itself.
 - A file uses standard library types (`std::string`, `std::vector`, `std::atomic`, stream types) with no direct include for them.
 - A file was recently edited and gained a new type without gaining the include for it.
@@ -48,10 +48,15 @@ Common sources of drift:
 - An include was added to be used while developing but no longer used by the time development finished.
 - The file includes its own dependencies' dependencies (e.g. including `MIAException.hpp` when only `Error.hpp`'s error codes are used).
 
+### One include per .hpp/.cpp pair
+
+A header must never be included in both a .hpp and its paired .cpp since the .cpp gets the .hpp's includes already, which makes the second include always redundant.
+Prefer the include in the .cpp, unless the .hpp needs the header itself, in which case the include belongs in the .hpp and is removed from the .cpp.
+
 ### Forward declarations vs includes
 
-A forward declaration is preferable to an include when the file only uses the type by pointer or reference and never needs its definition.
-Flag heavy includes in headers which a forward declaration would replace.
+Full includes are preferred; a header include keeps types complete and avoids silent issues with transitive includes and IDE visibility later.
+A forward declaration is only justified where including the header would create a circular dependency.
 
 ### CMake visibility coupling
 
