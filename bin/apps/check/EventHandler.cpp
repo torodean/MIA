@@ -23,9 +23,6 @@
 #include "Timing.hpp"
 // Needed for castling special case.
 #include "King.hpp"
-
-// For sound effects.
-#include "SoundsFromFile.hpp"
 #include "Paths.hpp"
 
 namespace check
@@ -55,7 +52,48 @@ namespace check
                 MIA_THROW(error::ErrorCode::Check_Malformed_Event, std::string(ex.what()));
             }
         }
+
+
+        /**
+         * @brief Plays one of the game's sound effects through the shared player.
+         *
+         * @param fileName The name of the sound file in the sound effects
+         *        playlist to play.
+         */
+        void playSoundEffect(const std::string& fileName)
+        {
+            try
+            { // Sound is not essential, so report failures and keep playing.
+                soundEffects().play(fileName, true);
+            }
+            catch (const error::MIAException& ex)
+            {
+                std::cerr << "Failed to play sound effect: " << ex.what() << std::endl;
+            }
+        }
     } // namespace
+
+
+    audio::AudioPlayer& soundEffects()
+    {
+        // One player is shared by all of the game's sound effects.
+        static audio::AudioPlayer soundEffects;
+
+        static const std::string soundDir = paths::getCppFileDirAtCompileTime(__FILE__) + "/sounds";
+        static const bool playlistLoaded = soundEffects.setPlaylist(
+        {
+            soundDir + "/move.mp3",
+            soundDir + "/capture.mp3",
+            soundDir + "/game_over.mp3"
+        });
+
+        if (!playlistLoaded)
+        {
+            std::cerr << "WARNING: Failed to load the game sound effects!" << std::endl;
+        }
+
+        return soundEffects;
+    }
 
 
     CheckUIEventType stringToCheckUIEventType(const std::string& input)
@@ -239,15 +277,14 @@ namespace check
                 processMoveToHistory(module, pieceArts, lastMove.value());
             }
 
-            // Play the sound for this move. TODO - this is keyed to the exe for now.
-            std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
+            // Play the sound for this move.
             if (lastMove.has_value() && lastMove->wasCapture)
             { // Play the capture sound.
-                audio::playSoundFromFileAsync(configPath + "/sounds/capture.mp3");
+                playSoundEffect("capture.mp3");
             }
             else
             { // Play the normal move sound.
-                audio::playSoundFromFileAsync(configPath + "/sounds/move.mp3");
+                playSoundEffect("move.mp3");
             }
 
             // Check if this was an en passant move.
@@ -331,9 +368,8 @@ namespace check
             return;
         }
 
-        // Play the sound for a game over. TODO - this is keyed to the exe for now.
-        std::string configPath = paths::getCppFileDirAtCompileTime(__FILE__);
-        audio::playSoundFromFileAsync(configPath + "/sounds/game_over.mp3");
+        // Play the sound for a game over.
+        playSoundEffect("game_over.mp3");
 
         module.call("showGameResult",
                     gameResultToString(result.type),
