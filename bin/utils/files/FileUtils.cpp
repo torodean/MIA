@@ -36,6 +36,17 @@ namespace files
     }
 
 
+    std::string fileTypeToString(FileType type)
+    {
+        switch (type)
+        {
+            case FileType::Mp3: return "mp3";
+            case FileType::Wav: return "wav";
+            default:            return "";
+        }
+    }
+
+
     FileMetaData getFileMetaData(const std::string& fileName,
                                  bool verboseMode)
     {
