@@ -10,7 +10,6 @@
 
 // Include the associated header file.
 #include "King.hpp"
-#include "BoardState.hpp"
 #include "MoveGeneration.hpp"
 
 namespace check

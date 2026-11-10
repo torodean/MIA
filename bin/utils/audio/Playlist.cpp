@@ -79,6 +79,53 @@ namespace audio
     }
 
 
+    bool Playlist::moveToTrack(const std::string& file)
+    {
+        /*
+         * The metadata holds the extension as the file type, so a track's
+         * extension is added back with fileTypeToString when the given file
+         * carries one. A given file without an extension matches a track by
+         * the file name alone.
+         */
+        std::string searchName = file;
+        const size_t nameStart = searchName.find_last_of("/\\");
+        if (nameStart != std::string::npos)
+            searchName.erase(0, nameStart + 1);
+
+        const bool hasExtension = (searchName.find('.') != std::string::npos);
+
+        // Try to find the track by its file name first.
+        for (size_t i = 0; i < tracks.size(); i++)
+        {
+            std::string trackName = tracks[i].fileName;
+
+            if (hasExtension)
+            { // The given extension must match the track's extension.
+                trackName += "." + files::fileTypeToString(tracks[i].type);
+            }
+
+            if (trackName == searchName)
+            { // Point the cursor at the matching track.
+                index = i;
+                return true;
+            }
+        }
+
+        // Fall back to matching the track by its full file path.
+        for (size_t i = 0; i < tracks.size(); i++)
+        {
+            if (tracks[i].fullFilePath == file)
+            { // Point the cursor at the matching track.
+                index = i;
+                return true;
+            }
+        }
+
+        // No track in the playlist holds this file.
+        return false;
+    }
+
+
     const std::vector<files::FileMetaData>& Playlist::getTracks() const
     { 
         return tracks;

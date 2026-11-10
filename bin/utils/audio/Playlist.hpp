@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 #include <vector>
 
 // Used for the track metadata type.
@@ -106,6 +107,23 @@ namespace audio
          *         unchanged).
          */
         bool back();
+
+        /**
+         * @brief Moves the index to the track with the given file name or path.
+         *
+         * When the input file has an extension, the track's name and extension
+         * must both match. When it carries no extension, the name matches a track
+         * regardless of the track's extension. A full file path is matched against 
+         * the track holding that exact path. The index being moved away from is not 
+         * recorded in the shuffle memory, since this is a direct selection of a 
+         * track rather than a continuation through the playlist.
+         *
+         * @param file The file name (with or without extension) or full file
+         *        path of the track to move to.
+         * @return true if a matching track was found and the index was moved,
+         *         false when no track matches (the index is left unchanged).
+         */
+        bool moveToTrack(const std::string& file);
 
         /**
          * @brief Returns a const reference to the full list of tracks.

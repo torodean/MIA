@@ -250,4 +250,89 @@ namespace audio
         EXPECT_TRUE(playlist.back());
         EXPECT_EQ(playlist.current().fileName, "track0");
     }
+
+
+    /**
+     * @brief Verifies moveToTrack finds a track by its bare file name.
+     */
+    TEST(Playlist, MoveToTrackByName)
+    {
+        std::vector<files::FileMetaData> tracks = {makeTrack(0), makeTrack(1), makeTrack(2)};
+        Playlist playlist(tracks);
+
+        EXPECT_TRUE(playlist.moveToTrack("track2"));
+        EXPECT_EQ(playlist.current().fileName, "track2");
+
+        // The search finds any track in the list, not just the last one.
+        EXPECT_TRUE(playlist.moveToTrack("track0"));
+        EXPECT_EQ(playlist.current().fileName, "track0");
+    }
+
+
+    /**
+     * @brief Verifies moveToTrack matches a name given with its extension.
+     */
+    TEST(Playlist, MoveToTrackByNameWithExtension)
+    {
+        std::vector<files::FileMetaData> tracks = {makeTrack(0), makeTrack(1)};
+        Playlist playlist(tracks);
+
+        EXPECT_TRUE(playlist.moveToTrack("track1.mp3"));
+        EXPECT_EQ(playlist.current().fileName, "track1");
+
+        // A name with the wrong extension must not match the track.
+        EXPECT_FALSE(playlist.moveToTrack("track0.wav"));
+        EXPECT_EQ(playlist.current().fileName, "track1");
+    }
+
+
+    /**
+     * @brief Verifies moveToTrack falls back to matching the full file path.
+     */
+    TEST(Playlist, MoveToTrackByFullPath)
+    {
+        std::vector<files::FileMetaData> tracks = {makeTrack(0), makeTrack(1)};
+        Playlist playlist(tracks);
+
+        EXPECT_TRUE(playlist.moveToTrack("/music/track1.mp3"));
+        EXPECT_EQ(playlist.current().fileName, "track1");
+    }
+
+
+    /**
+     * @brief Verifies moveToTrack fails and leaves the index alone for an unknown file.
+     */
+    TEST(Playlist, MoveToTrackUnknownFileFails)
+    {
+        std::vector<files::FileMetaData> tracks = {makeTrack(0), makeTrack(1)};
+        Playlist playlist(tracks);
+
+        EXPECT_FALSE(playlist.moveToTrack("track9"));
+        EXPECT_FALSE(playlist.moveToTrack("/music/nowhere.mp3"));
+        EXPECT_EQ(playlist.current().fileName, "track0");
+
+        // An empty playlist has no tracks to move to either.
+        Playlist empty;
+        EXPECT_FALSE(empty.moveToTrack("track0"));
+    }
+
+
+    /**
+     * @brief Verifies moveToTrack does not record the moved-from track in memory.
+     */
+    TEST(Playlist, MoveToTrackLeavesMemoryUntouched)
+    {
+        std::vector<files::FileMetaData> tracks = {makeTrack(0), makeTrack(1), makeTrack(2)};
+        Playlist playlist(tracks);
+
+        // Advancing leaves track0 in the memory to restore from.
+        EXPECT_TRUE(playlist.advance(false, false));
+        EXPECT_EQ(playlist.current().fileName, "track1");
+
+        // The move is a direct selection, so it records nothing to restore.
+        EXPECT_TRUE(playlist.moveToTrack("track2"));
+        EXPECT_TRUE(playlist.back());
+        EXPECT_EQ(playlist.current().fileName, "track0");
+        EXPECT_FALSE(playlist.back());
+    }
 } // namespace audio

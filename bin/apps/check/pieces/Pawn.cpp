@@ -5,13 +5,13 @@
  * @brief Implements the logic for the pawn piece.
  */
 
+// Include the associated header file.
+#include "Pawn.hpp"
+
 #include <cmath>
 #include <cstdint>
 #include <optional>
 
-// Include the associated header file.
-#include "Pawn.hpp"
-#include "Piece.hpp"
 #include "BoardState.hpp"
 #include "MoveState.hpp"
 

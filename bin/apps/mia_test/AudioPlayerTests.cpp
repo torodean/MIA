@@ -788,3 +788,103 @@ int testAudioPlayerChangeFilePlaysNext(bool verboseMode)
     // If it made it this far, it's a success.
     return constants::SUCCESS;
 }
+
+
+int testAudioPlayerPlaySingleTrack(bool verboseMode)
+{
+    std::string shortFilePath = getTestAudioFilePath("test_sound_short.mp3");
+    std::string longFilePath = getTestAudioFilePath("test_sound_long.mp3");
+
+    // Constructs an empty player and loads both test files as its playlist.
+    audio::AudioPlayer player;
+    if (!player.setPlaylist({shortFilePath, longFilePath}))
+    {
+        if (verboseMode)
+            std::cout << "FAILED building the test playlist!" << std::endl;
+        return constants::FAILURE;
+    }
+
+    // Plays the long file by its bare name so the name search is exercised.
+    if (verboseMode)
+        std::cout << "Playing the long file through play() as a one-shot..." << std::endl;
+    if (!player.play("test_sound_long.mp3", true))
+    {
+        if (verboseMode)
+            std::cout << "FAILED starting the long file through play()!" << std::endl;
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    // The long file outlives this wait, so it must still be playing here.
+    sleepWithCountdown(player, 3, verboseMode);
+    if (!player.isAudioPlaying())
+    {
+        if (verboseMode)
+            std::cout << "FAILED the long file stopped before the wait ended!" << std::endl;
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    // Interrupts the long file with the short file, also played by name.
+    if (verboseMode)
+        std::cout << "Interrupting with the short file as a one-shot..." << std::endl;
+    if (!player.play("test_sound_short.mp3", true))
+    {
+        if (verboseMode)
+            std::cout << "FAILED interrupting with the short file!" << std::endl;
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    /*
+     * Waits past the short file's playthrough (a couple of seconds) plus a
+     * small buffer; the countdown ends early once the one-shot stops.
+     */
+    if (verboseMode)
+        std::cout << "Waiting for the short file to play through..." << std::endl;
+    sleepWithCountdown(player, 4, verboseMode);
+
+    if (!verifyAudioStopped(player, verboseMode))
+    {
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    /*
+     * play() without stopAfterTrack keeps the playlist running, so the long
+     * file must start on its own when the short file ends.
+     */
+    if (verboseMode)
+        std::cout << "Playing the short file through play() to continue..." << std::endl;
+    if (!player.play("test_sound_short.mp3"))
+    {
+        if (verboseMode)
+            std::cout << "FAILED starting the continuation phase!" << std::endl;
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    // Waits past the short file plus a buffer; the long file must be playing.
+    if (verboseMode)
+        std::cout << "Waiting for the short file to end and the long file to start..."
+                  << std::endl;
+    sleepWithCountdown(player, 4, verboseMode);
+    if (!player.isAudioPlaying())
+    {
+        if (verboseMode)
+            std::cout << "FAILED the playlist did not continue after the track!" << std::endl;
+        player.stopAudio();
+        // Rethrow any exceptions if they occured in the audio thread.
+        player.rethrowExceptionIfAny();
+        return constants::FAILURE;
+    }
+
+    player.stopAudio();
+
+    // If it made it this far, it's a success.
+    return constants::SUCCESS;
+}

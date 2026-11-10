@@ -19,8 +19,6 @@
 #include "Error.hpp"
 // Used for config path.
 #include "Paths.hpp"
-// Used for command line parsing.
-#include "CommandOption.hpp"
 
 #include "Constants.hpp"
 

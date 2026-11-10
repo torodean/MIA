@@ -4,10 +4,9 @@
  * @date 09/22/2026
  * @brief Unit tests for the AudioPlayer class using Google Test.
  *
- * The tests cover the player's state-level behavior (file and playlist
- * validation, volume clamping, mode flags, and the empty-playlist guards).
- * Audible playback itself is covered by the interactive tests in the mia_test
- * app, so these tests never start a playback thread.
+ * The tests cover the audio player internal behavior (file and playlist
+ * validation, volume levels, flags, and track selection). Audible 
+ * playback and timing are covered by the tests in the mia_test app.
  */
 
 #include <filesystem>
@@ -155,6 +154,47 @@ namespace audio
         EXPECT_FALSE(player.nextAudio());
         EXPECT_FALSE(player.previousAudio());
         EXPECT_FALSE(player.isAudioPlaying());
+    }
+
+
+    /**
+     * @brief Verifies play rejects files which are not tracks in the playlist.
+     */
+    TEST(AudioPlayer, PlayRejectsUnknownTracks)
+    {
+        AudioPlayer player;
+
+        // An empty playlist has no track for play to select.
+        EXPECT_FALSE(player.play("track0.mp3"));
+
+        ASSERT_TRUE(player.setPlaylist({"/music/track0.mp3", "/music/track1.mp3"}));
+
+        // A name or a path which is not in the playlist is rejected in both call forms.
+        EXPECT_FALSE(player.play("missing.mp3"));
+        EXPECT_FALSE(player.play("/music/nowhere.mp3"));
+        EXPECT_FALSE(player.play("missing.mp3", true));
+        EXPECT_FALSE(player.isAudioPlaying());
+    }
+
+
+    /**
+     * @brief Verifies play starts a playlist track.
+     */
+    TEST(AudioPlayer, PlayByFullPath)
+    {
+        AudioPlayer player;
+        ASSERT_TRUE(player.setPlaylist({"/music/track0.mp3", "/music/track1.mp3"}));
+
+        // The files never exist, but the start only checks the file type.
+        EXPECT_TRUE(player.play("/music/track1.mp3"));
+        player.stopAudio();
+        EXPECT_TRUE(player.play("/music/track1.mp3", true));
+        player.stopAudio();
+        EXPECT_FALSE(player.isAudioPlaying());
+
+        // The bare name of a playlist track starts it just like its full path would.
+        EXPECT_TRUE(player.play("track1.mp3"));
+        player.stopAudio();
     }
 
 

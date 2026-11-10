@@ -22,8 +22,6 @@
 // Used for error returns.
 #include "MIAException.hpp"
 #include "Error.hpp"
-// Used for logging libVLC diagnostics.
-#include "Logger.hpp"
 // Used for thread sleeps.
 #include "Timing.hpp"
 
@@ -315,6 +313,7 @@ namespace audio
 
         // Reset the flags so the background task runs the new playback.
         stopRequested = false;
+        restartRequested = false;
         audioPlaying = true;
         start();
 
@@ -326,6 +325,40 @@ namespace audio
     {
         stopAudio();
         return startAudio();
+    }
+
+
+    bool AudioPlayer::play(const std::string& fileName, bool stopAfterTrack)
+    {
+        { // Point the playlist cursor at the requested track.
+            std::lock_guard<std::mutex> lock(playlistMutex);
+            if (!playlist.moveToTrack(fileName))
+            { // The player can only play the files it was given.
+                std::cerr << "ERROR: The file is not in the playlist: "
+                          << fileName << std::endl;
+                return false;
+            }
+        }
+
+        /*
+         * The run() for this playback reads the flag when it starts, so it
+         * must be set before signalling the worker thread below.
+         */
+        stopAfterCurrentTrack = stopAfterTrack;
+
+        /*
+         * When no fade is running, the worker thread is flagged to drop its
+         * current playback and start this track so this call never waits on
+         * the audio device. A fade-out is already stopping the playback.
+         */
+        if (audioPlaying && !fadeRequested)
+        {
+            restartRequested = true;
+            return true;
+        }
+
+        // Play the selected track now, interrupting anything already playing.
+        return restartAudio();
     }
 
 
@@ -455,6 +488,9 @@ namespace audio
             fileMetaData = playlist.current();
             playingFilePath = fileMetaData.fullFilePath;
         }
+
+        /// Whether or not this playback must end after its selected track.
+        const bool stopAfterThisTrack = stopAfterCurrentTrack.exchange(false);
 
         if (fileMetaData.type == files::FileType::Unknown)
         {
@@ -601,6 +637,12 @@ namespace audio
                 break;
             }
 
+            if (restartRequested.exchange(false))
+            { // A newer track was requested, so stop the current track.
+                closeAudioDevice(soundAlias);
+                return;
+            }
+
             // Sleep between polls.
             timing::sleepMilliseconds(5);
         }
@@ -703,6 +745,13 @@ namespace audio
                 return;
             }
 
+            if (restartRequested.exchange(false))
+            { // A newer track was requested, so stop the current track.
+                libvlc_media_player_stop(vlcPlayer);
+                libvlc_media_player_release(vlcPlayer);
+                return;
+            }
+
             // Sleep between polls.
             timing::sleepMilliseconds(5);
         }
@@ -716,6 +765,24 @@ namespace audio
         if (stopRequested)
         {
             audioPlaying = false;
+            return;
+        }
+
+        /*
+         * A new track was requested when this ended, so keep the task alive 
+         * for the task loop to start it.
+         */
+        if (restartRequested.exchange(false))
+            return;
+
+        /*
+         * A track selected with stopAfterTrack is a one-off sound, so end the task 
+         * instead of advancing through the rest of the playlist.
+         */
+        if (stopAfterThisTrack)
+        {
+            audioPlaying = false;
+            stopRequested = true;
             return;
         }
 

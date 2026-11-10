@@ -11,7 +11,6 @@
 // Include the associated header file.
 #include "CheckConfig.hpp"
 #include "PieceType.hpp"
-#include "Piece.hpp"
 #include "StringUtils.hpp"
 // For error handling.
 #include "MIAException.hpp"

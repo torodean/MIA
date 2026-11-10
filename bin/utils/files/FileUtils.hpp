@@ -28,6 +28,13 @@ namespace files
 	FileType stringToFileType(const std::string& input);
 
 	/**
+	 * @brief Converts a file type to its extension string.
+	 * @param type The file type to convert.
+	 * @return The extension string of the type, or an empty string if none.
+	 */
+	std::string fileTypeToString(FileType type);
+
+	/**
 	 * @brief Stores metadata for a file.
 	 */
 	struct FileMetaData
