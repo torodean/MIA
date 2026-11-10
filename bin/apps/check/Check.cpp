@@ -196,8 +196,14 @@ namespace check
                     }
 
                     case CheckUIEventType::SaveBoard:
-                        std::cout << "Still coding this event type!" << std::endl;
+                    case CheckUIEventType::LoadBoard:
+                    case CheckUIEventType::EditMode:
+                    case CheckUIEventType::UndoMove:
+                    { // The backend does not act on these menu events yet.
+                        std::cout << "The feature for this event type is still in development: "
+                                  << checkUIEventTypeToString(uiEvent.type) << std::endl;
                         break;
+                    }
 
                     case CheckUIEventType::Stop:
                     { // Signals that the UI was exited.
