@@ -166,6 +166,34 @@ namespace audio
         bool restartAudio();
 
         /**
+         * @brief Plays a specific track from the playlist.
+         *
+         * The track is located in the playlist by its file path, the
+         * playlist index is moved to it, and it is played immediately,
+         * interrupting any audio which is currently playing.
+         *
+         * By default the next track follows as usual, honoring the repeat,
+         * loop, and shuffle modes. With stopAfterTrack the playback ends
+         * after this track, leaving the index on it for the next
+         * startAudio() or nextAudio() call. That form suits one-off sounds
+         * tied to an application event, such as a game sound effect.
+         *
+         * This call does not wait on the audio device. When audio is already
+         * playing, the worker thread is flagged to switch to this track so
+         * the call returns immediately.
+         *
+         * @param fileName The file name or full file path of the track to
+         *        play. This file must already be in the playlist (see
+         *        addToPlaylist()).
+         * @param stopAfterTrack When true, playback ends when this track
+         *        finishes instead of continuing through the rest of the
+         *        playlist.
+         * @return true if the track was found and started playing, false
+         *         when the file is not in the playlist or failed to start.
+         */
+        bool play(const std::string& fileName, bool stopAfterTrack = false);
+
+        /**
          * @brief Stops playing the audio file.
          *
          * This will call stop() to also stop the audio player thread that
@@ -280,6 +308,10 @@ namespace audio
 
         /// Tracker of whether or not the audio is currently playing.
         std::atomic<bool> audioPlaying{false};
+        /// Whether or not the next playback must end after its selected track (set by play()).
+        std::atomic<bool> stopAfterCurrentTrack{false};
+        /// Whether or not a track selected through play() must interrupt the current playback.
+        std::atomic<bool> restartRequested{false};
         /// Whether or not to repeat the current audio track until stop is called.
         std::atomic<bool> repeatAudioTrack{false};
         /// Whether or not to loop the playlist back to the first track after the last.
