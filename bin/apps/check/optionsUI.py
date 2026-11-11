@@ -322,9 +322,7 @@ class OptionsPanel:
     def removeLastMove(self, color):
         """
         Removes the most recent move from the given player's history box, the
-        inverse of addMove(). The backend calls this for each move an undo
-        reverts, so the boxes track the moves the game has actually made. Does
-        nothing when that player's box is still empty.
+        inverse of addMove(). Does nothing when that player's box is still empty.
 
         @param color "white" or "black", the player who made the last move.
         """
