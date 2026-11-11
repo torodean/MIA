@@ -44,8 +44,6 @@ A sound for putting the opponent into check needs added.
 
 The logging and verbose output needs tidied up and improved.
 
-## Add an undo button
-
 ## Config validation
 
 The config files need some validation and the options to have any config field be optional. Also, expanding config to change colors and other things in the UI.
