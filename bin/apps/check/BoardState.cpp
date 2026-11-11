@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <cstddef>
 #include <sstream>
 #include <string>
 
@@ -47,7 +48,7 @@ namespace check
 
         // The starting position is the first entry of the position history.
         positionHistory.clear();
-        positionHistory.push_back(positionKey(*this));
+        positionHistory.push_back(makeSnapshot());
     }
 
 
@@ -129,7 +130,7 @@ namespace check
         }
 
         // The completed turn leaves a new position for the next player.
-        positionHistory.push_back(positionKey(*this));
+        positionHistory.push_back(makeSnapshot());
     }
 
 
@@ -257,7 +258,7 @@ namespace check
 
         // The new game restarts the position history at the starting position.
         positionHistory.clear();
-        positionHistory.push_back(positionKey(*this));
+        positionHistory.push_back(makeSnapshot());
     }
 
 
@@ -287,9 +288,155 @@ namespace check
     }
 
 
-    const std::vector<std::string>& BoardState::getPositionHistory() const
+    const std::vector<PositionSnapshot>& BoardState::getPositionHistory() const
     {
         return positionHistory;
+    }
+
+
+    std::vector<PiecePosition> BoardState::getBoardPosition() const
+    {
+        std::vector<PiecePosition> positions;
+
+        for (const SquareState& square : squareStates)
+        {
+            const std::optional<Piece>& piece = square.getPiece();
+
+            if (!piece.has_value())
+                continue;
+
+            PiecePosition pos;
+            pos.piece = piece.value();
+            pos.coordinate = square.getCoordinate();
+            positions.push_back(pos);
+        }
+
+        return positions;
+    }
+
+
+    bool BoardState::canUndo() const
+    {
+        // The first entry is the starting position; there is nothing to undo
+        // until a turn has completed and pushed a second entry.
+        return positionHistory.size() > 1;
+    }
+
+
+    PositionSnapshot BoardState::makeSnapshot() const
+    {
+        PositionSnapshot snapshot;
+        snapshot.key = positionKey(*this);
+        snapshot.board = serializeBoard();
+        return snapshot;
+    }
+
+
+    std::string BoardState::serializeBoard() const
+    {
+        std::string board;
+        board.reserve(1 + 5 * squareStates.size());
+
+        // A single byte names whose turn it is, followed by one 5-byte record
+        // per occupied square: x, y, piece type, piece color, and the square's
+        // moved state. Every value fits a byte, so the pieces follow directly
+        // with no separators and the count is recovered from the length.
+        board.push_back(static_cast<char>(whosTurnIsIt()));
+
+        for (const SquareState& square : squareStates)
+        {
+            const std::optional<Piece>& piece = square.getPiece();
+
+            if (!piece.has_value())
+                continue;
+
+            const math::Coordinate<uint8_t>& pos = square.getCoordinate();
+            board.push_back(static_cast<char>(pos.x));
+            board.push_back(static_cast<char>(pos.y));
+            board.push_back(static_cast<char>(piece->type));
+            board.push_back(static_cast<char>(piece->color));
+            board.push_back(square.hasChanged() ? 1 : 0);
+        }
+
+        return board;
+    }
+
+
+    void BoardState::restoreFromSnapshot(const std::string& board)
+    {
+        if (board.empty())
+        { // Nothing was recorded, so leave the board untouched.
+            return;
+        }
+
+        playerState.whosTurnIsIt = static_cast<uint8_t>(board[0]);
+
+        // Rebuild the squares, then replay the recorded pieces. updatePiece's
+        // initialPiece argument restores each square's moved state (false keeps
+        // it, true marks it moved), so castling is affected exactly as it was.
+        squareStates = createSquareStates(xSize, ySize);
+
+        const size_t pieceCount = (board.size() - 1) / 5;
+        for (size_t i = 0; i < pieceCount; ++i)
+        {
+            const size_t offset = 1 + 5 * i;
+            const math::Coordinate<uint8_t> pos{static_cast<uint8_t>(board[offset]),
+                                                static_cast<uint8_t>(board[offset + 1])};
+
+            Piece piece;
+            piece.type = static_cast<PieceType>(static_cast<uint8_t>(board[offset + 2]));
+            piece.color = static_cast<Color>(static_cast<uint8_t>(board[offset + 3]));
+
+            squareStates[coordToIndex(pos)].updatePiece(
+                piece, static_cast<uint8_t>(board[offset + 4]) == 0);
+        }
+    }
+
+
+    void BoardState::undoMove()
+    {
+        if (!canUndo())
+            return;
+
+        // The current position is the last entry; dropping it exposes the one
+        // the board should return to.
+        positionHistory.pop_back();
+
+        restoreFromSnapshot(positionHistory.back().board);
+
+        // One turn was reverted, so drop the move that produced the position
+        // which was just removed.
+        moves.resize(positionHistory.size() - 1);
+    }
+
+
+    size_t BoardState::undoToPlayersTurn(uint8_t targetTurn)
+    {
+        size_t count = 0;
+
+        /*
+         * Undo at least one turn (when any are available), then keep going until
+         * it is the target player's turn.
+         */
+        do
+        {
+            if (positionHistory.size() <= 1)
+                break; // The starting position is the furthest back.
+
+            undoMove();
+            ++count;
+        } while (whosTurnIsIt() != targetTurn);
+
+        return count;
+    }
+
+
+    uint8_t BoardState::previousPlayerInRotation() const
+    {
+        const uint8_t players = playerState.numberOfPlayers;
+
+        // The player that made the last recorded move.
+        return ((playerState.whosTurnIsIt + players - 2) % players) + 1;
     }
 
 
