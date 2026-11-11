@@ -319,6 +319,35 @@ class OptionsPanel:
         box.see(tk.END)
         box.config(state=tk.DISABLED)
 
+    def removeLastMove(self, color):
+        """
+        Removes the most recent move from the given player's history box, the
+        inverse of addMove(). The backend calls this for each move an undo
+        reverts, so the boxes track the moves the game has actually made. Does
+        nothing when that player's box is still empty.
+
+        @param color "white" or "black", the player who made the last move.
+        """
+        color = color.lower()
+        if color not in ("white", "black"):
+            raise ValueError(f"Unknown color '{color}'; expected white or black")
+
+        box = self.whiteMoves if color == "white" else self.blackMoves
+        if box.get("1.0", "end-2c").strip() == "":
+            return
+        box.config(state=tk.NORMAL)
+        # Drop any trailing pad lines first (mirrors the pad handling in
+        # addMove), then delete the last move line that is left.
+        while (int(box.index("end-1l").split(".")[0]) > 1
+               and box.get("end-2l", "end-1l").strip() == ""):
+            box.delete("end-2l", "end-1l")
+        if int(box.index("end-1l").split(".")[0]) > 1:
+            box.delete("end-2l", "end-1l")
+        box.config(state=tk.DISABLED)
+        self.padShorterBox()
+        self.refreshMoveNumbers()
+        self.moveNumbers.yview_moveto(0.0)
+
     def copyHistory(self):
         """
         Copies the whole history to the clipboard as one text, one row per
