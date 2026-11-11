@@ -247,6 +247,27 @@ namespace check
                            EventState& eventState);
 
     /**
+     * Process an undo event. This reverts the game to the point where the
+     * previous player in the turn rotation (the player who just moved) is to
+     * move again: undoToPlayersTurn(previousPlayerInRotation()) backs the game
+     * up to that player's turn using the position history. The UI is brought
+     * back to match (the undone move is removed from its history box, the board
+     * and turn indicator are updated, any game over dialog is dismissed, and the
+     * board is unlocked), and the result of the restored position is returned.
+     *
+     * @param module The python ui module to update. This method assumes that the
+     *        setBoardState(cells) and setTurn(color) methods exist, and that the
+     *        removeMoveFromHistory(side) and dismissGameResult() methods exist
+     *        (they are checked before being called).
+     * @param state The current state of the board, which is restored.
+     * @param eventState The event state to unlock (its game over flag is cleared).
+     * @return The result of the game after the undo (ongoing for a normal undo).
+     */
+    GameResult processUndoMove(PythonModule& module,
+                               BoardState& state,
+                               EventState& eventState);
+
+    /**
      * This handles a piece_promo_choice event. This event is somewhat special in the
      * sense that it is forced once a type of piece reaches the last rank. When this 
      * happens, the processPickupPiece method moves the piece, and triggers the ui promo 
