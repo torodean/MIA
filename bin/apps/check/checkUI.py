@@ -837,10 +837,12 @@ def removePiece(col, row):
 
 def showGameResult(result, reason, winner="none"):
     """
-    Displays the result of a finished game with a single reset option.
+    Displays the result of a finished game with undo and reset options.
     The dialog does not block the main window. The backend ignores pickup
     and drop events once the game is over, so the move history can still
-    be copied with the panel's Copy button. Closing the window resets too.
+    be copied with the panel's Copy button. Undo reverts the move that ended
+    the game (the backend then dismisses this window); Reset and closing the
+    window start a new game.
     @param result The result of the game: "win" or "draw".
     @param reason Why the game ended, e.g. "checkmate", "stalemate" or
         "insufficient material".
@@ -866,9 +868,16 @@ def showGameResult(result, reason, winner="none"):
     resultDialog.title("Game Over")
     resultDialog.resizable(False, False)
     resultDialog.transient(root)
+    # The dialog is a separate Toplevel, so the root's <Control-z> binding
+    # does not fire while the dialog holds focus. Bind it here too.
+    resultDialog.bind("<Control-z>", lambda event: addEvent("undo_move"))
     tk.Label(resultDialog, text=message, font=("Segoe UI", 14),
              bg=BACKGROUND, fg=LABEL_FG).pack(padx=24, pady=(18, 12))
-    tk.Button(resultDialog, text="Reset", command=resetBoard).pack(padx=24, pady=(0, 18))
+    buttonRow = tk.Frame(resultDialog)
+    buttonRow.pack(pady=(0, 18))
+    tk.Button(buttonRow, text="Undo",
+              command=lambda: addEvent("undo_move")).pack(side=tk.LEFT, padx=8)
+    tk.Button(buttonRow, text="Reset", command=resetBoard).pack(side=tk.LEFT, padx=8)
     resultDialog.protocol("WM_DELETE_WINDOW", resetBoard)
     updateUI()
 
@@ -955,6 +964,29 @@ def markMoveInHistory(side, marker):
     if optionsPanel is None:
         raise ValueError("UI not created; call createUI() first")
     optionsPanel.markLastMove(side, marker)
+
+def removeMoveFromHistory(side):
+    """
+    Removes the most recent move from the given player's move history box on the
+    options panel. The backend calls this for each move an undo reverts, so the
+    boxes stay in step with the game.
+    @param side "white" or "black", the player who made the last move.
+    """
+    if optionsPanel is None:
+        raise ValueError("UI not created; call createUI() first")
+    optionsPanel.removeLastMove(side)
+
+def dismissGameResult():
+    """
+    Closes the game result window without resetting the board. The backend
+    calls this when an undo reverts the move that ended the game, so play
+    continues from the restored position.
+    """
+    global resultDialog
+    if resultDialog is not None:
+        resultDialog.destroy()
+        resultDialog = None
+    updateUI()
 
 def showOptionsPanel():
     """
