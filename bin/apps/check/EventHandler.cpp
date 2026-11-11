@@ -486,6 +486,63 @@ namespace check
     }
 
 
+    GameResult processUndoMove(PythonModule& module,
+                               BoardState& state,
+                               EventState& eventState)
+    {
+        if (!state.canUndo())
+        { // There is no move to undo yet.
+            return getGameResult(state);
+        }
+
+        /*
+         * The turn has already advanced, so undo back to the player who just
+         * moved rather than the player to move.
+         */
+        const uint8_t targetTurn = state.previousPlayerInRotation();
+
+        // Remember the moves about to be reverted so they can be cleared from the
+        // ui move history, newest first.
+        const std::vector<MoveState> movesBefore = state.getMoves();
+
+        const size_t undone = state.undoToPlayersTurn(targetTurn);
+
+        if (undone == 0)
+        {
+            return getGameResult(state);
+        }
+
+        for (size_t i = 0; i < undone; ++i)
+        {
+            const MoveState& move = movesBefore[movesBefore.size() - 1 - i];
+
+            /*
+             * Only white and black have move history boxes in the ui; the method
+             * is checked so an older ui without it still works.
+             */
+            if ((move.piece.color == Color::White || move.piece.color == Color::Black) &&
+                module.hasMethod("removeMoveFromHistory"))
+            {
+                module.call("removeMoveFromHistory", colorToString(move.piece.color));
+            }
+        }
+
+        // Bring the ui back to the restored position and unlock the board.
+        if (module.hasMethod("dismissGameResult"))
+        {
+            module.call("dismissGameResult");
+        }
+        module.call("clearHighlights");
+        module.call("setBoardState", positionsToStateStrings(state.getBoardPosition()));
+        processTurnChange(module, state);
+
+        eventState.legalMoves.clear();
+        eventState.gameOver = false;
+
+        return GameResult();
+    }
+
+
     GameResult processPiecePromotion(PythonModule& module,
                                      const CheckUIEvent& event,
                                      BoardState& state)
