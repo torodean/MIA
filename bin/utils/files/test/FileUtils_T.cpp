@@ -10,6 +10,7 @@
 #include <sstream>
 #include <filesystem>
 #include <cstdio>  // for remove()
+#include <algorithm>
 
 #include <gtest/gtest.h>
 
