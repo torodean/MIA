@@ -4,6 +4,7 @@
  * @date 06/05/2025
  * @brief This file is for testing the moethods in the MarkovModels file(s).
  */
+#include <algorithm>
 
 #include <gtest/gtest.h>
 

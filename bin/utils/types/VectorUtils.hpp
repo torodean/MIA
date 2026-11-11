@@ -12,6 +12,7 @@
 #include <vector>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 namespace vector_utils
 {

@@ -147,9 +147,9 @@ if [[ $enableTesting ]]; then
   echo "Running the MIA tests!"
   cd "$rootDirectory"/build
   if [[ $verboseMode ]]; then
-    ctest -v --output-on-failure
+    ctest -V --output-on-failure
   else
-    ctest -v
+    ctest --output-on-failure
   fi
   cd -
   echo "Finished with tests!"
