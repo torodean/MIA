@@ -195,10 +195,16 @@ namespace check
                         break;
                     }
 
+                    case CheckUIEventType::UndoMove:
+                    { // Reverts the game to the previous player's turn.
+                        GameResult result = processUndoMove(module, boardState, eventState);
+                        handleGameResult(module, result, eventState);
+                        break;
+                    }
+
                     case CheckUIEventType::SaveBoard:
                     case CheckUIEventType::LoadBoard:
                     case CheckUIEventType::EditMode:
-                    case CheckUIEventType::UndoMove:
                     { // The backend does not act on these menu events yet.
                         std::cout << "The feature for this event type is still in development: "
                                   << checkUIEventTypeToString(uiEvent.type) << std::endl;
