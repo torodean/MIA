@@ -177,10 +177,16 @@ namespace check
     bool isThreefoldRepetition(const BoardState& boardState)
     {
         const std::string currentKey = positionKey(boardState);
-        const std::vector<std::string>& history = boardState.getPositionHistory();
+        const std::vector<PositionSnapshot>& history = boardState.getPositionHistory();
 
-        return std::count(history.begin(), history.end(), currentKey)
-               >= THREEFOLD_REPETITION_LIMIT;
+        size_t occurrences = 0;
+        for (const PositionSnapshot& snapshot : history)
+        {
+            if (snapshot.key == currentKey)
+                ++occurrences;
+        }
+
+        return occurrences >= THREEFOLD_REPETITION_LIMIT;
     }
 
 
