@@ -9,7 +9,7 @@
 #include "MoveState.hpp"
 
 #include <cstdint>
-#include <string>
+#include <sstream>
 
 // Needed to convert the moved piece's type for the glyph lookup.
 #include "PieceType.hpp"
@@ -100,5 +100,29 @@ namespace check
         output += squareToString(move.endingPos);
 
         return output;
+    }
+
+
+    std::string createSaveLine(const MoveState& moveState)
+    {
+        std::stringstream output;
+        output << moveState.startingPos << ";" << moveState.endingPos;
+        return output.str();
+    }
+
+
+    MoveState loadFromSaveLine(const std::string& input)
+    {
+        using namespace string_utils;
+
+        MoveState state;
+
+        std::vector<std::string> coords = delimiterString(input, ';');
+        state.startingPos.x = stringToUint8(getBetweenXAndY(coords[0], '(', ','));
+        state.startingPos.y = stringToUint8(getBetweenXAndY(coords[0], ',', ')'));
+        state.endingPos.x = stringToUint8(getBetweenXAndY(coords[1], '(', ','));
+        state.endingPos.y = stringToUint8(getBetweenXAndY(coords[1], ',', ')'));
+
+        return state;
     }
 } // namespace check

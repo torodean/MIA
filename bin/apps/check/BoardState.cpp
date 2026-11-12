@@ -5,6 +5,7 @@
  * @brief Implements the BoardState class and methods.
  */
 
+#include <iostream>
 #include <algorithm>
 #include <cstddef>
 #include <sstream>
@@ -21,6 +22,8 @@
 #include "King.hpp"
 // Used for building position keys.
 #include "PieceType.hpp"
+// Used for file saving and loading.
+#include "FileUtils.hpp"
 
 namespace check
 {
@@ -246,8 +249,8 @@ namespace check
         moves.clear();
 
         /*
-         * The squares are rebuilt from scratch here rather than just re-placing the
-         * starting pieces on top of the current board. setBoardToStartingPosition only writes
+         * The squares are rebuilt from scratch here instead of re-placing the starting 
+         * pieces on top of the current board. setBoardToStartingPosition only writes
          * the starting pieces down, so without this rebuild every piece which moved
          * during the game would stay on the square it moved to once the game reset.
          */
@@ -317,8 +320,7 @@ namespace check
 
     bool BoardState::canUndo() const
     {
-        // The first entry is the starting position; there is nothing to undo
-        // until a turn has completed and pushed a second entry.
+        // The first entry is the starting position; there is nothing to undo.
         return positionHistory.size() > 1;
     }
 
@@ -337,10 +339,12 @@ namespace check
         std::string board;
         board.reserve(1 + 5 * squareStates.size());
 
-        // A single byte names whose turn it is, followed by one 5-byte record
-        // per occupied square: x, y, piece type, piece color, and the square's
-        // moved state. Every value fits a byte, so the pieces follow directly
-        // with no separators and the count is recovered from the length.
+        /* 
+         * A single byte names whose turn it is, followed by one 5-byte record
+         * per occupied square: x, y, piece type, piece color, and the square's
+         * moved state. Every value fits a byte, so the pieces follow directly
+         * with no separators and the count is recovered from the length.
+         */
         board.push_back(static_cast<char>(whosTurnIsIt()));
 
         for (const SquareState& square : squareStates)
@@ -371,9 +375,11 @@ namespace check
 
         playerState.whosTurnIsIt = static_cast<uint8_t>(board[0]);
 
-        // Rebuild the squares, then replay the recorded pieces. updatePiece's
-        // initialPiece argument restores each square's moved state (false keeps
-        // it, true marks it moved), so castling is affected exactly as it was.
+        /* 
+         * Rebuild the squares, then replay the recorded pieces. updatePiece's
+         * initialPiece argument restores each square's moved state (false keeps
+         * it, true marks it moved), so castling is affected exactly as it was.
+         */
         squareStates = createSquareStates(xSize, ySize);
 
         const size_t pieceCount = (board.size() - 1) / 5;
@@ -435,7 +441,11 @@ namespace check
     {
         const uint8_t players = playerState.numberOfPlayers;
 
-        // The player that made the last recorded move.
+        /*
+         * The player that made the last recorded move.
+         * TODO - Currently, computer players are not yet a feature, so all 
+         *        players are human.
+         */
         return ((playerState.whosTurnIsIt + players - 2) % players) + 1;
     }
 
@@ -490,7 +500,9 @@ namespace check
         if (context)
         {
             stream << (isAttacked ? "true" : "false");
-            context->logger.log(stream.str(), {"BoardState", "isSquareAttacked()"}, context->verboseMode);
+            context->logger.log(stream.str(), 
+                                {"BoardState", "isSquareAttacked()"}, 
+                                context->verboseMode);
         }
 
         return isAttacked;
@@ -513,5 +525,71 @@ namespace check
     {
         uint16_t index = coordToIndex(pos);
         return squareStates[index];
+    }
+
+
+    void BoardState::loadBoardFromMoveHistory(const std::vector<MoveState>& moves)
+    {
+        reset();
+        for (const MoveState& move : moves)
+        { // Playback each move.
+            movePiece(move.startingPos, move.endingPos);
+        }
+    }
+
+
+    void saveBoardState(const BoardState& boardState,
+                        const std::string& outputFile)
+    {
+        if (!files::ensureFileExists(outputFile, true))
+        { // This indicates an error opening the file for saving.
+            MIA_THROW(error::ErrorCode::File_Open_Failure, outputFile);
+        }
+
+        std::vector<std::string> outputFileLines;
+        const std::vector<MoveState>& moves = boardState.getMoves();
+        
+        for (const MoveState& move : moves)
+        {
+            outputFileLines.push_back(createSaveLine(move));
+        }
+
+        files::writeLinesToFile(outputFile, outputFileLines);
+    }
+
+
+    bool loadBoardState(BoardState& boardState,
+                        const std::string& inputFile)
+    {
+        if (!files::fileExists(inputFile))
+        { // The file does not exist.
+            return false;
+        }
+
+        std::string configFile;
+        std::vector<MoveState> moveHistory;
+        std::vector<std::string> lines = files::readAllLines(inputFile);
+
+        try
+        { // A malformed file could mess-up parsing.
+            configFile = lines[0];
+            for (size_t i = 1; i < lines.size(); i++)
+            { // Each line after the first represents a move.
+                moveHistory.push_back(loadFromSaveLine(lines[i]));
+            }
+        }
+        catch(const error::MIAException& ex)
+        { // Incorrect deserialization.
+            std::cerr << "ERROR: loading the save file failed: " << ex.what() << std::endl;
+            return false;
+        }
+        catch(...)
+        {
+            std::cerr << "ERROR: unknown exception while loading save file!" << std::endl;
+            return false;
+        }
+
+        boardState.loadBoardFromMoveHistory(moveHistory);
+        return true;
     }
 } // namespace check

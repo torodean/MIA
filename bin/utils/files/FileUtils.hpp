@@ -61,12 +61,14 @@ namespace files
     std::string getRandomLineOfFile(std::string& fileName);
 
     /**
-     * @brief Takes a file as an input and prints an input number of random lines from it.
+     * @brief Takes a file as an input and prints an input number of random 
+     *        lines from it.
      * @param filePath The input file path to use.
      * @param numberOfLines The number of lines to return.
      * @throws MIAException if the file is not found or accessible.
      */
-    void printRandomLinesFromFile(std::string filePath, int numberOfLines);
+    void printRandomLinesFromFile(std::string filePath,
+                                  int numberOfLines);
 
     /**
      * @brief Checks if a file exists at the specified path.
@@ -87,7 +89,8 @@ namespace files
      * @param filePath Path to the file.
      * @param lines Lines to write.
      */
-    void writeLinesToFile(const std::string& filePath, const std::vector<std::string>& lines);
+    void writeLinesToFile(const std::string& filePath, 
+                          const std::vector<std::string>& lines);
 
     /**
      * @brief Reads the entire content of a file as a single string.
@@ -101,7 +104,8 @@ namespace files
      * @param filePath Path to the file.
      * @param line Line to append.
      */
-    void appendLineToFile(const std::string& filePath, const std::string& line);
+    void appendLineToFile(const std::string& filePath,
+                          const std::string& line);
 
     /**
      * @brief Counts the number of lines in a file.
@@ -116,7 +120,8 @@ namespace files
      * @param destPath Path to the destination file.
      * @return True if copy was successful, false otherwise.
      */
-    bool copyFile(const std::string& sourcePath, const std::string& destPath);
+    bool copyFile(const std::string& sourcePath,
+                  const std::string& destPath);
 
     /**
      * @brief Deletes the specified file.
@@ -124,4 +129,21 @@ namespace files
      * @return True if deletion was successful, false otherwise.
      */
     bool deleteFile(const std::string& filePath);
+
+    /**
+     * @brief Ensures that a file exists at the given path.
+     * 
+     * @note This simply wraps BasicUtilities::ensureFileExists() and is included
+     *       here for convenience so files do not have to include BasicUtilities_CORE.
+     *
+     * Checks if the file exists. If it does, returns true.
+     * If it doesn't exist and createIfMissing is true, creates an empty file.
+     * Returns false if the path exists but is not a regular file, or on error.
+     * 
+     * @param path The path to the file.
+     * @param createIfMissing If true, the directory will be created (including parent 
+     *        directories) if it doesn't exist. This will default to true.
+     * @return true if file exists or was successfully created, false otherwise.
+     */
+    bool ensureFileExists(const std::string& path, bool createIfMissing = true);
 } // namespace files
