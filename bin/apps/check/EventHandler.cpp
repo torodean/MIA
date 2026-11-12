@@ -104,6 +104,9 @@ namespace check
         if (event == "drop_piece")         return CheckUIEventType::DropPiece;
         if (event == "reset_board")        return CheckUIEventType::ResetBoard;
         if (event == "save_board")         return CheckUIEventType::SaveBoard;
+        if (event == "load_board")         return CheckUIEventType::LoadBoard;
+        if (event == "edit_mode")          return CheckUIEventType::EditMode;
+        if (event == "undo_move")          return CheckUIEventType::UndoMove;
         if (event == "piece_promo_choice") return CheckUIEventType::PiecePromotion;
         if (event == "stop")               return CheckUIEventType::Stop;
 
@@ -119,6 +122,9 @@ namespace check
             case CheckUIEventType::DropPiece:      return "drop_piece";
             case CheckUIEventType::ResetBoard:     return "reset_board";
             case CheckUIEventType::SaveBoard:      return "save_board";
+            case CheckUIEventType::LoadBoard:      return "load_board";
+            case CheckUIEventType::EditMode:       return "edit_mode";
+            case CheckUIEventType::UndoMove:       return "undo_move";
             case CheckUIEventType::PiecePromotion: return "piece_promo_choice";
             case CheckUIEventType::Stop:           return "stop";
             case CheckUIEventType::Unknown:
@@ -171,6 +177,9 @@ namespace check
             // These events have nothing more to them.
             case CheckUIEventType::ResetBoard:
             case CheckUIEventType::SaveBoard:
+            case CheckUIEventType::LoadBoard:
+            case CheckUIEventType::EditMode:
+            case CheckUIEventType::UndoMove:
             case CheckUIEventType::Stop:
             case CheckUIEventType::Unknown:
                 break;
@@ -474,6 +483,63 @@ namespace check
 
         eventState.legalMoves.clear();
         eventState.gameOver = false;
+    }
+
+
+    GameResult processUndoMove(PythonModule& module,
+                               BoardState& state,
+                               EventState& eventState)
+    {
+        if (!state.canUndo())
+        { // There is no move to undo yet.
+            return getGameResult(state);
+        }
+
+        /*
+         * The turn has already advanced, so undo back to the player who just
+         * moved rather than the player to move.
+         */
+        const uint8_t targetTurn = state.previousPlayerInRotation();
+
+        // Remember the moves about to be reverted so they can be cleared from the
+        // ui move history, newest first.
+        const std::vector<MoveState> movesBefore = state.getMoves();
+
+        const size_t undone = state.undoToPlayersTurn(targetTurn);
+
+        if (undone == 0)
+        {
+            return getGameResult(state);
+        }
+
+        for (size_t i = 0; i < undone; ++i)
+        {
+            const MoveState& move = movesBefore[movesBefore.size() - 1 - i];
+
+            /*
+             * Only white and black have move history boxes in the ui; the method
+             * is checked so an older ui without it still works.
+             */
+            if ((move.piece.color == Color::White || move.piece.color == Color::Black) &&
+                module.hasMethod("removeMoveFromHistory"))
+            {
+                module.call("removeMoveFromHistory", colorToString(move.piece.color));
+            }
+        }
+
+        // Bring the ui back to the restored position and unlock the board.
+        if (module.hasMethod("dismissGameResult"))
+        {
+            module.call("dismissGameResult");
+        }
+        module.call("clearHighlights");
+        module.call("setBoardState", positionsToStateStrings(state.getBoardPosition()));
+        processTurnChange(module, state);
+
+        eventState.legalMoves.clear();
+        eventState.gameOver = false;
+
+        return GameResult();
     }
 
 

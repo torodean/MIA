@@ -2,17 +2,13 @@
 
 This is a collection of TODO's still open for this application.
 
-## A turn indicator
-
-Some sort of indicator for who's turn it is in the UI is needed.
-
 ## AI to play against
 
 Some sort of automated opponents.
 
 ## Docs
 
-Docs for this app need made.
+Docs for this app need updated.
 
 ## Custom board and pieces
 
@@ -43,11 +39,10 @@ A sound for putting the opponent into check needs added.
 ## Verbose and debug output.
 
 The logging and verbose output needs tidied up and improved.
-
-## Add an undo button
+Enhance debug/verbose statements to use board coordinates.
 
 ## Config validation
 
-The config files need some validation and the options to have any config field be optional. Also, expanding config to change colors and other things in the UI.
-
-An undo button is needed to take back the last move.
+The config files need some validation and the options to have any config field be optional. 
+Also, expanding config to change colors and other things in the UI. 
+Make sound configuratble too

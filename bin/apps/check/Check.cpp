@@ -195,9 +195,21 @@ namespace check
                         break;
                     }
 
-                    case CheckUIEventType::SaveBoard:
-                        std::cout << "Still coding this event type!" << std::endl;
+                    case CheckUIEventType::UndoMove:
+                    { // Signals that an undo was requested from the UI.
+                        GameResult result = processUndoMove(module, boardState, eventState);
+                        handleGameResult(module, result, eventState);
                         break;
+                    }
+
+                    case CheckUIEventType::SaveBoard:
+                    case CheckUIEventType::LoadBoard:
+                    case CheckUIEventType::EditMode:
+                    { // The backend does not act on these menu events yet.
+                        std::cout << "The feature for this event type is still in development: "
+                                  << checkUIEventTypeToString(uiEvent.type) << std::endl;
+                        break;
+                    }
 
                     case CheckUIEventType::Stop:
                     { // Signals that the UI was exited.

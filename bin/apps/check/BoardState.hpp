@@ -26,6 +26,19 @@
 namespace check
 {
     /**
+     * One entry of the BoardState position history: a complete, restorable
+     * record of the position. Stored at the starting position and after every
+     * completed turn, so it doubles as the game's undo history.
+     */
+    struct PositionSnapshot
+    {
+        /// The positionKey() of this position.
+        std::string key;
+        /// A compact, reversible serialization of this position's board.
+        std::string board;
+    };
+
+    /**
      * This class represents the state of the entire game board. This is
      * a collection of SquareState objects, with one representing each square
      * of the game board.
@@ -234,7 +247,55 @@ namespace check
          *
          * @return A reference to the vector of recorded position keys.
          */
-        const std::vector<std::string>& getPositionHistory() const;
+        const std::vector<PositionSnapshot>& getPositionHistory() const;
+
+        /**
+         * @brief Returns the pieces currently on the board, one entry per
+         *        occupied square.
+         *
+         * This is the live position, as opposed to getStartingPosition().
+         *
+         * @return A vector of the occupied squares and the piece on each.
+         */
+        std::vector<PiecePosition> getBoardPosition() const;
+
+        /**
+         * @brief Determines whether there is a move available to undo.
+         *
+         * @return true when at least one turn has been completed, false at the
+         *         starting position.
+         */
+        bool canUndo() const;
+
+        /**
+         * @brief Undoes a single completed turn.
+         *
+         * The board, the turn, and the recorded move history are all restored
+         * to their state before the most recent turn, using the position
+         * history rather than reversing the move. Does nothing when there is
+         * nothing to undo.
+         */
+        void undoMove();
+
+        /**
+         * @brief Undoes completed turns until it is the given player's turn.
+         *
+         * At least one turn is undone (when any are available), and undoing
+         * continues until whosTurnIsIt() equals targetTurn.
+         *
+         * @param targetTurn The player index whose turn the undo stops at.
+         * @return The number of turns undone (0 when there was nothing to undo).
+         */
+        size_t undoToPlayersTurn(uint8_t targetTurn);
+
+        /**
+         * @brief Returns the player index which moved most recently, that is,
+         *        the player who comes just before the player to move in the turn
+         *        rotation.
+         *
+         * @return The player index which made the last recorded move.
+         */
+        uint8_t previousPlayerInRotation() const;
 
         /**
          * Determines whether a square is attacked by an opposing piece.
@@ -277,6 +338,43 @@ namespace check
         uint16_t coordToIndex(math::Coordinate<uint8_t> pos) const;
 
         /**
+         * @brief Takes a snapshot of the current position.
+         *
+         * Combines the position key (for the repetition rules) with a compact,
+         * reversible board serialization into a single PositionSnapshot, which
+         * is the unit stored in the position history and used for undo.
+         *
+         * @return A snapshot of this board's current position.
+         */
+        PositionSnapshot makeSnapshot() const;
+
+        /**
+         * @brief Builds the compact board serialization stored in a snapshot.
+         *
+         * Only the occupied squares are recorded: one 5-byte record each
+         * (x, y, piece type, piece color, and the square's moved state), after
+         * a single byte for whose turn it is. Empty squares take no space, so
+         * the length depends on the number of pieces rather than the board size.
+         *
+         * @return The compact serialization of this board (see
+         *         restoreFromSnapshot()).
+         */
+        std::string serializeBoard() const;
+
+        /**
+         * @brief Restores the board from a snapshot's compact board serialization.
+         *
+         * This is the inverse of serializeBoard(). It rebuilds the squares from
+         * scratch, replays every recorded piece (restoring each square's moved
+         * state so castling is affected exactly as it was), and sets whose turn
+         * it is. The caller truncates the move history to match the restored
+         * position.
+         *
+         * @param board The compact board serialization to restore from.
+         */
+        void restoreFromSnapshot(const std::string& board);
+
+        /**
          * Stores the player state for this board configuration (e.g., whos turn it is).
          * This is dynamically changing, and the current board state depends on it. Thus,
          * it can only be set in initialize.
@@ -314,11 +412,13 @@ namespace check
         std::vector<MoveState> moves;
 
         /*
-         * Stores the positionKey() of every position which has occurred in this
-         * game: the starting position followed by one entry per turn completed
-         * by advanceTurn(). Repetition rules are checked against this history.
+         * Stores a snapshot of every position which has occurred in this game:
+         * the starting position followed by one entry per turn completed by
+         * advanceTurn(). Each entry holds both the position key (which the
+         * repetition rules compare) and a compact, reversible board, so this
+         * history doubles as the game's undo mechanism.
          */
-        std::vector<std::string> positionHistory;
+        std::vector<PositionSnapshot> positionHistory;
     }; // class BoardState
 
     /**
