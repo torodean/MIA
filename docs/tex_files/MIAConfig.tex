@@ -120,13 +120,13 @@ The configuration values support optional values (as of MIA version 2.123). To u
 
 \begin{lstlisting}[style=cppstyle]
 	config::MIAConfig config;
-	
+
 	// Later in the code...
 	config.setConfigFileName("MIAConfig.MIA", constants::ConfigType::KEY_VALUE);
-	
+
 	// Defaults to "." if no "inputFilePath" is found.
 	std::string path = config.getString("inputFilePath", true, ".");
-	
+
 	// Defaults to false if no "verboseMode" is found.
 	bool verbose = config.getBool("verboseMode", true, false);
 \end{lstlisting}

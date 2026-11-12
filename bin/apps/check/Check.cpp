@@ -196,7 +196,7 @@ namespace check
                     }
 
                     case CheckUIEventType::UndoMove:
-                    { // Reverts the game to the previous player's turn.
+                    { // Signals that an undo was requested from the UI.
                         GameResult result = processUndoMove(module, boardState, eventState);
                         handleGameResult(module, result, eventState);
                         break;
