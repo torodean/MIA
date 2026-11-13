@@ -118,10 +118,16 @@ namespace check
         MoveState state;
 
         std::vector<std::string> coords = delimiterString(input, ';');
-        state.startingPos.x = stringToUint8(getBetweenXAndY(coords[0], '(', ','));
-        state.startingPos.y = stringToUint8(getBetweenXAndY(coords[0], ',', ')'));
-        state.endingPos.x = stringToUint8(getBetweenXAndY(coords[1], '(', ','));
-        state.endingPos.y = stringToUint8(getBetweenXAndY(coords[1], ',', ')'));
+        /*
+         * Coordinates are written by Coordinate's operator<< as "(x, y)" (with a
+         * space after the comma), so the value between ',' and ')' carries a
+         * leading space. Trim before converting, since stringToUint8() rejects
+         * any non-digit character and would otherwise throw.
+         */
+        state.startingPos.x = stringToUint8(trim(getBetweenXAndY(coords[0], '(', ',')));
+        state.startingPos.y = stringToUint8(trim(getBetweenXAndY(coords[0], ',', ')')));
+        state.endingPos.x = stringToUint8(trim(getBetweenXAndY(coords[1], '(', ',')));
+        state.endingPos.y = stringToUint8(trim(getBetweenXAndY(coords[1], ',', ')')));
 
         return state;
     }

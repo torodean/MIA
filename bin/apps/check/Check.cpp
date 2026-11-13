@@ -16,8 +16,6 @@
 #include "Paths.hpp"
 // Used for return codes.
 #include "Constants.hpp"
-// Used for handling events.
-#include "EventHandler.hpp"
 // Used for the win/draw result of a game.
 #include "GameResult.hpp"
 
@@ -53,23 +51,8 @@ namespace check
         loadConfig();
 
         // Pass the runtime context to the board state to enable logging and verbosity.
+        // The board and UI themselves are set up later in run() via setupBoard().
         boardState.setRuntimeContext(getContext());
-
-        // Validate the starting position.
-        if (!validStartingPosition(configValues.startingPosition, configValues.startingPlayerState))
-        { // And invalid starting position was configured.
-            std::string err = "Error: The configured starting position is invalid!";
-            MIA_THROW(error::ErrorCode::Check_Invalid_Start_Pos, err);
-        }
-
-        // Load config values into the board state.
-        boardState.initialize(configValues.boardSizeX,
-                              configValues.boardSizeY,
-                              configValues.startingPosition,
-                              configValues.startingPlayerState);
-
-        // Set the python module settings.
-        module.call("setVerbose", configValues.verboseMode);
     }
 
 
@@ -99,6 +82,44 @@ namespace check
     }
 
 
+    void Check::setupBoard(const CheckConfig& config)
+    {
+        // Validate the starting position.
+        if (!validStartingPosition(config.startingPosition, config.startingPlayerState))
+        { // An invalid starting position was configured.
+            std::string err = "Error: The configured starting position is invalid!";
+            MIA_THROW(error::ErrorCode::Check_Invalid_Start_Pos, err);
+        }
+
+        // Load config values into the board state.
+        boardState.initialize(config.boardSizeX,
+                              config.boardSizeY,
+                              config.startingPosition,
+                              config.startingPlayerState);
+
+        // Set the python module settings.
+        module.call("setVerbose", config.verboseMode);
+
+        // Create the UI.
+        std::cout << "Creating Check UI!" << std::endl;
+        module.call("createUI", config.boardSizeX, config.boardSizeY);
+
+        // Register pieces.
+        std::cout << "Registering piece art from config!" << std::endl;
+        registerPieceArtInUI(module, config.pieceArts);
+
+        // Setup the starting board position.
+        std::cout << "Setting initial board state!" << std::endl;
+        module.call("setBoardState", positionsToStateStrings(config.startingPosition));
+
+        // Point the ui turn indicator at the configured starting player.
+        processTurnChange(module, boardState);
+
+        // Update the UI with the board position.
+        module.call("updateUI");
+    }
+
+
     void Check::printHelp() const
     {
         MIAApplication::printHelp();
@@ -110,6 +131,35 @@ namespace check
     }
 
 
+    void Check::handleLoadEvent(const CheckUIEvent& uiEvent, EventState& eventState)
+    {
+        CheckConfig loadedConfig;
+        if (!processLoadEvent(uiEvent, loadedConfig))
+        { // The saved config failed to load, so there is nothing to replay.
+            return;
+        }
+
+        // Rebuild the board and UI for the config the save was made from.
+        configValues = loadedConfig;
+        setupBoard(configValues);
+
+        // Replay the saved moves, then sync the UI to the loaded position.
+        if (loadBoardState(boardState, uiEvent.argument.value()))
+        {
+            processTurnChange(module, boardState);
+            module.call("setBoardState",
+                        positionsToStateStrings(boardState.getBoardPosition()));
+            eventState.legalMoves.clear();
+            eventState.gameOver = getGameResult(boardState).isGameOver();
+        }
+        else
+        {
+            std::cerr << "ERROR: Could not replay the saved moves from "
+                      << uiEvent.argument.value() << std::endl;
+        }
+    }
+
+
     int Check::run()
     {
         std::cout << "Loading Check app!" << std::endl;
@@ -117,23 +167,8 @@ namespace check
         // Start the UI listener.
         listener.start();
 
-        // Create the UI.
-        std::cout << "Creating Check UI!" << std::endl;
-        module.call("createUI", configValues.boardSizeX, configValues.boardSizeY);
-
-        // Register pieces.
-        std::cout << "Registering piece art from config!" << std::endl;
-        registerPieceArtInUI(module, configValues.pieceArts);
-
-        // Setup the starting board position.
-        std::cout << "Setting initial board state!" << std::endl;
-        module.call("setBoardState", positionsToStateStrings(configValues.startingPosition));
-
-        // Point the ui turn indicator at the configured starting player.
-        processTurnChange(module, boardState);
-
-        // Update the UI with the board position.
-        module.call("updateUI");
+        // Set up the board and UI for the configured game.
+        setupBoard(configValues);
 
         EventState eventState; // Stores various states between events.
         while (listener.isRunning())
@@ -203,9 +238,19 @@ namespace check
                     }
 
                     case CheckUIEventType::SaveBoard:
+                    { // Save the current board state to the file named by the event.
+                        processSaveEvent(boardState, uiEvent, config.getConfigFileFullPath());
+                        break;
+                    }
+
                     case CheckUIEventType::LoadBoard:
+                    { // Load a saved board state, restoring its config and replaying its moves.
+                        handleLoadEvent(uiEvent, eventState);
+                        break;
+                    }
+
                     case CheckUIEventType::EditMode:
-                    { // The backend does not act on these menu events yet.
+                    { // The backend does not act on this menu event yet.
                         std::cout << "The feature for this event type is still in development: "
                                   << checkUIEventTypeToString(uiEvent.type) << std::endl;
                         break;

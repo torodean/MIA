@@ -19,6 +19,9 @@
 #include "MoveState.hpp"
 // Used to push the starting position back to the UI on a reset.
 #include "CheckConfig.hpp"
+// Used to read the save file and re-load the config it was saved with.
+#include "FileUtils.hpp"
+#include "Constants.hpp"
 // Used for pausing between ui events.
 #include "Timing.hpp"
 // Needed for castling special case.
@@ -136,7 +139,7 @@ namespace check
     CheckUIEvent toCheckUIEvent(const std::string& input)
     {
         CheckUIEvent event;
-        std::vector<std::string> eventTokens = string_utils::delimiterString(input, ' ');
+        std::vector<std::string> eventTokens = string_utils::delimiterString(input, ';');
         event.type = stringToCheckUIEventType(eventTokens[0]);
 
         // The rest of the parsing depends on the type of event.
@@ -165,19 +168,19 @@ namespace check
                 break;
             }
             case CheckUIEventType::PiecePromotion:
+            case CheckUIEventType::SaveBoard:
+            case CheckUIEventType::LoadBoard:
             {
                 if (eventTokens.size() != 2)
-                    MIA_THROW(error::ErrorCode::Check_Malformed_Event, 
-                              "Expected 2 tokens for PiecePromotion event.");
+                    MIA_THROW(error::ErrorCode::Check_Malformed_Event,
+                              "Expected 2 tokens for " + checkUIEventTypeToString(event.type) + " event.");
 
-                event.chosenPromoPiece = eventTokens[1];
+                event.argument = eventTokens[1];
                 break;
             }
 
             // These events have nothing more to them.
             case CheckUIEventType::ResetBoard:
-            case CheckUIEventType::SaveBoard:
-            case CheckUIEventType::LoadBoard:
             case CheckUIEventType::EditMode:
             case CheckUIEventType::UndoMove:
             case CheckUIEventType::Stop:
@@ -555,9 +558,9 @@ namespace check
         }
 
         Piece promoPiece;
-        if (event.chosenPromoPiece.has_value())
+        if (event.argument.has_value())
         {
-            promoPiece.type = stringToPieceType(event.chosenPromoPiece.value());
+            promoPiece.type = stringToPieceType(event.argument.value());
             if (promoPiece.type == PieceType::None)
                 MIA_THROW(error::ErrorCode::Check_Malformed_Event);
         }
@@ -578,7 +581,7 @@ namespace check
         promoPiece.color = lastMove->piece.color;
 
         module.call("setPiece", 
-                    event.chosenPromoPiece.value(),
+                    event.argument.value(),
                     colorToString(lastMove->piece.color),
                     lastMove->endingPos.x,
                     lastMove->endingPos.y);
@@ -623,5 +626,60 @@ namespace check
             }
             timing::sleepMilliseconds(15);
         }
+    }
+
+
+    void processSaveEvent(BoardState& state,
+                          const CheckUIEvent& event,
+                          const std::string& configFile)
+    {
+        if (!event.argument.has_value())
+        {
+            MIA_THROW(error::ErrorCode::Check_Malformed_Event,
+                      "The save event is missing the save file path.");
+        }
+
+        saveBoardState(state, event.argument.value(), configFile);
+        std::cout << "Saved the board state to: " << event.argument.value() << std::endl;
+    }
+
+
+    bool processLoadEvent(const CheckUIEvent& event, CheckConfig& outConfig)
+    {
+        if (!event.argument.has_value())
+        {
+            MIA_THROW(error::ErrorCode::Check_Malformed_Event,
+                      "The load event is missing the save file path.");
+        }
+
+        const std::string& saveFile = event.argument.value();
+        if (!files::fileExists(saveFile))
+        {
+            std::cerr << "ERROR: Could not find the save file: " << saveFile << std::endl;
+            return false;
+        }
+
+        std::vector<std::string> lines = files::readAllLines(saveFile);
+        if (lines.empty())
+        {
+            std::cerr << "ERROR: The save file is empty: " << saveFile << std::endl;
+            return false;
+        }
+
+        try
+        {
+            // The first line of the save file is the config it was created from.
+            config::MIAConfig fileConfig(lines.front(), constants::ConfigType::KEY_VALUE);
+            fileConfig.initialize();
+            outConfig = constructConfig(fileConfig);
+        }
+        catch (const error::MIAException& ex)
+        {
+            std::cerr << "ERROR: Could not load the config recorded in the save ("
+                      << lines.front() << "): " << ex.what() << std::endl;
+            return false;
+        }
+
+        return true;
     }
 } // namespace check

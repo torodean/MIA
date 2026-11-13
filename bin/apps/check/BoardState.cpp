@@ -404,14 +404,12 @@ namespace check
         if (!canUndo())
             return;
 
-        // The current position is the last entry; dropping it exposes the one
-        // the board should return to.
+        // The current position is the last entry.
         positionHistory.pop_back();
 
         restoreFromSnapshot(positionHistory.back().board);
 
-        // One turn was reverted, so drop the move that produced the position
-        // which was just removed.
+        // One turn was reverted, so drop the move that produced the position.
         moves.resize(positionHistory.size() - 1);
     }
 
@@ -534,19 +532,23 @@ namespace check
         for (const MoveState& move : moves)
         { // Playback each move.
             movePiece(move.startingPos, move.endingPos);
+            advanceTurn();
         }
     }
 
 
     void saveBoardState(const BoardState& boardState,
-                        const std::string& outputFile)
+                        const std::string& outputFile,
+                        const std::string& configFile)
     {
         if (!files::ensureFileExists(outputFile, true))
         { // This indicates an error opening the file for saving.
             MIA_THROW(error::ErrorCode::File_Open_Failure, outputFile);
         }
 
+        // The config file path is the first line, followed by the move lines.
         std::vector<std::string> outputFileLines;
+        outputFileLines.push_back(configFile);
         const std::vector<MoveState>& moves = boardState.getMoves();
         
         for (const MoveState& move : moves)

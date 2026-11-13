@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "BoardState.hpp"
+#include "CheckConfig.hpp"
 #include "GameResult.hpp"
 #include "MathTypes.hpp"
 #include "PythonModule.hpp"
@@ -66,8 +67,8 @@ namespace check
         std::optional<math::Coordinate<uint8_t>> startPos{std::nullopt};
         std::optional<math::Coordinate<uint8_t>> endPos{std::nullopt};
 
-        /// A chosen piece string sent with this event (used for promotions and such).
-        std::optional<std::string> chosenPromoPiece;
+        /// A single string argument such as a promo piece or a save/load path.
+        std::optional<std::string> argument;
     };
 
     /**
@@ -106,8 +107,9 @@ namespace check
     /**
      * Each ui event returned from the ui starts with a string 'name'. This
      * method will convert that name from the string and return the event.
-     * For example, an input of "pickup 3 1" will return PickupPiece and
-     * store 3 1 as the startPos.
+     * The event name and its arguments are separated by ';'. For example, an
+     * input of "pickup_piece;3;1" will return PickupPiece and store 3 1 as
+     * the startPos.
      *
      * @note The events from the python ui's are well-defined and this method
      *       assumes this will remain the case.
@@ -296,4 +298,33 @@ namespace check
      */
     void registerPieceArtInUI(PythonModule& module,
                               const std::vector<PieceArt>& pieceArts);
+
+    /**
+     * This handles a save_board event. It writes the current board state to the
+     * save file named by the event's argument. The save file first records the
+     * config file the board was set up from, followed by every move of the game
+     * in order, so the board can later be brought back to this exact state.
+     *
+     * @param state The current state of the board to save.
+     * @param event The event to process; its argument holds the save file path.
+     * @param configFile The config file the board was set up from, recorded as the
+     *        first line of the save file so a later load can restore the settings.
+     * @throws MIAException if the event has no save file path.
+     */
+    void processSaveEvent(BoardState& state,
+                          const CheckUIEvent& event,
+                          const std::string& configFile);
+
+    /**
+     * This handles a load_board event. It reads the save file named by the event's
+     * argument, pulls out the config file that save was created with, and re-loads
+     * that config into the outConfig. The caller is then responsible for
+     * setting the board up for that config (setupBoard) and replaying the saved
+     * moves (loadBoardState) to bring the board back to the saved state.
+     *
+     * @param event The event to process; its argument holds the save file path.
+     * @param[out] outConfig The configuration the save file was created from.
+     * @return true if the save file and its config were read successfully.
+     */
+    bool processLoadEvent(const CheckUIEvent& event, CheckConfig& outConfig);
 } // namespace check
