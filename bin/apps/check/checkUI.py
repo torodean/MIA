@@ -33,6 +33,11 @@ event queue like every other UI event.
 A menu bar sits across the top of the window with various game actions.
 The menu contents and the events they add are defined in createUI().
 
+The Game menu can also rotate the board 180 degrees in place. Rotation only
+changes which side of the board is viewed from; the position itself, and every
+coordinate the backend sees, is left identical. It is a local UI action, so no
+event is queued and the backend is never told about it.
+
 Event formats (the C++ side parses these):
    Events (semicolon-separated values, squares are 0-indexed col row):
     "pickup_piece;<col>;<row>"
@@ -172,6 +177,10 @@ class ChessBoard(tk.Frame):
         self.arrow = None
         self.squareHighlights = []
         self.drag = None
+        # True once the board has been rotated 180 degrees, so the geometry
+        # methods can mirror every square across the board's center. The border
+        # labels stay in place and only their values change to match.
+        self.rotated = False
         # The labeled border only occupies the left and bottom margins. The
         # squares sit flush with the right edge, so the collapse bar sits
         # directly against the board there.
@@ -208,8 +217,10 @@ class ChessBoard(tk.Frame):
 
     def drawBorderLabels(self):
         """
-        Draws the labeled border: files (a, b, c, ...) below the columns
-        and ranks (1, 2, 3, ...) to the left, counting up from the bottom.
+        Draws the labeled border: files (a, b, c, ...) below the columns and
+        ranks (1, 2, 3, ...) to the left, counting up from the bottom. The
+        labels always sit in these same places; when the board is rotated only
+        their values change, so each names the square now shown in its slot.
         """
         if (verboseMode):
             pythonTools.output_text("Drawing border labels on board!", option="program")
@@ -218,11 +229,15 @@ class ChessBoard(tk.Frame):
         for row in range(self.rows):
             x = MARGIN - MARGIN // 2
             y = MARGIN + row * CELL + CELL // 2
-            self.canvas.create_text(x, y, text=str(self.rows - row), fill=LABEL_FG, font=font)
+            # The rank of the square now shown in this row of the frame.
+            rank = row if self.rotated else (self.rows - 1 - row)
+            self.canvas.create_text(x, y, text=str(rank + 1), fill=LABEL_FG, font=font)
         for col in range(self.cols):
             x = MARGIN + col * CELL + CELL // 2
             y = MARGIN + self.rows * CELL + MARGIN // 2
-            self.canvas.create_text(x, y, text=chr(ord("a") + col), fill=LABEL_FG, font=font)
+            # The file of the square now shown in this column of the frame.
+            fileCol = (self.cols - 1 - col) if self.rotated else col
+            self.canvas.create_text(x, y, text=chr(ord("a") + fileCol), fill=LABEL_FG, font=font)
 
     def drawPieces(self):
         """
@@ -255,15 +270,32 @@ class ChessBoard(tk.Frame):
 
     # ----- geometry -----
 
+    def screenCoord(self, col, row):
+        """
+        The (col, row) slot a logical square is drawn in, applying the
+        current rotation. Not rotated, this is the square itself. Rotated,
+        the board is turned 180 degrees, so the square lands in the
+        diagonally opposite slot.
+        @param col The logical column.
+        @param row The logical row.
+        @return The (col, row) slot the square is drawn in.
+        """
+        if self.rotated:
+            return (self.cols - 1 - col, self.rows - 1 - row)
+        return (col, row)
+
     def topLeftPixel(self, col, row):
         """
-        Top-left pixel of a square. Row 0 is the bottom row.
+        Top-left pixel of a square. Row 0 is the bottom row. Accounts for the
+        current rotation.
         """
-        return (MARGIN + col * CELL, MARGIN + (self.rows - 1 - row) * CELL)
+        scol, srow = self.screenCoord(col, row)
+        return (MARGIN + scol * CELL, MARGIN + (self.rows - 1 - srow) * CELL)
 
     def squareCenterPixel(self, col, row):
         """
-        Center pixel of a square. Row 0 is the bottom row.
+        Center pixel of a square. Row 0 is the bottom row. Accounts for the
+        current rotation.
         """
         x, y = self.topLeftPixel(col, row)
         return (x + CELL // 2, y + CELL // 2)
@@ -271,13 +303,37 @@ class ChessBoard(tk.Frame):
     def squareAt(self, x, y):
         """
         Converts pixel coordinates to a (col, row) square. Row 0 is the bottom row.
+        Accounts for the current rotation.
         @return The (col, row) tuple, or None when off the board.
         """
         x -= MARGIN
         y -= MARGIN
         if not (0 <= x < CELL * self.cols and 0 <= y < CELL * self.rows):
             return None
-        return (int(x // CELL), int(self.rows - 1 - y // CELL))
+        scol = int(x // CELL)
+        srow = int(self.rows - 1 - y // CELL)
+        if self.rotated:
+            return (self.cols - 1 - scol, self.rows - 1 - srow)
+        return (scol, srow)
+
+    def rotate(self):
+        """
+        Rotates the board 180 degrees in place. The board data (which piece
+        sits on which square) is left untouched, so the position is identical;
+        only the side it is viewed from changes. The squares and pieces are
+        redrawn at their mirrored slots, and the border labels are redrawn with
+        the values of the squares now shown in each slot. The annotations are
+        dropped because they were drawn against the old orientation.
+        """
+        self.rotated = not self.rotated
+        self.canvas.delete("all")
+        self.highlightItems = []
+        self.arrows = []
+        self.squareHighlights = []
+        self.drag = None
+        self.drawBoard()
+        self.drawBorderLabels()
+        self.drawPieces()
 
     # ----- annotations -----
 
@@ -610,6 +666,21 @@ def loadBoard():
         addEvent(f"load_board;{loadFile}")
 
 
+def rotateBoard():
+    """
+    Rotates the board 180 degrees in place. The position is left identical;
+    only the side the board is viewed from changes. This is a pure view change,
+    so no board data is altered and no event is queued. It can be triggered from
+    the Game menu / Ctrl+R, or called directly by the C++ backend.
+    """
+    if boardUI is None:
+        return
+    if (verboseMode):
+        pythonTools.output_text("Rotating board!", option="note")
+    boardUI.rotate()
+    updateUI()
+
+
 #####################
 # INTERNAL BOARD OPS
 #####################
@@ -718,7 +789,7 @@ def createUI(cols, rows):
     fileMenu = tk.Menu(menuBar, tearoff=0)
     fileMenu.add_command(label="Save", accelerator="Ctrl+S",
                          command=saveBoard)
-    fileMenu.add_command(label="Load",
+    fileMenu.add_command(label="Load", accelerator="Ctrl+L",
                          command=loadBoard)
     fileMenu.add_separator()
     # Exit reuses closeUI(), so it behaves exactly like closing the window.
@@ -726,10 +797,15 @@ def createUI(cols, rows):
     menuBar.add_cascade(label="File", menu=fileMenu)
 
     gameMenu = tk.Menu(menuBar, tearoff=0)
+    # Rotation is a local UI action, so it calls rotateBoard() directly rather
+    # than queueing an event for the backend.
+    gameMenu.add_command(label="Rotate Board", accelerator="Ctrl+R",
+                         command=rotateBoard)
     gameMenu.add_command(label="Undo", accelerator="Ctrl+Z",
                          command=lambda: addEvent("undo_move"))
-    gameMenu.add_command(label="Edit",
-                         command=lambda: addEvent("edit_mode"))
+    # Still being developed.
+    #gameMenu.add_command(label="Edit",
+    #                     command=lambda: addEvent("edit_mode"))
     menuBar.add_cascade(label="Game", menu=gameMenu)
 
     root.config(menu=menuBar)
@@ -737,7 +813,9 @@ def createUI(cols, rows):
     # The accelerator labels above only display the shortcuts; tkinter
     # needs explicit bindings for the keys to actually fire the events.
     root.bind("<Control-s>", lambda event: saveBoard())
+    root.bind("<Control-l>", lambda event: loadBoard())
     root.bind("<Control-z>", lambda event: addEvent("undo_move"))
+    root.bind("<Control-r>", lambda event: rotateBoard())
 
     # The board, the collapse bar and the options panel share one row,
     # packed left to right. The panel can then open beside the board
