@@ -452,7 +452,7 @@ namespace check
      * in when this method was called.
      *
      * The configFile will always be the first line of the save file, followed
-     * by the list of moves. This moves is enough to reconstruct the current
+     * by the list of moves. These moves are enough to reconstruct the current
      * state of the game by replaying all of the moves.
      *
      * @param boardState The current state of the board.
@@ -471,7 +471,7 @@ namespace check
      * in when the saveBoardState() method was called.
      *
      * @param[out] boardState The current state of the board.
-     * @param outputFile The file to read the save state from.
+     * @param inputFile The file to read the save state from.
      * @return true on success, false otherwise (e.g., the file does not exist).
      */
     bool loadBoardState(BoardState& boardState,
