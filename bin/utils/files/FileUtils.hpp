@@ -132,18 +132,18 @@ namespace files
 
     /**
      * @brief Ensures that a file exists at the given path.
-     * 
-     * @note This simply wraps BasicUtilities::ensureFileExists() and is included
-     *       here for convenience so files do not have to include BasicUtilities_CORE.
      *
      * Checks if the file exists. If it does, returns true.
-     * If it doesn't exist and createIfMissing is true, creates an empty file.
+     * If it does not exist and createIfMissing is true, creates an empty file.
      * Returns false if the path exists but is not a regular file, or on error.
-     * 
+     *
+     * @note This simply wraps basic_utils::ensureFileExists() and is included here
+     *       for convenience so callers do not have to include BasicUtilities_CORE.
+     *
      * @param path The path to the file.
-     * @param createIfMissing If true, the directory will be created (including parent 
-     *        directories) if it doesn't exist. This will default to true.
-     * @return true if file exists or was successfully created, false otherwise.
+     * @param createIfMissing If true, an empty file is created when the file does
+     *        not exist. This defaults to true.
+     * @return true if the file exists or was created, false otherwise.
      */
     bool ensureFileExists(const std::string& path, bool createIfMissing = true);
 } // namespace files
