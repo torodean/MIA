@@ -7,8 +7,9 @@ set(Files_INC
 add_library(Files_UTIL ${Files_SRC} ${Files_INC})
 target_link_libraries(Files_UTIL 
     PRIVATE
-        Error_CORE 
-        Types_UTIL 
+        Error_CORE           # For error handling.
+        BasicUtilities_CORE  # For methods implemented at the core level.
+        Types_UTIL           # For string and file type handling.
 )
 
 # Expose this library's source directory for #include access by dependent targets
