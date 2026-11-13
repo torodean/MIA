@@ -300,6 +300,16 @@ namespace check
                               const std::vector<PieceArt>& pieceArts);
 
     /**
+     * Rotates the UI board 180 degrees in place. This is a pure view change:
+     * the position itself, and every coordinate the backend uses, is left
+     * identical; only the side the board is viewed from changes.
+     *
+     * @note Does nothing if the loaded UI does not define a rotateBoard() method.
+     * @param module The python ui module to rotate the board in.
+     */
+    void rotateBoardInUI(PythonModule& module);
+
+    /**
      * This handles a save_board event. It writes the current board state to the
      * save file named by the event's argument. The save file first records the
      * config file the board was set up from, followed by every move of the game
