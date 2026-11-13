@@ -629,6 +629,18 @@ namespace check
     }
 
 
+    void rotateBoardInUI(PythonModule& module)
+    {
+        if (!module.hasMethod("rotateBoard"))
+        { // The loaded UI does not support rotation, so there is nothing to do.
+            std::cerr << "Error: The UI does not have a rotateBoard method!" << std::endl;
+            return;
+        }
+
+        module.call("rotateBoard");
+    }
+
+
     void processSaveEvent(BoardState& state,
                           const CheckUIEvent& event,
                           const std::string& configFile)
