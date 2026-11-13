@@ -80,7 +80,7 @@ namespace check
      *
      * @note This will only convert the startingPos and endingPos of the MoveState.
      *       The intent is that the move playback can reconstruct a board state,
-     *       but only the coorindates of the MoveState are needed for that process. 
+     *       but only the coordinates of the MoveState are needed for that process.
      *
      * @param moveState The MoveState to stringify.
      * @return The move coordinates of MoveState as a string.
@@ -88,13 +88,13 @@ namespace check
     std::string createSaveLine(const MoveState& moveState);
 
     /**
-     * This extracts the moves from a string created by createSaveLine().
+     * This extracts the move from a string created by createSaveLine().
      *
      * @note The returned MoveState's bool values are not set, because those
      *       are typically determined later and also not needed for move-playback.
      *
-     * @paramm input The input as a string.
-     * @return The Move constructed from the input string.
+     * @param input The input as a string.
+     * @return The MoveState constructed from the input string.
      * @throws MIAException if the input string is not correctly serialized.
      */
     MoveState loadFromSaveLine(const std::string& input);
