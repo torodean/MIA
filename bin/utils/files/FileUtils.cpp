@@ -20,6 +20,8 @@
 // Used for error handling.
 #include "Error.hpp"
 #include "MIAException.hpp"
+// Used for some basic utility functionality defined at a core level.
+#include "BasicUtilities.hpp"
 
 using std::string;
 using std::cout;
@@ -193,7 +195,7 @@ namespace files
     {
         std::ofstream file(filePath, std::ios::trunc);
         if (!file.is_open()) 
-            return; // @TODO - Add MIA Exception.
+            return; // TODO - Add MIA Exception.
 
         for (const auto& line : lines)
             file << line << "\n";
@@ -215,7 +217,7 @@ namespace files
     {
         std::ofstream file(filePath, std::ios::app);
         if (!file.is_open()) 
-            return; // @TODO - Add MIA Exception.
+            return; // TODO - Add MIA Exception.
 
         file << line << "\n";
     }
@@ -239,7 +241,7 @@ namespace files
     {
         std::error_code ec;
         std::filesystem::copy_file(sourcePath, destPath, std::filesystem::copy_options::overwrite_existing, ec);
-        return !ec; // @TODO - Add MIA Exception.
+        return !ec; // TODO - Add MIA Exception.
     }
 
 
@@ -247,6 +249,12 @@ namespace files
     {
         std::error_code ec;
         bool removed = std::filesystem::remove(filePath, ec);
-        return removed && !ec; // @TODO - Add MIA Exception.
+        return removed && !ec; // TODO - Add MIA Exception.
+    }
+
+
+    bool ensureFileExists(const std::string& path, bool createIfMissing)
+    {
+        return basic_utils::ensureFileExists(path, createIfMissing);
     }
 } // namespace files

@@ -291,7 +291,7 @@ namespace check
         /**
          * @brief Returns the player index which moved most recently, that is,
          *        the player who comes just before the player to move in the turn
-         *        rotation.
+         *        rotation. This will skip computer players.
          *
          * @return The player index which made the last recorded move.
          */
@@ -317,6 +317,17 @@ namespace check
          * @return A reference to the square in question.
          */
         const SquareState& getSquareAt(math::Coordinate<uint8_t> pos) const;
+
+        /**
+         * This will load this object from a set of moves. This is used to create
+         * this object from a save file.
+         *
+         * @note This will assume that this object has been either initialized or
+         *       re-initialized with the board configuration that these moves expect.
+         *
+         * @param moves The move history from a save file.
+         */
+        void loadBoardFromMoveHistory(const std::vector<MoveState>& moves);
 
     private:
 
@@ -433,4 +444,36 @@ namespace check
      * @return The position key string for the board.
      */
     std::string positionKey(const BoardState& boardState);
+    
+    /**
+     * This will save the board state to a file. The file contains the content
+     * of the positionHistory contained within the boardState, which can be
+     * reloaded by loadBoardState() to return the board to the state it was
+     * in when this method was called.
+     *
+     * The configFile will always be the first line of the save file, followed
+     * by the list of moves. These moves are enough to reconstruct the current
+     * state of the game by replaying all of the moves.
+     *
+     * @param boardState The current state of the board.
+     * @param outputFile The file to output the save state to.
+     * @param configFile The config file that was used to generate the board
+     *        setup for the game that is being saved.
+     */
+    void saveBoardState(const BoardState& boardState,
+                        const std::string& outputFile,
+                        const std::string& configFile);
+    
+    /**
+     * This will load the board state from a file. The file must contain the
+     * content of the positionHistory contained within the boardState. It's
+     * reloaded by this method to return the board to the state it was
+     * in when the saveBoardState() method was called.
+     *
+     * @param[out] boardState The current state of the board.
+     * @param inputFile The file to read the save state from.
+     * @return true on success, false otherwise (e.g., the file does not exist).
+     */
+    bool loadBoardState(BoardState& boardState,
+                        const std::string& inputFile);
 } // namespace check

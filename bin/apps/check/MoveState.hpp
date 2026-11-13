@@ -72,4 +72,30 @@ namespace check
      */
     std::string moveStateToString(const MoveState& move,
                                   const std::vector<PieceArt>& pieceArts);
+
+    /**
+     * This converts a MoveState's move coords to a string. This is used for
+     * saving this object's move as a string and then decoding it later with
+     * loadFromSaveLine (such as during file saves).
+     *
+     * @note This will only convert the startingPos and endingPos of the MoveState.
+     *       The intent is that the move playback can reconstruct a board state,
+     *       but only the coordinates of the MoveState are needed for that process.
+     *
+     * @param moveState The MoveState to stringify.
+     * @return The move coordinates of MoveState as a string.
+     */
+    std::string createSaveLine(const MoveState& moveState);
+
+    /**
+     * This extracts the move from a string created by createSaveLine().
+     *
+     * @note The returned MoveState's bool values are not set, because those
+     *       are typically determined later and also not needed for move-playback.
+     *
+     * @param input The input as a string.
+     * @return The MoveState constructed from the input string.
+     * @throws MIAException if the input string is not correctly serialized.
+     */
+    MoveState loadFromSaveLine(const std::string& input);
 } // namespace check
