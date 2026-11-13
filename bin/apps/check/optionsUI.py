@@ -224,8 +224,8 @@ class OptionsPanel:
         Queues an event for the C++ backend through the callable given at
         construction. Panel buttons should send their events through here.
 
-        @param event The event string, in the space-separated format the
-               C++ side parses, e.g., "save_board".
+        @param event The event string, in the semicolon-separated format the
+               C++ side parses, e.g., "save_board;<file>".
         """
         self.addEvent(event)
 
