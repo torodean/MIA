@@ -34,15 +34,15 @@ A menu bar sits across the top of the window with various game actions.
 The menu contents and the events they add are defined in createUI().
 
 Event formats (the C++ side parses these):
-   Events (space-separated values, squares are 0-indexed col row):
-    "pickup_piece <col> <row>"
-    "drop_piece <fromCol> <fromRow> <toCol> <toRow>"
+   Events (semicolon-separated values, squares are 0-indexed col row):
+    "pickup_piece;<col>;<row>"
+    "drop_piece;<fromCol>;<fromRow>;<toCol>;<toRow>"
     "reset_board"
-    "save_board <file>"
-    "load_board <file>"
+    "save_board;<file>"
+    "load_board;<file>"
     "edit_mode"
     "undo_move"
-    "piece_promo_choice <piece>"
+    "piece_promo_choice;<piece>"
     "stop"
    Board state (one string per occupied cell, comma-separated):
     "<col>,<row>,<type>,<color>"
@@ -60,6 +60,7 @@ top, so (0, 0) is the bottom-left square. This applies to event strings,
 board state strings, and every public method taking a col/row pair.
 """
 import tkinter as tk
+from tkinter import filedialog
 
 # Module in the same directory. It defines the options panel and its
 # collapse bar. The C++ side puts it on sys.path like checkUI itself.
@@ -425,7 +426,7 @@ class ChessBoard(tk.Frame):
         self.clearSquareAnnotations(sq)
         highlightSquare(col, row, SELECTED_HIGHLIGHT)
         self.drag = {"from": sq}
-        addEvent(f"pickup_piece {col} {row}")
+        addEvent(f"pickup_piece;{col};{row}")
         # Hide the piece on its square so it is not duplicated during
         # the drag; drawPieces() restores it if the drop is invalid.
         self.canvas.delete(self.pieceItems[col][row])
@@ -455,7 +456,7 @@ class ChessBoard(tk.Frame):
         dst = self.squareAt(event.x, event.y)
         self.drawPieces()
         if dst is not None and dst != src:
-            addEvent(f"drop_piece {src[0]} {src[1]} {dst[0]} {dst[1]}")
+            addEvent(f"drop_piece;{src[0]};{src[1]};{dst[0]};{dst[1]}")
 
     def onRightPress(self, event):
         """
@@ -573,7 +574,40 @@ def sendPiecePromoChoice(piece):
         piecePromoBox.destroy()
         piecePromoBox = None
 
-    addEvent(f"piece_promo_choice {piece}")
+    addEvent(f"piece_promo_choice;{piece}")
+
+
+def saveBoard():
+    """
+    Prompts the user for a file location and queues a save_board event with the
+    chosen path so the backend can write the current board state to it. If the
+    user cancels the file dialog, no event is queued.
+    """
+    saveFile = filedialog.asksaveasfilename(
+        title="Save Board State",
+        defaultextension=".check",
+        filetypes=[("Check save files", "*.check"), ("All files", "*.*")],
+    )
+    if saveFile:
+        if (verboseMode):
+            pythonTools.output_text(f"Saving board to: {saveFile}", option="note")
+        addEvent(f"save_board;{saveFile}")
+
+
+def loadBoard():
+    """
+    Prompts the user for a saved file and queues a load_board event with the
+    chosen path so the backend can restore the board state from it. If the
+    user cancels the file dialog, no event is queued.
+    """
+    loadFile = filedialog.askopenfilename(
+        title="Load Board State",
+        filetypes=[("Check save files", "*.check"), ("All files", "*.*")],
+    )
+    if loadFile:
+        if (verboseMode):
+            pythonTools.output_text(f"Loading board from: {loadFile}", option="note")
+        addEvent(f"load_board;{loadFile}")
 
 
 #####################
@@ -683,9 +717,9 @@ def createUI(cols, rows):
 
     fileMenu = tk.Menu(menuBar, tearoff=0)
     fileMenu.add_command(label="Save", accelerator="Ctrl+S",
-                         command=lambda: addEvent("save_board"))
+                         command=saveBoard)
     fileMenu.add_command(label="Load",
-                         command=lambda: addEvent("load_board"))
+                         command=loadBoard)
     fileMenu.add_separator()
     # Exit reuses closeUI(), so it behaves exactly like closing the window.
     fileMenu.add_command(label="Exit", command=closeUI)
@@ -702,7 +736,7 @@ def createUI(cols, rows):
 
     # The accelerator labels above only display the shortcuts; tkinter
     # needs explicit bindings for the keys to actually fire the events.
-    root.bind("<Control-s>", lambda event: addEvent("save_board"))
+    root.bind("<Control-s>", lambda event: saveBoard())
     root.bind("<Control-z>", lambda event: addEvent("undo_move"))
 
     # The board, the collapse bar and the options panel share one row,
