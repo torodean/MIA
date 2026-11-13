@@ -9,7 +9,7 @@
 #include "MoveState.hpp"
 
 #include <cstdint>
-#include <string>
+#include <sstream>
 
 // Needed to convert the moved piece's type for the glyph lookup.
 #include "PieceType.hpp"
@@ -100,5 +100,35 @@ namespace check
         output += squareToString(move.endingPos);
 
         return output;
+    }
+
+
+    std::string createSaveLine(const MoveState& moveState)
+    {
+        std::stringstream output;
+        output << moveState.startingPos << ";" << moveState.endingPos;
+        return output.str();
+    }
+
+
+    MoveState loadFromSaveLine(const std::string& input)
+    {
+        using namespace string_utils;
+
+        MoveState state;
+
+        std::vector<std::string> coords = delimiterString(input, ';');
+        /*
+         * Coordinates are written by Coordinate's operator<< as "(x, y)" (with a
+         * space after the comma), so the value between ',' and ')' carries a
+         * leading space. Trim before converting, since stringToUint8() rejects
+         * any non-digit character and would otherwise throw.
+         */
+        state.startingPos.x = stringToUint8(trim(getBetweenXAndY(coords[0], '(', ',')));
+        state.startingPos.y = stringToUint8(trim(getBetweenXAndY(coords[0], ',', ')')));
+        state.endingPos.x = stringToUint8(trim(getBetweenXAndY(coords[1], '(', ',')));
+        state.endingPos.y = stringToUint8(trim(getBetweenXAndY(coords[1], ',', ')')));
+
+        return state;
     }
 } // namespace check
