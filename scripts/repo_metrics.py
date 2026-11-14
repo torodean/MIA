@@ -21,7 +21,9 @@ FILE_TYPES = {
     ".hpp": "C++ Header",
     ".sh": "Shell Script",
     ".py": "Python",
-    "CMakeLists.txt": "CMake"
+    ".cmake": "CMake",     # CMakeLists.txt are handled separately later.
+    #".md": "Markdown",
+    #".tex": "LaTeX"
 }
 
 
@@ -69,7 +71,7 @@ def scan_repository(root, excluded):
             extension = os.path.splitext(filename)[1]
 
             if filename == "CMakeLists.txt":
-                file_type = "CMakeLists.txt"
+                file_type = ".cmake"
             elif extension in FILE_TYPES:
                 file_type = extension
             else:
