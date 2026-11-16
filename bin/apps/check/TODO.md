@@ -23,11 +23,6 @@ Perhaps even add in knight-shaped arrows which form an L shape.
 
 Unit tests for all these classes need added.
 
-## Save/Loading options
-
-Add the ability to save and load games.
-Save and load are a bit tricky; Although saving and loading the board state is fairly straight forward, the initial board configuration (e.g., size, shape, pieces, etc) is determined by the configuration file, and may not match what the save state stored. Therefore, the configuration file for a save state will also be needed during save/load.
-
 ## Game clocks
 
 The board state docs mention keeping times and the timing library is linked in for
