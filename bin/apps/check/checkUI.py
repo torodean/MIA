@@ -11,9 +11,11 @@ Used by the C++ backend through PythonModule.
 The UI renders an N x M board of square cells with labeled borders and
 supports
 dragging pieces between squares. All game logic lives in the C++ backend:
-the UI never decides whether a move is legal. When a piece is dropped the UI
-snaps it back to its origin square and queues a drop_piece event; the backend then
-calls movePiece() to make the move official.
+the UI never decides whether a move is legal. When a piece is dropped on a
+different square the UI queues a drop_piece event and leaves the piece to the
+backend, which calls movePiece() to make the move official or snapPieceBack()
+to put the piece back on its origin square. A drop on the same square or off the
+board is not a move, so the UI puts the piece back itself.
 
 Right clicking and dragging across the board draws an annotation arrow between
 the two squares, and drawing that same arrow again removes it. A right click
@@ -483,8 +485,8 @@ class ChessBoard(tk.Frame):
         highlightSquare(col, row, SELECTED_HIGHLIGHT)
         self.drag = {"from": sq}
         addEvent(f"pickup_piece;{col};{row}")
-        # Hide the piece on its square so it is not duplicated during
-        # the drag; drawPieces() restores it if the drop is invalid.
+        # Hide the piece on its square so it is not duplicated during the
+        # drag; it is redrawn again once the drop is resolved or cancelled.
         self.canvas.delete(self.pieceItems[col][row])
         self.pieceItems[col][row] = None
         self.drag["item"] = self.drawPiece(col, row, self.board[col][row])
@@ -500,8 +502,10 @@ class ChessBoard(tk.Frame):
 
     def onRelease(self, event):
         """
-        Ends a drag. The piece snaps back to its origin; the backend
-        confirms the move by calling movePiece().
+        Ends a drag. A drop on a different square queues a drop_piece event and
+        leaves the piece to the backend, which calls movePiece() or
+        snapPieceBack() to place it. A drop on the same square or off the board
+        is not a move, so the piece is put back on its origin here.
         """
         clearHighlights()
         if self.drag is None:
@@ -510,9 +514,10 @@ class ChessBoard(tk.Frame):
         self.canvas.delete(self.drag["item"])
         self.drag = None
         dst = self.squareAt(event.x, event.y)
-        self.drawPieces()
         if dst is not None and dst != src:
             addEvent(f"drop_piece;{src[0]};{src[1]};{dst[0]};{dst[1]}")
+        else:
+            self.drawPieces()
 
     def onRightPress(self, event):
         """
@@ -941,6 +946,17 @@ def removePiece(col, row):
     validateCell(col, row)
 
     boardUI.board[col][row] = None
+    boardUI.clearAnnotations()
+    boardUI.drawPieces()
+
+
+def snapPieceBack():
+    """
+    Puts the last dropped piece back on its origin square.
+    A drop does not move the piece in the board data, so it is still on the
+    square it was picked up from; redrawing the board shows it there again.
+    Called by the backend for a drop that is not a legal move.
+    """
     boardUI.clearAnnotations()
     boardUI.drawPieces()
 
