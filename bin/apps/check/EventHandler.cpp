@@ -268,7 +268,8 @@ namespace check
         }
 
         if (!isLegalMove)
-        {
+        { // The drop is not a legal move, so the ui puts the piece back where it picked it up.
+            module.call("snapPieceBack");
             return ongoing;
         }
 
