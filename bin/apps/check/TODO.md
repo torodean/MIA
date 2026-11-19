@@ -42,7 +42,3 @@ Enhance debug/verbose statements to use board coordinates.
 The config files need some validation and the options to have any config field be optional. 
 Also, expanding config to change colors and other things in the UI. 
 Make sound configuratble too
-
-## Move UI Improvements
-
-Right now, the UI releasing a piece returns it to its previous square, where the backend will update the position if it's a legal move. This results in some choppy UI piece handling and can be improved by re-ordering the events so that the backend controls whether or not a piece should 'snap' back or just go straight to being moved.
