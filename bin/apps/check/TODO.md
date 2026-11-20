@@ -40,5 +40,5 @@ Enhance debug/verbose statements to use board coordinates.
 ## Config validation
 
 The config files need some validation and the options to have any config field be optional. 
-Also, expanding config to change colors and other things in the UI. 
+Also, expanding config to change other things in the UI. 
 Make sound configuratble too
