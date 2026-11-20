@@ -158,7 +158,8 @@ namespace check
                                 const CheckUIEvent& event,
                                 BoardState& state,
                                 EventState& eventState,
-                                const std::vector<PieceArt>& pieceArts);
+                                const std::vector<PieceArt>& pieceArts,
+                                const CheckConfig& config);
 
     /**
      * Send the result of a finished game to the UI so that it can display it. This
@@ -286,7 +287,8 @@ namespace check
      */
     GameResult processPiecePromotion(PythonModule& module,
                                      const CheckUIEvent& event,
-                                     BoardState& state);
+                                     BoardState& state,
+                                     const CheckConfig& config);
 
     /**
      * This method will register all of the piece art values into the UI. All pieces
