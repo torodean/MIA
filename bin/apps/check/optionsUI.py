@@ -19,6 +19,8 @@ does not imports checkUI, so it can be ran and tested by itself.
 import tkinter as tk
 from tkinter import ttk
 
+import uiPalette
+
 #########################
 # CONFIGURATION VARIABLES
 #########################
@@ -29,13 +31,6 @@ from tkinter import ttk
 # rules.
 PANEL_WIDTH = 280
 PANEL_BORDER = 1
-
-# Colors matching the checkUI palette.
-BACKGROUND = "#ffddc9"
-LABEL_FG = "#333333"
-LIGHT = "#bfa08e"
-DARK = "#7d6455"
-SELECTED_HIGHLIGHT = "#F7EC59"
 
 # Fonts for the turn indicator and the move history boxes.
 KING_FONT = ("Segoe UI Symbol", 30)
@@ -87,9 +82,9 @@ class OptionsPanel:
             highlightthickness=0,
             takefocus=0,
             cursor="hand2",
-            bg=BACKGROUND,
-            activebackground=BACKGROUND,
-            fg=LABEL_FG,
+            bg=uiPalette.background,
+            activebackground=uiPalette.background,
+            fg=uiPalette.labelFg,
         )
         self.bar.pack(side=tk.LEFT, fill=tk.Y)
 
@@ -97,9 +92,9 @@ class OptionsPanel:
         self.frame = tk.Frame(
             master,
             width=PANEL_WIDTH,
-            bg=BACKGROUND,
+            bg=uiPalette.background,
             highlightthickness=PANEL_BORDER,
-            highlightbackground=LABEL_FG,
+            highlightbackground=uiPalette.labelFg,
         )
         # The panel keeps its requested width instead of shrinking around its
         # content. Its height follows the board through fill=tk.Y.
@@ -109,23 +104,23 @@ class OptionsPanel:
         # Both tiles draw the king glyph and are told apart by color. The
         # white king sits on the dark square color and the black king on the
         # light one, so either glyph stays readable.
-        indicator = tk.Frame(self.frame, bg=BACKGROUND)
+        indicator = tk.Frame(self.frame, bg=uiPalette.background)
         indicator.pack(side=tk.TOP, fill=tk.X, padx=6, pady=6)
 
-        kingRow = tk.Frame(indicator, bg=BACKGROUND)
+        kingRow = tk.Frame(indicator, bg=uiPalette.background)
         kingRow.pack(side=tk.TOP, fill=tk.X)
         self.whiteKingLabel = tk.Label(
-            kingRow, bg=DARK, fg="white", font=KING_FONT, padx=10, pady=2,
-            highlightthickness=3, highlightbackground=BACKGROUND,
+            kingRow, bg=uiPalette.darkSquare, fg="white", font=KING_FONT, padx=10, pady=2,
+            highlightthickness=3, highlightbackground=uiPalette.background,
         )
         self.whiteKingLabel.pack(side=tk.LEFT, expand=True)
         self.blackKingLabel = tk.Label(
-            kingRow, bg=LIGHT, fg="black", font=KING_FONT, padx=10, pady=2,
-            highlightthickness=3, highlightbackground=BACKGROUND,
+            kingRow, bg=uiPalette.lightSquare, fg="black", font=KING_FONT, padx=10, pady=2,
+            highlightthickness=3, highlightbackground=uiPalette.background,
         )
         self.blackKingLabel.pack(side=tk.RIGHT, expand=True)
 
-        self.turnLabel = tk.Label(indicator, bg=BACKGROUND, fg=LABEL_FG, font=TURN_FONT)
+        self.turnLabel = tk.Label(indicator, bg=uiPalette.background, fg=uiPalette.labelFg, font=TURN_FONT)
         self.turnLabel.pack(side=tk.TOP, pady=(4, 0))
 
         # ----- move history -----
@@ -133,7 +128,7 @@ class OptionsPanel:
         # columns do not wrap. A wrapped line could stop the rows lining up
         # with their move numbers. place() pins the history to the bottom
         # part of the panel and keeps that share when the window resizes.
-        self.movesFrame = tk.Frame(self.frame, bg=BACKGROUND)
+        self.movesFrame = tk.Frame(self.frame, bg=uiPalette.background)
         self.movesFrame.place(relx=0.0, rely=0.4, relwidth=1.0, relheight=0.6)
 
         # The header row, the columns and the copy button share one grid.
@@ -147,26 +142,26 @@ class OptionsPanel:
         self.movesFrame.rowconfigure(2, weight=1)
 
         tk.Label(
-            self.movesFrame, text="White", bg=BACKGROUND, fg=DARK,
+            self.movesFrame, text="White", bg=uiPalette.background, fg=uiPalette.labelFg,
             font=MOVE_FONT, pady=1,
         ).grid(row=0, column=2)
         tk.Label(
-            self.movesFrame, text="Black", bg=BACKGROUND, fg=DARK,
+            self.movesFrame, text="Black", bg=uiPalette.background, fg=uiPalette.labelFg,
             font=MOVE_FONT, pady=1,
         ).grid(row=0, column=4)
-        tk.Frame(self.movesFrame, height=1, bg=DARK).grid(
+        tk.Frame(self.movesFrame, height=1, bg=uiPalette.darkSquare).grid(
             row=1, column=0, columnspan=6, sticky="ew")
         # A selection cannot span the separate columns, so this button
         # copies the whole history (move numbers and both players' moves)
         # to the clipboard as one text.
         self.copyButton = tk.Button(
             self.movesFrame, text="Copy Move History", command=self.copyHistory,
-            relief=tk.FLAT, bd=0, pady=1, bg=BACKGROUND,
-            activebackground=LIGHT, fg=LABEL_FG,
+            relief=tk.FLAT, bd=0, pady=1, bg=uiPalette.background,
+            activebackground=uiPalette.lightSquare, fg=uiPalette.labelFg,
             takefocus=0, cursor="hand2",
         )
         # Bottom rule, under the move columns.
-        tk.Frame(self.movesFrame, height=1, bg=DARK).grid(
+        tk.Frame(self.movesFrame, height=1, bg=uiPalette.darkSquare).grid(
             row=3, column=0, columnspan=6, sticky="ew")
         self.copyButton.grid(row=4, column=0, columnspan=6, sticky="ew")
 
@@ -182,7 +177,7 @@ class OptionsPanel:
         # own colors. They are Text widgets because only Text can be
         # scrolled; a Label cannot.
         def rule(column):
-            tk.Frame(self.movesFrame, width=1, bg=DARK).grid(
+            tk.Frame(self.movesFrame, width=1, bg=uiPalette.darkSquare).grid(
                 row=2, column=column, sticky="ns")
 
         def column(width, padx, fg, gridCol, expand):
@@ -191,20 +186,20 @@ class OptionsPanel:
                 relief=tk.FLAT, bd=0, highlightthickness=0,
                 padx=padx, pady=2, font=MOVE_FONT,
                 state=tk.DISABLED, takefocus=0, cursor="arrow",
-                bg=BACKGROUND, fg=fg,
+                bg=uiPalette.background, fg=fg,
             )
             box.grid(row=2, column=gridCol, sticky="ns" if not expand else "nsew")
             return box
 
         # The move columns share the width left over. The number column only
         # needs its three characters.
-        self.moveNumbers = column(3, 2, DARK, 0, False)
+        self.moveNumbers = column(3, 2, uiPalette.labelFg, 0, False)
         self.moveNumbers.tag_configure("num", justify=tk.RIGHT)
         rule(1)
-        self.whiteMoves = column(1, 4, LABEL_FG, 2, True)
+        self.whiteMoves = column(1, 4, uiPalette.labelFg, 2, True)
         self.whiteMoves.tag_configure("line", justify=tk.LEFT)
         rule(3)
-        self.blackMoves = column(1, 4, LABEL_FG, 4, True)
+        self.blackMoves = column(1, 4, uiPalette.labelFg, 4, True)
         self.blackMoves.tag_configure("line", justify=tk.LEFT)
 
         # All three columns scroll as one unit. Each reports through the
@@ -255,9 +250,9 @@ class OptionsPanel:
         self.updateGlyphs()
         white = color == "white"
         self.whiteKingLabel.config(
-            highlightbackground=SELECTED_HIGHLIGHT if white else BACKGROUND)
+            highlightbackground=uiPalette.selectedHighlight if white else uiPalette.background)
         self.blackKingLabel.config(
-            highlightbackground=BACKGROUND if white else SELECTED_HIGHLIGHT)
+            highlightbackground=uiPalette.background if white else uiPalette.selectedHighlight)
         self.turnLabel.config(text=("White" if white else "Black") + "'s Turn!")
 
     def addMove(self, color, move):
