@@ -69,9 +69,11 @@ board state strings, and every public method taking a col/row pair.
 import tkinter as tk
 from tkinter import filedialog
 
-# Module in the same directory. It defines the options panel and its
-# collapse bar. The C++ side puts it on sys.path like checkUI itself.
+# Modules in the same directory; the C++ side puts them on sys.path like
+# checkUI itself. optionsUI is the options panel and its collapse bar, and
+# uiPalette is the shared color palette.
 import optionsUI
+import uiPalette
 
 # Shared python utilities. Import strategy: bin/utils/python/README.md.
 try:
@@ -96,21 +98,11 @@ verboseMode = False
 CELL = 90
 MARGIN = 34
 
-# Square and label colors.
-LIGHT = "#bfa08e"
-DARK = "#7d6455"
-SELECTED_HIGHLIGHT = "#F7EC59"
-LEGAL_MOVE_HIGHLIGHT = "#3db2d3"
-LABEL_FG = "#333333"
-BACKGROUND = "#ffddc9"
-
 # Annotations drawn with the right mouse button: arrows dragged between two
 # squares, and highlights toggled on a single square. These are a local UI
 # note only, they are never sent to the C++ backend.
-ARROW_COLOR = "#e8e52c"
 ARROW_WIDTH = 8
 ARROW_HEAD = (16, 22, 9)
-SQUARE_HIGHLIGHT = "#59c135"
 
 ##########
 # UI STATE
@@ -188,7 +180,7 @@ class ChessBoard(tk.Frame):
         # directly against the board there.
         width = cols * CELL + MARGIN
         height = rows * CELL + 2 * MARGIN
-        self.canvas = tk.Canvas(self, width=width, height=height, highlightthickness=0, bg=BACKGROUND)
+        self.canvas = tk.Canvas(self, width=width, height=height, highlightthickness=0, bg=uiPalette.background)
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.onPress)
         self.canvas.bind("<B1-Motion>", self.onDrag)
@@ -213,7 +205,7 @@ class ChessBoard(tk.Frame):
 
         for col in range(self.cols):
             for row in range(self.rows):
-                color = LIGHT if (col + row) % 2 == 0 else DARK
+                color = uiPalette.lightSquare if (col + row) % 2 == 0 else uiPalette.darkSquare
                 x0, y0 = self.topLeftPixel(col, row)
                 self.canvas.create_rectangle(x0, y0, x0 + CELL, y0 + CELL, fill=color, outline="")
 
@@ -233,13 +225,13 @@ class ChessBoard(tk.Frame):
             y = MARGIN + row * CELL + CELL // 2
             # The rank of the square now shown in this row of the frame.
             rank = row if self.rotated else (self.rows - 1 - row)
-            self.canvas.create_text(x, y, text=str(rank + 1), fill=LABEL_FG, font=font)
+            self.canvas.create_text(x, y, text=str(rank + 1), fill=uiPalette.labelFg, font=font)
         for col in range(self.cols):
             x = MARGIN + col * CELL + CELL // 2
             y = MARGIN + self.rows * CELL + MARGIN // 2
             # The file of the square now shown in this column of the frame.
             fileCol = (self.cols - 1 - col) if self.rotated else col
-            self.canvas.create_text(x, y, text=chr(ord("a") + fileCol), fill=LABEL_FG, font=font)
+            self.canvas.create_text(x, y, text=chr(ord("a") + fileCol), fill=uiPalette.labelFg, font=font)
 
     def drawPieces(self):
         """
@@ -370,7 +362,7 @@ class ChessBoard(tk.Frame):
         startX, startY = self.squareCenterPixel(*fromSquare)
         endX, endY = self.squareCenterPixel(*toSquare)
         return self.canvas.create_line(startX, startY, endX, endY,
-                                      fill=ARROW_COLOR, width=ARROW_WIDTH,
+                                      fill=uiPalette.arrowColor, width=ARROW_WIDTH,
                                       arrow=tk.LAST, arrowshape=ARROW_HEAD,
                                       capstyle=tk.ROUND)
 
@@ -439,7 +431,7 @@ class ChessBoard(tk.Frame):
         x0, y0 = self.topLeftPixel(*square)
         item = self.canvas.create_rectangle(
             x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
-            outline=SQUARE_HIGHLIGHT, width=4,
+            outline=uiPalette.squareHighlight, width=4,
         )
         self.squareHighlights.append({"item": item, "square": square})
 
@@ -482,7 +474,7 @@ class ChessBoard(tk.Frame):
         # The picked square is about to change, so the annotations which come
         # from it go away: its arrows and its highlight together.
         self.clearSquareAnnotations(sq)
-        highlightSquare(col, row, SELECTED_HIGHLIGHT)
+        highlightSquare(col, row, uiPalette.selectedHighlight)
         self.drag = {"from": sq}
         addEvent(f"pickup_piece;{col};{row}")
         # Hide the piece on its square so it is not duplicated during the
@@ -734,15 +726,19 @@ def clearAnnotations():
     boardUI.clearAnnotations()
     updateUI()
 
-def highlightSquare(col, row, color=LEGAL_MOVE_HIGHLIGHT):
+def highlightSquare(col, row, color=None):
     """
     Draws a highlight outline on one square.
     @param col The column of the square.
     @param row The row of the square.
-    @param color Optional outline color.
+    @param color Optional outline color. Defaults to uiPalette.legalMoveHighlight.
     """
     if boardUI is None:
         return
+    if color is None:
+        # Resolved here rather than as a default argument so a color set after
+        # import (via setLegalMoveHighlight) is picked up.
+        color = uiPalette.legalMoveHighlight
     x0, y0 = boardUI.topLeftPixel(col, row)
     item = boardUI.canvas.create_rectangle(
         x0 + 3, y0 + 3, x0 + CELL - 3, y0 + CELL - 3,
@@ -828,6 +824,7 @@ def createUI(cols, rows):
     mainRow = tk.Frame(root)
     mainRow.pack()
     boardUI = ChessBoard(mainRow, cols, rows)
+
     optionsPanel = optionsUI.OptionsPanel(mainRow, addEvent, glyphs)
 
     uiEvents = []
@@ -1000,7 +997,7 @@ def showGameResult(result, reason, winner="none"):
     # does not fire while the dialog holds focus. Bind it here too.
     resultDialog.bind("<Control-z>", lambda event: addEvent("undo_move"))
     tk.Label(resultDialog, text=message, font=("Segoe UI", 14),
-             bg=BACKGROUND, fg=LABEL_FG).pack(padx=24, pady=(18, 12))
+             bg=uiPalette.background, fg=uiPalette.labelFg).pack(padx=24, pady=(18, 12))
     buttonRow = tk.Frame(resultDialog)
     buttonRow.pack(pady=(0, 18))
     tk.Button(buttonRow, text="Undo",
@@ -1170,6 +1167,86 @@ def setVerbose(val):
     verboseMode = val
     if verboseMode:
         pythonTools.output_text("Verbose mode enabled for checkUI (python module).", option="program")
+
+
+def setLightSquare(color):
+    """
+    Sets the light square color.
+    @param color The new color.
+    """
+    uiPalette.lightSquare = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting light square color to: {color}", option="program")
+
+
+def setDarkSquare(color):
+    """
+    Sets the dark square color.
+    @param color The new color.
+    """
+    uiPalette.darkSquare = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting dark square color to: {color}", option="program")
+
+
+def setSelectedHighlight(color):
+    """
+    Sets the picked-up square highlight color.
+    @param color The new color.
+    """
+    uiPalette.selectedHighlight = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting picked-up square highlight color to: {color}", option="program")
+
+
+def setLegalMoveHighlight(color):
+    """
+    Sets the legal move square highlight color.
+    @param color The new color.
+    """
+    uiPalette.legalMoveHighlight = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting legal move square highlight color to: {color}", option="program")
+
+
+def setLabelFg(color):
+    """
+    Sets the border label and dialog text color.
+    @param color The new color.
+    """
+    uiPalette.labelFg = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting border label and dialog text color to: {color}", option="program")
+
+
+def setBackground(color):
+    """
+    Sets the board, panel and dialog background color.
+    @param color The new color.
+    """
+    uiPalette.background = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting board, panel and dialog background color to: {color}", option="program")
+
+
+def setArrowColor(color):
+    """
+    Sets the annotation arrow color.
+    @param color The new color.
+    """
+    uiPalette.arrowColor = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting annotation arrow color to: {color}", option="program")
+
+
+def setSquareHighlight(color):
+    """
+    Sets the annotation square highlight color.
+    @param color The new color.
+    """
+    uiPalette.squareHighlight = color
+    if (verboseMode):
+        pythonTools.output_text(f"Setting annotation square highlight color to: {color}", option="program")
 
 
 ##################
