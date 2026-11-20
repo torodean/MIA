@@ -62,7 +62,7 @@ target_include_directories(check PRIVATE
 install_app( check )
 
 # Install the associated python files.
-install_python_files( checkUI.py optionsUI.py )
+install_python_files( checkUI.py optionsUI.py uiPalette.py )
 
 # TODO - add tests.
 #add_test_dir()
