@@ -4,18 +4,34 @@ This folder contains system-related utility functions designed to support common
 
 ## Timing
 
-The `Timing.hpp` and `Timing.cpp` files provide a set of cross-platform utilities related to time management and thread pausing. The module is designed to offer precise control over execution delays and timing operations, and is intended to be expanded with additional time-related functions as needed. These functions use C++ standard library threading and chrono utilities to ensure consistent behavior on Windows and Linux platforms.
+The `Timing.hpp` and `Timing.cpp` files provide a set of cross-platform utilities related to time management and thread pausing.
+The module is designed to offer precise control over execution delays and timing operations, and is intended to be expanded with additional time-related functions as needed.
+These functions use C++ standard library threading and chrono utilities to ensure consistent behavior on Windows and Linux platforms.
 
 ## VirtualKeyStrokes
 
-The VirtualKeyStrokes module provides a cross-platform interface for simulating keyboard and mouse input. It supports low-level key press emulation, string typing, mouse movement, and basic UI interaction on both Windows and Linux (via xdotool). The module is designed to abstract platform-specific APIs and expose a consistent interface for automation and scripting tasks. It includes specialized routines for games and applications, which should eventually be migrated into application-specific modules.
+The VirtualKeyStrokes module provides a cross-platform interface for simulating keyboard and mouse input.
+It supports low-level key press emulation, string typing, mouse movement, and basic UI interaction on both Windows and Linux (via xdotool).
+The module is designed to abstract platform-specific APIs and expose a consistent interface for automation and scripting tasks.
+It includes specialized routines for games and applications, which should eventually be migrated into application-specific modules.
 
-The virtual key stroke features are optional on Linux: they are only built when the libxdo and X11 development libraries are found (see `cmake/xdo.cmake`). When they are not available, `System_UTIL` still builds with other features, and the apps which use key strokes (e.g., MIASequencer and MIAOriginal) are skipped.
+The virtual key stroke features are optional on Linux: they are only built when the libxdo and X11 development libraries are found (see `cmake/xdo.cmake`).
+When they are not available, `System_UTIL` still builds with other features, and the apps which use key strokes (e.g., MIASequencer and MIAOriginal) are skipped.
 
 ## TerminalColors
 
-The `TerminalColors` module provides a lightweight, header-only utility for printing colored text to the terminal using ANSI escape codes. It supports both foreground and background color customization and is compatible with Unix-like systems and Windows 10+. This module is useful for enhancing CLI output, debugging, and creating visually organized terminal applications.
+The `TerminalColors` module provides a lightweight, header-only utility for printing colored text to the terminal using ANSI escape codes.
+It supports both foreground and background color customization and is compatible with Unix-like systems and Windows 10+.
+This module is useful for enhancing CLI output, debugging, and creating visually organized terminal applications.
 
+## CommandLine
+
+The `CommandLine.hpp` and `CommandLine.cpp` files provide execution of commands through the system command line.
+`command_line::command()` runs a command in the system shell, waits for it to finish, and returns a `CommandData` struct with the command, its exit code, and the captured standard output and standard error.
+
+The `PipeReader.hpp` and `PipeReader.cpp` files read data from pipes as it becomes available.
+Reads wait for a pipe to have data before reading, so output larger than the pipe holds does not hang.
+These are needed by the `CommandLine` files mentioned above when used on Linux systems. 
 
 ---
 

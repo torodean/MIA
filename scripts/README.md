@@ -17,7 +17,7 @@ Automatically increments the documentation and application's version number. Typ
 Handles extra installation features not handled via cmake.
 
 ### `open_changes.sh`
-Quickly opens all files changed according to git status (staged, unstaged, and untracked) as tabs in a single gedit window, so you can do a final review of your edits right before committing. Can be run from anywhere in the repository.
+Quickly opens all files changed according to git status (staged, unstaged, and untracked) as tabs in a single gedit window, so you can do a final review of your edits right before committing. Deleted, pdf, and image files are skipped. Can be run from anywhere in the repository.
 
 ### `repo_metrics.py`
 This is a simple script that gathers some code metrics about the MIA repo. 

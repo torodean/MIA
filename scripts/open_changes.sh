@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Quickly opens every file git reports as edited (staged, unstaged, and
-# untracked; deleted files are skipped) as tabs in a single gedit window,
-# for a final review of your changes right before committing. gedit reuses
-# its running window automatically. Pass a different editor command as the
-# first argument or in the EDITOR_BIN variable (e.g. EDITOR_BIN="vim -p")
-# to use something else. Run from anywhere; it always targets the repository
-# the script lives in.
+# untracked; deleted, pdf, and image files are skipped) as tabs in a single
+# gedit window, for a final review of your changes right before committing.
+# gedit reuses its running window automatically. Pass a different editor
+# command as the first argument or in the EDITOR_BIN variable (e.g.
+# EDITOR_BIN="vim -p") to use something else. Run from anywhere; it always
+# targets the repository the script lives in.
 
 # Enable strict error handling, including failures in the collection pipeline.
 set -eu -o pipefail
@@ -28,14 +28,15 @@ fi
 cd "$repo_root"
 
 # Collect changed paths from the index, the working tree, and the untracked
-# files, skipping deletions (--diff-filter=d), then collapse duplicates into
-# a sorted unique list.
+# files, skipping deletions (--diff-filter=d) and pdf/image files, then
+# collapse duplicates into a sorted unique list. The grep fallback keeps an
+# empty result from failing the pipeline under set -e.
 mapfile -t files < <(
     {
         git diff --name-only --diff-filter=d
         git diff --cached --name-only --diff-filter=d
         git ls-files --others --exclude-standard
-    } | sort -u
+    } | sort -u | grep -Ev '\.(pdf|png|jpg|jpeg|gif|bmp|svg|ico|tiff?|webp)$' || true
 )
 
 if [[ ${#files[@]} -eq 0 ]]; then

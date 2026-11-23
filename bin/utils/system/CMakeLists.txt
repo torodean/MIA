@@ -1,15 +1,23 @@
 # Create the System_UTIL
 set(System_SRC
+    CommandLine.cpp
     Timing.cpp )
 set(System_INC
-    Timing.hpp
-    TerminalColors.hpp )
+    CommandLine.hpp
+    TerminalColors.hpp
+    Timing.hpp )
 
 # The virtual key strokes use Windows APIs directly; on Linux they need libxdo/X11,
 # so they are only built when those are available.
 if ( WIN32 OR CYGWIN OR BUILD_XDO_FEATURES )
     list(APPEND System_SRC VirtualKeyStrokes.cpp)
     list(APPEND System_INC VirtualKeyStrokes.hpp)
+endif()
+
+# The pipe reader uses POSIX file descriptors, so it is only built on Linux.
+if ( NOT WIN32 AND NOT CYGWIN )
+    list(APPEND System_SRC PipeReader.cpp)
+    list(APPEND System_INC PipeReader.hpp)
 endif()
 
 add_library( System_UTIL ${System_SRC} ${System_INC} )
