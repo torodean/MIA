@@ -39,6 +39,7 @@ namespace error
         { Duplicate_Argument, "The same command option was specified more than once." },
         { Invalid_Type_Requested, "Invalid type for template argument." },
         { Out_Of_Order_Method_Calls, "A sequence of methods was called out of order." },
+        { Command_Failed_To_Start, "Failed to start the command line process." },
 
         /*
          * Operating-system-specific related Errors.
@@ -64,6 +65,23 @@ namespace error
          */
         { Required_File_Not_Found, "A required file was not found." },
         { File_Open_Failure, "Failed to open a file." },
+
+        /*
+         * Network-related error codes. 318XX.
+         */
+        { Socket_Creation_Failure, "Failed to create a socket." },
+        { Socket_Bind_Failure, "Failed to bind a socket to an address and port." },
+        { Socket_Listen_Failure, "Failed to listen on a socket." },
+        { Socket_Accept_Failure, "Failed to accept an incoming connection." },
+        { Socket_Connect_Failure, "Failed to connect to a remote endpoint." },
+        { Socket_Send_Failure, "Failed to send data over a socket." },
+        { Socket_Receive_Failure, "Failed to receive data from a socket." },
+        { Socket_Close_Failure, "Failed to shut down or close a socket." },
+        { Socket_Option_Failure, "Failed to get or set a socket option." },
+        { Address_Resolution_Failure, "Failed to resolve a hostname or address." },
+        { Invalid_Endpoint, "The endpoint address or port is invalid." },
+        { Connection_Lost, "The connection was closed by the remote endpoint." },
+        { Connection_Timed_Out, "The connection or data transfer timed out." },
 
         /*
          * VLC-related errors. 361XX
