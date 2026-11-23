@@ -207,7 +207,7 @@ The d0s3 encryption algorithm was (as of the time writing this) never finished. 
 
 
 
-\section{Terminal Color Codes}
+\section{Terminal Color Codes}\label{section:terminal_color_codes_utils}
 
 The terminal color features are part of the \texttt{System\_UTIL} utility. It provides a set of inline functions that insert ANSI escape sequences into output streams to enable colored terminal text. To use it in an application or library, the utility needs included in Cmake, similar to the following example:
 \begin{lstlisting}[style=shellstyle]
@@ -262,8 +262,7 @@ These functions leverage ANSI escape codes and are compatible with Unix-like sys
 
 
 
-\section{Virtual Key Strokes Utility}
-\label{sec:virtualkeystrokes}
+\section{Virtual Key Strokes Utility}\label{sec:virtualkeystrokes}
 
 These features are all part of the \texttt{System\_UTIL}.
 
@@ -323,13 +322,30 @@ vk.leftclick();
 
 
 
+\section{Command Line Utility}\label{section:command_line_utils}
+
+These features are all part of the \texttt{System\_UTIL}.
+
+The \texttt{command\_line::command()} function runs a command through the system shell and waits for it to finish. It returns a \texttt{CommandData} struct holding the command, its exit code, and the standard output and standard error captured from the command. The command runs in the shell, so built-in commands and shell syntax work the same as typed at a prompt. It throws a \texttt{MIAException} if the process could not be started.
+
+\subsection{Usage Example}
+To run a command and print its output:
+\begin{lstlisting}[style=cppstyle]
+command_line::CommandData data = command_line::command("ls -lh ~");
+if (data.isSuccess())
+    std::cout << data.stdout;
+\end{lstlisting}
 
 
 
 
 
-\section{Type Manipulation Utility}
-\label{section:type_utility}
+
+
+
+
+
+\section{Type Manipulation Utility}\label{section:type_utils}
 
 These features are all part of the \texttt{Types\_UTIL}.
 
