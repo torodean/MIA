@@ -65,6 +65,7 @@ namespace error
          */
         { Required_File_Not_Found, "A required file was not found." },
         { File_Open_Failure, "Failed to open a file." },
+        { Pipe_Read_Failure, "Failed to read data from a pipe." },
 
         /*
          * Network-related error codes. 318XX.
