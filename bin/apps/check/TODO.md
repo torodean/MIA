@@ -23,11 +23,6 @@ Perhaps even add in knight-shaped arrows which form an L shape.
 
 Unit tests for all these classes need added.
 
-## Save/Loading options
-
-Add the ability to save and load games.
-Save and load are a bit tricky; Although saving and loading the board state is fairly straight forward, the initial board configuration (e.g., size, shape, pieces, etc) is determined by the configuration file, and may not match what the save state stored. Therefore, the configuration file for a save state will also be needed during save/load.
-
 ## Game clocks
 
 The board state docs mention keeping times and the timing library is linked in for
@@ -45,9 +40,5 @@ Enhance debug/verbose statements to use board coordinates.
 ## Config validation
 
 The config files need some validation and the options to have any config field be optional. 
-Also, expanding config to change colors and other things in the UI. 
+Also, expanding config to change other things in the UI. 
 Make sound configuratble too
-
-## Move UI Improvements
-
-Right now, the UI releasing a piece returns it to its previous square, where the backend will update the position if it's a legal move. This results in some choppy UI piece handling and can be improved by re-ordering the events so that the backend controls whether or not a piece should 'snap' back or just go straight to being moved.

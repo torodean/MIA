@@ -16,6 +16,19 @@
 verbose_mode=true
 show_legal_moves=true
 
+# When true, the board view automatically flips to the player's turn.
+auto_flip=false
+
+# Optional UI colors. 
+#color_light_square=#bfa08e
+#color_dark_square=#7d6455
+#color_selected_highlight=#F7EC59
+#color_legal_move_highlight=#3db2d3
+#color_label_fg=#333333
+#color_background=#ffddc9
+#color_arrow=#e8e52c
+#color_square_highlight=#59c135
+
 # Defines the board size.
 board_size_x=8
 board_size_y=8

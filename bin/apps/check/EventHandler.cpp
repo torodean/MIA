@@ -238,7 +238,8 @@ namespace check
                                 const CheckUIEvent& event,
                                 BoardState& state,
                                 EventState& eventState,
-                                const std::vector<PieceArt>& pieceArts)
+                                const std::vector<PieceArt>& pieceArts,
+                                const CheckConfig& config)
     {
         GameResult ongoing;
 
@@ -268,7 +269,8 @@ namespace check
         }
 
         if (!isLegalMove)
-        {
+        { // The drop is not a legal move, so the ui puts the piece back where it picked it up.
+            module.call("snapPieceBack");
             return ongoing;
         }
 
@@ -360,6 +362,10 @@ namespace check
 
         // Point the ui turn indicator at the new player.
         processTurnChange(module, state);
+
+        // Flip the board view to the incoming player's side when auto-flip is on.
+        if (config.autoFlip)
+            rotateBoardInUI(module);
 
         // Clear the cached legal moves after processing the move.
         eventState.legalMoves.clear();
@@ -548,7 +554,8 @@ namespace check
 
     GameResult processPiecePromotion(PythonModule& module,
                                      const CheckUIEvent& event,
-                                     BoardState& state)
+                                     BoardState& state,
+                                     const CheckConfig& config)
     {
         GameResult ongoing;
 
@@ -592,6 +599,10 @@ namespace check
 
         // Point the ui turn indicator at the new player.
         processTurnChange(module, state);
+
+        // Flip the board view to the incoming player's side when auto-flip is on.
+        if (config.autoFlip)
+            rotateBoardInUI(module);
 
         /*
          * The turn has been advanced, so this determines the result for the player who

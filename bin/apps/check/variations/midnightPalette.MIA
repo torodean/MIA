@@ -1,0 +1,93 @@
+#============================================================================
+# Name        : midnightPalette.MIA
+# Author      : Antonius Torode
+# Created on  : 11/20/2026
+# Description : Color palette config for the CHECK application.
+#============================================================================
+
+# Create a commented line using the '#' character. 
+# Comments must be on their own line.
+# This file must be of the proper format to work with MIA.
+# Create a setting parameter using 'settingVariable=value'.
+# Do not include spaces unless within a string variable. 
+# This means, do not do 'variable= text' unless you intend to have " text" be the variable value.
+
+# Misc Options.
+verbose_mode=true
+show_legal_moves=true
+
+# When true, the board view automatically flips to the player's turn.
+auto_flip=true
+
+# UI palette colors. Each key overrides the built-in uiPalette.py default so the
+# game loads with this palette. Values are hex color strings.
+color_light_square=#46586b
+color_dark_square=#2b3947
+color_selected_highlight=#ffc94d
+color_legal_move_highlight=#40c9a8
+color_label_fg=#e9eef4
+color_background=#1a2129
+color_arrow=#ff6b6b
+color_square_highlight=#7cb8ff
+
+# Defines the board size.
+board_size_x=8
+board_size_y=8
+
+# Player state to start.
+number_of_players=2
+whos_turn_is_it=1
+
+# The art for the pieces. These must all start with the prefix "piece_" followed by the
+# piece name. The values of these must be either a unicode character or an image file (in dev).
+piece_king=\u265A
+piece_queen=\u265B
+piece_pawn=\u265F
+piece_knight=\u265E
+piece_rook=\u265C
+piece_bishop=\u265D
+piece_templar=\u2720
+piece_ankh=\u2625
+piece_golem=\u25A0
+piece_shard=\u25B2
+piece_spade=\u2660
+piece_pedestal=\u21EF
+
+#============================================================================
+# Starting board state (position).
+# Exactly one 'starting_state' line must be active (uncommented). To use one
+# of the test scenarios below, comment out the active starting_state line and
+# uncomment the desired scenario. All scenarios use the 8x8 board above and
+# leave white to move (whos_turn_is_it=1).
+# Coordinate system: (x,y) where x is the column (0 = left edge, increasing
+# right) and y is the row (0 = white home rank, increasing toward black).
+#============================================================================
+
+# Standard chess starting configuration.
+starting_state=0,0,rook,white;1,0,knight,white;2,0,bishop,white;3,0,queen,white;4,0,king,white;5,0,bishop,white;6,0,knight,white;7,0,rook,white;0,1,pawn,white;1,1,pawn,white;2,1,pawn,white;3,1,pawn,white;4,1,pawn,white;5,1,pawn,white;6,1,pawn,white;7,1,pawn,white;0,6,pawn,black;1,6,pawn,black;2,6,pawn,black;3,6,pawn,black;4,6,pawn,black;5,6,pawn,black;6,6,pawn,black;7,6,pawn,black;0,7,rook,black;1,7,knight,black;2,7,bishop,black;3,7,queen,black;4,7,king,black;5,7,bishop,black;6,7,knight,black;7,7,rook,black
+
+# --- TEST SCENARIOS (commented out; uncomment one at a time) ---------------
+
+# Piece movement test: every piece type on an empty board (no pawns). Both
+# sides have a full back rank so each piece's movement logic can be verified
+# in isolation without pawn interference.
+#starting_state=0,0,rook,white;1,0,knight,white;2,0,bishop,white;3,0,queen,white;4,0,king,white;5,0,bishop,white;6,0,knight,white;7,0,rook,white;0,7,rook,black;1,7,knight,black;2,7,bishop,black;3,7,queen,black;4,7,king,black;5,7,bishop,black;6,7,knight,black;7,7,rook,black
+
+# Castling test: kings and all rooks on their home squares with the paths
+# clear (no knights or bishops blocking), pawns kept off the back rank.
+# White can castle kingside (O-O) and queenside (O-O-O), black likewise.
+#starting_state=0,0,rook,white;4,0,king,white;7,0,rook,white;1,1,pawn,white;2,1,pawn,white;3,1,pawn,white;5,1,pawn,white;6,1,pawn,white;7,1,pawn,white;0,7,rook,black;4,7,king,black;7,7,rook,black;1,6,pawn,black;2,6,pawn,black;3,6,pawn,black;5,6,pawn,black;6,6,pawn,black
+
+# Check test: the black queen checks the white king along the e-file (x=4).
+# White must respond to the check: the rook can capture the queen or block
+# on the file, and the pawns cannot help. Tests check detection and that
+# only responses to the check are legal.
+#starting_state=4,0,king,white;4,5,rook,white;2,1,pawn,white;3,1,pawn,white;0,7,king,black;4,3,queen,black;5,6,pawn,black
+
+# Checkmate test (back-rank mate in two).
+#starting_state=4,0,king,white;0,3,rook,white;6,7,king,black;2,4,rook,black;5,6,pawn,black;6,6,pawn,black;7,6,pawn,black
+
+# Stalemate test: the white king on the corner is not in check but moving the
+# queen to g3 will check the black king and offer a stalemate if the black queen
+# responds by taking the white queen.
+# starting_state=7,0,king,white;4,4,king,black;3,2,queen,black;6,0,queen,white

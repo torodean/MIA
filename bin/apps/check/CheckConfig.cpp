@@ -79,9 +79,20 @@ namespace check
         // Optional options.
         out.verboseMode = config.getBool("verbose_mode", true, false);
         out.showLegalMoves = config.getBool("show_legal_moves", true, true);
+        out.autoFlip = config.getBool("auto_flip", true, false);
         out.startingPlayerState = PlayerState(
             string_utils::stringToUint8(config.getString("number_of_players", true, "2")),
             string_utils::stringToUint8(config.getString("whos_turn_is_it", true, "1")));
+
+        // Optional UI palette colors.
+        out.uiPalette.lightSquare = config.getString("color_light_square", true, "");
+        out.uiPalette.darkSquare = config.getString("color_dark_square", true, "");
+        out.uiPalette.selectedHighlight = config.getString("color_selected_highlight", true, "");
+        out.uiPalette.legalMoveHighlight = config.getString("color_legal_move_highlight", true, "");
+        out.uiPalette.labelFg = config.getString("color_label_fg", true, "");
+        out.uiPalette.background = config.getString("color_background", true, "");
+        out.uiPalette.arrowColor = config.getString("color_arrow", true, "");
+        out.uiPalette.squareHighlight = config.getString("color_square_highlight", true, "");
 
         // Required options.
         out.boardSizeX = string_utils::stringToUint8(config.getString("board_size_x"));

@@ -19,12 +19,29 @@
 namespace check
 {
     /**
+     * Storage for the UI palette colors. An empty value means the config file
+     * did not set that color, so the python UI keeps the uiPalette.py default.
+     */
+    struct UIPalette
+    {
+        std::string lightSquare;        ///< The light square color.
+        std::string darkSquare;         ///< The dark square color.
+        std::string selectedHighlight;  ///< The picked-up square highlight color.
+        std::string legalMoveHighlight; ///< The legal move square highlight color.
+        std::string labelFg;            ///< The border label and dialog text color.
+        std::string background;         ///< The board, panel and dialog background color.
+        std::string arrowColor;         ///< The annotation arrow color.
+        std::string squareHighlight;    ///< The annotation square highlight color.
+    }; // struct UIPalette
+
+    /**
      * Storage for all configurable CHECK application values.
      */
     struct CheckConfig
     {
         bool verboseMode{false};   ///< Whether or not verbose output is enabled.
         bool showLegalMoves{true}; ///< Whether or not to show the legal moves of picked pieces.
+        bool autoFlip{false};      ///< Whether to automatically flip the board after each turn advances.
         uint8_t boardSizeX;        ///< The x size of the board.
         uint8_t boardSizeY;        ///< The y size of the board.
 
@@ -36,6 +53,9 @@ namespace check
 
         /// Stores the art for the various pieces.
         std::vector<PieceArt> pieceArts;
+
+        /// The UI palette colors.
+        UIPalette uiPalette;
     }; // struct CheckConfig
 
     /**

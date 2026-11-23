@@ -100,6 +100,24 @@ namespace check
         // Set the python module settings.
         module.call("setVerbose", config.verboseMode);
 
+        // Apply the configured UI colors before the board is drawn.
+        if (!config.uiPalette.lightSquare.empty())
+            module.call("setLightSquare", config.uiPalette.lightSquare);
+        if (!config.uiPalette.darkSquare.empty())
+            module.call("setDarkSquare", config.uiPalette.darkSquare);
+        if (!config.uiPalette.selectedHighlight.empty())
+            module.call("setSelectedHighlight", config.uiPalette.selectedHighlight);
+        if (!config.uiPalette.legalMoveHighlight.empty())
+            module.call("setLegalMoveHighlight", config.uiPalette.legalMoveHighlight);
+        if (!config.uiPalette.labelFg.empty())
+            module.call("setLabelFg", config.uiPalette.labelFg);
+        if (!config.uiPalette.background.empty())
+            module.call("setBackground", config.uiPalette.background);
+        if (!config.uiPalette.arrowColor.empty())
+            module.call("setArrowColor", config.uiPalette.arrowColor);
+        if (!config.uiPalette.squareHighlight.empty())
+            module.call("setSquareHighlight", config.uiPalette.squareHighlight);
+
         // Create the UI.
         std::cout << "Creating Check UI!" << std::endl;
         module.call("createUI", config.boardSizeX, config.boardSizeY);
@@ -206,7 +224,8 @@ namespace check
                         }
 
                         GameResult result = processMoveEvent(module, uiEvent, boardState, eventState,
-                                                             configValues.pieceArts);
+                                                             configValues.pieceArts,
+                                                             configValues);
                         handleGameResult(module, result, eventState);
                         break;
                     }
@@ -218,7 +237,8 @@ namespace check
                             break;
                         }
 
-                        GameResult result = processPiecePromotion(module, uiEvent, boardState);
+                        GameResult result = processPiecePromotion(module, uiEvent, boardState,
+                                                                  configValues);
                         handleGameResult(module, result, eventState);
                         break;
                     }
