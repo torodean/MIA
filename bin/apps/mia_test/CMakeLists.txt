@@ -8,28 +8,30 @@ if( BUILD_PYTHON_FEATURES AND (WIN32 OR CYGWIN OR BUILD_XDO_FEATURES) )
          PythonPlotterTests.cpp
          PythonUITests.cpp 
          KeybindTests.cpp 
-		 SystemSoundTests.cpp
-         AudioPlayerTests.cpp        )
+         SystemSoundTests.cpp
+         AudioPlayerTests.cpp
+         CommandLineTests.cpp )
     set( test_INC
          MIATest.hpp
          PythonModuleTests.hpp
          PythonPlotterTests.hpp
          PythonUITests.hpp 
          KeybindTests.hpp 
-		 SystemSoundTests.hpp
-         AudioPlayerTests.hpp )
+         SystemSoundTests.hpp
+         AudioPlayerTests.hpp
+         CommandLineTests.hpp )
 
     #  The target name "test" is reserved when CTest testing is enabled.
     add_executable( miatest ${test_SRC} ${test_INC} )
     target_link_libraries( miatest 
                        PRIVATE 
-	                       Framework_CORE 
-						   Python_UTIL 
-						   Py_Plotting_LIB 
-						   Py_UI_LIB 
-						   Audio_UTIL 
-						   UI_UTIL
-						   System_UTIL )
+                           Framework_CORE 
+                           Python_UTIL 
+                           Py_Plotting_LIB 
+                           Py_UI_LIB 
+                           Audio_UTIL 
+                           UI_UTIL
+                           System_UTIL )
 
     # Install the app.
     install_app( miatest )
