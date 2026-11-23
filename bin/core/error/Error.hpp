@@ -58,6 +58,7 @@ namespace error
         Duplicate_Argument = 31430,           ///< The same command option was specified more than once.
         Invalid_Type_Requested = 31432,       ///< Invalid type for template argument.
         Out_Of_Order_Method_Calls = 31434,    ///< A sequence of methods was called out of order.
+        Command_Failed_To_Start = 31435,      ///< Failed to start the command line process.
 
         /*
          * Operating-system-specific related Errors. These define errors which are relevant to 
@@ -85,6 +86,24 @@ namespace error
          */
         Required_File_Not_Found = 31700,      ///< A required file was not found.
         File_Open_Failure = 31701,            ///< Failed to open a file.
+
+        /*
+         * Network-related error codes. 318XX. These cover failures while creating and
+         * using sockets and transferring data over network connections.
+         */
+        Socket_Creation_Failure = 31800,      ///< Failed to create a socket.
+        Socket_Bind_Failure = 31801,          ///< Failed to bind a socket to an address and port.
+        Socket_Listen_Failure = 31802,        ///< Failed to listen on a socket.
+        Socket_Accept_Failure = 31803,        ///< Failed to accept an incoming connection.
+        Socket_Connect_Failure = 31804,       ///< Failed to connect to a remote endpoint.
+        Socket_Send_Failure = 31805,          ///< Failed to send data over a socket.
+        Socket_Receive_Failure = 31806,       ///< Failed to receive data from a socket.
+        Socket_Close_Failure = 31807,         ///< Failed to shut down or close a socket.
+        Socket_Option_Failure = 31808,        ///< Failed to get or set a socket option.
+        Address_Resolution_Failure = 31809,   ///< Failed to resolve a hostname or address.
+        Invalid_Endpoint = 31810,             ///< The endpoint address or port is invalid.
+        Connection_Lost = 31811,              ///< The connection was closed by the remote endpoint.
+        Connection_Timed_Out = 31812,         ///< The connection or data transfer timed out.
 
         /*
          * VLC-related errors. 361XX
