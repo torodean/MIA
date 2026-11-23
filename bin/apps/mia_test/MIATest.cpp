@@ -25,6 +25,8 @@
 #include "SystemSoundTests.hpp"
 // Used to test the AudioPlayer features.
 #include "AudioPlayerTests.hpp"
+// Used to test the command line features.
+#include "CommandLineTests.hpp"
 
 
 MIATest::MIATest() :
@@ -89,7 +91,9 @@ void MIATest::printTestHelp()
               << " 22: Test the AudioPlayer skipping forward and back in a playlist." << std::endl
               << " 23: Test the AudioPlayer changing the volume during playback." << std::endl
               << " 24: Test the AudioPlayer playing a changed file after the current track." << std::endl
-              << " 25: Test the AudioPlayer play() one-shot and continuation." << std::endl;
+              << " 25: Test the AudioPlayer play() one-shot and continuation." << std::endl
+              << " 26: Test running a command which lists this app's directory structure." << std::endl
+              << " 27: Test running a command which returns the date." << std::endl;
 }
 
 
@@ -137,6 +141,8 @@ int MIATest::run()
         case 23: return testAudioPlayerVolumeChange(verboseMode);
         case 24: return testAudioPlayerChangeFilePlaysNext(verboseMode);
         case 25: return testAudioPlayerPlaySingleTrack(verboseMode);
+        case 26: return testCommandLineDirectoryStructure(verboseMode);
+        case 27: return testCommandLineDate(verboseMode);
         default:
             std::cerr << "Invalid test index: " << testIndexToRun << std::endl;
             printTestHelp();
