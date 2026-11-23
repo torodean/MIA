@@ -86,6 +86,7 @@ namespace error
          */
         Required_File_Not_Found = 31700,      ///< A required file was not found.
         File_Open_Failure = 31701,            ///< Failed to open a file.
+        Pipe_Read_Failure = 31702,            ///< Failed to read data from a pipe.
 
         /*
          * Network-related error codes. 318XX. These cover failures while creating and
